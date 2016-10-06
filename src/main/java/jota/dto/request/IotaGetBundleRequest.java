@@ -6,7 +6,7 @@ public class IotaGetBundleRequest extends IotaCommandRequest {
 
     private String transaction;
 
-    private IotaGetInclusionStateRequest(final String transaction) {
+    private IotaGetBundleRequest(final String transaction) {
         super(IotaAPICommands.GET_BUNDLE);
         this.transaction = transaction;
     }
