@@ -1,19 +1,19 @@
 ##Introduction
 
-The JOTA library is a simple Java8 wrapper around IOTA Node's JSON-REST HTTP interface.
+The JOTA library is a simple Java8 wrapper around [[IOTA]](http://www.iotatoken.com/) Node's JSON-REST HTTP interface.
 
-It allows to connect easily using java directly to a local or a remote [[IOTA]](https://iota.readme.io/docs/syncing-to-the-network) node.
+It allows to connect easily using java directly to a local or a remote [[IOTA node]](https://iota.readme.io/docs/syncing-to-the-network).
 
 * **Latest release:** 0.0.1 Snapshot
 * **Compatibility:** IOTA IRI v1.0.6
-* **API coverage:** 20 of 20 commands fully implemented
+* **API coverage:** 10 of 20 commands fully implemented
 * **License:** Apache License 2.0 
 * **Readme updated:** 2016-10-07 14:23:43 (UTC)
 
-A list of all *IOTA* JSON-REST API commands currently supported by jota wrapper can be found in the `Commands` enum (see [here](IotaAPICommands.java) for more details).
+A list of all *IOTA* JSON-REST API commands currently supported by jota wrapper can be found in the `Commands` enum (see [here](https://github.com/davassi/JOTA/blob/master/src/main/java/jota/IotaAPICommands.java) for more details).
 
 JOTA java wrapper is being designed to be thread-safe and simplest as possible in order to be easily mantainable, accordingly with the ongoing natural evolution of IOTA'api.
-All the boilerplate code for connecting to the node rest interface has been gotten rid off by using Retrofit. 
+All the boilerplate code for connecting to the node rest interface has been eliminated using Retrofit.
 
 ##Technologies & dependencies
 
@@ -73,7 +73,6 @@ There's an extensive list of test coverages on the src/test/java package of the 
 
 If JOTA has been useful to you and you feel like contributing, consider posting a [bug report](https://github.com/priiduneemre/btcd-cli4j/issues) or a [pull request](https://github.com/priiduneemre/btcd-cli4j/pulls). Alternatively, donations are very welcome too!
 
-* Bitcoin: `12CfEQ7RAEwpS82jFZg1HgjeH8obbpMeL5`
-* IOTA: ``
-* Ethereum: ``
+* Bitcoin: `3FGCHqhG1SUpgn2eS1Agq2KnxJemWnQFbB`
+
 
