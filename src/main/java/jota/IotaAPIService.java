@@ -53,19 +53,19 @@ public interface IotaAPIService {
 
     /**
      * Get the list of latest tips (unconfirmed transactions).
-     * 
+     *
      * curl http://localhost:14265 \ -X POST \ -H 'Content-Type:
      * application/json' \ -d '{"command": "getTips"}'
      */
     @Headers({ CONTENT_TYPE_HEADER, USER_AGENT_HEADER })
     @POST("./")
     Call<GetTipsResponse> getTips(@Body IotaCommandRequest request);
-    
+
     /**
-     * Get the list of latest tips (unconfirmed transactions).
-     * 
-     * curl http://localhost:14265 \ -X POST \ -H 'Content-Type:
-     * application/json' \ -d '{"command": "getTips"}'
+     * Get the list of transfers from a specified seed (account).
+     *
+     * curl http://localhost:14265 -X POST -H 'Content-Type: application/json'
+     * -d '{"command": "getTransfers", "seed": "AAA999999999999999999999999999999999999999999999999999999999999999999999999999999", "securityLevel": 1}'
      */
     @Headers({ CONTENT_TYPE_HEADER, USER_AGENT_HEADER })
     @POST("./")
@@ -88,22 +88,34 @@ public interface IotaAPIService {
      *
      * curl http://localhost:14265   -X POST   -H 'Content-Type: application/json'
      * -d '{"command": "getInclusionStates", "transactions"Q9HZWYKFWYWZRE9JQKG9REPKIASHUUECPSQO9JT9XNMVKWYGVAZETAIRPTM"], "tips" : []}'
-     *
-     *
      */
     @Headers({ CONTENT_TYPE_HEADER, USER_AGENT_HEADER })
     @POST("./")
     Call<GetInclusionStateResponse> getInclusionStates(@Body IotaGetInclusionStateRequest request);
 
+    /**
+     * Get the list of transactions which were bundled with the specified tail transaction. This call returns the full value of all individual transactions, not just the hashes.
+     *
+     *  curl http://localhost:14265 -X POST -H 'Content-Type: application/json'
+     *  -d '{"command": "getBundle", "transaction": "ZJVYUGTDRPDYFGFXMKOTV9ZWSGFK9CFPXTITQLQNLPPG9YNAARMKNKYQO9GSCSBIOTGMLJUFLZWSY9999"}'
+     *
+     */
     @Headers({ CONTENT_TYPE_HEADER, USER_AGENT_HEADER })
     @POST("./")
     Call<GetBundleResponse> getBundle(@Body IotaGetBundleRequest request);
 
-    /*
+    /**
+     * Returns the raw trytes data of a transaction.
+     *
+     * curl http://localhost:14265 -X POST -H 'Content-Type: application/json'
+     * -d '{"command": "getTrytes", "hashes": ["OAATQS9VQLSXCLDJVJJVYUGONXAXOFMJOZNSYWRZSWECMXAQQURHQBJNLD9IOFEPGZEPEMPXCIVRX9999"]}'
+     *
+     */
     @Headers({ CONTENT_TYPE_HEADER, USER_AGENT_HEADER })
     @POST("./")
     Call<GetTrytesResponse> getTrytes(@Body IotaGetTrytesRequest request);
 
+    /*
     @Headers({ CONTENT_TYPE_HEADER, USER_AGENT_HEADER })
     @POST("./")
     Call<AnalyzeTransactionResponse> analyzeTransactions(@Body IotaAnalyzeTransactionRequest request);

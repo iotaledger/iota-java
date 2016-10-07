@@ -8,7 +8,7 @@ It allows to connect easily using java directly to a local or a remote [[IOTA]](
 * **Compatibility:** IOTA IRI v1.0.6
 * **API coverage:** 20 of 20 commands fully implemented
 * **License:** Apache License 2.0 
-* **Readme updated:** 2016-02-17 10:16:43 (UTC)
+* **Readme updated:** 2016-10-07 14:23:43 (UTC)
 
 A list of all *IOTA* JSON-REST API commands currently supported by jota wrapper can be found in the `Commands` enum (see [here](IotaAPICommands.java) for more details).
 
@@ -21,9 +21,7 @@ The JOTA library has been designed to be used exclusively with Java 8+.
 
 Core dependencies:
 * Retrofit Client 2.1.0 [[link]](https://square.github.io/retrofit/)
-* Gson JSON Processor :
-  * Annotations 2.5.0 (`jackson-annotations`) [[link]](https://github.com/FasterXML/jackson-annotations)
-  * Databind 2.5.0 (`jackson-databind`) [[link]](https://github.com/FasterXML/jackson-databind)
+* Gson JSON Processor : [[link]](https://github.com/google/gson)
 * Lombok 1.16.2 [[link]](https://github.com/rzwitserloot/lombok)
 
 Other dependencies:

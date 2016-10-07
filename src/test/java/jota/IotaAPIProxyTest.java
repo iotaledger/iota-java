@@ -14,6 +14,11 @@ import org.junit.Test;
  */
 public class IotaAPIProxyTest {
 
+    private static final String TEST_SEED = "AAA999999999999999999999999999999999999999999999999999999999999999999999999999999";
+    private static final String TEST_TRANSACTION = "ZJVYUGTDRPDYFGFXMKOTV9ZWSGFK9CFPXTITQLQNLPPG9YNAARMKNKYQO9GSCSBIOTGMLJUFLZWSY9999";
+    private static final String TEST_HASH = "OAATQS9VQLSXCLDJVJJVYUGONXAXOFMJOZNSYWRZSWECMXAQQURHQBJNLD9IOFEPGZEPEMPXCIVRX9999";
+    private static final Integer TEST_MILESTONE_INDEX = 8059;
+
     private IotaAPIProxy proxy;
 
     @Before
@@ -40,7 +45,7 @@ public class IotaAPIProxyTest {
 
     @Test
     public void shouldGetMilestone() {
-        GetMilestoneResponse milestone = proxy.getMilestone(1000);
+        GetMilestoneResponse milestone = proxy.getMilestone(TEST_MILESTONE_INDEX);
         assertThat(milestone, IsNull.notNullValue());
     }
     
@@ -58,7 +63,7 @@ public class IotaAPIProxyTest {
 
     @Test
     public void shouldFindTransactionsByAddresses() {
-        FindTransactionResponse trans = proxy.findTransactionsByAddresses(new String[]{"123ABC"});
+        FindTransactionResponse trans = proxy.findTransactionsByAddresses(TEST_TRANSACTION);
         assertThat(trans, IsNull.notNullValue());
     }
 
@@ -81,9 +86,27 @@ public class IotaAPIProxyTest {
     }
 
     @Test
+    public void shouldGetTransactions() {
+        GetTransfersResponse res = proxy.getTransfers(TEST_SEED, 1);
+        assertThat(res, IsNull.notNullValue());
+    }
+
+    @Test
     public void shouldGetInclusionStates() {
-        GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{"123ABC"},
+        GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{TEST_TRANSACTION},
                 new String[]{"123"});
+        assertThat(res, IsNull.notNullValue());
+    }
+
+    @Test
+    public void shouldGetBundle() {
+        GetBundleResponse res = proxy.getBundle(TEST_TRANSACTION);
+        assertThat(res, IsNull.notNullValue());
+    }
+
+    @Test
+    public void shouldGetTrytes() {
+        GetTrytesResponse res = proxy.getTrytes(TEST_HASH);
         assertThat(res, IsNull.notNullValue());
     }
 }

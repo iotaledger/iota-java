@@ -1,5 +1,8 @@
 package jota.dto.response;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class GetTransfersResponse extends AbstractResponse {
 
     private Transfers[] transfers;
@@ -25,6 +28,11 @@ public class GetTransfersResponse extends AbstractResponse {
         }
         public String getValue() {
             return value;
+        }
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
         }
     }
     

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Properties;
@@ -81,7 +82,8 @@ public class IotaAPIProxy {
     }
     
     public GetTransfersResponse getTransfers(String seed, Integer securityLevel) {
-        final Call<GetTransfersResponse> res = service.getTransfers(IotaGetTransferRequest.createGetTransferRequest(seed, securityLevel));
+        final IotaGetTransferRequest tr = IotaGetTransferRequest.createGetTransferRequest(seed, securityLevel);
+        final Call<GetTransfersResponse> res = service.getTransfers(tr);
         return wrapCheckedException(res).body();
     }
 
@@ -98,19 +100,19 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    public FindTransactionResponse findTransactionsByAddresses(String [] addresses) {
+    public FindTransactionResponse findTransactionsByAddresses(final String ... addresses) {
         return findTransactions(addresses, null, null, null);
     }
 
-    public FindTransactionResponse findTransactionsByBundles(String [] bundles) {
+    public FindTransactionResponse findTransactionsByBundles(final String ... bundles) {
         return findTransactions(null, null, null, bundles);
     }
 
-    public FindTransactionResponse findTransactionsByApprovees(String [] approvees) {
+    public FindTransactionResponse findTransactionsByApprovees(final String ... approvees) {
         return findTransactions(null, null, approvees, null);
     }
 
-    public FindTransactionResponse findTransactionsByDigests(String [] digests) {
+    public FindTransactionResponse findTransactionsByDigests(final String ... digests) {
         return findTransactions(null, digests, null, null);
     }
 
@@ -123,6 +125,16 @@ public class IotaAPIProxy {
     public GetInclusionStateResponse getInclusionStates(Collection<String> transactions, Collection<String> tips) {
         final Call<GetInclusionStateResponse> res = service.getInclusionStates(IotaGetInclusionStateRequest
                 .createGetInclusionStateRequest(transactions, tips));
+        return wrapCheckedException(res).body();
+    }
+
+    public GetBundleResponse getBundle(String transaction) {
+        final Call<GetBundleResponse> res = service.getBundle(IotaGetBundleRequest.createIotaGetBundleRequest(transaction));
+        return wrapCheckedException(res).body();
+    }
+
+    public GetTrytesResponse getTrytes(String ... hashes) {
+        final Call<GetTrytesResponse> res = service.getTrytes(IotaGetTrytesRequest.createGetTrytesRequest(hashes));
         return wrapCheckedException(res).body();
     }
 

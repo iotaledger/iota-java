@@ -17,22 +17,22 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
         return new IotaFindTransactionsRequest();
     }
 
-    public IotaFindTransactionsRequest byBundles(String [] bundles) {
+    public IotaFindTransactionsRequest byBundles(String ... bundles) {
         this.bundles = bundles;
         return this;
     }
 
-    public IotaFindTransactionsRequest byAddresses(String [] addresses) {
+    public IotaFindTransactionsRequest byAddresses(String ... addresses) {
         this.addresses = addresses;
         return this;
     }
 
-    public IotaFindTransactionsRequest byDigests(String [] digests) {
+    public IotaFindTransactionsRequest byDigests(String ... digests) {
         this.digests = digests;
         return this;
     }
 
-    public IotaFindTransactionsRequest byApprovees(String [] approvees) {
+    public IotaFindTransactionsRequest byApprovees(String ... approvees) {
         this.approvees = approvees;
         return this;
     }
