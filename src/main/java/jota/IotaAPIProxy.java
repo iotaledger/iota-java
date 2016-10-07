@@ -87,6 +87,11 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
+    public AnalyzeTransactionResponse analyseTransaction(String ... trytes) {
+        final Call<AnalyzeTransactionResponse> res = service.analyzeTransactions(IotaAnalyzeTransactionRequest.createIotaAnalyzeTransactionRequest(trytes));
+        return wrapCheckedException(res).body();
+    }
+
     public FindTransactionResponse findTransactions(String [] addresses, String [] digests, String [] approvees, String [] bundles ) {
 
         final IotaFindTransactionsRequest findTransRequest = IotaFindTransactionsRequest
