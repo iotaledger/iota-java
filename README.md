@@ -65,7 +65,7 @@ There's an extensive list of test coverages on the src/test/java package of the 
 
 ##Supporting the project
 
-If JOTA has been useful to you and you feel like contributing, consider posting a [bug report](https://github.com/priiduneemre/btcd-cli4j/issues) or a [pull request](https://github.com/priiduneemre/btcd-cli4j/pulls). Alternatively, donations are very welcome too!
+If JOTA has been useful to you and you feel like contributing, consider posting a bug report or a pull request. Alternatively, donations are very welcome too!
 
 * Bitcoin: `3FGCHqhG1SUpgn2eS1Agq2KnxJemWnQFbB`
 
