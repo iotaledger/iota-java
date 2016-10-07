@@ -46,13 +46,7 @@ of if you need to connect to a remote node on https:
 	
 	GetNodeInfoResponse response = api.getNodeInfo();
 
-Next, modify your `pom.xml` to include `btcd-cli4j-core` as a dependency:
-
-	<dependency>
-		<groupId>com.neemre.btcd-cli4j</groupId>
-		<artifactId>btcd-cli4j-core</artifactId>
-		<version>0.5.1</version>
-	</dependency>
+Jota is still *not* in the central maven repository. It will be available when it will cover 100% iota's rest interface.
 
 In order to communicate with *IOTA node*, JOTA needs to be aware of your node's exact configuration. The easiest way of providing this information is via a `node_config.properties` file, for example:
 
