@@ -6,7 +6,7 @@ It allows to connect easily using java directly to a local or a remote [[IOTA no
 
 * **Latest release:** 0.0.1 Snapshot
 * **Compatibility:** IOTA IRI v1.0.6
-* **API coverage:** 10 of 20 commands fully implemented
+* **API coverage:** 12 of 20 commands fully implemented
 * **License:** Apache License 2.0 
 * **Readme updated:** 2016-10-07 14:23:43 (UTC)
 
@@ -40,7 +40,7 @@ of if you need to connect to a remote node on https:
 
 	IotaApiProxy api = new IotaApiProxy.Builder 
 		.protocol("https")
-		.nodeAddress("somewhere_remotely") 
+		.nodeAddress("somewhere_over_the_rainbow")
 		.port(54321) 
 		.build();
 	
