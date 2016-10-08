@@ -140,11 +140,19 @@ public interface IotaAPIService {
     @Headers({ CONTENT_TYPE_HEADER, USER_AGENT_HEADER })
     @POST("./")
     Call<PrepareTransfersResponse> prepareTransfers(@Body IotaPrepareTransfersRequest request);
+    */
 
+    /**
+     * Tip selection which returns trunkTransaction and branchTransaction. The input value is the latest coordinator milestone, as provided through the getNodeInfo API call.
+     *
+     * curl http://localhost:14265 -X POST -H 'Content-Type: application/json'
+     * -d '{"command": "getTransactionsToApprove", "milestone": "SMYMAKKPSUKCKDRUEYCGZJTYCZ9HHDMDUWBAPXARGURPQRHTAJDASRWMIDTPTBNDKDEFBUTBGGAFX9999"}'
+     */
     @Headers({ CONTENT_TYPE_HEADER, USER_AGENT_HEADER })
     @POST("./")
     Call<GetTransactionsToApproveResponse> getTransactionsToApprove(@Body IotaGetTransactionsToApproveRequest request);
 
+    /*
     @Headers({ CONTENT_TYPE_HEADER, USER_AGENT_HEADER })
     @POST("./")
     Call<GetAttachToTangleResponse> attachToTangle(@Body IotaAttachToTangleRequest request);

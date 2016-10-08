@@ -8,9 +8,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import jota.dto.request.*;
 import jota.dto.response.*;
+import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,9 +53,15 @@ public class IotaAPIProxy {
 
         final String nodeUrl = protocol + "://" + host + ":" + port;
 
+        final OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(120, TimeUnit.SECONDS)
+                .connectTimeout(120, TimeUnit.SECONDS)
+                .build();
+
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(nodeUrl)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
                 .build();
 
         service = retrofit.create(IotaAPIService.class);
@@ -148,6 +156,10 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
+    public GetTransactionsToApproveResponse getTransactionsToApprove(String milestone) {
+        final Call<GetTransactionsToApproveResponse> res = service.getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(milestone));
+        return wrapCheckedException(res).body();
+    }
 
 
     protected static <T> Response<T> wrapCheckedException(final Call<T> call) {
