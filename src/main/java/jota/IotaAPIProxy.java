@@ -87,11 +87,6 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    public AnalyzeTransactionResponse analyseTransaction(String ... trytes) {
-        final Call<AnalyzeTransactionResponse> res = service.analyzeTransactions(IotaAnalyzeTransactionRequest.createIotaAnalyzeTransactionRequest(trytes));
-        return wrapCheckedException(res).body();
-    }
-
     public FindTransactionResponse findTransactions(String [] addresses, String [] digests, String [] approvees, String [] bundles ) {
 
         final IotaFindTransactionsRequest findTransRequest = IotaFindTransactionsRequest
@@ -142,6 +137,18 @@ public class IotaAPIProxy {
         final Call<GetTrytesResponse> res = service.getTrytes(IotaGetTrytesRequest.createGetTrytesRequest(hashes));
         return wrapCheckedException(res).body();
     }
+
+    public AnalyzeTransactionResponse analyseTransaction(String ... trytes) {
+        final Call<AnalyzeTransactionResponse> res = service.analyzeTransactions(IotaAnalyzeTransactionRequest.createIotaAnalyzeTransactionRequest(trytes));
+        return wrapCheckedException(res).body();
+    }
+
+    public GetNewAddressResponse getNewAddress(String seed, Integer securityLevel) {
+        final Call<GetNewAddressResponse> res = service.getNewAddress(IotaGetNewAddressRequest.createIotaGetNewAddressRequest(seed, securityLevel));
+        return wrapCheckedException(res).body();
+    }
+
+
 
     protected static <T> Response<T> wrapCheckedException(final Call<T> call) {
         try {

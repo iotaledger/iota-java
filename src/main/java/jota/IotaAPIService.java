@@ -126,11 +126,17 @@ public interface IotaAPIService {
     @POST("./")
     Call<AnalyzeTransactionResponse> analyzeTransactions(@Body IotaAnalyzeTransactionRequest request);
 
-    /*
+    /**
+     * Generates a new address for your specified account (seed + securityLevel).
+     *
+     * curl http://localhost:14265 -X POST -H 'Content-Type: application/json'
+     * -d '{"command": "getNewAddress", "seed": "AAA999999999999999999999999999999999999999999999999999999999999999999999999999999", "securityLevel": 1}'
+     */
     @Headers({ CONTENT_TYPE_HEADER, USER_AGENT_HEADER })
     @POST("./")
     Call<GetNewAddressResponse> getNewAddress(@Body IotaGetNewAddressRequest request);
 
+    /*
     @Headers({ CONTENT_TYPE_HEADER, USER_AGENT_HEADER })
     @POST("./")
     Call<PrepareTransfersResponse> prepareTransfers(@Body IotaPrepareTransfersRequest request);

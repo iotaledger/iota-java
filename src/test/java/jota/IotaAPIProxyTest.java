@@ -117,4 +117,10 @@ public class IotaAPIProxyTest {
         assertThat(res, IsNull.notNullValue());
     }
 
+    @Test
+    public void shouldGetNewAddress() {
+        GetNewAddressResponse res = proxy.getNewAddress(TEST_SEED, 1);
+        assertThat(res, IsNull.notNullValue());
+    }
+
 }
