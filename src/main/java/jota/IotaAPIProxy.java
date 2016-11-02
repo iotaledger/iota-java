@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Properties;
@@ -74,11 +73,6 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    public GetMilestoneResponse getMilestone(Integer index) {
-        final Call<GetMilestoneResponse> res = service.getMilestone(IotaGetMilestoneRequest.createMilestoneRequest(index));
-        return wrapCheckedException(res).body();
-    }
-
     public GetNeighborsResponse getNeighbors() {
         final Call<GetNeighborsResponse> res = service.getNeighbors(IotaCommandRequest.createGetNeighborsRequest());
         return wrapCheckedException(res).body();
@@ -86,12 +80,6 @@ public class IotaAPIProxy {
 
     public GetTipsResponse getTips() {
         final Call<GetTipsResponse> res = service.getTips(IotaCommandRequest.createGetTipsRequest());
-        return wrapCheckedException(res).body();
-    }
-    
-    public GetTransfersResponse getTransfers(String seed, Integer securityLevel) {
-        final IotaGetTransferRequest tr = IotaGetTransferRequest.createGetTransferRequest(seed, securityLevel);
-        final Call<GetTransfersResponse> res = service.getTransfers(tr);
         return wrapCheckedException(res).body();
     }
 
@@ -136,23 +124,8 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    public GetBundleResponse getBundle(String transaction) {
-        final Call<GetBundleResponse> res = service.getBundle(IotaGetBundleRequest.createIotaGetBundleRequest(transaction));
-        return wrapCheckedException(res).body();
-    }
-
     public GetTrytesResponse getTrytes(String ... hashes) {
         final Call<GetTrytesResponse> res = service.getTrytes(IotaGetTrytesRequest.createGetTrytesRequest(hashes));
-        return wrapCheckedException(res).body();
-    }
-
-    public AnalyzeTransactionResponse analyseTransaction(String ... trytes) {
-        final Call<AnalyzeTransactionResponse> res = service.analyzeTransactions(IotaAnalyzeTransactionRequest.createIotaAnalyzeTransactionRequest(trytes));
-        return wrapCheckedException(res).body();
-    }
-
-    public GetNewAddressResponse getNewAddress(String seed, Integer securityLevel) {
-        final Call<GetNewAddressResponse> res = service.getNewAddress(IotaGetNewAddressRequest.createIotaGetNewAddressRequest(seed, securityLevel));
         return wrapCheckedException(res).body();
     }
 
@@ -173,6 +146,16 @@ public class IotaAPIProxy {
             log.error("Execution of the API call raised exception. IOTA Node not reachable?", e);
             throw new IllegalStateException(e.getMessage());
         }
+    }
+
+    // end of proxied calls.
+
+    public GetBundleResponse getBundle(String transaction) {
+        return IotaAPIUtils.getBundle(transaction);
+    }
+
+    public GetNewAddressResponse getNewAddress(String seed, Integer securityLevel) {
+        return IotaAPIUtils.getNewAddress(seed, securityLevel);
     }
 
     private static final String env(String env, String def) {

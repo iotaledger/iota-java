@@ -47,12 +47,6 @@ public class IotaAPIProxyTest {
     }
 
     @Test
-    public void shouldGetMilestone() {
-        GetMilestoneResponse milestone = proxy.getMilestone(TEST_MILESTONE_INDEX);
-        assertThat(milestone, IsNull.notNullValue());
-    }
-    
-    @Test
     public void shouldGetNeighbors() {
         GetNeighborsResponse neighbors = proxy.getNeighbors();
         assertThat(neighbors, IsNull.notNullValue());
@@ -89,39 +83,9 @@ public class IotaAPIProxyTest {
     }
 
     @Test
-    public void shouldGetTransactions() {
-        GetTransfersResponse res = proxy.getTransfers(TEST_SEED, 1);
-        assertThat(res, IsNull.notNullValue());
-    }
-
-    @Test
     public void shouldGetInclusionStates() {
         GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{TEST_TRANSACTION},
                 new String[]{"123"});
-        assertThat(res, IsNull.notNullValue());
-    }
-
-    @Test
-    public void shouldGetBundle() {
-        GetBundleResponse res = proxy.getBundle(TEST_TRANSACTION);
-        assertThat(res, IsNull.notNullValue());
-    }
-
-    @Test
-    public void shouldGetTrytes() {
-        GetTrytesResponse res = proxy.getTrytes(TEST_HASH);
-        assertThat(res, IsNull.notNullValue());
-    }
-
-    @Test
-    public void shouldAnalyseTransaction() {
-        AnalyzeTransactionResponse res = proxy.analyseTransaction(TEST_TRYTES);
-        assertThat(res, IsNull.notNullValue());
-    }
-
-    @Test
-    public void shouldGetNewAddress() {
-        GetNewAddressResponse res = proxy.getNewAddress(TEST_SEED, 1);
         assertThat(res, IsNull.notNullValue());
     }
 
