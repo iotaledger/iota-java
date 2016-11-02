@@ -5,8 +5,8 @@ The JOTA library is a simple Java8 wrapper around [[IOTA]](http://www.iotatoken.
 It allows to connect easily using java directly to a local or a remote [[IOTA node]](https://iota.readme.io/docs/syncing-to-the-network).
 
 * **Latest release:** 0.0.1 Snapshot
-* **Compatibility:** IOTA IRI v1.0.6
-* **API coverage:** 12 of 20 commands fully implemented
+* **Compatibility:** in development to be fully compatible with IOTA IRI v1.1.0
+* **API coverage:** 11 of 14 commands fully implemented
 * **License:** Apache License 2.0 
 * **Readme updated:** 2016-10-07 14:23:43 (UTC)
 
