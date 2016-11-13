@@ -36,7 +36,4 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
         this.approvees = approvees;
         return this;
     }
-
-
-
 }

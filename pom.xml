@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.iota</groupId>
 	<artifactId>jota</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-RELEASE</version>
 	<name>JOTA</name>
-	<description>JOTA library is a simple Java8 wrapper around IOTA Node's JSON-REST HTTP interface.</description>
+	<description>JOTA library is a simple Java wrapper around IOTA Node's JSON-REST HTTP interface.</description>
 
 	<properties>
-		<java-version>1.8</java-version>
+		<java-version>1.7</java-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 

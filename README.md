@@ -1,14 +1,14 @@
 ##Introduction
 
-The JOTA library is a simple Java8 wrapper around [[IOTA]](http://www.iotatoken.com/) Node's JSON-REST HTTP interface.
+The JOTA library is a simple Java wrapper around [[IOTA]](http://www.iotatoken.com/) Node's JSON-REST HTTP interface.
 
 It allows to connect easily using java directly to a local or a remote [[IOTA node]](https://iota.readme.io/docs/syncing-to-the-network).
 
-* **Latest release:** 0.0.1 Snapshot
+* **Latest release:** 1.0.0 Release
 * **Compatibility:** in development to be fully compatible with IOTA IRI v1.1.0
-* **API coverage:** 11 of 14 commands fully implemented
+* **API coverage:** 14 of 14 commands fully implemented
 * **License:** Apache License 2.0 
-* **Readme updated:** 2016-10-07 14:23:43 (UTC)
+* **Readme updated:** 2016-11-12 21:05:02 (UTC)
 
 A list of all *IOTA* JSON-REST API commands currently supported by jota wrapper can be found in the `Commands` enum (see [here](https://github.com/davassi/JOTA/blob/master/src/main/java/jota/IotaAPICommands.java) for more details).
 
@@ -17,7 +17,7 @@ All the boilerplate code for connecting to the node rest interface has been elim
 
 ##Technologies & dependencies
 
-The JOTA library has been designed to be used exclusively with Java 8+.
+The JOTA library has been designed to be used with Java6+, in order to promote compatibility with Android.
 
 Core dependencies:
 * Retrofit Client 2.1.0 [[link]](https://square.github.io/retrofit/)
@@ -28,10 +28,9 @@ Other dependencies:
 * Simple Logging Facade for Java 1.7.21 [[link]](http://www.slf4j.org/)
 * Apache Commons Lang 3.3.2 [[link]](http://commons.apache.org/proper/commons-lang/)
 
-
 ##Getting started <a name="getting-started"></a>
 
-Connect to your local node with the default settings is quite straitforward: it requires only 2 lines of code. For example, in order to fetch the Node Info:
+Connect to your local node with the default settings is quite straightforward: it requires only 2 lines of code. For example, in order to fetch the Node Info:
 
 	IotaApiProxy api = new IotaApiProxy.Builder.build();
 	GetNodeInfoResponse response = api.getNodeInfo();
@@ -50,7 +49,6 @@ Jota is still *not* in the central maven repository. It will be available when i
 
 In order to communicate with *IOTA node*, JOTA needs to be aware of your node's exact configuration. The easiest way of providing this information is via a `node_config.properties` file, for example:
 
-
     iota.node.protocol=http
     iota.node.host=127.0.0.1
     iota.node.port=14265
@@ -66,5 +64,6 @@ There's an extensive list of test coverages on the src/test/java package of the 
 If JOTA has been useful to you and you feel like contributing, consider posting a bug report or a pull request. Alternatively, donations are very welcome too!
 
 * Bitcoin: `3FGCHqhG1SUpgn2eS1Agq2KnxJemWnQFbB`
+
 
 

@@ -4,14 +4,14 @@ import jota.IotaAPICommands;
 
 public class IotaGetTransactionsToApproveRequest extends IotaCommandRequest {
 
-    private String milestone;
+    private Integer depth;
 
-    private IotaGetTransactionsToApproveRequest(final String milestone) {
+    private IotaGetTransactionsToApproveRequest(final Integer depth) {
         super(IotaAPICommands.GET_TRANSACTIONS_TO_APPROVE);
-        this.milestone = milestone;
+        this.depth = depth;
     }
 
-    public static IotaGetTransactionsToApproveRequest createIotaGetTransactionsToApproveRequest(String milestone) {
-        return new IotaGetTransactionsToApproveRequest(milestone);
+    public static IotaGetTransactionsToApproveRequest createIotaGetTransactionsToApproveRequest(Integer depth) {
+        return new IotaGetTransactionsToApproveRequest(depth);
     }
 }
