@@ -122,9 +122,5 @@ public class IotaAPIProxyTest {
         IotaAPIProxy proxy = new IotaAPIProxy.Builder().build();
         assertThat(proxy, IsNull.notNullValue());
     }
-
-    @Test(expected = IllegalStateException.class)
-    public void shouldNotCreateIotaApiProxyInstanceWithDefaultValues() {
-        new IotaAPIProxy.Builder().host("a_very_wrong_ip_address").build().getNodeInfo();
-    }
+    
 }
