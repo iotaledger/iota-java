@@ -18,6 +18,7 @@ public class GetNeighborsResponse extends AbstractResponse {
         public String getAddress() {
             return address;
         }
+
         public String getNumberOfAllTransactions() {
             return numberOfAllTransactions;
         }
@@ -25,6 +26,7 @@ public class GetNeighborsResponse extends AbstractResponse {
         public String getNumberOfInvalidTransactions() {
             return numberOfInvalidTransactions;
         }
+
         public String getNumberOfNewTransactions() {
             return numberOfNewTransactions;
         }

@@ -17,7 +17,7 @@ public class IotaCommandRequest {
     public static IotaCommandRequest createGetTipsRequest() {
         return new IotaCommandRequest(IotaAPICommands.GET_TIPS);
     }
-    
+
     public static IotaCommandRequest createGetNeighborsRequest() {
         return new IotaCommandRequest(IotaAPICommands.GET_NEIGHBORS);
     }

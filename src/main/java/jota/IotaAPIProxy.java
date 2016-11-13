@@ -19,15 +19,15 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * IotaAPIProxy Builder. Usage:
- * 
+ *
  * IotaApiProxy api = IotaApiProxy.Builder
- *      .protocol("http")
- *      .nodeAddress("localhost")
- *      .port(12345)
- *      .build();
- * 
+ * .protocol("http")
+ * .nodeAddress("localhost")
+ * .port(12345)
+ * .build();
+ *
  * GetNodeInfoResponse response = api.getNodeInfo();
- * 
+ *
  * @author davassi
  */
 public class IotaAPIProxy {
@@ -35,6 +35,7 @@ public class IotaAPIProxy {
     private static final Logger log = LoggerFactory.getLogger(IotaAPIProxy.class);
 
     private IotaAPIService service;
+    private String protocol, host, port;
 
     private IotaAPIProxy(final Builder builder) {
         protocol = builder.protocol;
@@ -43,7 +44,28 @@ public class IotaAPIProxy {
         postConstruct();
     }
 
-    private String protocol, host, port;
+    protected static <T> Response<T> wrapCheckedException(final Call<T> call) {
+        try {
+            final Response<T> res = call.execute();
+            if (res.code() == 400) {
+                throw new IllegalAccessError(res.errorBody().toString());
+            }
+            return res;
+        } catch (IOException e) {
+            log.error("Execution of the API call raised exception. IOTA Node not reachable?", e);
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
+    private static final String env(String env, String def) {
+        final String value = System.getenv(env);
+        if (value == null) {
+            log.warn("Environment variable '{}' is not defined, and actual value has not been specified. "
+                    + "Rolling back to default value: '{}'", env, def);
+            return def;
+        }
+        return value;
+    }
 
     private void postConstruct() {
 
@@ -75,12 +97,12 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    public AddNeighborsResponse addNeighbors(String ... uris) {
+    public AddNeighborsResponse addNeighbors(String... uris) {
         final Call<AddNeighborsResponse> res = service.addNeighbors(IotaNeighborsRequest.createAddNeighborsRequest(uris));
         return wrapCheckedException(res).body();
     }
 
-    public RemoveNeighborsResponse removeNeighbors(String ... uris) {
+    public RemoveNeighborsResponse removeNeighbors(String... uris) {
         final Call<RemoveNeighborsResponse> res = service.removeNeighbors(IotaNeighborsRequest.createRemoveNeighborsRequest(uris));
         return wrapCheckedException(res).body();
     }
@@ -103,19 +125,19 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    public FindTransactionResponse findTransactionsByAddresses(final String ... addresses) {
+    public FindTransactionResponse findTransactionsByAddresses(final String... addresses) {
         return findTransactions(addresses, null, null, null);
     }
 
-    public FindTransactionResponse findTransactionsByBundles(final String ... bundles) {
+    public FindTransactionResponse findTransactionsByBundles(final String... bundles) {
         return findTransactions(null, null, null, bundles);
     }
 
-    public FindTransactionResponse findTransactionsByApprovees(final String ... approvees) {
+    public FindTransactionResponse findTransactionsByApprovees(final String... approvees) {
         return findTransactions(null, null, approvees, null);
     }
 
-    public FindTransactionResponse findTransactionsByDigests(final String ... digests) {
+    public FindTransactionResponse findTransactionsByDigests(final String... digests) {
         return findTransactions(null, digests, null, null);
     }
 
@@ -131,7 +153,7 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    public GetTrytesResponse getTrytes(String ... hashes) {
+    public GetTrytesResponse getTrytes(String... hashes) {
         final Call<GetTrytesResponse> res = service.getTrytes(IotaGetTrytesRequest.createGetTrytesRequest(hashes));
         return wrapCheckedException(res).body();
     }
@@ -141,7 +163,7 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    public GetBalancesResponse getBalances(Integer threshold, String [] addresses) {
+    public GetBalancesResponse getBalances(Integer threshold, String[] addresses) {
         final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses));
         return wrapCheckedException(res).body();
     }
@@ -151,35 +173,22 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String ... trytes) {
+    public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) {
         final Call<GetAttachToTangleResponse> res = service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
         return wrapCheckedException(res).body();
     }
 
-    public StoreTransactionsResponse storeTransactions(String ... trytes) {
+    public StoreTransactionsResponse storeTransactions(String... trytes) {
         final Call<StoreTransactionsResponse> res = service.storeTransactions(IotaStoreTransactionsRequest.createStoreTransactionsRequest(trytes));
         return wrapCheckedException(res).body();
     }
 
-    public BroadcastTransactionsResponse broadcastTransactions(String ... trytes) {
+    // end of proxied calls.
+
+    public BroadcastTransactionsResponse broadcastTransactions(String... trytes) {
         final Call<BroadcastTransactionsResponse> res = service.broadcastTransactions(IotaBroadcastTransactionRequest.createBroadcastTransactionsRequest(trytes));
         return wrapCheckedException(res).body();
     }
-
-    protected static <T> Response<T> wrapCheckedException(final Call<T> call) {
-        try {
-            final Response<T> res = call.execute();
-            if (res.code() == 400) {
-                throw new IllegalAccessError(res.errorBody().toString());
-            }
-            return res;
-        } catch (IOException e) {
-            log.error("Execution of the API call raised exception. IOTA Node not reachable?", e);
-            throw new IllegalStateException(e.getMessage());
-        }
-    }
-
-    // end of proxied calls.
 
     public GetBundleResponse getBundle(String transaction) {
         return IotaAPIUtils.getBundle(transaction);
@@ -189,20 +198,10 @@ public class IotaAPIProxy {
         return IotaAPIUtils.getNewAddress(seed, securityLevel);
     }
 
-    private static final String env(String env, String def) {
-        final String value = System.getenv(env);
-        if (value == null) {
-            log.warn("Environment variable '{}' is not defined, and actual value has not been specified. "
-                    + "Rolling back to default value: '{}'", env, def);
-            return def;
-        }
-        return value;
-    }
-
     public static class Builder {
 
         String protocol, host, port;
-        
+
         public IotaAPIProxy build() {
 
             if (protocol == null || host == null || port == null) {
@@ -252,7 +251,7 @@ public class IotaAPIProxy {
             host = env("IOTA_NODE_HOST", "localhost");
             port = env("IOTA_NODE_PORT", "14265");
         }
-        
+
         public Builder host(String host) {
             this.host = host;
             return this;
