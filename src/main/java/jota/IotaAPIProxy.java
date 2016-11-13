@@ -1,24 +1,21 @@
 package jota;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
 import jota.dto.request.*;
 import jota.dto.response.*;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * IotaAPIProxy Builder. Usage:
@@ -93,12 +90,12 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    public FindTransactionResponse findTransactions(String [] addresses, String [] digests, String [] approvees, String [] bundles ) {
+    public FindTransactionResponse findTransactions(String[] addresses, String[] tags, String[] approvees, String[] bundles) {
 
         final IotaFindTransactionsRequest findTransRequest = IotaFindTransactionsRequest
                 .createFindTransactionRequest()
                 .byAddresses(addresses)
-                .byDigests(digests)
+                .byTags(tags)
                 .byApprovees(approvees)
                 .byBundles(bundles);
 
@@ -224,9 +221,13 @@ public class IotaAPIProxy {
 
         private boolean checkPropertiesFiles() {
 
-            try (BufferedReader reader = Files.newBufferedReader(Paths.get("node_config.properties"))) {
+            try {
+
+                FileReader fileReader = new FileReader("node_config.properties");
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+
                 final Properties nodeConfig = new Properties();
-                nodeConfig.load(reader);
+                nodeConfig.load(bufferedReader);
 
                 if (nodeConfig.getProperty("iota.node.protocol") != null) {
                     protocol = nodeConfig.getProperty("iota.node.protocol");

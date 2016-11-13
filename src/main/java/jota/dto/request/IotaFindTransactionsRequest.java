@@ -10,8 +10,8 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
 	private String[] bundles; // List of bundle hashes. The hashes need to be extended to 81chars by padding the hash with 9's.
 	private String[] addresses;
-	private String[] digests;
-	private String[] approvees;
+    private String[] tags;
+    private String[] approvees;
 
     public static IotaFindTransactionsRequest createFindTransactionRequest() {
         return new IotaFindTransactionsRequest();
@@ -27,8 +27,8 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
         return this;
     }
 
-    public IotaFindTransactionsRequest byDigests(String ... digests) {
-        this.digests = digests;
+    public IotaFindTransactionsRequest byTags(String ... tags) {
+        this.tags = tags;
         return this;
     }
 

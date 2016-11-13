@@ -10,8 +10,9 @@ public class GetNeighborsResponse extends AbstractResponse {
 
     static class Neighbors {
 
-        private String numberOfAllTransactions;
         private String address;
+        private String numberOfAllTransactions;
+        private String numberOfInvalidTransactions;
         private String numberOfNewTransactions;
 
         public String getAddress() {
@@ -19,6 +20,10 @@ public class GetNeighborsResponse extends AbstractResponse {
         }
         public String getNumberOfAllTransactions() {
             return numberOfAllTransactions;
+        }
+
+        public String getNumberOfInvalidTransactions() {
+            return numberOfInvalidTransactions;
         }
         public String getNumberOfNewTransactions() {
             return numberOfNewTransactions;

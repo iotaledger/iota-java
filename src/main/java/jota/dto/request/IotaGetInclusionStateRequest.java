@@ -3,7 +3,6 @@ package jota.dto.request;
 import jota.IotaAPICommands;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class IotaGetInclusionStateRequest extends IotaCommandRequest {
 

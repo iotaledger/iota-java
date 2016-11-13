@@ -2,9 +2,9 @@ package jota.dto.response;
 
 public class GetTrytesResponse extends AbstractResponse {
 
-    private String [] trites;
+    private String[] trytes;
 
-    public String[] getTrites() {
-        return trites;
+    public String[] getTrytes() {
+        return trytes;
     }
 }
