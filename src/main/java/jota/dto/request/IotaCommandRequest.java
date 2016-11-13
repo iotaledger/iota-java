@@ -21,4 +21,8 @@ public class IotaCommandRequest {
     public static IotaCommandRequest createGetNeighborsRequest() {
         return new IotaCommandRequest(IotaAPICommands.GET_NEIGHBORS);
     }
+
+    public static IotaCommandRequest createInterruptAttachToTangleRequest() {
+        return new IotaCommandRequest(IotaAPICommands.INTERRUPT_ATTACHING_TO_TANGLE);
+    }
 }

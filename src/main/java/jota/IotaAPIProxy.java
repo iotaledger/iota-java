@@ -78,6 +78,16 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
+    public AddNeighborsResponse addNeighbors(String ... uris) {
+        final Call<AddNeighborsResponse> res = service.addNeighbors(IotaNeighborsRequest.createAddNeighborsRequest(uris));
+        return wrapCheckedException(res).body();
+    }
+
+    public RemoveNeighborsResponse removeNeighbors(String ... uris) {
+        final Call<RemoveNeighborsResponse> res = service.removeNeighbors(IotaNeighborsRequest.createRemoveNeighborsRequest(uris));
+        return wrapCheckedException(res).body();
+    }
+
     public GetTipsResponse getTips() {
         final Call<GetTipsResponse> res = service.getTips(IotaCommandRequest.createGetTipsRequest());
         return wrapCheckedException(res).body();
@@ -129,11 +139,35 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    public GetTransactionsToApproveResponse getTransactionsToApprove(String milestone) {
-        final Call<GetTransactionsToApproveResponse> res = service.getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(milestone));
+    public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth) {
+        final Call<GetTransactionsToApproveResponse> res = service.getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(depth));
         return wrapCheckedException(res).body();
     }
 
+    public GetBalancesResponse getBalances(Integer threshold, String [] addresses) {
+        final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses));
+        return wrapCheckedException(res).body();
+    }
+
+    public InterruptAttachingToTangleResponse interruptAttachingToTangle() {
+        final Call<InterruptAttachingToTangleResponse> res = service.interruptAttachingToTangle(IotaCommandRequest.createInterruptAttachToTangleRequest());
+        return wrapCheckedException(res).body();
+    }
+
+    public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String ... trytes) {
+        final Call<GetAttachToTangleResponse> res = service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
+        return wrapCheckedException(res).body();
+    }
+
+    public StoreTransactionsResponse storeTransactions(String ... trytes) {
+        final Call<StoreTransactionsResponse> res = service.storeTransactions(IotaStoreTransactionsRequest.createStoreTransactionsRequest(trytes));
+        return wrapCheckedException(res).body();
+    }
+
+    public BroadcastTransactionsResponse broadcastTransactions(String ... trytes) {
+        final Call<BroadcastTransactionsResponse> res = service.broadcastTransactions(IotaBroadcastTransactionRequest.createBroadcastTransactionsRequest(trytes));
+        return wrapCheckedException(res).body();
+    }
 
     protected static <T> Response<T> wrapCheckedException(final Call<T> call) {
         try {
@@ -159,11 +193,13 @@ public class IotaAPIProxy {
     }
 
     private static final String env(String env, String def) {
-        return Optional.ofNullable(System.getenv(env)).orElseGet(() -> {
-            log.warn("Enviroment variable '{}' is not defined, and actual value has not been specified. "
+        final String value = System.getenv(env);
+        if (value == null) {
+            log.warn("Environment variable '{}' is not defined, and actual value has not been specified. "
                     + "Rolling back to default value: '{}'", env, def);
             return def;
-        });
+        }
+        return value;
     }
 
     public static class Builder {
@@ -192,17 +228,17 @@ public class IotaAPIProxy {
                 final Properties nodeConfig = new Properties();
                 nodeConfig.load(reader);
 
-                Optional.ofNullable(nodeConfig.getProperty("iota.node.protocol"))
-                        .filter(v -> protocol == null)
-                        .ifPresent(v -> protocol = v);
+                if (nodeConfig.getProperty("iota.node.protocol") != null) {
+                    protocol = nodeConfig.getProperty("iota.node.protocol");
+                }
 
-                Optional.ofNullable(nodeConfig.getProperty("iota.node.host"))
-                        .filter(v -> host == null)
-                        .ifPresent(v -> host = v);
+                if (nodeConfig.getProperty("iota.node.host") != null) {
+                    host = nodeConfig.getProperty("iota.node.host");
+                }
 
-                Optional.ofNullable(nodeConfig.getProperty("iota.node.port"))
-                        .filter(v -> port == null)
-                        .ifPresent(v -> port = v);
+                if (nodeConfig.getProperty("iota.node.port") != null) {
+                    port = nodeConfig.getProperty("iota.node.port");
+                }
 
             } catch (IOException e1) {
                 log.debug("node_config.properties not found. Rolling back for another solution...");
@@ -211,18 +247,9 @@ public class IotaAPIProxy {
         }
 
         private void checkEnviromentVariables() {
-
-            Optional.of(env("IOTA_NODE_PROTOCOL", "http"))
-                    .filter(v -> protocol == null)
-                    .ifPresent(v -> protocol = v);
-
-            Optional.ofNullable(env("IOTA_NODE_HOST", "localhost"))
-                    .filter(v -> host == null)
-                    .ifPresent(v -> host = v);
-
-            Optional.ofNullable(env("IOTA_NODE_PORT", "14265"))
-                    .filter(v -> port == null)
-                    .ifPresent(v -> port = v);
+            protocol = env("IOTA_NODE_PROTOCOL", "http");
+            host = env("IOTA_NODE_HOST", "localhost");
+            port = env("IOTA_NODE_PORT", "14265");
         }
         
         public Builder host(String host) {
@@ -241,5 +268,4 @@ public class IotaAPIProxy {
         }
 
     }
-
 }
