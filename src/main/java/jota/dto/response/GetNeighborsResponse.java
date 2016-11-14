@@ -2,32 +2,32 @@ package jota.dto.response;
 
 public class GetNeighborsResponse extends AbstractResponse {
 
-    private Neighbors[] neighbors;
+    public Neighbors[] neighbors;
 
     public Neighbors[] getNeighbors() {
         return neighbors;
     }
 
-    static class Neighbors {
+    public static class Neighbors {
 
         private String address;
-        private String numberOfAllTransactions;
-        private String numberOfInvalidTransactions;
-        private String numberOfNewTransactions;
+        private Integer numberOfAllTransactions;
+        private Integer numberOfInvalidTransactions;
+        private Integer numberOfNewTransactions;
 
         public String getAddress() {
             return address;
         }
 
-        public String getNumberOfAllTransactions() {
+        public Integer getNumberOfAllTransactions() {
             return numberOfAllTransactions;
         }
 
-        public String getNumberOfInvalidTransactions() {
+        public Integer getNumberOfInvalidTransactions() {
             return numberOfInvalidTransactions;
         }
 
-        public String getNumberOfNewTransactions() {
+        public Integer getNumberOfNewTransactions() {
             return numberOfNewTransactions;
         }
     }

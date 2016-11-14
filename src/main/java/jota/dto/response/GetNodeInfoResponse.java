@@ -6,17 +6,17 @@ public class GetNodeInfoResponse extends AbstractResponse {
     private String appVersion;
     private Integer jreAvailableProcessors;
     private Integer jreFreeMemory;
-    private float jreMaxMemory;
-    private float jreTotalMemory;
+    private Integer jreMaxMemory;
+    private Integer jreTotalMemory;
     private String latestMilestone;
-    private Integer latestMilestoneIndex;
+    private Long latestMilestoneIndex;
     private String latestSolidSubtangleMilestone;
-    private Integer latestSolidSubtangleMilestoneIndex;
-    private Integer neighbors;
-    private Integer packetsQueueSize;
-    private long time;
-    private Integer tips;
-    private Integer transactionsToRequest;
+    private Long latestSolidSubtangleMilestoneIndex;
+    private Long neighbors;
+    private Long packetsQueueSize;
+    private Long time;
+    private Long tips;
+    private Long transactionsToRequest;
 
     public String getAppName() {
         return appName;
@@ -34,11 +34,11 @@ public class GetNodeInfoResponse extends AbstractResponse {
         return jreFreeMemory;
     }
 
-    public float getJreMaxMemory() {
+    public Integer getJreMaxMemory() {
         return jreMaxMemory;
     }
 
-    public float getJreTotalMemory() {
+    public Integer getJreTotalMemory() {
         return jreTotalMemory;
     }
 
@@ -46,7 +46,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
         return latestMilestone;
     }
 
-    public Integer getLatestMilestoneIndex() {
+    public Long getLatestMilestoneIndex() {
         return latestMilestoneIndex;
     }
 
@@ -54,27 +54,27 @@ public class GetNodeInfoResponse extends AbstractResponse {
         return latestSolidSubtangleMilestone;
     }
 
-    public Integer getLatestSolidSubtangleMilestoneIndex() {
+    public Long getLatestSolidSubtangleMilestoneIndex() {
         return latestSolidSubtangleMilestoneIndex;
     }
 
-    public Integer getNeighbors() {
+    public Long getNeighbors() {
         return neighbors;
     }
 
-    public Integer getPacketsQueueSize() {
+    public Long getPacketsQueueSize() {
         return packetsQueueSize;
     }
 
-    public long getTime() {
+    public Long getTime() {
         return time;
     }
 
-    public Integer getTips() {
+    public Long getTips() {
         return tips;
     }
 
-    public Integer getTransactionsToRequest() {
+    public Long getTransactionsToRequest() {
         return transactionsToRequest;
     }
 
