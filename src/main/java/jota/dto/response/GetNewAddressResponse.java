@@ -7,4 +7,10 @@ public class GetNewAddressResponse extends AbstractResponse {
     public String getAddress() {
         return address;
     }
+
+    public static GetNewAddressResponse create(String address) {
+        GetNewAddressResponse res = new GetNewAddressResponse();
+        res.address = address;
+        return res;
+    }
 }

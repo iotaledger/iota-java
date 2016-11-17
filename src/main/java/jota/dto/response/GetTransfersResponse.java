@@ -15,8 +15,8 @@ public class GetTransfersResponse extends AbstractResponse {
         private String timestamp;
         private String address;
         private String hash;
-        private String persistence;
-        private String value;
+        private Integer persistence;
+        private long value;
 
         public String getAddress() {
             return address;
@@ -26,7 +26,7 @@ public class GetTransfersResponse extends AbstractResponse {
             return hash;
         }
 
-        public String getPersistence() {
+        public Integer getPersistence() {
             return persistence;
         }
 
@@ -34,7 +34,7 @@ public class GetTransfersResponse extends AbstractResponse {
             return timestamp;
         }
 
-        public String getValue() {
+        public long getValue() {
             return value;
         }
 
