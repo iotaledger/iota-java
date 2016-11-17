@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jota.dto.response.*;
+import jota.utils.IotaAPIUtils;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -122,5 +123,11 @@ public class IotaAPIProxyTest {
         IotaAPIProxy proxy = new IotaAPIProxy.Builder().build();
         assertThat(proxy, IsNull.notNullValue());
     }
-    
+
+    @Test
+    public void shouldCreateANewAddress() {
+        GetNewAddressResponse res = IotaAPIUtils.getNewAddress(TEST_SEED, 2);
+        System.err.println(res);
+    }
+
 }

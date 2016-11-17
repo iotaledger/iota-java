@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import jota.dto.request.*;
 import jota.dto.response.*;
+import jota.utils.IotaAPIUtils;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

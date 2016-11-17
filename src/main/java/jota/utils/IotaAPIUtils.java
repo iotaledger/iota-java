@@ -1,4 +1,4 @@
-package jota;
+package jota.utils;
 
 import jota.dto.response.GetBundleResponse;
 import jota.dto.response.GetNewAddressResponse;
@@ -15,8 +15,14 @@ public class IotaAPIUtils {
 
     private static final Logger log = LoggerFactory.getLogger(IotaAPIUtils.class);
 
-    public static GetNewAddressResponse getNewAddress(final String seed, final Integer securityLevel) {
-        throw new NotImplementedException("Not yet implemented");
+    public static GetNewAddressResponse getNewAddress(final String seed, final int index) {
+
+        final int [] key = Signing.key(Converter.trits(seed), index, 2);
+        final int [] digests = Signing.digests(key);
+        final int [] addressTrits = Signing.address(digests);
+        final String address = Converter.trytes(addressTrits);
+
+        return GetNewAddressResponse.create(address);
     }
 
     public static GetBundleResponse getBundle(final String transaction) {
