@@ -6,27 +6,35 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class GetTransfersResponse extends AbstractResponse {
 
     private Transfers[] transfers;
-    
+
+    public Transfers[] getTransfers() {
+        return transfers;
+    }
+
     public static class Transfers {
         private String timestamp;
         private String address;
         private String hash;
-        private String persistence;
-        private String value;
-        
+        private Integer persistence;
+        private long value;
+
         public String getAddress() {
             return address;
         }
+
         public String getHash() {
             return hash;
         }
-        public String getPersistence() {
+
+        public Integer getPersistence() {
             return persistence;
         }
+
         public String getTimestamp() {
             return timestamp;
         }
-        public String getValue() {
+
+        public long getValue() {
             return value;
         }
 
@@ -34,9 +42,5 @@ public class GetTransfersResponse extends AbstractResponse {
         public String toString() {
             return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
         }
-    }
-    
-    public Transfers[] getTransfers() {
-        return transfers;
     }
 }

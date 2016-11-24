@@ -9,11 +9,9 @@ public class Converter {
 
     public static final int NUMBER_OF_TRITS_IN_A_BYTE = 5;
     public static final int NUMBER_OF_TRITS_IN_A_TRYTE = 3;
-
+    public static final String TRYTE_ALPHABET = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     static final int[][] BYTE_TO_TRITS_MAPPINGS = new int[243][];
     static final int[][] TRYTE_TO_TRITS_MAPPINGS = new int[27][];
-
-    public static final String TRYTE_ALPHABET = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     static {
 
@@ -39,7 +37,7 @@ public class Converter {
             for (int j = (size - i * NUMBER_OF_TRITS_IN_A_BYTE) < 5 ? (size - i * NUMBER_OF_TRITS_IN_A_BYTE) : NUMBER_OF_TRITS_IN_A_BYTE; j-- > 0; ) {
                 value = value * RADIX + trits[offset + i * NUMBER_OF_TRITS_IN_A_BYTE + j];
             }
-            bytes[i] = (byte)value;
+            bytes[i] = (byte) value;
         }
 
         return bytes;
@@ -76,7 +74,7 @@ public class Converter {
         long absoluteValue = value < 0 ? -value : value;
         for (int i = 0; i < size; i++) {
 
-            int remainder = (int)(absoluteValue % RADIX);
+            int remainder = (int) (absoluteValue % RADIX);
             absoluteValue /= RADIX;
             if (remainder > MAX_TRIT_VALUE) {
 

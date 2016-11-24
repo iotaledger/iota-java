@@ -17,9 +17,9 @@ public class IotaAPIUtils {
 
     public static GetNewAddressResponse getNewAddress(final String seed, final int index) {
 
-        final int [] key = Signing.key(Converter.trits(seed), index, 2);
-        final int [] digests = Signing.digests(key);
-        final int [] addressTrits = Signing.address(digests);
+        final int[] key = Signing.key(Converter.trits(seed), index, 2);
+        final int[] digests = Signing.digests(key);
+        final int[] addressTrits = Signing.address(digests);
         final String address = Converter.trytes(addressTrits);
 
         return GetNewAddressResponse.create(address);

@@ -2,9 +2,8 @@ package jota.utils;
 
 /**
  * (c) 2016 Come-from-Beyond
- *
+ * <p>
  * Curl belongs to the sponge function family.
- *
  */
 public class Curl {
 
@@ -25,7 +24,7 @@ public class Curl {
         } while ((length -= HASH_LENGTH) > 0);
     }
 
-    public int [] squeeze(final int[] trits, int offset, int length) {
+    public int[] squeeze(final int[] trits, int offset, int length) {
 
         do {
             System.arraycopy(state, 0, trits, offset, length < HASH_LENGTH ? length : HASH_LENGTH);

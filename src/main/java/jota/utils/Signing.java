@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Signing {
 
-    static int[] key(int [] seed, int index, int length) {
+    static int[] key(int[] seed, int index, int length) {
 
         final int[] subseed = seed;
 
@@ -26,7 +26,7 @@ public class Signing {
         curl.absorb(subseed, 0, subseed.length);
 
         List<Integer> key = new ArrayList<>();
-        int [] buffer = new int[subseed.length];
+        int[] buffer = new int[subseed.length];
         int offset = 0;
 
         while (length-- > 0) {
@@ -43,21 +43,22 @@ public class Signing {
     }
 
     private static int[] to(List<Integer> key) {
-        int a [] = new int[key.size()]; int i = 0;
+        int a[] = new int[key.size()];
+        int i = 0;
         for (Integer v : key) {
             a[i++] = v;
         }
         return a;
     }
 
-    public static int [] digests(int [] key) {
+    public static int[] digests(int[] key) {
         final Curl curl = new Curl();
 
         int[] digests = new int[key.length];
         int[] buffer = new int[key.length];
 
         for (int i = 0; i < Math.floor(key.length / 6561); i++) {
-            int [] keyFragment = Arrays.copyOfRange(key, i * 6561, (i + 1) * 6561);
+            int[] keyFragment = Arrays.copyOfRange(key, i * 6561, (i + 1) * 6561);
 
             for (int j = 0; j < 27; j++) {
 
@@ -83,9 +84,9 @@ public class Signing {
         return digests;
     }
 
-    public static int [] address(int [] digests) {
+    public static int[] address(int[] digests) {
         final Curl curl = new Curl();
-        int [] address = new int[digests.length];
+        int[] address = new int[digests.length];
         curl.absorb(digests, 0, digests.length);
         curl.squeeze(address, 0, address.length);
         return address;

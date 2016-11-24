@@ -1,19 +1,18 @@
 package jota;
 
-import static org.junit.Assert.assertThat;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jota.dto.response.*;
 import jota.utils.IotaAPIUtils;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertThat;
 
 /**
  * Let's do some integration test coverage against a default local real node.
- * 
+ *
  * @author davassi
  */
 public class IotaAPIProxyTest {

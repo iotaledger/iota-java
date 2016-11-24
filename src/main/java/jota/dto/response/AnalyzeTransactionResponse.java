@@ -34,39 +34,51 @@ public class AnalyzeTransactionResponse extends AbstractResponse {
         public String getValue() {
             return value;
         }
+
         public String getDigest() {
             return digest;
         }
+
         public String getTrunkTransaction() {
             return trunkTransaction;
         }
+
         public String getTimestamp() {
             return timestamp;
         }
+
         public String getSignatureNonce() {
             return signatureNonce;
         }
+
         public String getType() {
             return type;
         }
+
         public String getAddress() {
             return address;
         }
+
         public String getApprovalNonce() {
             return approvalNonce;
         }
+
         public String getBranchTransaction() {
             return branchTransaction;
         }
+
         public String getBundle() {
             return bundle;
         }
+
         public String getHash() {
             return hash;
         }
+
         public String getIndex() {
             return index;
         }
+
         public String getSignatureMessageChunk() {
             return signatureMessageChunk;
         }

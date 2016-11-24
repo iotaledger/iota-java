@@ -8,6 +8,7 @@ public class GetTransactionsToApproveResponse extends AbstractResponse {
     public String getBranchTransactionToApprove() {
         return branchTransactionToApprove;
     }
+
     public String getTrunkTransaction() {
         return trunkTransaction;
     }

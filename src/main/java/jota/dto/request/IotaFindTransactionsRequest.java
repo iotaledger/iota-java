@@ -4,35 +4,35 @@ import jota.IotaAPICommands;
 
 public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
-	private IotaFindTransactionsRequest() {
-		super(IotaAPICommands.FIND_TRANSACTIONS);
-	}
+    private String[] bundles; // List of bundle hashes. The hashes need to be extended to 81chars by padding the hash with 9's.
+    private String[] addresses;
+    private String[] tags;
+    private String[] approvees;
 
-	private String[] bundles; // List of bundle hashes. The hashes need to be extended to 81chars by padding the hash with 9's.
-	private String[] addresses;
-	private String[] digests;
-	private String[] approvees;
+    private IotaFindTransactionsRequest() {
+        super(IotaAPICommands.FIND_TRANSACTIONS);
+    }
 
     public static IotaFindTransactionsRequest createFindTransactionRequest() {
         return new IotaFindTransactionsRequest();
     }
 
-    public IotaFindTransactionsRequest byBundles(String ... bundles) {
+    public IotaFindTransactionsRequest byBundles(String... bundles) {
         this.bundles = bundles;
         return this;
     }
 
-    public IotaFindTransactionsRequest byAddresses(String ... addresses) {
+    public IotaFindTransactionsRequest byAddresses(String... addresses) {
         this.addresses = addresses;
         return this;
     }
 
-    public IotaFindTransactionsRequest byDigests(String ... digests) {
-        this.digests = digests;
+    public IotaFindTransactionsRequest byTags(String... tags) {
+        this.tags = tags;
         return this;
     }
 
-    public IotaFindTransactionsRequest byApprovees(String ... approvees) {
+    public IotaFindTransactionsRequest byApprovees(String... approvees) {
         this.approvees = approvees;
         return this;
     }
