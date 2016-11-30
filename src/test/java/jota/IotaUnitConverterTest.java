@@ -29,11 +29,11 @@ public class IotaUnitConverterTest {
 
     @Test
     public void shouldConvertUnitGiToTi() {
-        assertThat(IotaUnitConverter.convertUnits(1000, IotaUnits.GIGA_IOTA, IotaUnits.TERRA_IOTA), IsNull.notNullValue());
+        assertThat(IotaUnitConverter.convertUnits(1000, IotaUnits.GIGA_IOTA, IotaUnits.TERA_IOTA), IsNull.notNullValue());
     }
 
     @Test
     public void shouldConvertUnitTiToPi() {
-        assertThat(IotaUnitConverter.convertUnits(1000, IotaUnits.TERRA_IOTA, IotaUnits.PETA_IOTA), IsNull.notNullValue());
+        assertThat(IotaUnitConverter.convertUnits(1000, IotaUnits.TERA_IOTA, IotaUnits.PETA_IOTA), IsNull.notNullValue());
     }
 }

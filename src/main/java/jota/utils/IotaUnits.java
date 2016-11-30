@@ -8,7 +8,7 @@ public enum IotaUnits {
     KILO_IOTA("Ki", 3),
     MEGA_IOTA("Mi", 6),
     GIGA_IOTA("Gi", 9),
-    TERRA_IOTA("Ti", 12),
+    TERA_IOTA("Ti", 12),
     PETA_IOTA("Pi", 15);
 
     private String unit;
