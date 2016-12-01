@@ -5,7 +5,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class GetBundleResponse extends AbstractResponse {
 
-    private Transactions[] transactions;
+    public Transactions[] transactions;
 
     private String warning;
 
@@ -17,7 +17,7 @@ public class GetBundleResponse extends AbstractResponse {
         return transactions;
     }
 
-    static class Transactions {
+    public static class Transactions {
         private String signatureMessageChunk;
         private String index;
         private String approvalNonce;

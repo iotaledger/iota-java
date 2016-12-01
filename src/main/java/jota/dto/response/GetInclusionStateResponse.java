@@ -1,7 +1,8 @@
 package jota.dto.response;
 
 public class GetInclusionStateResponse extends AbstractResponse {
-    boolean [] states;
+
+    boolean[] states;
 
     public boolean[] getStates() {
         return states;

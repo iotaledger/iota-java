@@ -2,7 +2,7 @@ package jota.dto.response;
 
 public class GetBalancesResponse extends AbstractResponse {
 
-    private String [] balances;
+    private String[] balances;
     private String milestone;
     private Integer milestoneIndex;
 

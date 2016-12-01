@@ -2,65 +2,80 @@ package jota.dto.response;
 
 public class GetNodeInfoResponse extends AbstractResponse {
 
-    private String incomingPacketsBacklog;
     private String appName;
-    private String transactionsToRequest;
-    private String jreTotalMemory;
-    private String time;
-    private String neighbors;
-    private String milestoneIndex;
     private String appVersion;
-    private String jreAvailableProcessors;
-    private String jreMaxMemory;
-    private String tips;
-    private String jreFreeMemory;
-
-    public String getIncomingPacketsBacklog() {
-        return incomingPacketsBacklog;
-    }
+    private Integer jreAvailableProcessors;
+    private Integer jreFreeMemory;
+    private Integer jreMaxMemory;
+    private Integer jreTotalMemory;
+    private String latestMilestone;
+    private Long latestMilestoneIndex;
+    private String latestSolidSubtangleMilestone;
+    private Long latestSolidSubtangleMilestoneIndex;
+    private Long neighbors;
+    private Long packetsQueueSize;
+    private Long time;
+    private Long tips;
+    private Long transactionsToRequest;
 
     public String getAppName() {
         return appName;
-    }
-
-    public String getTransactionsToRequest() {
-        return transactionsToRequest;
-    }
-
-    public String getJreTotalMemory() {
-        return jreTotalMemory;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public String getNeighbors() {
-        return neighbors;
-    }
-
-    public String getMilestoneIndex() {
-        return milestoneIndex;
     }
 
     public String getAppVersion() {
         return appVersion;
     }
 
-    public String getJreAvailableProcessors() {
+    public Integer getJreAvailableProcessors() {
         return jreAvailableProcessors;
     }
 
-    public String getJreMaxMemory() {
+    public Integer getJreFreeMemory() {
+        return jreFreeMemory;
+    }
+
+    public Integer getJreMaxMemory() {
         return jreMaxMemory;
     }
 
-    public String getTips() {
+    public Integer getJreTotalMemory() {
+        return jreTotalMemory;
+    }
+
+    public String getLatestMilestone() {
+        return latestMilestone;
+    }
+
+    public Long getLatestMilestoneIndex() {
+        return latestMilestoneIndex;
+    }
+
+    public String getLatestSolidSubtangleMilestone() {
+        return latestSolidSubtangleMilestone;
+    }
+
+    public Long getLatestSolidSubtangleMilestoneIndex() {
+        return latestSolidSubtangleMilestoneIndex;
+    }
+
+    public Long getNeighbors() {
+        return neighbors;
+    }
+
+    public Long getPacketsQueueSize() {
+        return packetsQueueSize;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public Long getTips() {
         return tips;
     }
 
-    public String getJreFreeMemory() {
-        return jreFreeMemory;
+    public Long getTransactionsToRequest() {
+        return transactionsToRequest;
     }
 
 }
