@@ -4,9 +4,9 @@ public class GetBalancesResponse extends AbstractResponse {
 
     private String[] balances;
     private String milestone;
-    private Integer milestoneIndex;
+    private int milestoneIndex;
 
-    public Integer getMilestoneIndex() {
+    public int getMilestoneIndex() {
         return milestoneIndex;
     }
 
