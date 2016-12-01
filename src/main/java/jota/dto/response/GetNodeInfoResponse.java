@@ -4,19 +4,19 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     private String appName;
     private String appVersion;
-    private Integer jreAvailableProcessors;
-    private Integer jreFreeMemory;
-    private Integer jreMaxMemory;
-    private Integer jreTotalMemory;
+    private int jreAvailableProcessors;
+    private long jreFreeMemory;
+    private long jreMaxMemory;
+    private long jreTotalMemory;
     private String latestMilestone;
-    private Long latestMilestoneIndex;
+    private int latestMilestoneIndex;
     private String latestSolidSubtangleMilestone;
-    private Long latestSolidSubtangleMilestoneIndex;
-    private Long neighbors;
-    private Long packetsQueueSize;
-    private Long time;
-    private Long tips;
-    private Long transactionsToRequest;
+    private int latestSolidSubtangleMilestoneIndex;
+    private int neighbors;
+    private int packetsQueueSize;
+    private long time;
+    private int tips;
+    private int transactionsToRequest;
 
     public String getAppName() {
         return appName;
@@ -30,15 +30,15 @@ public class GetNodeInfoResponse extends AbstractResponse {
         return jreAvailableProcessors;
     }
 
-    public Integer getJreFreeMemory() {
+    public long getJreFreeMemory() {
         return jreFreeMemory;
     }
 
-    public Integer getJreMaxMemory() {
+    public long getJreMaxMemory() {
         return jreMaxMemory;
     }
 
-    public Integer getJreTotalMemory() {
+    public long getJreTotalMemory() {
         return jreTotalMemory;
     }
 
@@ -46,7 +46,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
         return latestMilestone;
     }
 
-    public Long getLatestMilestoneIndex() {
+    public int getLatestMilestoneIndex() {
         return latestMilestoneIndex;
     }
 
@@ -54,15 +54,15 @@ public class GetNodeInfoResponse extends AbstractResponse {
         return latestSolidSubtangleMilestone;
     }
 
-    public Long getLatestSolidSubtangleMilestoneIndex() {
+    public int getLatestSolidSubtangleMilestoneIndex() {
         return latestSolidSubtangleMilestoneIndex;
     }
 
-    public Long getNeighbors() {
+    public int getNeighbors() {
         return neighbors;
     }
 
-    public Long getPacketsQueueSize() {
+    public int getPacketsQueueSize() {
         return packetsQueueSize;
     }
 
@@ -70,12 +70,11 @@ public class GetNodeInfoResponse extends AbstractResponse {
         return time;
     }
 
-    public Long getTips() {
+    public int getTips() {
         return tips;
     }
 
-    public Long getTransactionsToRequest() {
+    public int getTransactionsToRequest() {
         return transactionsToRequest;
     }
-
 }
