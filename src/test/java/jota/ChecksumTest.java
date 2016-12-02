@@ -11,15 +11,16 @@ import static org.junit.Assert.assertEquals;
  */
 public class ChecksumTest {
 
-    private static final String TEST_ADDRESS = "RVORZ9SIIP9RCYMREUIXXVPQIPHVCNPQ9HZWYKFWYWZRE9JQKG9REPKIASHUUECPSQO9JT9XNMVKWYGVAZETAIRPTM";
+    private static final String TEST_ADDRESS_WITHOUT_CHECKSUM = "RVORZ9SIIP9RCYMREUIXXVPQIPHVCNPQ9HZWYKFWYWZRE9JQKG9REPKIASHUUECPSQO9JT9XNMVKWYGVAZETAIRPTM";
+    private static final String TEST_ADDRESS_WITH_CHECKSUM = "RVORZ9SIIP9RCYMREUIXXVPQIPHVCNPQ9HZWYKFWYWZRE9JQKG9REPKIASHUUECPSQO9JT9XNMVKWYGVAZETAIRPTMLSDUKRPBM";
 
     @Test
     public void shouldAddChecksum() {
-        assertEquals(Checksum.addChecksum(TEST_ADDRESS), true);
+        assertEquals(Checksum.addChecksum(TEST_ADDRESS_WITHOUT_CHECKSUM), TEST_ADDRESS_WITH_CHECKSUM);
     }
 
     @Test
     public void shouldRemoveChecksum() {
-        assertEquals(Checksum.addChecksum(TEST_ADDRESS), Checksum.isValidChecksum(Checksum.addChecksum(TEST_ADDRESS)));
+        assertEquals(Checksum.removeChecksum(TEST_ADDRESS_WITH_CHECKSUM), TEST_ADDRESS_WITHOUT_CHECKSUM);
     }
 }

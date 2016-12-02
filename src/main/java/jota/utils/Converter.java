@@ -91,6 +91,16 @@ public class Converter {
         }
     }
 
+    public static int[] copyTrits(final String input, final int[] destination) {
+        for (int i = 0; i < input.length(); i++) {
+            int index = Constants.TRYTE_ALPHABET.indexOf(input.charAt(i));
+            destination[i * 3] = TRYTE_TO_TRITS_MAPPINGS [index][0];
+            destination[i * 3 + 1] = TRYTE_TO_TRITS_MAPPINGS[index][1];
+            destination[i * 3 + 2] = TRYTE_TO_TRITS_MAPPINGS[index][2];
+        }
+        return destination;
+    }
+
     public static String trytes(final int[] trits, final int offset, final int size) {
 
         StringBuilder trytes = new StringBuilder();

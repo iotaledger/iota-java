@@ -38,7 +38,11 @@ public class Checksum {
     }
 
     private static String calculateChecksum(String address) {
-        // TODO
-        throw new NotImplementedException(address);
+        Curl curl = new Curl();
+        curl.reset();
+        curl.setState(Converter.copyTrits(address, curl.getState()));
+        curl.transform();
+        String checksum = Converter.trytes(curl.getState()).substring(0, 9);
+        return checksum;
     }
 }
