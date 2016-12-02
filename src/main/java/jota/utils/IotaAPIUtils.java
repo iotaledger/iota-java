@@ -18,12 +18,13 @@ public class IotaAPIUtils {
     public static GetNewAddressResponse getNewAddress(final String seed, final int index) {
 
         final int[] key = Signing.key(Converter.trits(seed), index, 2);
-        System.out.println("Length = "+ key.length );
+        log.debug("key Length = {}", key.length );
+        
         final int[] digests = Signing.digests(key);
-        System.out.println("Length = "+ digests.length );
-
+        log.debug("digests Length = {}", digests.length );
+        
         final int[] addressTrits = Signing.address(digests);
-        System.out.println("Length = "+ addressTrits.length );
+        log.debug("addressTrits Length = {}", addressTrits.length );
 
         final String address = Converter.trytes(addressTrits);
 
