@@ -15,8 +15,7 @@ public class Checksum {
     public static String removeChecksum(String addressWithChecksum) {
         if (isAddressWithChecksum(addressWithChecksum)) {
             return getAddress(addressWithChecksum);
-        }
-        throw new RuntimeException("Invalid address: " + addressWithChecksum);
+        } else return "";
     }
 
     private static String getAddress(String addressWithChecksum) {
