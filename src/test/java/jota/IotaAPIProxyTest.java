@@ -8,6 +8,7 @@ import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -126,7 +127,6 @@ public class IotaAPIProxyTest {
 
     @Test
     public void shouldCreateANewAddress() {
-        GetNewAddressResponse res = IotaAPIUtils.getNewAddress(TEST_SEED, 2);
-        System.err.println(res);
+        assertEquals(IotaAPIUtils.getNewAddress(TEST_SEED, 0).getAddress(), TEST_ADDRESS_WITH_CHECKSUM);
     }
 }

@@ -1,7 +1,6 @@
 package jota;
 
 import jota.utils.Checksum;
-import jota.utils.InputValidator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
