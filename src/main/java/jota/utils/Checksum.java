@@ -1,14 +1,11 @@
 package jota.utils;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 /**
  * Created by pinpong on 02.12.16.
  */
 public class Checksum {
 
     public static String addChecksum(String address) {
-
         InputValidator.checkAddress(address);
         String addressWithChecksum = address;
         addressWithChecksum += calculateChecksum(address);
@@ -28,21 +25,20 @@ public class Checksum {
 
     public static boolean isValidChecksum(String addressWithChecksum) {
         String addressWithoutChecksum = removeChecksum(addressWithChecksum);
-        String adressWithRecalculateChecksum = calculateChecksum(addressWithoutChecksum);
+        String addressWithRecalculateChecksum = calculateChecksum(addressWithoutChecksum);
 
-        return adressWithRecalculateChecksum.equals(addressWithChecksum);
+        return addressWithRecalculateChecksum.equals(addressWithChecksum);
     }
 
     private static boolean isAddressWithChecksum(String addressWithChecksum) {
         return InputValidator.checkAddress(addressWithChecksum) && addressWithChecksum.length() == Constants.addressLengthWithChecksum;
     }
 
-    private static String calculateChecksum(String address) {
+    public static String calculateChecksum(String address) {
         Curl curl = new Curl();
         curl.reset();
         curl.setState(Converter.copyTrits(address, curl.getState()));
         curl.transform();
-        String checksum = Converter.trytes(curl.getState()).substring(0, 9);
-        return checksum;
+        return Converter.trytes(curl.getState()).substring(0, 9);
     }
 }
