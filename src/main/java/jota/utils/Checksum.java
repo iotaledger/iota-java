@@ -25,8 +25,7 @@ public class Checksum {
 
     public static boolean isValidChecksum(String addressWithChecksum) {
         String addressWithoutChecksum = removeChecksum(addressWithChecksum);
-        String addressWithRecalculateChecksum = calculateChecksum(addressWithoutChecksum);
-
+        String addressWithRecalculateChecksum = addressWithChecksum += calculateChecksum(addressWithoutChecksum);
         return addressWithRecalculateChecksum.equals(addressWithChecksum);
     }
 

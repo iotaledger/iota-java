@@ -6,12 +6,9 @@ package jota.utils;
 public class InputValidator {
 
     public static boolean isAddress(String address) {
-        // TODO: In the future check checksum
-        // Check if address with checksum
         return (address.length() == Constants.addressLengthWithoutChecksum ||
                 address.length() == Constants.addressLengthWithChecksum) && isTrytes(address, address.length());
     }
-
 
     public static boolean checkAddress(String address) {
         if (!isAddress(address))
@@ -20,7 +17,6 @@ public class InputValidator {
     }
 
     public static boolean isTrytes(String trytes, int length) {
-        // If no length specified, just validate the trytes
-        return trytes.matches("^[9A-Z]{" + (length == 0 ? "0," : length) + "}$");
+        return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
     }
 }

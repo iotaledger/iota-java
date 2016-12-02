@@ -25,6 +25,6 @@ public class InputValidatorTest {
 
     @Test
     public void shouldIsTrytes() {
-        assertEquals(InputValidator.isTrytes(TEST_TRYTES, TEST_ADDRESS_WITHOUT_CHECKSUM.length()), true);
+        assertEquals(InputValidator.isTrytes(TEST_TRYTES, TEST_TRYTES.length()), true);
     }
 }
