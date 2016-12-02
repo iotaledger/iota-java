@@ -9,7 +9,6 @@ public class Converter {
 
     public static final int NUMBER_OF_TRITS_IN_A_BYTE = 5;
     public static final int NUMBER_OF_TRITS_IN_A_TRYTE = 3;
-    public static final String TRYTE_ALPHABET = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     static final int[][] BYTE_TO_TRITS_MAPPINGS = new int[243][];
     static final int[][] TRYTE_TO_TRITS_MAPPINGS = new int[27][];
 
@@ -63,7 +62,7 @@ public class Converter {
 
         final int[] trits = new int[trytes.length() * NUMBER_OF_TRITS_IN_A_TRYTE];
         for (int i = 0; i < trytes.length(); i++) {
-            System.arraycopy(TRYTE_TO_TRITS_MAPPINGS[TRYTE_ALPHABET.indexOf(trytes.charAt(i))], 0, trits, i * NUMBER_OF_TRITS_IN_A_TRYTE, NUMBER_OF_TRITS_IN_A_TRYTE);
+            System.arraycopy(TRYTE_TO_TRITS_MAPPINGS[Constants.TRYTE_ALPHABET.indexOf(trytes.charAt(i))], 0, trits, i * NUMBER_OF_TRITS_IN_A_TRYTE, NUMBER_OF_TRITS_IN_A_TRYTE);
         }
 
         return trits;
@@ -92,6 +91,16 @@ public class Converter {
         }
     }
 
+    public static int[] copyTrits(final String input, final int[] destination) {
+        for (int i = 0; i < input.length(); i++) {
+            int index = Constants.TRYTE_ALPHABET.indexOf(input.charAt(i));
+            destination[i * 3] = TRYTE_TO_TRITS_MAPPINGS [index][0];
+            destination[i * 3 + 1] = TRYTE_TO_TRITS_MAPPINGS[index][1];
+            destination[i * 3 + 2] = TRYTE_TO_TRITS_MAPPINGS[index][2];
+        }
+        return destination;
+    }
+
     public static String trytes(final int[] trits, final int offset, final int size) {
 
         StringBuilder trytes = new StringBuilder();
@@ -100,9 +109,9 @@ public class Converter {
             int j = trits[offset + i * 3] + trits[offset + i * 3 + 1] * 3 + trits[offset + i * 3 + 2] * 9;
             if (j < 0) {
 
-                j += TRYTE_ALPHABET.length();
+                j += Constants.TRYTE_ALPHABET.length();
             }
-            trytes.append(TRYTE_ALPHABET.charAt(j));
+            trytes.append(Constants.TRYTE_ALPHABET.charAt(j));
         }
         return trytes.toString();
     }
