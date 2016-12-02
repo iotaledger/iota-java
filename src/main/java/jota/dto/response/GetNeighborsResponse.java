@@ -1,34 +1,15 @@
 package jota.dto.response;
 
+import jota.model.Neighbor;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class GetNeighborsResponse extends AbstractResponse {
 
-    public Neighbors[] neighbors;
+    private List<Neighbor> neighbors = new ArrayList<>();
 
-    public Neighbors[] getNeighbors() {
+    public List<Neighbor> getNeighbors() {
         return neighbors;
-    }
-
-    public static class Neighbors {
-
-        private String address;
-        private Integer numberOfAllTransactions;
-        private Integer numberOfInvalidTransactions;
-        private Integer numberOfNewTransactions;
-
-        public String getAddress() {
-            return address;
-        }
-
-        public Integer getNumberOfAllTransactions() {
-            return numberOfAllTransactions;
-        }
-
-        public Integer getNumberOfInvalidTransactions() {
-            return numberOfInvalidTransactions;
-        }
-
-        public Integer getNumberOfNewTransactions() {
-            return numberOfNewTransactions;
-        }
     }
 }

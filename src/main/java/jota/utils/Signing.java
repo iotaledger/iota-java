@@ -21,8 +21,10 @@ public class Signing {
         }
 
         Curl curl = new Curl();
-        //curl.absorb(subseed, state);
-        //curl.squeeze(subseed, state);
+        curl.reset();
+        curl.absorb(subseed, 0, subseed.length);
+        curl.squeeze(subseed, 0, subseed.length);
+        curl.reset();
         curl.absorb(subseed, 0, subseed.length);
 
         List<Integer> key = new ArrayList<>();
@@ -33,7 +35,7 @@ public class Signing {
 
             for (int i = 0; i < 27; i++) {
 
-                curl.squeeze(buffer, 0, buffer.length);
+                curl.squeeze(buffer, offset, buffer.length);
                 for (int j = 0; j < 243; j++) {
                     key.add(buffer[j]);
                 }
@@ -54,8 +56,8 @@ public class Signing {
     public static int[] digests(int[] key) {
         final Curl curl = new Curl();
 
-        int[] digests = new int[key.length];
-        int[] buffer = new int[key.length];
+        int[] digests = new int[(int) Math.floor(key.length / 6561) * 243];
+        int[] buffer = new int[243];
 
         for (int i = 0; i < Math.floor(key.length / 6561); i++) {
             int[] keyFragment = Arrays.copyOfRange(key, i * 6561, (i + 1) * 6561);
@@ -64,7 +66,7 @@ public class Signing {
 
                 buffer = Arrays.copyOfRange(keyFragment, j * 243, (j + 1) * 243);
                 for (int k = 0; k < 26; k++) {
-
+                    curl.reset();
                     curl.absorb(buffer, 0, buffer.length);
                     curl.squeeze(buffer, 0, buffer.length);
                 }
@@ -74,6 +76,7 @@ public class Signing {
                 }
             }
 
+            curl.reset();
             curl.absorb(keyFragment, 0, keyFragment.length);
             curl.squeeze(buffer, 0, buffer.length);
 
@@ -86,7 +89,8 @@ public class Signing {
 
     public static int[] address(int[] digests) {
         final Curl curl = new Curl();
-        int[] address = new int[digests.length];
+        int[] address = new int[243];
+        curl.reset();
         curl.absorb(digests, 0, digests.length);
         curl.squeeze(address, 0, address.length);
         return address;
