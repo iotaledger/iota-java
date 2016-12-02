@@ -5,8 +5,6 @@ package jota.utils;
  */
 public class TrytesConverter {
 
-    private static final String TRYTE_ALPHABET = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
     /**
      * Conversion of ascii encoded bytes to trytes.
      * Input is a string (can be stringified JSON object), return value is Trytes
@@ -52,7 +50,7 @@ public class TrytesConverter {
             int firstValue = asciiValue % 27;
             int secondValue = (asciiValue - firstValue) / 27;
 
-            String trytesValue = String.valueOf(TRYTE_ALPHABET.charAt(firstValue) + String.valueOf(TRYTE_ALPHABET.charAt(secondValue)));
+            String trytesValue = String.valueOf(Constants.TRYTE_ALPHABET.charAt(firstValue) + String.valueOf(Constants.TRYTE_ALPHABET.charAt(secondValue)));
 
             trytes += trytesValue;
         }
@@ -77,8 +75,8 @@ public class TrytesConverter {
         for (int i = 0; i < inputTrytes.length(); i += 2) {
             // get a trytes pair
 
-            int firstValue = TRYTE_ALPHABET.indexOf(inputTrytes.charAt(i));
-            int secondValue = TRYTE_ALPHABET.indexOf(inputTrytes.charAt(i + 1));
+            int firstValue = Constants.TRYTE_ALPHABET.indexOf(inputTrytes.charAt(i));
+            int secondValue = Constants.TRYTE_ALPHABET.indexOf(inputTrytes.charAt(i + 1));
 
             int decimalValue = firstValue + secondValue * 27;
 

@@ -9,7 +9,6 @@ public class Converter {
 
     public static final int NUMBER_OF_TRITS_IN_A_BYTE = 5;
     public static final int NUMBER_OF_TRITS_IN_A_TRYTE = 3;
-    public static final String TRYTE_ALPHABET = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     static final int[][] BYTE_TO_TRITS_MAPPINGS = new int[243][];
     static final int[][] TRYTE_TO_TRITS_MAPPINGS = new int[27][];
 
@@ -63,7 +62,7 @@ public class Converter {
 
         final int[] trits = new int[trytes.length() * NUMBER_OF_TRITS_IN_A_TRYTE];
         for (int i = 0; i < trytes.length(); i++) {
-            System.arraycopy(TRYTE_TO_TRITS_MAPPINGS[TRYTE_ALPHABET.indexOf(trytes.charAt(i))], 0, trits, i * NUMBER_OF_TRITS_IN_A_TRYTE, NUMBER_OF_TRITS_IN_A_TRYTE);
+            System.arraycopy(TRYTE_TO_TRITS_MAPPINGS[Constants.TRYTE_ALPHABET.indexOf(trytes.charAt(i))], 0, trits, i * NUMBER_OF_TRITS_IN_A_TRYTE, NUMBER_OF_TRITS_IN_A_TRYTE);
         }
 
         return trits;
@@ -100,9 +99,9 @@ public class Converter {
             int j = trits[offset + i * 3] + trits[offset + i * 3 + 1] * 3 + trits[offset + i * 3 + 2] * 9;
             if (j < 0) {
 
-                j += TRYTE_ALPHABET.length();
+                j += Constants.TRYTE_ALPHABET.length();
             }
-            trytes.append(TRYTE_ALPHABET.charAt(j));
+            trytes.append(Constants.TRYTE_ALPHABET.charAt(j));
         }
         return trytes.toString();
     }
