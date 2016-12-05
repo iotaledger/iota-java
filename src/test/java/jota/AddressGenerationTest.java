@@ -14,7 +14,7 @@ public class AddressGenerationTest {
 
     @Test
     public void shouldAddChecksum() {
-        assertEquals(IotaAPIUtils.getNewAddress(TEST_SEED,0),FIRST_ADDRESS);
+        assertEquals(IotaAPIUtils.newAddress(TEST_SEED,0, false),FIRST_ADDRESS);
     }
 
 }

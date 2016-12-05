@@ -14,7 +14,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -184,19 +186,69 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    // end of proxied calls.
-
     public BroadcastTransactionsResponse broadcastTransactions(String... trytes) {
         final Call<BroadcastTransactionsResponse> res = service.broadcastTransactions(IotaBroadcastTransactionRequest.createBroadcastTransactionsRequest(trytes));
         return wrapCheckedException(res).body();
     }
 
+    // end of proxied calls.
+
     public GetBundleResponse getBundle(String transaction) {
         return IotaAPIUtils.getBundle(transaction);
     }
+    
+    /**
+     * Generates a new address from a seed and returns the remainderAddress.
+     * This is either done deterministically, or by providing the index of the new remainderAddress
+     *
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred
+     * @param index     Optional (default null). Key index to start search from. If the index is provided, the generation of the address is not deterministic.
+     * @param checksum  Optional (default false). Adds 9-tryte address checksum
+     * @param total     Optional (default 1)Total number of addresses to generate
+     * @param returnAll If true, it returns all addresses which were deterministically generated (until findTransactions returns null)
+     * @return an array of strings with the specifed number of addresses
+     */
 
-    public GetNewAddressResponse getNewAddress(String seed, Integer securityLevel) {
-        return IotaAPIUtils.getNewAddress(seed, securityLevel);
+    public GetNewAddressResponse getNewAddress(final String seed, final int index, final boolean checksum, final int total, final boolean returnAll) {
+
+        final List<String> allAddresses = new ArrayList<>();
+        // Case 1: total
+        //
+        // If total number of addresses to generate is supplied, simply generate
+        // and return the list of all addresses
+        
+        if (total != 0) {
+            // Increase index with each iteration
+            for (int i = index; i < index + total; i++) {
+                allAddresses.add(IotaAPIUtils.newAddress(seed, i, checksum));
+            }
+            return GetNewAddressResponse.create(allAddresses);
+        }
+        
+        //  Case 2: no total provided
+        //
+        //  Continue calling findTransactions to see if address was already created
+        //  if null, return list of addresses
+        
+        for (int i = index; ; i++) {
+            String newAddress = IotaAPIUtils.newAddress(seed, i, checksum);
+
+            final FindTransactionResponse response = findTransactionsByAddresses(new String[]{newAddress});
+            
+            allAddresses.add(newAddress);
+            
+            if (response.getHashes().length == 0) {
+                break;
+            }
+        }
+
+        // If returnAll, return list of allAddresses
+        // else return only the last address that was generated
+        if (!returnAll) {
+        	allAddresses.subList(0, allAddresses.size()-1).clear();
+        }
+
+        return GetNewAddressResponse.create(allAddresses);        
     }
 
     public static class Builder {

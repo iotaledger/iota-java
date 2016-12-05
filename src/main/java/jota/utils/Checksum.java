@@ -1,5 +1,7 @@
 package jota.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Created by pinpong on 02.12.16.
  */
@@ -15,7 +17,8 @@ public class Checksum {
     public static String removeChecksum(String addressWithChecksum) {
         if (isAddressWithChecksum(addressWithChecksum)) {
             return getAddress(addressWithChecksum);
-        } else return "";
+        }
+        return StringUtils.EMPTY;
     }
 
     private static String getAddress(String addressWithChecksum) {

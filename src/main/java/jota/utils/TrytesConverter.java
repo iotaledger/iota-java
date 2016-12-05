@@ -36,7 +36,7 @@ public class TrytesConverter {
 
     public static String toTrytes(String inputString) {
 
-        String trytes = "";
+        StringBuilder trytes = new StringBuilder();
 
         for (int i = 0; i < inputString.length(); i++) {
 
@@ -52,10 +52,10 @@ public class TrytesConverter {
 
             String trytesValue = String.valueOf(Constants.TRYTE_ALPHABET.charAt(firstValue) + String.valueOf(Constants.TRYTE_ALPHABET.charAt(secondValue)));
 
-            trytes += trytesValue;
+            trytes.append(trytesValue);
         }
 
-        return trytes;
+        return trytes.toString();
     }
 
     /**

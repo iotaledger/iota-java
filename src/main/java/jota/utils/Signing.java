@@ -8,27 +8,25 @@ public class Signing {
 
     static int[] key(int[] seed, int index, int length) {
 
-        final int[] subseed = seed;
-
         for (int i = 0; i < index; i++) {
             for (int j = 0; j < 243; j++) {
-                if (++subseed[j] > 1) {
-                    subseed[j] = -1;
+                if (++seed[j] > 1) {
+                    seed[j] = -1;
                 } else {
                     break;
                 }
             }
         }
 
-        Curl curl = new Curl();
+        final Curl curl = new Curl();
         curl.reset();
-        curl.absorb(subseed, 0, subseed.length);
-        curl.squeeze(subseed, 0, subseed.length);
+        curl.absorb(seed, 0, seed.length);
+        curl.squeeze(seed, 0, seed.length);
         curl.reset();
-        curl.absorb(subseed, 0, subseed.length);
+        curl.absorb(seed, 0, seed.length);
 
-        List<Integer> key = new ArrayList<>();
-        int[] buffer = new int[subseed.length];
+        final List<Integer> key = new ArrayList<>();
+        int[] buffer = new int[seed.length];
         int offset = 0;
 
         while (length-- > 0) {
@@ -70,19 +68,14 @@ public class Signing {
                     curl.absorb(buffer, 0, buffer.length);
                     curl.squeeze(buffer, 0, buffer.length);
                 }
-                for (int k = 0; k < 243; k++) {
-
-                    keyFragment[j * 243 + k] = buffer[k];
-                }
+                System.arraycopy(buffer, 0, keyFragment, j * 243, 243);
             }
 
             curl.reset();
             curl.absorb(keyFragment, 0, keyFragment.length);
             curl.squeeze(buffer, 0, buffer.length);
 
-            for (int j = 0; j < 243; j++) {
-                digests[i * 243 + j] = buffer[j];
-            }
+            System.arraycopy(buffer, 0, digests, i * 243, 243);
         }
         return digests;
     }
