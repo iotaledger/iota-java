@@ -11,8 +11,9 @@ public class InputValidator {
     }
 
     public static boolean checkAddress(String address) {
-        if (!isAddress(address))
+        if (!isAddress(address)) {
             throw new RuntimeException("Invalid address: " + address);
+        }
         return true;
     }
 
