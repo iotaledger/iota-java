@@ -195,8 +195,8 @@ public class IotaAPIProxy {
         return IotaAPIUtils.getBundle(transaction);
     }
 
-    public GetNewAddressResponse getNewAddress(String seed, Integer securityLevel) {
-        return IotaAPIUtils.getNewAddress(seed, securityLevel);
+    public GetNewAddressResponse getNewAddress(String seed, Integer index, boolean checksum, int total, boolean returnAll) {
+        return IotaAPIUtils.getNewAddress(seed, index, checksum, total, returnAll);
     }
 
     public static class Builder {
