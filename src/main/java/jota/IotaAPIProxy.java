@@ -208,48 +208,39 @@ public class IotaAPIProxy {
      * @param returnAll If true, it returns all addresses which were deterministically generated (until findTransactions returns null)
      * @return an array of strings with the specifed number of addresses
      */
-
     public GetNewAddressResponse getNewAddress(final String seed, final int index, final boolean checksum, final int total, final boolean returnAll) {
 
         final List<String> allAddresses = new ArrayList<>();
-        // Case 1: total
-        //
+        
         // If total number of addresses to generate is supplied, simply generate
         // and return the list of all addresses
-        
         if (total != 0) {
-            // Increase index with each iteration
             for (int i = index; i < index + total; i++) {
                 allAddresses.add(IotaAPIUtils.newAddress(seed, i, checksum));
             }
             return GetNewAddressResponse.create(allAddresses);
         }
-        
-        //  Case 2: no total provided
-        //
-        //  Continue calling findTransactions to see if address was already created
-        //  if null, return list of addresses
-        
+        // No total provided: Continue calling findTransactions to see if address was 
+        // already created if null, return list of addresses
         for (int i = index; ; i++) {
-            String newAddress = IotaAPIUtils.newAddress(seed, i, checksum);
-
+            
+        	final String newAddress = IotaAPIUtils.newAddress(seed, i, checksum);
             final FindTransactionResponse response = findTransactionsByAddresses(new String[]{newAddress});
             
             allAddresses.add(newAddress);
-            
             if (response.getHashes().length == 0) {
                 break;
             }
         }
 
-        // If returnAll, return list of allAddresses
-        // else return only the last address that was generated
+        // If !returnAll return only the last address that was generated
         if (!returnAll) {
         	allAddresses.subList(0, allAddresses.size()-1).clear();
         }
-
         return GetNewAddressResponse.create(allAddresses);        
     }
+    
+    
 
     public static class Builder {
 

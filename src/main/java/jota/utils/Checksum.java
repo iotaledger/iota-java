@@ -2,6 +2,8 @@ package jota.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import jota.pow.Curl;
+
 /**
  * Created by pinpong on 02.12.16.
  */
