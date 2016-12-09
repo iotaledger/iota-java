@@ -7,36 +7,33 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * Created by pinpong on 02.12.16.
  */
 public class Transaction {
-
-    private String signatureMessageChunk;
-    private String index;
-    private String approvalNonce;
     private String hash;
-    private String digest;
-    private String type;
-    private String timestamp;
-    private String trunkTransaction;
-    private String branchTransaction;
-    private String signatureNonce;
+    private String signatureMessageChunk;
     private String address;
     private String value;
+    private String tag;
+    private String timestamp;
+    private String currentIndex;
+    private String lastIndex;
     private String bundle;
+    private String trunkTransaction;
+    private String branchTransaction;
+    private String nonce;
 
-    public Transaction(String signatureMessageChunk, String index, String approvalNonce, String hash, String digest, String type, String timestamp, String trunkTransaction, String branchTransaction, String signatureNonce, String address, String value, String bundle) {
+    public Transaction(String signatureMessageChunk, String currentIndex, String lastIndex, String nonce, String hash, String tag, String timestamp, String trunkTransaction, String branchTransaction, String address, String value, String bundle) {
 
         this.hash = hash;
-        this.type = type;
+        this.tag = tag;
         this.signatureMessageChunk = signatureMessageChunk;
-        this.digest = digest;
         this.address = address;
         this.value = value;
         this.timestamp = timestamp;
-        this.index = index;
+        this.currentIndex = currentIndex;
+        this.lastIndex = lastIndex;
         this.bundle = bundle;
-        this.signatureNonce = signatureNonce;
-        this.approvalNonce = approvalNonce;
         this.trunkTransaction = trunkTransaction;
         this.branchTransaction = branchTransaction;
+        this.nonce = nonce;
     }
 
     @Override
@@ -49,24 +46,8 @@ public class Transaction {
         this.signatureMessageChunk = signatureMessageChunk;
     }
 
-    public void setIndex(String index) {
-        this.index = index;
-    }
-
-    public void setApprovalNonce(String approvalNonce) {
-        this.approvalNonce = approvalNonce;
-    }
-
     public void setHash(String hash) {
         this.hash = hash;
-    }
-
-    public void setDigest(String digest) {
-        this.digest = digest;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public void setTimestamp(String timestamp) {
@@ -79,10 +60,6 @@ public class Transaction {
 
     public void setBranchTransaction(String branchTransaction) {
         this.branchTransaction = branchTransaction;
-    }
-
-    public void setSignatureNonce(String signatureNonce) {
-        this.signatureNonce = signatureNonce;
     }
 
     public void setAddress(String address) {
@@ -101,10 +78,6 @@ public class Transaction {
         return value;
     }
 
-    public String getDigest() {
-        return digest;
-    }
-
     public String getTrunkTransaction() {
         return trunkTransaction;
     }
@@ -113,20 +86,8 @@ public class Transaction {
         return timestamp;
     }
 
-    public String getSignatureNonce() {
-        return signatureNonce;
-    }
-
-    public String getType() {
-        return type;
-    }
-
     public String getAddress() {
         return address;
-    }
-
-    public String getApprovalNonce() {
-        return approvalNonce;
     }
 
     public String getBranchTransaction() {
@@ -141,12 +102,39 @@ public class Transaction {
         return hash;
     }
 
-    public String getIndex() {
-        return index;
-    }
-
     public String getSignatureMessageChunk() {
         return signatureMessageChunk;
     }
 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public String getCurrentIndex() {
+        return currentIndex;
+    }
+
+    public void setCurrentIndex(String currentIndex) {
+        this.currentIndex = currentIndex;
+    }
+
+    public String getLastIndex() {
+        return lastIndex;
+    }
+
+    public void setLastIndex(String lastIndex) {
+        this.lastIndex = lastIndex;
+    }
+
+    public String getNonce() {
+        return nonce;
+    }
+
+    public void setNonce(String nonce) {
+        this.nonce = nonce;
+    }
 }

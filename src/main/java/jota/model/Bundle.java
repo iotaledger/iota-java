@@ -1,5 +1,6 @@
 package jota.model;
 
+import jota.utils.Converter;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.ArrayList;
@@ -51,9 +52,44 @@ public class Bundle {
         throw new NotImplementedException("");
     }
 
-    public String normalizedBundle(String bundleHash) {
-        throw new NotImplementedException("");
+    public int[] normalizedBundle(String bundleHash) {
+        int[] normalizedBundle = new int[33 * 27 + 27];
+
+        for (int i = 0; i < 3; i++) {
+
+            long sum = 0;
+            for (int j = 0; j < 27; j++) {
+
+                sum += (normalizedBundle[i * 27 + j] = Converter.value(Converter.trits("" + bundleHash.charAt(i * 27 + j))));
+            }
+
+            if (sum >= 0) {
+                while (sum-- > 0) {
+                    for (int j = 0; j < 27; j++) {
+                        if (normalizedBundle[i * 27 + j] > -13) {
+                            normalizedBundle[i * 27 + j]--;
+                            break;
+                        }
+                    }
+                }
+            } else {
+
+                while (sum++ < 0) {
+
+                    for (int j = 0; j < 27; j++) {
+
+                        if (normalizedBundle[i * 27 + j] < 13) {
+
+                            normalizedBundle[i * 27 + j]++;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return normalizedBundle;
     }
 
-
 }
+

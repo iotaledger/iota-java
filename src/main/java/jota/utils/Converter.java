@@ -124,6 +124,14 @@ public class Converter {
         return trits[offset] + trits[offset + 1] * 3 + trits[offset + 2] * 9;
     }
 
+    public static int value(final int[] trits) {
+        int value = 0;
+
+        for (int i = trits.length; i-- > 0; ) {
+            value = value * 3 + trits[i];
+        }
+        return value;    }
+
     public static void increment(final int[] trits, final int size) {
 
         for (int i = 0; i < size; i++) {
