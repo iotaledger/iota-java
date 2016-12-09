@@ -17,7 +17,7 @@ public class InputValidator {
         return true;
     }
 
-    public static boolean isTrytes(String trytes, int length) {
+    public static boolean isTrytes(final String trytes, final int length) {
         return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
     }
 }
