@@ -3,6 +3,10 @@ package jota.utils;
 /**
  * Created by pinpong on 30.11.16.
  */
+
+/**
+ * Table of IOTA units based off of the standard system of Units
+ **/
 public enum IotaUnits {
     IOTA("i", 0),
     KILO_IOTA("Ki", 3),

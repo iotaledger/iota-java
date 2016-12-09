@@ -3,12 +3,13 @@ package jota;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jota.dto.response.*;
-import jota.utils.IotaAPIUtils;
+import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import java.util.Collections;
+
 import static org.junit.Assert.assertThat;
 
 /**
@@ -74,19 +75,19 @@ public class IotaAPIProxyTest {
 
     @Test
     public void shouldFindTransactionsByApprovees() {
-        FindTransactionResponse trans = proxy.findTransactionsByApprovees(new String[]{"123ABC"});
+        FindTransactionResponse trans = proxy.findTransactionsByApprovees(new String[]{TEST_HASH});
         assertThat(trans, IsNull.notNullValue());
     }
 
     @Test
     public void shouldFindTransactionsByBundles() {
-        FindTransactionResponse trans = proxy.findTransactionsByBundles(new String[]{"123ABC"});
+        FindTransactionResponse trans = proxy.findTransactionsByBundles(TEST_HASH);
         assertThat(trans, IsNull.notNullValue());
     }
 
     @Test
     public void shouldFindTransactionsByDigests() {
-        FindTransactionResponse trans = proxy.findTransactionsByDigests(new String[]{"123ABC"});
+        FindTransactionResponse trans = proxy.findTransactionsByDigests(TEST_HASH);
         assertThat(trans, IsNull.notNullValue());
     }
 
@@ -96,13 +97,13 @@ public class IotaAPIProxyTest {
     @Test
     public void shouldGetTrytes() {
         GetTrytesResponse res = proxy.getTrytes(TEST_HASH);
-        assertThat(res, IsNull.nullValue());
+        assertThat(res, IsNull.notNullValue());
+
     }
 
     @Test
     public void shouldGetInclusionStates() {
-        GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{TEST_ADDRESS_WITH_CHECKSUM},
-                new String[]{"123"});
+        GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{TEST_ADDRESS_WITH_CHECKSUM}, new String[]{"DNSBRJWNOVUCQPILOQIFDKBFJMVOTGHLIMLLRXOHFTJZGRHJUEDAOWXQRYGDI9KHYFGYDWQJZKX999999"});
         assertThat(res, IsNull.notNullValue());
     }
 
@@ -114,7 +115,7 @@ public class IotaAPIProxyTest {
 
     @Test
     public void shouldGetBalances() {
-        GetBalancesResponse res = proxy.getBalances(100, new String[]{"HBBYKAKTILIPVUKFOTSLHGENPTXYBNKXZFQFR9VQFWNBMTQNRVOUKPVPRNBSZVVILMAFBKOTBLGLWLOHQ"});
+        GetBalancesResponse res = proxy.getBalances(100, new String[]{TEST_ADDRESS_WITH_CHECKSUM});
         System.err.println(res);
         assertThat(res, IsNull.notNullValue());
     }
@@ -127,6 +128,7 @@ public class IotaAPIProxyTest {
 
     @Test
     public void shouldCreateANewAddress() {
-        assertEquals(IotaAPIUtils.getNewAddress(TEST_SEED, 0).getAddress(), TEST_ADDRESS_WITH_CHECKSUM);
+        final GetNewAddressResponse res = proxy.getNewAddress(TEST_SEED, 0, false, 1, false);
+        assertThat(res.getAddress(), Is.is(Collections.singletonList(TEST_ADDRESS_WITHOUT_CHECKSUM)));
     }
 }

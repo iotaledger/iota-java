@@ -22,4 +22,9 @@ public class ChecksumTest {
     public void shouldRemoveChecksum() {
         assertEquals(Checksum.removeChecksum(TEST_ADDRESS_WITH_CHECKSUM), TEST_ADDRESS_WITHOUT_CHECKSUM);
     }
+
+    @Test
+    public void shouldIsValidChecksum() {
+        assertEquals(Checksum.isValidChecksum(TEST_ADDRESS_WITH_CHECKSUM), true);
+    }
 }
