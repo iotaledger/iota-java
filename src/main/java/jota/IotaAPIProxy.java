@@ -257,13 +257,7 @@ public class IotaAPIProxy {
         throw new NotImplementedException("MISSING");
     }
 
-/*
-    public Transaction[] SendTransfer(String seed, int depth, int minWeightMagnitude, Transfer[] transactions, int[] inputs, String address) {
-        // todo: check what to do with the optional arguments
-        String[] trytes = prepareTransfers(seed, transactions, inputs, address);
-        return sendTrytes(trytes, depth, minWeightMagnitude);
-    }
-*/
+
     public Inputs getInputs(String seed, Integer start, Integer end, int threshold) throws ArgumentException, NotEnoughBalanceException {
         if (start == null || start < 0)
             start = 0;
@@ -337,10 +331,15 @@ public class IotaAPIProxy {
             throw new NotEnoughBalanceException();
         }
     }
-/*
-    public String[] prepareTransfers(String seed, Transfer[] transfers, String[] inputs, String remainderAddress) throws NotEnoughBalanceException,ArgumentException{
-        //InputValidator.checkTransferArray(transfers);
 
+
+    public Transaction[] SendTransfer(String seed, int depth, int minWeightMagnitude, Transfer[] transfers, Input[] inputs, String address) throws NotEnoughBalanceException, ArgumentException {
+        String[] trytes = prepareTransfers(seed, transfers, inputs, address);
+        return sendTrytes(trytes, depth, minWeightMagnitude);
+    }
+
+    public String[] prepareTransfers(String seed, Transfer[] transfers, Input[] inputs, String remainderAddress) throws NotEnoughBalanceException, ArgumentException {
+        //InputValidator.checkTransferArray(transfers);
         // If message or tag is not supplied, provide it
 
         for (Transfer transfer : transfers) {
@@ -426,8 +425,8 @@ public class IotaAPIProxy {
                 // Get list if addresses of the provided inputs
 
                 List<String> inputAddresses = new ArrayList();
-                for (String input : inputs) {
-                    inputAddresses.add(input);
+                for (Input input : inputs) {
+                    inputAddresses.add(input.getAddress());
                 }
 
                 GetBalancesResponse balances = getBalances(100, inputAddresses.toArray(new String[inputAddresses.size()]));
@@ -441,10 +440,9 @@ public class IotaAPIProxy {
 
                     // If input has balance, add it to confirmedInputs
                     if (thisBalance > 0) {
-                        String inputEl = inputs[i];
-                        inputEl = thisBalance + "";
-
-                        confirmedInputs.add(new Input());
+                        Input inputEl = inputs[i];
+                        inputEl.setBalance(thisBalance);
+                        confirmedInputs.add(inputEl);
                     }
                 }
 
@@ -462,25 +460,25 @@ public class IotaAPIProxy {
             //  If no inputs provided, derive the addresses from the seed and
             //  confirm that the inputs exceed the threshold
             else {
-                // todo getInputs should trow an exception if not enough balance
-                addRemainder(seed, GetInputs(seed, null, null, (int) totalValue).InputsList,
-                        totalValue, bundle, tag, remainderAddress, signatureFragments);
+                Inputs input = getInputs(seed, null, null, (int) totalValue);
+                if (input != null && input.getInputsList() != null) {
+                    addRemainder(seed, input.getInputsList(), totalValue, bundle, tag, remainderAddress, signatureFragments);
+                } else {
+                    throw new NotEnoughBalanceException();
+                }
             }
         } else {
             // If no input required, don't sign and simply finalize the bundle
             bundle.finalize();
             bundle.addTrytes(signatureFragments);
 
-            List<String> bundleTrytes = null;
-            // todo not sure what to add here
-            bundle.getLength().forEach();
-            tx =>bundleTrytes.add(null);
+            List<String> bundleTrytes = new ArrayList<>();
 
-            bundleTrytes.Reverse();
-            return bundleTrytes.toArray();
+            for (Transaction trx : bundle.getTransactions()) {
+                bundleTrytes.add(IotaAPIUtils.transactionTrytes(trx));
+            }
+            return bundleTrytes.toArray(new String[bundleTrytes.size()]);
         }
-
-        // todo not sure what to return here too
         return null;
     }
 
@@ -530,7 +528,7 @@ public class IotaAPIProxy {
             }
         }
     }
-        */
+
 
     public static class Builder {
 
