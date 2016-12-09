@@ -3,6 +3,9 @@ package jota;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jota.dto.response.*;
+import jota.error.ArgumentException;
+import jota.error.NotEnoughBalanceException;
+import jota.model.Inputs;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
@@ -11,6 +14,7 @@ import org.junit.Test;
 import java.util.Collections;
 
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Let's do some integration test coverage against a default local real node.
@@ -129,6 +133,12 @@ public class IotaAPIProxyTest {
     @Test
     public void shouldCreateANewAddress() {
         final GetNewAddressResponse res = proxy.getNewAddress(TEST_SEED, 0, false, 1, false);
-        assertThat(res.getAddress(), Is.is(Collections.singletonList(TEST_ADDRESS_WITHOUT_CHECKSUM)));
+        assertThat(res.getAddresses(), Is.is(Collections.singletonList(TEST_ADDRESS_WITHOUT_CHECKSUM)));
+    }
+
+    @Test
+    public void shouldGetGetInputs() throws ArgumentException, NotEnoughBalanceException {
+        final Inputs res = proxy.getInputs(TEST_SEED, 0, 1, 1);
+        assertTrue(res.getTotalBalance() > 0);
     }
 }
