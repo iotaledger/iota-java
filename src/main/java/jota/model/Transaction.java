@@ -44,6 +44,59 @@ public class Transaction {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
+    public void setSignatureMessageChunk(String signatureMessageChunk) {
+
+        this.signatureMessageChunk = signatureMessageChunk;
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
+    }
+
+    public void setApprovalNonce(String approvalNonce) {
+        this.approvalNonce = approvalNonce;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
+    public void setDigest(String digest) {
+        this.digest = digest;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setTrunkTransaction(String trunkTransaction) {
+        this.trunkTransaction = trunkTransaction;
+    }
+
+    public void setBranchTransaction(String branchTransaction) {
+        this.branchTransaction = branchTransaction;
+    }
+
+    public void setSignatureNonce(String signatureNonce) {
+        this.signatureNonce = signatureNonce;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setBundle(String bundle) {
+        this.bundle = bundle;
+    }
+
     public String getValue() {
         return value;
     }
