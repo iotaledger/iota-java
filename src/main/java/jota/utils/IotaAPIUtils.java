@@ -3,10 +3,14 @@ package jota.utils;
 import jota.dto.response.GetBundleResponse;
 import jota.model.Bundle;
 import jota.model.Input;
+import jota.model.Transaction;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,10 +47,43 @@ public class IotaAPIUtils {
     public static GetBundleResponse getBundle(final String transaction) {
         throw new NotImplementedException("Not yet implemented");
     }
+/*
+    public static String transactionTrytes(Transaction trx) {
+        int[] valueTrits = Converter.trits(trx.getValue());
+        while (valueTrits.length < 81) {
+            valueTrits[valueTrits.length] = 0;
+        }
 
-    /*
-    public static  List<String> signInputsAndReturn(String seed, List<Input> inputs, Bundle bundle,
-                                             List<String> signatureFragments) {
+        int[] timestampTrits = Converter.trits(trx.getTimestamp());
+        while (timestampTrits.length < 27) {
+            timestampTrits[timestampTrits.length] = 0;
+        }
+
+        int[] currentIndexTrits = Converter.trits(trx.getC);
+        while (currentIndexTrits.length < 27) {
+            currentIndexTrits[currentIndexTrits.length] = 0;
+        }
+
+        int[] lastIndexTrits = Converter.trits(trx.get);
+        while (lastIndexTrits.length < 27) {
+            lastIndexTrits[lastIndexTrits.length] = 0;
+        }
+
+        return trx.getSignatureMessageChunk()
+                + trx.getAddress()
+                + Converter.trytes(valueTrits)
+                + trx.getT
+                + Converter.trytes(timestampTrits)
+                + Converter.trytes(currentIndexTrits)
+                + Converter.trytes(lastIndexTrits)
+                + trx.bundle
+                + trx.trunkTransaction
+                + trx.branchTransaction
+                + trx.nonce;
+    }
+
+    public static List<String> signInputsAndReturn(String seed, List<Input> inputs, Bundle bundle,
+                                                   List<String> signatureFragments) {
         bundle.finalize();
         bundle.addTrytes(signatureFragments);
 
@@ -74,41 +111,48 @@ public class IotaAPIUtils {
                 int[] key = Signing.key(Converter.trits(seed), keyIndex, 2);
 
                 //  First 6561 trits for the firstFragment
-                var firstFragment = key.Take(6561);
+                int[] firstFragment = Arrays.copyOfRange((6561);
 
                 //  Get the normalized bundle hash
                 String normalizedBundleHash = bundle.normalizedBundle(bundleHash);
-                    /*
-                    //  First bundle fragment uses 27 trytes
-                    var firstBundleFragment = normalizedBundleHash(27);
 
-                    //  Calculate the new signatureFragment with the first bundle fragment
-                    var firstSignedFragment = Signing.signatureFragment(firstBundleFragment, firstFragment);
+                //  First bundle fragment uses 27 trytes
+                var firstBundleFragment = normalizedBundleHash(27);
 
-                    //  Convert signature to trytes and assign the new signatureFragment
-                    bundle.Transactions[i].signatureMessageFragment = Converter.trytes(firstSignedFragment);
+                //  Calculate the new signatureFragment with the first bundle fragment
+                var firstSignedFragment = Signing.signatureFragment(firstBundleFragment, firstFragment);
 
-                    //  Because the signature is > 2187 trytes, we need to
-                    //  find the second transaction to add the remainder of the signature
-                    for (var j = 0; j < bundle.Transactions.Count; j++)
-                    {
-                        //  Same address as well as value = 0 (as we already spent the input)
-                        if (bundle.Transactions[j].Address == thisAddress && bundle.Transactions[j].Value == 0)
-                        {
-                            // Use the second 6562 trits
-                            var secondFragment = key.Skip(6561).Take(6561);
+                //  Convert signature to trytes and assign the new signatureFragment
+                bundle.Transactions[i].signatureMessageFragment = Converter.trytes(firstSignedFragment);
 
-                            // The second 27 to 54 trytes of the bundle hash
-                            var secondBundleFragment = normalizedBundleHash.slice(27, 27*2);
+                //  Because the signature is > 2187 trytes, we need to
+                //  find the second transaction to add the remainder of the signature
+                for (var j = 0; j < bundle.Transactions.Count; j++) {
+                    //  Same address as well as value = 0 (as we already spent the input)
+                    if (bundle.Transactions[j].Address == thisAddress && bundle.Transactions[j].Value == 0) {
+                        // Use the second 6562 trits
+                        var secondFragment = key.Skip(6561).Take(6561);
 
-                            //  Calculate the new signature
-                            var secondSignedFragment = Signing.signatureFragment(secondBundleFragment, secondFragment);
+                        // The second 27 to 54 trytes of the bundle hash
+                        var secondBundleFragment = normalizedBundleHash.slice(27, 27 * 2);
 
-                            //  Convert signature to trytes and assign it again to this bundle entry
-                            bundle.Transactions[j].signatureMessageFragment = Converter.trytes(secondSignedFragment);
-                        }
-                    }*/
-    //   }
-    // }
+                        //  Calculate the new signature
+                        var secondSignedFragment = Signing.signatureFragment(secondBundleFragment, secondFragment);
+
+                        //  Convert signature to trytes and assign it again to this bundle entry
+                        bundle.getTransactions().get(j).setSignatureMessageChunk(Converter.trytes(secondSignedFragment));
+                    }
+                }
+            }
+        }
+
+        List<String> bundleTrytes = new ArrayList<>();
+
+        // Convert all bundle entries into trytes
+        for (Transaction tx : bundle.getTransactions()) {
+            bundleTrytes.add(IotaAPIUtils.transactionTrytes(tx));
+        }
+        Collections.reverse(bundleTrytes);
+        return bundleTrytes;
+    }*/
 }
-

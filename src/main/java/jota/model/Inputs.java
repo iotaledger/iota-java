@@ -34,6 +34,6 @@ public class Inputs {
     }
 
     public void setTotalBalance(long totalBalance) {
-        totalBalance = totalBalance;
+        this.totalBalance = totalBalance;
     }
 }

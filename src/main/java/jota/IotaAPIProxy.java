@@ -257,18 +257,18 @@ public class IotaAPIProxy {
         throw new NotImplementedException("MISSING");
     }
 
-    /*
+/*
     public Transaction[] SendTransfer(String seed, int depth, int minWeightMagnitude, Transfer[] transactions, int[] inputs, String address) {
         // todo: check what to do with the optional arguments
         String[] trytes = prepareTransfers(seed, transactions, inputs, address);
         return sendTrytes(trytes, depth, minWeightMagnitude);
-    }*/
-
-    public Inputs GetInputs(String seed, Integer start, Integer end, int threshold) throws ArgumentException, NotEnoughBalanceException {
-        if (start < 0)
+    }
+*/
+    public Inputs getInputs(String seed, Integer start, Integer end, int threshold) throws ArgumentException, NotEnoughBalanceException {
+        if (start == null || start < 0)
             start = 0;
 
-        if (end < 0)
+        if (end == null || end < 0)
             end = 0;
 
         // If start value bigger than end, return error
@@ -291,7 +291,7 @@ public class IotaAPIProxy {
                 addresses[i] = address;
             }
 
-            return getBalancesaAndFormat(addresses, start, end, threshold);
+            return getBalancesAndFormat(addresses, start, end, threshold);
         }
 
         //  Case 2: iterate till threshold || end
@@ -300,17 +300,17 @@ public class IotaAPIProxy {
         //  Calls getNewAddress and deterministically generates and returns all addresses
         //  We then do getBalance, format the output and return it
         else {
-            List<String> addressList = getNewAddress(seed, start, true, 0,true).getAddresses();
+            List<String> addressList = getNewAddress(seed, start, true, 0, true).getAddresses();
             String[] addresses = addressList.toArray(new String[addressList.size()]);
-            return getBalancesaAndFormat(addresses, start, end, threshold);
+            return getBalancesAndFormat(addresses, start, end, threshold);
         }
     }
 
-    private Inputs getBalancesaAndFormat(String[] addresses) throws NotEnoughBalanceException{
-        return getBalancesaAndFormat(addresses, null, null, null);
+    private Inputs getBalancesAndFormat(String[] addresses) throws NotEnoughBalanceException {
+        return getBalancesAndFormat(addresses, null, null, null);
     }
 
-    private Inputs getBalancesaAndFormat(String[] addresses, Integer start, Integer end, Integer threshold) throws NotEnoughBalanceException {
+    private Inputs getBalancesAndFormat(String[] addresses, Integer start, Integer end, Integer threshold) throws NotEnoughBalanceException {
         GetBalancesResponse getBalancesResponse = getBalances(threshold, addresses);
 
         String[] balances = getBalancesResponse.getBalances();
@@ -337,10 +337,10 @@ public class IotaAPIProxy {
             throw new NotEnoughBalanceException();
         }
     }
-
-    //public String[] prepareTransfers(String seed, Transfer[] transfers, int[] inputs, String remainderAddress) {
-        //InputValidator.checkTransferArray(transfers);
 /*
+    public String[] prepareTransfers(String seed, Transfer[] transfers, String[] inputs, String remainderAddress) throws NotEnoughBalanceException,ArgumentException{
+        //InputValidator.checkTransferArray(transfers);
+
         // If message or tag is not supplied, provide it
 
         for (Transfer transfer : transfers) {
@@ -425,12 +425,12 @@ public class IotaAPIProxy {
             if (inputs != null) {
                 // Get list if addresses of the provided inputs
 
-                List<int> inputAddresses = new ArrayList();
-                for (int input : inputs) {
+                List<String> inputAddresses = new ArrayList();
+                for (String input : inputs) {
                     inputAddresses.add(input);
                 }
 
-                GetBalancesResponse balances = getBalances(100, inputAddresses);
+                GetBalancesResponse balances = getBalances(100, inputAddresses.toArray(new String[inputAddresses.size()]));
 
                 List<Input> confirmedInputs = new ArrayList<Input>();
 
@@ -441,16 +441,17 @@ public class IotaAPIProxy {
 
                     // If input has balance, add it to confirmedInputs
                     if (thisBalance > 0) {
-                        long inputEl = inputs[i];
-                        inputEl = thisBalance;
+                        String inputEl = inputs[i];
+                        inputEl = thisBalance + "";
 
-                        confirmedInputs.add(inputEl);
+                        confirmedInputs.add(new Input());
                     }
                 }
 
                 // Return not enough balance error
                 if (totalValue > totalBalance) {
-                    throw new NotEnoughBalanceException(totalBalance, totalValue);
+                    //throw new NotEnoughBalanceException(totalBalance, totalValue);
+                    throw new NotEnoughBalanceException();
                 }
 
                 addRemainder(seed, confirmedInputs, totalValue, bundle, tag, remainderAddress, signatureFragments);
@@ -531,74 +532,74 @@ public class IotaAPIProxy {
     }
         */
 
-        public static class Builder {
+    public static class Builder {
 
-            String protocol, host, port;
+        String protocol, host, port;
 
-            public IotaAPIProxy build() {
+        public IotaAPIProxy build() {
 
-                if (protocol == null || host == null || port == null) {
+            if (protocol == null || host == null || port == null) {
 
-                    // check properties files.
-                    if (!checkPropertiesFiles()) {
+                // check properties files.
+                if (!checkPropertiesFiles()) {
 
-                        // last resort: best effort on enviroment variable,
-                        // before assigning default values.
-                        checkEnviromentVariables();
-                    }
+                    // last resort: best effort on enviroment variable,
+                    // before assigning default values.
+                    checkEnviromentVariables();
                 }
-
-                return new IotaAPIProxy(this);
             }
 
-            private boolean checkPropertiesFiles() {
-
-                try {
-
-                    FileReader fileReader = new FileReader("node_config.properties");
-                    BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-                    final Properties nodeConfig = new Properties();
-                    nodeConfig.load(bufferedReader);
-
-                    if (nodeConfig.getProperty("iota.node.protocol") != null) {
-                        protocol = nodeConfig.getProperty("iota.node.protocol");
-                    }
-
-                    if (nodeConfig.getProperty("iota.node.host") != null) {
-                        host = nodeConfig.getProperty("iota.node.host");
-                    }
-
-                    if (nodeConfig.getProperty("iota.node.port") != null) {
-                        port = nodeConfig.getProperty("iota.node.port");
-                    }
-
-                } catch (IOException e1) {
-                    log.debug("node_config.properties not found. Rolling back for another solution...");
-                }
-                return (port != null && protocol != null && host != null);
-            }
-
-            private void checkEnviromentVariables() {
-                protocol = env("IOTA_NODE_PROTOCOL", "http");
-                host = env("IOTA_NODE_HOST", "localhost");
-                port = env("IOTA_NODE_PORT", "14265");
-            }
-
-            public Builder host(String host) {
-                this.host = host;
-                return this;
-            }
-
-            public Builder port(String port) {
-                this.port = port;
-                return this;
-            }
-
-            public Builder protocol(String protocol) {
-                this.protocol = protocol;
-                return this;
-            }
-
+            return new IotaAPIProxy(this);
         }
+
+        private boolean checkPropertiesFiles() {
+
+            try {
+
+                FileReader fileReader = new FileReader("node_config.properties");
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+                final Properties nodeConfig = new Properties();
+                nodeConfig.load(bufferedReader);
+
+                if (nodeConfig.getProperty("iota.node.protocol") != null) {
+                    protocol = nodeConfig.getProperty("iota.node.protocol");
+                }
+
+                if (nodeConfig.getProperty("iota.node.host") != null) {
+                    host = nodeConfig.getProperty("iota.node.host");
+                }
+
+                if (nodeConfig.getProperty("iota.node.port") != null) {
+                    port = nodeConfig.getProperty("iota.node.port");
+                }
+
+            } catch (IOException e1) {
+                log.debug("node_config.properties not found. Rolling back for another solution...");
+            }
+            return (port != null && protocol != null && host != null);
+        }
+
+        private void checkEnviromentVariables() {
+            protocol = env("IOTA_NODE_PROTOCOL", "http");
+            host = env("IOTA_NODE_HOST", "localhost");
+            port = env("IOTA_NODE_PORT", "14265");
+        }
+
+        public Builder host(String host) {
+            this.host = host;
+            return this;
+        }
+
+        public Builder port(String port) {
+            this.port = port;
+            return this;
+        }
+
+        public Builder protocol(String protocol) {
+            this.protocol = protocol;
+            return this;
+        }
+
     }
+}
