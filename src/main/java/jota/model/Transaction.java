@@ -20,6 +20,10 @@ public class Transaction {
     private String branchTransaction;
     private String nonce;
 
+    public Transaction() {
+
+    }
+
     public Transaction(String signatureMessageChunk, String currentIndex, String lastIndex, String nonce, String hash, String tag, String timestamp, String trunkTransaction, String branchTransaction, String address, String value, String bundle) {
 
         this.hash = hash;
@@ -118,16 +122,16 @@ public class Transaction {
         return currentIndex;
     }
 
-    public void setCurrentIndex(String currentIndex) {
-        this.currentIndex = currentIndex;
+    public String setCurrentIndex(String currentIndex) {
+        return this.currentIndex = currentIndex;
     }
 
     public String getLastIndex() {
         return lastIndex;
     }
 
-    public void setLastIndex(String lastIndex) {
-        this.lastIndex = lastIndex;
+    public String setLastIndex(String lastIndex) {
+        return this.lastIndex = lastIndex;
     }
 
     public String getNonce() {

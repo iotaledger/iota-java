@@ -1,5 +1,8 @@
 package jota.utils;
 
+import jota.model.Transaction;
+import jota.pow.Curl;
+
 import java.util.Arrays;
 
 public class Converter {
@@ -94,7 +97,7 @@ public class Converter {
     public static int[] copyTrits(final String input, final int[] destination) {
         for (int i = 0; i < input.length(); i++) {
             int index = Constants.TRYTE_ALPHABET.indexOf(input.charAt(i));
-            destination[i * 3] = TRYTE_TO_TRITS_MAPPINGS [index][0];
+            destination[i * 3] = TRYTE_TO_TRITS_MAPPINGS[index][0];
             destination[i * 3 + 1] = TRYTE_TO_TRITS_MAPPINGS[index][1];
             destination[i * 3 + 2] = TRYTE_TO_TRITS_MAPPINGS[index][2];
         }
@@ -130,7 +133,8 @@ public class Converter {
         for (int i = trits.length; i-- > 0; ) {
             value = value * 3 + trits[i];
         }
-        return value;    }
+        return value;
+    }
 
     public static void increment(final int[] trits, final int size) {
 
@@ -141,5 +145,42 @@ public class Converter {
                 break;
             }
         }
+    }
+
+    public static Transaction transactionObject(String trytes) {
+        if (trytes == null) return null;
+
+        // validity check
+        for (int i = 2279; i < 2295; i++) {
+            if (trytes.charAt(i) != '9') {
+                return null;
+            }
+        }
+        int[] transactionTrits = Converter.trits(trytes);
+        int[] hash = new int[90];
+
+        Curl curl = new Curl();
+
+        // generate the correct transaction hash
+        curl.reset();
+        curl.absorb(transactionTrits, 0, transactionTrits.length);
+        curl.squeeze(hash, 0, hash.length);
+
+        Transaction trx = new Transaction();
+
+        trx.setHash(Converter.trytes(hash));
+        trx.setSignatureMessageChunk(trytes.substring(0, 2187));
+        trx.setAddress(trytes.substring(2187, 2268));
+        trx.setValue("" + Converter.value(Arrays.copyOfRange(transactionTrits, 6804, 6837)));
+        trx.setTag(trytes.substring(2295, 2322));
+        trx.setTimestamp("" + Converter.value(Arrays.copyOfRange(transactionTrits, 6966, 6993)));
+        trx.setCurrentIndex("" + Converter.value(Arrays.copyOfRange(transactionTrits, 6993, 7020)));
+        trx.setLastIndex("" + Converter.value(Arrays.copyOfRange(transactionTrits, 7020, 7047)));
+        trx.setBundle(trytes.substring(2349, 2430));
+        trx.setTrunkTransaction(trytes.substring(2430, 2511));
+        trx.setBranchTransaction(trytes.substring(2511, 2592));
+        trx.setNonce(trytes.substring(2592, 2673));
+
+        return trx;
     }
 }

@@ -1,10 +1,13 @@
 package jota;
 
+import com.sun.org.apache.xpath.internal.Arg;
 import jota.dto.request.*;
 import jota.dto.response.*;
 import jota.error.ArgumentException;
 import jota.error.NotEnoughBalanceException;
 import jota.model.*;
+import jota.utils.Converter;
+import jota.utils.InputValidator;
 import jota.utils.IotaAPIUtils;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.NotImplementedException;
@@ -332,8 +335,92 @@ public class IotaAPIProxy {
         }
     }
 
+    public Bundle[] getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException {
+        start = start != null ? 0 : start;
+        end = end == null ? null : end;
+        inclusionStates = inclusionStates != null ? inclusionStates : null;
 
-    public Transaction[] SendTransfer(String seed, int depth, int minWeightMagnitude, Transfer[] transfers, Input[] inputs, String address) throws NotEnoughBalanceException, ArgumentException {
+        if (start > end || end > (start + 500)) {
+            throw new ArgumentException();
+        }
+
+        GetNewAddressResponse gnr = getNewAddress(seed, start, false, end == null ? end - start : end, true);
+        if (gnr != null && gnr.getAddresses() != null) {
+            return bundlesFromAddresses(gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]), inclusionStates);
+        }
+        return null;
+    }
+
+    public Bundle[] bundlesFromAddresses(String[] addresses, Boolean inclusionStates) {
+        return null;
+
+        Transaction[] trxs = findTransactionObjects(addresses);
+        // set of tail transactions
+        var tailTransactions = new Set();
+        var nonTailBundleHashes = new Set();
+
+        transactionObjects.forEach(function(thisTransaction) {
+
+            // Sort tail and nonTails
+            if (thisTransaction.currentIndex === 0) {
+
+                tailTransactions.add(thisTransaction.hash);
+            } else {
+
+                nonTailBundleHashes.add(thisTransaction.bundle)
+            }
+        })
+/*
+        // Get tail transactions for each nonTail via the bundle hash
+        self.findTransactionObjects({'bundles': Array.from(nonTailBundleHashes)}, function(error, bundleObjects) {
+
+            if (error) return callback(error);
+
+            bundleObjects.forEach(function(thisTransaction) {
+
+                if (thisTransaction.currentIndex === 0) {
+
+                    tailTransactions.add(thisTransaction.hash);
+                }
+            })
+
+            var finalBundles = [];
+            var tailTxArray = Array.from(tailTransactions);*/
+    }
+
+    public Transaction[] findTransactionObjects(String[] input) throws ArgumentException {
+        FindTransactionResponse ftr = findTransactions(input, null, null, null);
+        if (ftr == null || ftr.getHashes() == null) return null;
+        // get the transaction objects of the transactions
+        return getTransactionsObjects(ftr.getHashes());
+    }
+
+    public Transaction[] getTransactionsObjects(String[] hashes) throws ArgumentException {
+
+        // If not array of hashes, return error
+        if (!InputValidator.isArrayOfHashes(hashes)) {
+            throw new ArgumentException();
+        }
+
+        // get the trytes of the transaction hashes
+        GetTrytesResponse gtr = getTrytes(hashes);
+        if (gtr == null || gtr.getTrytes() == null) return null;
+        List<Transaction> transactionObjects = new ArrayList<>();
+
+        // call transactionObjects for each trytes
+        for (String transactionInTrytes : gtr.getTrytes()) {
+
+            // If no trytes returned, simply push null as placeholder
+            if (transactionInTrytes == null) {
+                transactionObjects.add(null);
+            } else {
+                transactionObjects.add(Converter.transactionObject(transactionInTrytes));
+            }
+        }
+        return transactionObjects.toArray(new Transaction[transactionObjects.size()]);
+    }
+
+    public Transaction[] sendTransfer(String seed, int depth, int minWeightMagnitude, Transfer[] transfers, Input[] inputs, String address) throws NotEnoughBalanceException, ArgumentException {
         String[] trytes = prepareTransfers(seed, transfers, inputs, address);
         return sendTrytes(trytes, depth, minWeightMagnitude);
     }
