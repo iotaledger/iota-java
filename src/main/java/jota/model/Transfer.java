@@ -1,5 +1,6 @@
 package jota.model;
 
+import com.google.gson.Gson;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -13,19 +14,24 @@ public class Transfer {
     private String hash;
     private Integer persistence;
     private long value;
+    private String message;
+    private String tag;
 
-    public Transfer(String timestamp, String address, String hash, Integer persistence, long value) {
+    public Transfer(String timestamp, String address, String hash, Integer persistence, long value, String message, String tag) {
 
         this.timestamp = timestamp;
         this.address = address;
         this.hash = hash;
         this.persistence = persistence;
         this.value = value;
+        this.message = message;
+        this.tag = tag;
+
     }
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+        return new Gson().toJson(this);
     }
 
     public String getAddress() {
@@ -47,4 +53,13 @@ public class Transfer {
     public long getValue() {
         return value;
     }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
 }
