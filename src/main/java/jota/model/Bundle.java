@@ -42,7 +42,18 @@ public class Bundle {
     }
 
     public void addEntry(int signatureMessageLength, String slice, long value, String tag, long timestamp) {
-        throw new NotImplementedException("");
+        for (int i = 0; i < signatureMessageLength; i++) {
+            //TODO
+
+/*            var transactionObject = new Object();
+            transactionObject.address = address;
+            transactionObject.value = i == 0 ? value : 0;
+            transactionObject.tag = tag;
+            transactionObject.timestamp = timestamp;
+
+            this.bundle[this.bundle.length] = transactionObject;
+*/
+        }
     }
 
     public void finalize() {
@@ -87,7 +98,28 @@ public class Bundle {
 
 
     public void addTrytes(List<String> signatureFragments) {
-        throw new NotImplementedException("");
+        String emptySignatureFragment = "";
+        String emptyHash = "999999999999999999999999999999999999999999999999999999999999999999999999999999999";
+
+        for (int j = 0; emptySignatureFragment.length() < 2187; j++) {
+            emptySignatureFragment += '9';
+        }
+
+        for (int i = 0; i < this.getTransactions().size(); i++) {
+
+            // Fill empty signatureMessageFragment
+
+            //TODO
+            ///this.getTransactions().get(i).signatureMessageFragment(signatureFragments[i] ? signatureFragments[i] : emptySignatureFragment);
+            // Fill empty trunkTransaction
+            this.getTransactions().get(i).setTrunkTransaction(emptyHash);
+
+            // Fill empty branchTransaction
+            this.getTransactions().get(i).setBranchTransaction(emptyHash);
+
+            // Fill empty nonce
+            this.getTransactions().get(i).setNonce(emptyHash);
+        }
     }
 
     public int[] normalizedBundle(String bundleHash) {

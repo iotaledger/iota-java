@@ -29,6 +29,15 @@ public class Transfer {
 
     }
 
+    public Transfer(String address, long value, String message, String tag) {
+
+        this.address = address;
+        this.value = value;
+        this.message = message;
+        this.tag = tag;
+
+    }
+
     @Override
     public String toString() {
         return new Gson().toJson(this);
