@@ -12,12 +12,12 @@ public class Transfer {
     private String timestamp;
     private String address;
     private String hash;
-    private Integer persistence;
+    private Boolean persistence;
     private long value;
     private String message;
     private String tag;
 
-    public Transfer(String timestamp, String address, String hash, Integer persistence, long value, String message, String tag) {
+    public Transfer(String timestamp, String address, String hash, Boolean persistence, long value, String message, String tag) {
 
         this.timestamp = timestamp;
         this.address = address;
@@ -51,7 +51,7 @@ public class Transfer {
         return hash;
     }
 
-    public Integer getPersistence() {
+    public Boolean getPersistence() {
         return persistence;
     }
 
@@ -71,4 +71,31 @@ public class Transfer {
         return tag;
     }
 
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
+    public void setPersistence(Boolean persistence) {
+        this.persistence = persistence;
+    }
+
+    public void setValue(long value) {
+        this.value = value;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 }

@@ -351,41 +351,75 @@ public class IotaAPIProxy {
         return null;
     }
 
-    public Bundle[] bundlesFromAddresses(String[] addresses, Boolean inclusionStates) {
-        return null;
+    public Bundle[] bundlesFromAddresses(String[] addresses, Boolean inclusionStates) throws ArgumentException {
 
         Transaction[] trxs = findTransactionObjects(addresses);
         // set of tail transactions
-        var tailTransactions = new Set();
-        var nonTailBundleHashes = new Set();
+        List<String> tailTransactions = new ArrayList<>();
+        List<String> nonTailBundleHashes = new ArrayList<>();
 
-        transactionObjects.forEach(function(thisTransaction) {
-
+        for (Transaction trx : trxs) {
             // Sort tail and nonTails
-            if (thisTransaction.currentIndex === 0) {
-
-                tailTransactions.add(thisTransaction.hash);
+            if (Long.parseLong(trx.getCurrentIndex()) == 0) {
+                tailTransactions.add(trx.getHash());
             } else {
-
-                nonTailBundleHashes.add(thisTransaction.bundle)
+                nonTailBundleHashes.add(trx.getBundle());
             }
-        })
-/*
-        // Get tail transactions for each nonTail via the bundle hash
-        self.findTransactionObjects({'bundles': Array.from(nonTailBundleHashes)}, function(error, bundleObjects) {
+        }
+        if (nonTailBundleHashes.isEmpty()) return null;
 
-            if (error) return callback(error);
+        Transaction[] bundleObjects = findTransactionObjects(addresses);
+        for (Transaction trx : bundleObjects) {
+            // Sort tail and nonTails
+            if (Long.parseLong(trx.getCurrentIndex()) == 0) {
+                tailTransactions.add(trx.getHash());
+            }
+        }
 
-            bundleObjects.forEach(function(thisTransaction) {
+        List<GetBundleResponse> finalBundles = new ArrayList<>();
+        String[] tailTxArray = tailTransactions.toArray(new String[tailTransactions.size()]);
 
-                if (thisTransaction.currentIndex === 0) {
-
-                    tailTransactions.add(thisTransaction.hash);
+        // If inclusionStates, get the confirmation status
+        // of the tail transactions, and thus the bundles
+        if (inclusionStates) {
+            GetInclusionStateResponse gisr = getLatestInclusion(tailTxArray);
+            if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0) return null;
+            for (String trx : tailTxArray) {
+                GetBundleResponse gbr = getBundle(trx);
+                if (gbr != null && gbr.getTransactions() != null) {
+                    if (inclusionStates) {
+                        boolean thisInclusion = gisr.getStates()[Arrays.asList(tailTxArray).indexOf(trx)];
+                        for (Transaction t : gbr.getTransactions()) {
+                            t.setPersistence(thisInclusion);
+                        }
+                    }
+                    finalBundles.add(gbr);
                 }
-            })
+            }
+        }
+        Collections.sort(finalBundles, new Comparator<GetBundleResponse>() {
+            public int compare(GetBundleResponse c1, GetBundleResponse c2) {
+                if (Long.parseLong(c1.getTransactions().get(0).getTimestamp()) > Long.parseLong(c2.getTransactions().get(0).getTimestamp()))
+                    return -1;
+                if (Long.parseLong(c1.getTransactions().get(0).getTimestamp()) < Long.parseLong(c2.getTransactions().get(0).getTimestamp()))
+                    return 1;
+                return 0;
+            }
+        });
+        Bundle[] returnValue = new Bundle[finalBundles.size()];
+        for (int i = 0; i < finalBundles.size(); i++) {
+            returnValue[i] = new Bundle(finalBundles.get(i).getTransactions(), finalBundles.get(i).getTransactions().size());
+        }
+        return returnValue;
+    }
 
-            var finalBundles = [];
-            var tailTxArray = Array.from(tailTransactions);*/
+    public GetInclusionStateResponse getLatestInclusion(String[] hashes) {
+        GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
+        if (getNodeInfoResponse == null) return null;
+
+        String[] latestMilestone = {getNodeInfoResponse.getLatestSolidSubtangleMilestone()};
+
+        return getInclusionStates(hashes, latestMilestone);
     }
 
     public Transaction[] findTransactionObjects(String[] input) throws ArgumentException {
@@ -420,12 +454,14 @@ public class IotaAPIProxy {
         return transactionObjects.toArray(new Transaction[transactionObjects.size()]);
     }
 
-    public Transaction[] sendTransfer(String seed, int depth, int minWeightMagnitude, Transfer[] transfers, Input[] inputs, String address) throws NotEnoughBalanceException, ArgumentException {
+    public Transaction[] sendTransfer(String seed, int depth, int minWeightMagnitude, Transfer[] transfers, Input[]
+            inputs, String address) throws NotEnoughBalanceException, ArgumentException {
         String[] trytes = prepareTransfers(seed, transfers, inputs, address);
         return sendTrytes(trytes, depth, minWeightMagnitude);
     }
 
-    public String[] prepareTransfers(String seed, Transfer[] transfers, Input[] inputs, String remainderAddress) throws NotEnoughBalanceException, ArgumentException {
+    public String[] prepareTransfers(String seed, Transfer[] transfers, Input[] inputs, String remainderAddress) throws
+            NotEnoughBalanceException, ArgumentException {
         //InputValidator.checkTransferArray(transfers);
         // If message or tag is not supplied, provide it
 

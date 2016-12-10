@@ -19,6 +19,7 @@ public class Transaction {
     private String trunkTransaction;
     private String branchTransaction;
     private String nonce;
+    private Boolean persistence;
 
     public Transaction() {
 
@@ -139,5 +140,13 @@ public class Transaction {
 
     public void setNonce(String nonce) {
         this.nonce = nonce;
+    }
+
+    public Boolean getPersistence() {
+        return persistence;
+    }
+
+    public void setPersistence(Boolean persistence) {
+        this.persistence = persistence;
     }
 }
