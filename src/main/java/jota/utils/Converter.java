@@ -169,7 +169,7 @@ public class Converter {
         Transaction trx = new Transaction();
 
         trx.setHash(Converter.trytes(hash));
-        trx.setSignatureMessageChunk(trytes.substring(0, 2187));
+        trx.setSignatureFragments(trytes.substring(0, 2187));
         trx.setAddress(trytes.substring(2187, 2268));
         trx.setValue("" + Converter.value(Arrays.copyOfRange(transactionTrits, 6804, 6837)));
         trx.setTag(trytes.substring(2295, 2322));

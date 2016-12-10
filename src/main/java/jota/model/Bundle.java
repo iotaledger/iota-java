@@ -1,11 +1,10 @@
 package jota.model;
 
 import jota.pow.Curl;
+import jota.utils.Constants;
 import jota.utils.Converter;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,6 +14,9 @@ public class Bundle {
 
     private List<Transaction> transactions;
     private int length;
+
+    public static String EMPTY_HASH = "999999999999999999999999999999999999999999999999999999999999999999999999999999999";
+
 
     public Bundle() {
         this(new ArrayList<Transaction>(), 0);
@@ -99,7 +101,7 @@ public class Bundle {
 
     public void addTrytes(List<String> signatureFragments) {
         String emptySignatureFragment = "";
-        String emptyHash = "999999999999999999999999999999999999999999999999999999999999999999999999999999999";
+        String emptyHash = EMPTY_HASH;
 
         for (int j = 0; emptySignatureFragment.length() < 2187; j++) {
             emptySignatureFragment += '9';
@@ -108,9 +110,7 @@ public class Bundle {
         for (int i = 0; i < this.getTransactions().size(); i++) {
 
             // Fill empty signatureMessageFragment
-
-            //TODO
-            ///this.getTransactions().get(i).signatureMessageFragment(signatureFragments[i] ? signatureFragments[i] : emptySignatureFragment);
+            this.getTransactions().get(i).setSignatureFragments(signatureFragments.get(i) == null ? signatureFragments.get(i) : emptySignatureFragment);
             // Fill empty trunkTransaction
             this.getTransactions().get(i).setTrunkTransaction(emptyHash);
 

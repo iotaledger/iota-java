@@ -69,7 +69,7 @@ public class IotaAPIUtils {
             lastIndexTrits[lastIndexTrits.length] = 0;
         }
 
-        return trx.getSignatureMessageChunk()
+        return trx.getSignatureFragments()
                 + trx.getAddress()
                 + Converter.trytes(valueTrits)
                 + trx.getTag()
@@ -123,7 +123,7 @@ public class IotaAPIUtils {
                 int[] firstSignedFragment = Signing.signatureFragment(firstBundleFragment, firstFragment);
 
                 //  Convert signature to trytes and assign the new signatureFragment
-                bundle.getTransactions().get(i).setSignatureMessageChunk(Converter.trytes(firstSignedFragment));
+                bundle.getTransactions().get(i).setSignatureFragments(Converter.trytes(firstSignedFragment));
 
                 //  Because the signature is > 2187 trytes, we need to
                 //  find the second transaction to add the remainder of the signature
@@ -140,7 +140,7 @@ public class IotaAPIUtils {
                         int[] secondSignedFragment = Signing.signatureFragment(secondBundleFragment, secondFragment);
 
                         //  Convert signature to trytes and assign it again to this bundle entry
-                        bundle.getTransactions().get(j).setSignatureMessageChunk(Converter.trytes(secondSignedFragment));
+                        bundle.getTransactions().get(j).setSignatureFragments(Converter.trytes(secondSignedFragment));
                     }
                 }
             }

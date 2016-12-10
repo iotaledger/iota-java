@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class Transaction {
     private String hash;
-    private String signatureMessageChunk;
+    private String signatureFragments;
     private String address;
     private String value;
     private String tag;
@@ -24,11 +24,11 @@ public class Transaction {
 
     }
 
-    public Transaction(String signatureMessageChunk, String currentIndex, String lastIndex, String nonce, String hash, String tag, String timestamp, String trunkTransaction, String branchTransaction, String address, String value, String bundle) {
+    public Transaction(String signatureFragments, String currentIndex, String lastIndex, String nonce, String hash, String tag, String timestamp, String trunkTransaction, String branchTransaction, String address, String value, String bundle) {
 
         this.hash = hash;
         this.tag = tag;
-        this.signatureMessageChunk = signatureMessageChunk;
+        this.signatureFragments = signatureFragments;
         this.address = address;
         this.value = value;
         this.timestamp = timestamp;
@@ -45,69 +45,36 @@ public class Transaction {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
-    public void setSignatureMessageChunk(String signatureMessageChunk) {
-
-        this.signatureMessageChunk = signatureMessageChunk;
+    public String getHash() {
+        return hash;
     }
 
     public void setHash(String hash) {
         this.hash = hash;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public String getSignatureFragments() {
+        return signatureFragments;
     }
 
-    public void setTrunkTransaction(String trunkTransaction) {
-        this.trunkTransaction = trunkTransaction;
-    }
-
-    public void setBranchTransaction(String branchTransaction) {
-        this.branchTransaction = branchTransaction;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public void setBundle(String bundle) {
-        this.bundle = bundle;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public String getTrunkTransaction() {
-        return trunkTransaction;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
+    public String setSignatureFragments(String signatureFragments) {
+        return this.signatureFragments = signatureFragments;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public String getBranchTransaction() {
-        return branchTransaction;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public String getBundle() {
-        return bundle;
+    public String getValue() {
+        return value;
     }
 
-    public String getHash() {
-        return hash;
-    }
-
-    public String getSignatureMessageChunk() {
-        return signatureMessageChunk;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public String getTag() {
@@ -116,6 +83,14 @@ public class Transaction {
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getCurrentIndex() {
@@ -132,6 +107,30 @@ public class Transaction {
 
     public String setLastIndex(String lastIndex) {
         return this.lastIndex = lastIndex;
+    }
+
+    public String getBundle() {
+        return bundle;
+    }
+
+    public void setBundle(String bundle) {
+        this.bundle = bundle;
+    }
+
+    public String getTrunkTransaction() {
+        return trunkTransaction;
+    }
+
+    public void setTrunkTransaction(String trunkTransaction) {
+        this.trunkTransaction = trunkTransaction;
+    }
+
+    public String getBranchTransaction() {
+        return branchTransaction;
+    }
+
+    public void setBranchTransaction(String branchTransaction) {
+        this.branchTransaction = branchTransaction;
     }
 
     public String getNonce() {
