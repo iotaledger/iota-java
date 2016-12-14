@@ -1,16 +1,19 @@
 package jota.utils;
 
+import jota.model.Transaction;
+import jota.pow.Curl;
+
 import java.util.Arrays;
 
 public class Converter {
 
-    public static final int RADIX = 3;
-    public static final int MAX_TRIT_VALUE = (RADIX - 1) / 2, MIN_TRIT_VALUE = -MAX_TRIT_VALUE;
+    private static final int RADIX = 3;
+    private static final int MAX_TRIT_VALUE = (RADIX - 1) / 2, MIN_TRIT_VALUE = -MAX_TRIT_VALUE;
 
-    public static final int NUMBER_OF_TRITS_IN_A_BYTE = 5;
-    public static final int NUMBER_OF_TRITS_IN_A_TRYTE = 3;
-    static final int[][] BYTE_TO_TRITS_MAPPINGS = new int[243][];
-    static final int[][] TRYTE_TO_TRITS_MAPPINGS = new int[27][];
+    private static final int NUMBER_OF_TRITS_IN_A_BYTE = 5;
+    private static final int NUMBER_OF_TRITS_IN_A_TRYTE = 3;
+    private static final int[][] BYTE_TO_TRITS_MAPPINGS = new int[243][];
+    private static final int[][] TRYTE_TO_TRITS_MAPPINGS = new int[27][];
 
     static {
 
@@ -94,7 +97,7 @@ public class Converter {
     public static int[] copyTrits(final String input, final int[] destination) {
         for (int i = 0; i < input.length(); i++) {
             int index = Constants.TRYTE_ALPHABET.indexOf(input.charAt(i));
-            destination[i * 3] = TRYTE_TO_TRITS_MAPPINGS [index][0];
+            destination[i * 3] = TRYTE_TO_TRITS_MAPPINGS[index][0];
             destination[i * 3 + 1] = TRYTE_TO_TRITS_MAPPINGS[index][1];
             destination[i * 3 + 2] = TRYTE_TO_TRITS_MAPPINGS[index][2];
         }
@@ -124,6 +127,15 @@ public class Converter {
         return trits[offset] + trits[offset + 1] * 3 + trits[offset + 2] * 9;
     }
 
+    public static int value(final int[] trits) {
+        int value = 0;
+
+        for (int i = trits.length; i-- > 0; ) {
+            value = value * 3 + trits[i];
+        }
+        return value;
+    }
+
     public static void increment(final int[] trits, final int size) {
 
         for (int i = 0; i < size; i++) {
@@ -133,5 +145,42 @@ public class Converter {
                 break;
             }
         }
+    }
+
+    public static Transaction transactionObject(String trytes) {
+        if (trytes == null) return null;
+
+        // validity check
+        for (int i = 2279; i < 2295; i++) {
+            if (trytes.charAt(i) != '9') {
+                return null;
+            }
+        }
+        int[] transactionTrits = Converter.trits(trytes);
+        int[] hash = new int[90];
+
+        Curl curl = new Curl();
+
+        // generate the correct transaction hash
+        curl.reset();
+        curl.absorb(transactionTrits, 0, transactionTrits.length);
+        curl.squeeze(hash, 0, hash.length);
+
+        Transaction trx = new Transaction();
+
+        trx.setHash(Converter.trytes(hash));
+        trx.setSignatureFragments(trytes.substring(0, 2187));
+        trx.setAddress(trytes.substring(2187, 2268));
+        trx.setValue("" + Converter.value(Arrays.copyOfRange(transactionTrits, 6804, 6837)));
+        trx.setTag(trytes.substring(2295, 2322));
+        trx.setTimestamp("" + Converter.value(Arrays.copyOfRange(transactionTrits, 6966, 6993)));
+        trx.setCurrentIndex("" + Converter.value(Arrays.copyOfRange(transactionTrits, 6993, 7020)));
+        trx.setLastIndex("" + Converter.value(Arrays.copyOfRange(transactionTrits, 7020, 7047)));
+        trx.setBundle(trytes.substring(2349, 2430));
+        trx.setTrunkTransaction(trytes.substring(2430, 2511));
+        trx.setBranchTransaction(trytes.substring(2511, 2592));
+        trx.setNonce(trytes.substring(2592, 2673));
+
+        return trx;
     }
 }

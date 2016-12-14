@@ -7,7 +7,9 @@ public class Constants {
 
     public static final String TRYTE_ALPHABET = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    public static int addressLengthWithoutChecksum = 81;
-    public static int addressLengthWithChecksum = 90;
+    public static final int SEED_LENGTH_MAX = 81;
+
+    public static int ADDRESS_LENGTH_WITHOUT_CHECKSUM = 81;
+    public static int ADDRESS_LENGTH_WITH_CHECKSUM = 90;
 
 }
