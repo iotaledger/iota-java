@@ -1,10 +1,9 @@
 package jota.utils;
 
+import jota.dto.response.GetBundleResponse;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jota.dto.response.GetBundleResponse;
 
 /**
  * Client Side computation service
@@ -26,14 +25,9 @@ public class IotaAPIUtils {
     public static String newAddress(String seed, int index, boolean checksum) {
 
         final int[] key = Signing.key(Converter.trits(seed), index, 2);
-        log.debug("key Length = {}", key.length );
-        
         final int[] digests = Signing.digests(key);
-        log.debug("digests Length = {}", digests.length );
-        
         final int[] addressTrits = Signing.address(digests);
-        log.debug("addressTrits Length = {}", addressTrits.length );
-        
+
         String address = Converter.trytes(addressTrits);
 
         if (checksum) {

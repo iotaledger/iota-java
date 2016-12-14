@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import jota.pow.Curl;
+
 public class Signing {
 
     static int[] key(int[] seed, int index, int length) {

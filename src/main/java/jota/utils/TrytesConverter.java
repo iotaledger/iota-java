@@ -70,7 +70,7 @@ public class TrytesConverter {
 
     public static String toString(String inputTrytes) {
 
-        String string = "";
+        StringBuilder string = new StringBuilder();
 
         for (int i = 0; i < inputTrytes.length(); i += 2) {
             // get a trytes pair
@@ -82,9 +82,9 @@ public class TrytesConverter {
 
             String character = Character.toString((char) decimalValue);
 
-            string += character;
+            string.append(character);
         }
 
-        return string;
+        return string.toString();
     }
 }

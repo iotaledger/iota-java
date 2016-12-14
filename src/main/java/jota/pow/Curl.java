@@ -1,4 +1,4 @@
-package jota.utils;
+package jota.pow;
 
 /**
  * (c) 2016 Come-from-Beyond
