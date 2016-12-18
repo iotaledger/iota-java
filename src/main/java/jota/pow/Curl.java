@@ -15,15 +15,37 @@ public class Curl {
 
     private int[] state = new int[STATE_LENGTH];
 
-    public void absorb(final int[] trits, int offset, int length) {
+    public Curl absorb(final int[] trits, int offset, int length) {
 
         do {
             System.arraycopy(trits, offset, state, 0, length < HASH_LENGTH ? length : HASH_LENGTH);
             transform();
             offset += HASH_LENGTH;
         } while ((length -= HASH_LENGTH) > 0);
+        
+        return this;
     }
 
+    public Curl transform() {
+
+        final int[] scratchpad = new int[STATE_LENGTH];
+        int scratchpadIndex = 0;
+        for (int round = 0; round < NUMBER_OF_ROUNDS; round++) {
+            System.arraycopy(state, 0, scratchpad, 0, STATE_LENGTH);
+            for (int stateIndex = 0; stateIndex < STATE_LENGTH; stateIndex++) {
+                state[stateIndex] = TRUTH_TABLE[scratchpad[scratchpadIndex] + scratchpad[scratchpadIndex += (scratchpadIndex < 365 ? 364 : -365)] * 3 + 4];
+            }
+        }
+        return this;
+    }
+
+    public Curl reset() {
+        for (int stateIndex = 0; stateIndex < STATE_LENGTH; stateIndex++) {
+            state[stateIndex] = 0;
+        }
+        return this;
+    }
+    
     public int[] squeeze(final int[] trits, int offset, int length) {
 
         do {
@@ -35,26 +57,10 @@ public class Curl {
         return state;
     }
 
-    public void transform() {
-
-        final int[] scratchpad = new int[STATE_LENGTH];
-        int scratchpadIndex = 0;
-        for (int round = 0; round < NUMBER_OF_ROUNDS; round++) {
-            System.arraycopy(state, 0, scratchpad, 0, STATE_LENGTH);
-            for (int stateIndex = 0; stateIndex < STATE_LENGTH; stateIndex++) {
-                state[stateIndex] = TRUTH_TABLE[scratchpad[scratchpadIndex] + scratchpad[scratchpadIndex += (scratchpadIndex < 365 ? 364 : -365)] * 3 + 4];
-            }
-        }
-    }
-
-    public void reset() {
-        for (int stateIndex = 0; stateIndex < STATE_LENGTH; stateIndex++) {
-            state[stateIndex] = 0;
-        }
-    }
-
     public int[] getState() {
         return state;
     }
-    public void setState(int[] state) { this.state = state; }
+    public void setState(int[] state) { 
+        this.state = state; 
+    }
 }

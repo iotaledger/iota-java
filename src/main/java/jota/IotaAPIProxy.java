@@ -2,6 +2,8 @@ package jota;
 
 import jota.dto.request.*;
 import jota.dto.response.*;
+import jota.model.Transaction;
+import jota.utils.Converter;
 import jota.utils.IotaAPIUtils;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
@@ -15,10 +17,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * IotaAPIProxy Builder. Usage:
@@ -193,10 +197,6 @@ public class IotaAPIProxy {
 
     // end of proxied calls.
 
-    public GetBundleResponse getBundle(String transaction) {
-        return IotaAPIUtils.getBundle(transaction);
-    }
-    
     /**
      * Generates a new address from a seed and returns the remainderAddress.
      * This is either done deterministically, or by providing the index of the new remainderAddress
@@ -240,8 +240,72 @@ public class IotaAPIProxy {
         return GetNewAddressResponse.create(allAddresses);        
     }
     
+    /*
+     * newAddress
+     * broadcastAndStore
+     * sendTrytes
+     * 
+    getTransactionsObjects
+    findTransactionObjects
+    getLatestInclusion
+    getInputs
+    prepareTransfers
+    sendTransfer
+    replayBundle
+    broadcastBundle
+    getBundle
+    getTransfers
+    getAccountData
+    */
     
+    /**
+     * 
+     * @param trytes
+     * @return a StoreTransactionsResponse
+     */
+    public StoreTransactionsResponse broadcastAndStore(final String ... trytes) {
+        
+        try {
+            broadcastTransactions(trytes);
+        } catch (Exception e) {
+            log.error("Impossible to broadcastAndStore, aborting.", e);
+            throw new IllegalStateException("BroadcastAndStore Illegal state Exception");
+        }
+        return storeTransactions(trytes);
+        
+    }
+    
+    /**
+     * Facade method: Gets transactions to approve, attaches to Tangle, broadcasts and stores
+     * @param {array} trytes
+     * @param {int} depth
+     * @param {int} minWeightMagnitude
+     * @return 
+     */
+    public List<Transaction> sendTrytes(final String trytes, final int minWeightMagnitude) {
+        
+        final GetTransactionsToApproveResponse txs = getTransactionsToApprove(minWeightMagnitude);
+        
+        // attach to tangle - do pow
+        final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransactionToApprove(), minWeightMagnitude, trytes);
+    
+        try {
+            broadcastAndStore(res.getTrytes());
+        } catch (Exception e) {
+            log.error("Impossible to sendTrytes, aborting.", e);
+            throw new IllegalStateException("sendTrytes Illegal state Exception");
+        }
+        
+        return Arrays.stream(res.getTrytes())
+                 .map(Converter::transactionObject)
+                 .collect(Collectors.toList());
+    }
 
+    public GetBundleResponse getBundle(String transaction) {
+        return null; //IotaAPIUtils.getBundle(transaction);
+    }
+    
+    
     public static class Builder {
 
         String protocol, host, port;

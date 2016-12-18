@@ -34,7 +34,6 @@ public class Signing {
         while (length-- > 0) {
 
             for (int i = 0; i < 27; i++) {
-
                 curl.squeeze(buffer, offset, buffer.length);
                 for (int j = 0; j < 243; j++) {
                     key.add(buffer[j]);
@@ -80,6 +79,31 @@ public class Signing {
             System.arraycopy(buffer, 0, digests, i * 243, 243);
         }
         return digests;
+    }
+    
+    public static int[] signatureFragment(int[] normalizedBundleFragment, int[] keyFragment) {
+
+        int[] signatureFragment = keyFragment;
+        int[] hash;
+
+        Curl curl = new Curl();
+
+        for (int i = 0; i < 27; i++) {
+
+            hash = Arrays.copyOfRange(signatureFragment, i * 243, (i + 1) * 243);
+
+            for (int j = 0; j < 13 - normalizedBundleFragment[i]; j++) {
+                curl.reset()
+                    .absorb(hash, 0, hash.length)
+                    .squeeze(hash, 0, hash.length);
+            }
+
+            for (int j = 0; j < 243; j++) {
+                signatureFragment[i * 243 + j] = hash[j];
+            }
+        }
+
+        return signatureFragment;
     }
 
     public static int[] address(int[] digests) {
