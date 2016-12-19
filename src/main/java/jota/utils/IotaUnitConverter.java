@@ -43,8 +43,9 @@ public class IotaUnitConverter {
     public static IotaUnits findOptimalIotaUnitToDisplay(long amount) {
         int length = String.valueOf(amount).length();
 
-        if (amount < 0) // do not count "-" sign
+        if (amount < 0)  {// do not count "-" sign
             length -= 1;
+        }
 
         IotaUnits units = IotaUnits.IOTA;
 

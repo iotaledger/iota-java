@@ -11,5 +11,4 @@ public class Constants {
 
     public static int ADDRESS_LENGTH_WITHOUT_CHECKSUM = 81;
     public static int ADDRESS_LENGTH_WITH_CHECKSUM = 90;
-
 }

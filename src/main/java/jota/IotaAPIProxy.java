@@ -1,24 +1,60 @@
 package jota;
 
-import jota.dto.request.*;
-import jota.dto.response.*;
-import jota.utils.IotaAPIUtils;
-import okhttp3.OkHttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import jota.dto.request.IotaAttachToTangleRequest;
+import jota.dto.request.IotaBroadcastTransactionRequest;
+import jota.dto.request.IotaCommandRequest;
+import jota.dto.request.IotaFindTransactionsRequest;
+import jota.dto.request.IotaGetBalancesRequest;
+import jota.dto.request.IotaGetInclusionStateRequest;
+import jota.dto.request.IotaGetTransactionsToApproveRequest;
+import jota.dto.request.IotaGetTrytesRequest;
+import jota.dto.request.IotaNeighborsRequest;
+import jota.dto.request.IotaStoreTransactionsRequest;
+import jota.dto.response.AddNeighborsResponse;
+import jota.dto.response.BroadcastTransactionsResponse;
+import jota.dto.response.FindTransactionResponse;
+import jota.dto.response.GetAttachToTangleResponse;
+import jota.dto.response.GetBalancesAndFormatResponse;
+import jota.dto.response.GetBalancesResponse;
+import jota.dto.response.GetBundleResponse;
+import jota.dto.response.GetInclusionStateResponse;
+import jota.dto.response.GetNeighborsResponse;
+import jota.dto.response.GetNewAddressResponse;
+import jota.dto.response.GetNodeInfoResponse;
+import jota.dto.response.GetTipsResponse;
+import jota.dto.response.GetTransactionsToApproveResponse;
+import jota.dto.response.GetTrytesResponse;
+import jota.dto.response.InterruptAttachingToTangleResponse;
+import jota.dto.response.RemoveNeighborsResponse;
+import jota.dto.response.StoreTransactionsResponse;
+import jota.model.Bundle;
+import jota.model.Input;
+import jota.model.Transaction;
+import jota.model.Transfer;
+import jota.utils.Converter;
+import jota.utils.InputValidator;
+import jota.utils.IotaAPIUtils;
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * IotaAPIProxy Builder. Usage:
@@ -170,6 +206,10 @@ public class IotaAPIProxy {
         final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses));
         return wrapCheckedException(res).body();
     }
+    
+    public GetBalancesResponse getBalances(Integer threshold, List<String> addresses) {
+        return getBalances(threshold, addresses.toArray(new String[] {}));
+    }
 
     public InterruptAttachingToTangleResponse interruptAttachingToTangle() {
         final Call<InterruptAttachingToTangleResponse> res = service.interruptAttachingToTangle(IotaCommandRequest.createInterruptAttachToTangleRequest());
@@ -193,10 +233,6 @@ public class IotaAPIProxy {
 
     // end of proxied calls.
 
-    public GetBundleResponse getBundle(String transaction) {
-        return IotaAPIUtils.getBundle(transaction);
-    }
-    
     /**
      * Generates a new address from a seed and returns the remainderAddress.
      * This is either done deterministically, or by providing the index of the new remainderAddress
@@ -240,8 +276,345 @@ public class IotaAPIProxy {
         return GetNewAddressResponse.create(allAddresses);        
     }
     
+    /*
+     * newAddress
+     * broadcastAndStore
+     * sendTrytes
+     * prepareTransfers
+     * getInputs
+       
+      getTransfers
+      sendTransfer
+      getBundle
     
+      getTransactionsObjects
+      findTransactionObjects
+      getLatestInclusion
+       
+      replayBundle
+      broadcastBundle
+      getAccountData
+    */
+    
+    /**
+     * 
+     * @param trytes
+     * @return a StoreTransactionsResponse
+     */
+    public StoreTransactionsResponse broadcastAndStore(final String ... trytes) {
+        
+        try {
+            broadcastTransactions(trytes);
+        } catch (Exception e) {
+            log.error("Impossible to broadcastAndStore, aborting.", e);
+            throw new IllegalStateException("BroadcastAndStore Illegal state Exception");
+        }
+        return storeTransactions(trytes);
+    }
+    
+    /**
+     * Facade method: Gets transactions to approve, attaches to Tangle, broadcasts and stores
+     * @param {array} trytes
+     * @param {int} depth
+     * @param {int} minWeightMagnitude
+     * @return 
+     */
+    public List<Transaction> sendTrytes(final String trytes, final int minWeightMagnitude) {
+        
+        final GetTransactionsToApproveResponse txs = getTransactionsToApprove(minWeightMagnitude);
+        
+        // attach to tangle - do pow
+        final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransactionToApprove(), minWeightMagnitude, trytes);
+    
+        try {
+            broadcastAndStore(res.getTrytes());
+        } catch (Exception e) {
+            log.error("Impossible to sendTrytes, aborting.", e);
+            throw new IllegalStateException("sendTrytes Illegal state Exception");
+        }
+        
+        //return Arrays.stream(res.getTrytes()).map(Converter::transactionObject).collect(Collectors.toList());
+        final List<Transaction> trx = new ArrayList<>();
+        
+        for (final String tx : Arrays.asList(res.getTrytes())) {
+            trx.add(Converter.transactionObject(tx));
+        }
+        return trx;
+    }
+    
+    public List<Transaction> findAndGetTxs(final String addresses) {
 
+        final FindTransactionResponse res = findTransactionsByAddresses(addresses);
+        return getTransactionsObjects(res.getHashes());
+    }
+    
+    /**
+    *   Wrapper function for getTrytes and transactionObjects
+    *   gets the trytes and transaction object from a list of transaction hashes
+    *
+    *   @method getTransactionsObjects
+    *   @param {array} hashes
+     * @return 
+    *   @returns {function} callback
+    *   @returns {object} success
+    **/
+    public List<Transaction> getTransactionsObjects(String ... hashes) {
+
+        if (!InputValidator.isArrayOfHashes(hashes)) {
+            throw new IllegalStateException("Not an Array of Hashes: " + Arrays.toString(hashes));
+        }
+
+        final GetTrytesResponse trytesResponse = getTrytes(hashes);
+        
+        final List<Transaction> trxs = new ArrayList<>();
+        
+        for (final String tryte : trytesResponse.getTrytes()) {
+            trxs.add(Converter.transactionObject(tryte));
+        }
+        return trxs;
+    }
+
+    /**
+    *   Prepares transfer by generating bundle, finding and signing inputs
+    *
+    *   @method prepareTransfers
+    *   @param {string} seed
+    *   @param {object} transfers
+    *   @param {object} options
+    *       @property {array} inputs Inputs used for signing. Needs to have correct keyIndex and address value
+    *       @property {string} address Remainder address
+    *   @param {function} callback
+     * @return 
+    *   @returns {array} trytes Returns bundle trytes
+    **/
+    public List<String> prepareTransfers(final String seed, final List<Transfer> transfers, String remainder, List<Input> inputs) {
+
+        // Input validation of transfers object
+        if (!InputValidator.isTransfersCollectionCorrect(transfers)) {
+            throw new IllegalStateException("Invalid Transfer");
+        }
+
+        // Create a new bundle
+        final Bundle bundle = new Bundle();
+        final List<String> signatureFragments = new ArrayList<>();
+        
+        int totalValue = 0;
+        String tag;
+
+        //  Iterate over all transfers, get totalValue
+        //  and prepare the signatureFragments, message and tag
+        for (final Transfer transfer : transfers) {
+
+            int signatureMessageLength = 1;
+
+            // If message longer than 2187 trytes, increase signatureMessageLength (add 2nd transaction)
+            if (transfer.getMessage().length() > 2187) {
+
+                // Get total length, message / maxLength (2187 trytes)
+                signatureMessageLength += Math.floor(transfer.getMessage().length() / 2187);
+
+                String msgCopy = new String(transfer.getMessage());
+
+                // While there is still a message, copy it
+                while (!msgCopy.isEmpty()) {
+                    
+                    String fragment = StringUtils.substring(msgCopy, 0, 2187);
+                    msgCopy = StringUtils.substring(msgCopy, 2187, msgCopy.length());
+
+                    // Pad remainder of fragment
+                    for (int j = 0; fragment.length() < 2187; j++) {
+                        fragment += "9";
+                    }
+
+                    signatureFragments.add(fragment);
+                }
+            } else {
+                // Else, get single fragment with 2187 of 9's trytes
+                String fragment = StringUtils.substring(transfer.getMessage(), 0, 2187);
+
+                for (int j = 0; fragment.length() < 2187; j++) {
+                    fragment += '9';
+                }
+
+                signatureFragments.add(fragment);
+            }
+
+            // get current timestamp in seconds
+            long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
+
+            // If no tag defined, get 27 tryte tag.
+            tag = transfer.getTag().isEmpty() ? "999999999999999999999999999" : transfer.getTag();
+
+            // Pad for required 27 tryte length
+            for (int j = 0; tag.length() < 27; j++) {
+                tag += '9';
+            }
+
+            // Add first entry to the bundle
+            bundle.addEntry(signatureMessageLength, transfer.getAddress(), transfer.getValue(), tag, timestamp);
+            // Sum up total value
+            totalValue += transfer.getValue();
+        }
+
+        // Get inputs if we are sending tokens
+        if (totalValue != 0) {
+
+            //  Case 1: user provided inputs
+            //  Validate the inputs by calling getBalances
+            if (!inputs.isEmpty()) {
+
+                // Get list if addresses of the provided inputs
+                List<String> inputsAddresses = new ArrayList<>();
+                for (final Input i : inputs) {
+                    inputsAddresses.add(i.getAddress());
+                }
+
+                GetBalancesResponse resbalances = getBalances(100, inputsAddresses);
+                String[] balances = resbalances.getBalances();
+                
+
+                List<Input> confirmedInputs = new ArrayList<>();
+                int totalBalance = 0; int i = 0;
+                for (String balance : balances) {
+                    long thisBalance = Integer.parseInt(balance);
+                    totalBalance += thisBalance;
+
+                    // If input has balance, add it to confirmedInputs
+                    if (thisBalance > 0) {
+                        Input inputEl = inputs.get(i++);
+                        inputEl.setBalance(thisBalance);
+                        confirmedInputs.add(inputEl);
+                    }
+                }
+
+                // Return not enough balance error
+                if (totalValue > totalBalance) {
+                    throw new IllegalStateException("Not enough balance");
+                }
+
+                return IotaAPIUtils.signInputsAndReturn(seed, confirmedInputs, bundle, signatureFragments);
+            }
+
+            //  Case 2: Get inputs deterministically
+            //
+            //  If no inputs provided, derive the addresses from the seed and
+            //  confirm that the inputs exceed the threshold
+            else {
+
+                GetBalancesAndFormatResponse newinputs = getInputs(seed, Collections.EMPTY_LIST, 0, 0, totalValue);
+                // If inputs with enough balance
+                return IotaAPIUtils.signInputsAndReturn(seed, newinputs.getInput(), bundle, signatureFragments);
+            }
+        } else {
+
+            // If no input required, don't sign and simply finalize the bundle
+            bundle.finalize();
+            bundle.addTrytes(signatureFragments);
+
+            List<Transaction> trxb = bundle.getTransactions();
+            List<String> bundleTrytes = new ArrayList<>();
+            for (Transaction tx : trxb) {
+                jota.utils.IotaAPIUtils.transactionTrytes(tx);
+            }
+            Collections.reverse(bundleTrytes);
+            return bundleTrytes;
+        }
+    }
+    
+    /**
+    *   Gets the inputs of a seed
+    *
+    *   @method getInputs
+    *   @param {string} seed
+    *   @param {object} options
+    *       @property {int} start Starting key index
+    *       @property {int} end Ending key index
+    *       @property {int} threshold Min balance required
+    *   @param {function} callback
+    **/
+    public GetBalancesAndFormatResponse getInputs(final String seed, final List<String> balances, int start, int end, int threshold) {
+
+        // validate the seed
+        if (!InputValidator.isTrytes(seed, 0)) {
+            throw new IllegalStateException("Invalid Seed");
+        }
+
+        // If start value bigger than end, return error
+        // or if difference between end and start is bigger than 500 keys
+        if (start > end || end > (start + 500)) {
+            throw new IllegalStateException("Invalid inputs provided");
+        }
+
+        //  Case 1: start and end
+        //
+        //  If start and end is defined by the user, simply iterate through the keys
+        //  and call getBalances
+        if (end != 0) {
+
+            List<String> allAddresses = new ArrayList<>();
+
+            for (int i = start; i < end; i++) {
+
+                String address = IotaAPIUtils.newAddress(seed, i, false);
+                allAddresses.add(address);
+            }
+
+            return getBalanceAndFormat(allAddresses, balances, threshold, start, end);
+        }
+        //  Case 2: iterate till threshold || end
+        //
+        //  Either start from index: 0 or start (if defined) until threshold is reached.
+        //  Calls getNewAddress and deterministically generates and returns all addresses
+        //  We then do getBalance, format the output and return it
+        else {
+
+            final GetNewAddressResponse res = getNewAddress(seed, start, false, 0, true);
+            return getBalanceAndFormat(res.getAddresses(), balances, threshold, start, end);
+        }
+    }
+
+    //  Calls getBalances and formats the output
+    //  returns the final inputsObject then
+    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, 
+            final List<String> balances, long threshold, int start, int end) {
+
+        GetBalancesResponse bres = getBalances(100, addresses);
+
+        // If threshold defined, keep track of whether reached or not
+        // else set default to true
+        boolean thresholdReached = threshold != 0 ? false : true; int i = -1;
+        
+        List<Input> inputs = new ArrayList<>();
+        long totalBalance = 0;
+        
+        for (String address : addresses) {
+            
+            long balance = Long.parseLong(balances.get(++i));
+            
+            if (balance > 0) {
+                final Input newEntry = new Input(address, balance, start+i);
+                                        
+                inputs.add(newEntry);
+                // Increase totalBalance of all aggregated inputs
+                totalBalance += balance;
+
+                if (thresholdReached == false && totalBalance >= threshold) {
+                    thresholdReached = true;
+                    break;
+                }
+            }
+        }
+
+        if (thresholdReached) {
+            return GetBalancesAndFormatResponse.create(inputs, totalBalance);
+        } 
+        throw new IllegalStateException("Not enough balance");
+    }
+    
+    public GetBundleResponse getBundle(String transaction) {
+        return null; //IotaAPIUtils.getBundle(transaction);
+    }
+    
     public static class Builder {
 
         String protocol, host, port;
