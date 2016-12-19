@@ -12,7 +12,7 @@ public class GetNewAddressResponse extends AbstractResponse {
         return res;
     }
 
-    public List<String> getAddress() {
+    public List<String> getAddresses() {
         return addresses;
     }
 }

@@ -129,6 +129,6 @@ public class IotaAPIProxyTest {
     @Test
     public void shouldCreateANewAddress() {
         final GetNewAddressResponse res = proxy.getNewAddress(TEST_SEED, 0, false, 1, false);
-        assertThat(res.getAddress(), Is.is(Collections.singletonList(TEST_ADDRESS_WITHOUT_CHECKSUM)));
+        assertThat(res.getAddresses(), Is.is(Collections.singletonList(TEST_ADDRESS_WITHOUT_CHECKSUM)));
     }
 }

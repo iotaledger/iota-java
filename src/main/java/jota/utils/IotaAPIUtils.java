@@ -77,8 +77,10 @@ public class IotaAPIUtils {
                 + trx.getNonce();
     }
 
-    public static List<String> signInputsAndReturn(String seed, List<Input> inputs, Bundle bundle,
-                                                   List<String> signatureFragments) {
+    public static List<String> signInputsAndReturn(final String seed, 
+                                                   final List<Input> inputs, 
+                                                   final Bundle bundle,
+                                                   final List<String> signatureFragments) {
         bundle.finalize();
         bundle.addTrytes(signatureFragments);
 

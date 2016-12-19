@@ -25,6 +25,10 @@ public class Curl {
         
         return this;
     }
+    
+    public Curl absorb(final int[] trits) {
+        return absorb(trits, 0, trits.length);
+    }
 
     public Curl transform() {
 
@@ -55,6 +59,10 @@ public class Curl {
         } while ((length -= HASH_LENGTH) > 0);
 
         return state;
+    }
+    
+    public int[] squeeze(final int[] trits) {
+        return squeeze(trits, 0, trits.length);
     }
 
     public int[] getState() {
