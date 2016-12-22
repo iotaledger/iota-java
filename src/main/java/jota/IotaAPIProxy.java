@@ -250,15 +250,15 @@ public class IotaAPIProxy {
      * sendTrytes
      * prepareTransfers
      * getInputs
-       
+     * getLatestInclusion
+
       getTransfers
       sendTransfer
       getBundle
     
       getTransactionsObjects
       findTransactionObjects
-      getLatestInclusion
-       
+
       replayBundle
       broadcastBundle
       getAccountData
@@ -582,7 +582,17 @@ public class IotaAPIProxy {
     public GetBundleResponse getBundle(String transaction) {
         return null; //IotaAPIUtils.getBundle(transaction);
     }
-    
+
+
+    public GetInclusionStateResponse getLatestInclusion(String[] hashes) {
+        GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
+        if (getNodeInfoResponse == null) return null;
+
+        String[] latestMilestone = {getNodeInfoResponse.getLatestSolidSubtangleMilestone()};
+
+        return getInclusionStates(hashes, latestMilestone);
+    }
+
     public static class Builder {
 
         String protocol, host, port;

@@ -169,4 +169,10 @@ public class IotaAPIProxyTest {
     public void shouldSendTrytes() {
         proxy.sendTrytes(TEST_TRYTES, 18);
     }
+
+    @Test
+    public void shouldGetLastInclusionState() {
+        GetInclusionStateResponse res = proxy.getLatestInclusion(new String[]{TEST_HASH});
+        assertThat(res.getStates(), IsNull.notNullValue());
+    }
 }
