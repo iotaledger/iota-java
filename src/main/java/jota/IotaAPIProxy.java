@@ -336,6 +336,16 @@ public class IotaAPIProxy {
         return trxs;
     }
 
+    public List<Transaction> findTransactionObjects(String[] input) {
+        FindTransactionResponse ftr = findTransactions(input, null, null, null);
+        if (ftr == null || ftr.getHashes() == null)
+
+            return null;
+
+        // get the transaction objects of the transactions
+        return getTransactionsObjects(ftr.getHashes());
+    }
+
     /**
      * Wrapper function for findTransactions, getTrytes and transactionObjects
      * Returns the transactionObject of a transaction hash. The input can be a valid
