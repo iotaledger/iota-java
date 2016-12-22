@@ -336,6 +336,16 @@ public class IotaAPIProxy {
         return trxs;
     }
 
+    /**
+     * Wrapper function for findTransactions, getTrytes and transactionObjects
+     * Returns the transactionObject of a transaction hash. The input can be a valid
+     * findTransactions input
+     *
+     * @param {object} input
+     * @method getTransactionsObjects
+     * @returns {function} callback
+     * @returns {object} success
+     **/
     public List<Transaction> findTransactionObjects(String[] input) {
         FindTransactionResponse ftr = findTransactions(input, null, null, null);
         if (ftr == null || ftr.getHashes() == null)
@@ -582,12 +592,27 @@ public class IotaAPIProxy {
         } 
         throw new IllegalStateException("Not enough balance");
     }
-    
+
+    /**
+     *   Gets the associated bundle transactions of a single transaction
+     *   Does validation of signatures, total sum as well as bundle order
+     *
+     *   @method getBundle
+     *   @param {string} transaction Hash of a tail transaction
+     *   @returns {list} bundle Transaction objects
+     **/
     public GetBundleResponse getBundle(String transaction) {
         return null; //IotaAPIUtils.getBundle(transaction);
     }
 
-
+    /**
+     *   Wrapper function for getNodeInfo and getInclusionStates
+     *
+     *   @method getLatestInclusion
+     *   @param {array} hashes
+     *   @returns {function} callback
+     *   @returns {array} state
+     **/
     public GetInclusionStateResponse getLatestInclusion(String[] hashes) {
         GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
         if (getNodeInfoResponse == null) return null;
