@@ -309,13 +309,7 @@ public class IotaAPIProxy {
         }
         return trx;
     }
-    
-    public List<Transaction> findAndGetTxs(final String addresses) {
 
-        final FindTransactionResponse res = findTransactionsByAddresses(addresses);
-        return getTransactionsObjects(res.getHashes());
-    }
-    
     /**
     *   Wrapper function for getTrytes and transactionObjects
     *   gets the trytes and transaction object from a list of transaction hashes
@@ -326,7 +320,7 @@ public class IotaAPIProxy {
     *   @returns {function} callback
     *   @returns {object} success
     **/
-    public List<Transaction> getTransactionsObjects(String ... hashes) {
+    public List<Transaction> getTransactionsObjects(String[] hashes) {
 
         if (!InputValidator.isArrayOfHashes(hashes)) {
             throw new IllegalStateException("Not an Array of Hashes: " + Arrays.toString(hashes));
@@ -340,6 +334,16 @@ public class IotaAPIProxy {
             trxs.add(Converter.transactionObject(tryte));
         }
         return trxs;
+    }
+
+    public List<Transaction> findTransactionObjects(String[] input) {
+        FindTransactionResponse ftr = findTransactions(input, null, null, null);
+        if (ftr == null || ftr.getHashes() == null)
+
+            return null;
+
+        // get the transaction objects of the transactions
+        return getTransactionsObjects(ftr.getHashes());
     }
 
     /**

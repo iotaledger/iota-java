@@ -175,4 +175,9 @@ public class IotaAPIProxyTest {
         GetInclusionStateResponse res = proxy.getLatestInclusion(new String[]{TEST_HASH});
         assertThat(res.getStates(), IsNull.notNullValue());
     }
+
+    @Test
+    public void shouldFindTransactionObjects() {
+        assertThat(proxy.findTransactionObjects(new String[]{TEST_ADDRESS_WITH_CHECKSUM}), IsNull.notNullValue());
+    }
 }
