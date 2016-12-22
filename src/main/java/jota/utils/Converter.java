@@ -4,16 +4,23 @@ import jota.model.Transaction;
 import jota.pow.Curl;
 
 import java.util.Arrays;
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Converter {
+    
+    private static final Logger log = LoggerFactory.getLogger(Converter.class);
 
-    public static final int RADIX = 3;
-    public static final int MAX_TRIT_VALUE = (RADIX - 1) / 2, MIN_TRIT_VALUE = -MAX_TRIT_VALUE;
+    private static final int RADIX = 3;
+    private static final int MAX_TRIT_VALUE = (RADIX - 1) / 2, MIN_TRIT_VALUE = -MAX_TRIT_VALUE;
 
-    public static final int NUMBER_OF_TRITS_IN_A_BYTE = 5;
-    public static final int NUMBER_OF_TRITS_IN_A_TRYTE = 3;
-    static final int[][] BYTE_TO_TRITS_MAPPINGS = new int[243][];
-    static final int[][] TRYTE_TO_TRITS_MAPPINGS = new int[27][];
+    private static final int NUMBER_OF_TRITS_IN_A_BYTE = 5;
+    private static final int NUMBER_OF_TRITS_IN_A_TRYTE = 3;
+    private static final int[][] BYTE_TO_TRITS_MAPPINGS = new int[243][];
+    private static final int[][] TRYTE_TO_TRITS_MAPPINGS = new int[27][];
 
     static {
 
@@ -146,20 +153,26 @@ public class Converter {
             }
         }
     }
-
-    public static Transaction transactionObject(String trytes) {
-        if (trytes == null) return null;
-
+    
+    public static Transaction transactionObject(final String trytes) {
+        
+        if (StringUtils.isEmpty(trytes)) {
+            log.warn("Warning: empty trytes in input for transactionObject");
+            return null;
+        }
+        
         // validity check
         for (int i = 2279; i < 2295; i++) {
             if (trytes.charAt(i) != '9') {
+                log.warn("Trytes {} does not seem a valid tryte", trytes);
                 return null;
             }
         }
+        
         int[] transactionTrits = Converter.trits(trytes);
         int[] hash = new int[90];
 
-        Curl curl = new Curl();
+        final Curl curl = new Curl(); // we need a fluent Curl.
 
         // generate the correct transaction hash
         curl.reset();

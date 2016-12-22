@@ -8,6 +8,7 @@ package jota.utils;
  * Table of IOTA units based off of the standard system of Units
  **/
 public enum IotaUnits {
+    
     IOTA("i", 0),
     KILO_IOTA("Ki", 3),
     MEGA_IOTA("Mi", 6),

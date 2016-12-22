@@ -1,17 +1,16 @@
 package jota.utils;
 
-import jota.dto.response.GetBundleResponse;
-import jota.model.Bundle;
-import jota.model.Input;
-import jota.model.Transaction;
-import org.apache.commons.lang3.NotImplementedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import jota.model.Bundle;
+import jota.model.Input;
+import jota.model.Transaction;
 
 /**
  * Client Side computation service
@@ -42,10 +41,6 @@ public class IotaAPIUtils {
             address = Checksum.addChecksum(address);
         }
         return address;
-    }
-
-    public static GetBundleResponse getBundle(final String transaction) {
-        throw new NotImplementedException("Not yet implemented");
     }
 
     public static String transactionTrytes(Transaction trx) {
@@ -82,8 +77,10 @@ public class IotaAPIUtils {
                 + trx.getNonce();
     }
 
-    public static List<String> signInputsAndReturn(String seed, List<Input> inputs, Bundle bundle,
-                                                   List<String> signatureFragments) {
+    public static List<String> signInputsAndReturn(final String seed, 
+                                                   final List<Input> inputs, 
+                                                   final Bundle bundle,
+                                                   final List<String> signatureFragments) {
         bundle.finalize();
         bundle.addTrytes(signatureFragments);
 
@@ -156,3 +153,4 @@ public class IotaAPIUtils {
         return bundleTrytes;
     }
 }
+

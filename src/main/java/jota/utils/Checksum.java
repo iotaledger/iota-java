@@ -24,7 +24,7 @@ public class Checksum {
     }
 
     private static String getAddress(String addressWithChecksum) {
-        return addressWithChecksum.substring(0, Constants.addressLengthWithoutChecksum);
+        return addressWithChecksum.substring(0, Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM);
     }
 
     public static boolean isValidChecksum(String addressWithChecksum) {
@@ -34,7 +34,7 @@ public class Checksum {
     }
 
     private static boolean isAddressWithChecksum(String addressWithChecksum) {
-        return InputValidator.checkAddress(addressWithChecksum) && addressWithChecksum.length() == Constants.addressLengthWithChecksum;
+        return InputValidator.checkAddress(addressWithChecksum) && addressWithChecksum.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM;
     }
 
     public static String calculateChecksum(String address) {

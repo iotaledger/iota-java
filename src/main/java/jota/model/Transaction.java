@@ -41,6 +41,14 @@ public class Transaction {
         this.nonce = nonce;
     }
 
+
+    public Transaction(String address, String value, String tag, String timestamp) {
+        this.address = address;
+        this.value = value;
+        this.tag = tag;
+        this.timestamp = timestamp;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

@@ -1,7 +1,6 @@
 package jota.model;
 
 import jota.pow.Curl;
-import jota.utils.Constants;
 import jota.utils.Converter;
 
 import java.util.ArrayList;
@@ -43,18 +42,14 @@ public class Bundle {
         this.length = length;
     }
 
-    public void addEntry(int signatureMessageLength, String slice, long value, String tag, long timestamp) {
+    public void addEntry(int signatureMessageLength, String address, long value, String tag, long timestamp) {
         for (int i = 0; i < signatureMessageLength; i++) {
-            //TODO
 
-/*            var transactionObject = new Object();
-            transactionObject.address = address;
-            transactionObject.value = i == 0 ? value : 0;
-            transactionObject.tag = tag;
-            transactionObject.timestamp = timestamp;
+            List<Transaction> transactions = new ArrayList<>(getTransactions());
+            transactions.add(new Transaction(address, String.valueOf(i == 0 ? value : 0), tag, String.valueOf(timestamp)));
 
-            this.bundle[this.bundle.length] = transactionObject;
-*/
+            setTransactions(transactions);
+
         }
     }
 
@@ -84,9 +79,9 @@ public class Bundle {
             while (lastIndexTrits.length < 27) {
                 lastIndexTrits[lastIndexTrits.length] = 0;
             }
+
             int[] t = Converter.trits(this.getTransactions().get(i).getAddress() + Converter.trytes(valueTrits) + this.getTransactions().get(i).getTag() + Converter.trytes(timestampTrits) + Converter.trytes(currentIndexTrits) + Converter.trytes(lastIndexTrits));
             curl.absorb(t, 0, t.length);
-
         }
 
         int[] hash = new int[90];
@@ -149,7 +144,6 @@ public class Bundle {
                     for (int j = 0; j < 27; j++) {
 
                         if (normalizedBundle[i * 27 + j] < 13) {
-
                             normalizedBundle[i * 27 + j]++;
                             break;
                         }
@@ -162,4 +156,3 @@ public class Bundle {
     }
 
 }
-

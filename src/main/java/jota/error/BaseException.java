@@ -1,30 +1,28 @@
 package jota.error;
 
-import org.apache.commons.lang3.StringUtils;
-
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
  * Created by Adrian on 09.12.2016.
  */
 public class BaseException extends Exception {
+
+    private static final long serialVersionUID = 5617085097507773343L;
+
     protected Collection<String> messages;
 
     public BaseException(String msg) {
         super(msg);
     }
 
-
     public BaseException(String msg, Exception cause) {
         super(msg, cause);
     }
 
-
     public BaseException(Collection<String> messages) {
-        super();
         this.messages = messages;
     }
-
 
     public BaseException(Collection<String> messages, Exception cause) {
         super(cause);
@@ -33,19 +31,6 @@ public class BaseException extends Exception {
 
     @Override
     public String getMessage() {
-        String msg;
-
-        if (this.messages != null && !this.messages.isEmpty()) {
-            msg = "[";
-
-            for (String message : this.messages) {
-                msg += message + ",";
-            }
-
-            msg = StringUtils.removeEnd(msg, ",") + "]";
-
-        } else msg = super.getMessage();
-
-        return msg;
+        return Arrays.toString(messages.toArray());
     }
 }
