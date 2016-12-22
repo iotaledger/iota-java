@@ -324,7 +324,7 @@ public class IotaAPIProxy {
         final GetTransactionsToApproveResponse txs = getTransactionsToApprove(minWeightMagnitude);
         
         // attach to tangle - do pow
-        final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransactionToApprove(), minWeightMagnitude, trytes);
+        final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
     
         try {
             broadcastAndStore(res.getTrytes());
