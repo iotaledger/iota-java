@@ -577,10 +577,12 @@ public class IotaAPIProxy {
 
     //  Calls getBalances and formats the output
     //  returns the final inputsObject then
-    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, 
-            final List<String> balances, long threshold, int start, int end) {
+    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, List<String> balances, long threshold, int start, int end) {
 
-        GetBalancesResponse bres = getBalances(100, addresses);
+        if (balances == null || balances.isEmpty()) {
+            GetBalancesResponse getBalancesResponse = getBalances(100, addresses);
+            balances = Arrays.asList(getBalancesResponse.getBalances());
+        }
 
         // If threshold defined, keep track of whether reached or not
         // else set default to true
