@@ -285,7 +285,7 @@ public class IotaAPIProxy {
      * @param {array} trytes
      * @param {int} depth
      * @param {int} minWeightMagnitude
-     * @return 
+     * @return
      */
     public List<Transaction> sendTrytes(final String trytes, final int minWeightMagnitude) {
         
@@ -625,6 +625,30 @@ public class IotaAPIProxy {
      **/
     public GetBundleResponse getBundle(String transaction) {
         return null; //IotaAPIUtils.getBundle(transaction);
+    }
+
+    /**
+     *   Replays a transfer by doing Proof of Work again
+     *
+     *   @method replayBundle
+     *   @param {string} tail
+     *   @param {int} depth
+     *   @param {int} minWeightMagnitude
+     *   @param {function} callback
+     *   @returns {object} analyzed Transaction objects
+     **/
+    public List<Transaction> replayTransfer(String transaction, int depth, int minWeightMagnitude) {
+
+        List<String> bundleTrytes = new ArrayList<>();
+
+        GetBundleResponse bundle = getBundle(transaction);
+
+        for (Transaction element : bundle.getTransactions()) {
+
+            bundleTrytes.add(IotaAPIUtils.transactionTrytes(element));
+        }
+
+        return sendTrytes(bundleTrytes, minWeightMagnitude);
     }
 
     /**
