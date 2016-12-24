@@ -287,8 +287,7 @@ public class IotaAPIProxy {
      * @param {int} minWeightMagnitude
      * @return
      */
-    public List<Transaction> sendTrytes(final String trytes, final int minWeightMagnitude) {
-        
+    public List<Transaction> sendTrytes(final String[] trytes, final int minWeightMagnitude) {
         final GetTransactionsToApproveResponse txs = getTransactionsToApprove(minWeightMagnitude);
         
         // attach to tangle - do pow
@@ -443,7 +442,7 @@ public class IotaAPIProxy {
 
             //  Case 1: user provided inputs
             //  Validate the inputs by calling getBalances
-            if (!inputs.isEmpty()) {
+            if (inputs != null && !inputs.isEmpty()) {
 
                 // Get list if addresses of the provided inputs
                 List<String> inputsAddresses = new ArrayList<>();
@@ -453,7 +452,6 @@ public class IotaAPIProxy {
 
                 GetBalancesResponse resbalances = getBalances(100, inputsAddresses);
                 String[] balances = resbalances.getBalances();
-                
 
                 List<Input> confirmedInputs = new ArrayList<>();
                 int totalBalance = 0; int i = 0;
@@ -502,7 +500,7 @@ public class IotaAPIProxy {
             return bundleTrytes;
         }
     }
-    
+
     /**
     *   Gets the inputs of a seed
     *
@@ -628,7 +626,7 @@ public class IotaAPIProxy {
             bundleTrytes.add(IotaAPIUtils.transactionTrytes(element));
         }
 
-        return sendTrytes(bundleTrytes.get(0), minWeightMagnitude);
+        return sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), minWeightMagnitude);
     }
 
     /**
@@ -646,6 +644,13 @@ public class IotaAPIProxy {
         String[] latestMilestone = {getNodeInfoResponse.getLatestSolidSubtangleMilestone()};
 
         return getInclusionStates(hashes, latestMilestone);
+    }
+
+    public Transaction[] sendTransfer(String seed, int depth, int minWeightMagnitude, Transfer[] transactions, Input[] inputs, String address) {
+
+        List<String> trytes = prepareTransfers(seed, Arrays.asList(transactions), address, Arrays.asList(inputs));
+        List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), minWeightMagnitude);
+        return trxs.toArray(new Transaction[trxs.size()]);
     }
 
     public static class Builder {

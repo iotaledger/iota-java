@@ -6,6 +6,7 @@ import jota.dto.response.*;
 import jota.model.Transfer;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -162,12 +163,15 @@ public class IotaAPIProxyTest {
     public void shouldPrepareTransfer() {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
-        proxy.prepareTransfers(TEST_SEED, transfers, null, null);
+        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 1, TEST_MESSAGE, TEST_TAG));
+        List<String> trytes = proxy.prepareTransfers(TEST_SEED, transfers, null, null);
+        Assert.assertNotNull(trytes);
+        assertThat(trytes.isEmpty(), Is.is(false));
     }
 
     @Test
     public void shouldSendTrytes() {
-        proxy.sendTrytes(TEST_TRYTES, 18);
+        proxy.sendTrytes(new String[]{TEST_TRYTES}, 18);
     }
 
     @Test
