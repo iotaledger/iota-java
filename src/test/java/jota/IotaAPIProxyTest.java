@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -161,8 +162,10 @@ public class IotaAPIProxyTest {
     @Test
     public void shouldPrepareTransfer() {
         List<Transfer> transfers = new ArrayList<>();
-        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
-        proxy.prepareTransfers(TEST_SEED, transfers, null, null);
+        transfers.add(new jota.model.Transfer("SEOOMCIJRDPDYDXVMUVUJPUGMNO9GGKYRTQZYPUXBKTBFWMMGXCLYPASCXF9DXEXZBVXZYZOPVGGDHJFJ", 1, TEST_MESSAGE, TEST_TAG));
+        List<String> trytes = proxy.prepareTransfers("IHDEENZYITYVYSPKAURUZAQKGVJEREFDJMYTANNXXGPZ9GJWTEOJJ9IPMXOGZNQLSNMFDSQOTZAEETUEA", transfers, null, null);
+        assertNotNull(trytes);
+        assertThat(trytes.isEmpty(), Is.is(false));
     }
 
     @Test

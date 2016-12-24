@@ -143,7 +143,7 @@ public class Converter {
                 remainder = MIN_TRIT_VALUE;
                 absoluteValue++;
             }
-            destination[offset + i] = remainder;
+            destination[offset +i ] = remainder;
         }
 
         if (value < 0) {
