@@ -33,7 +33,8 @@ public class InputValidator {
     }
 
     public static boolean isArrayOfHashes(String[] hashes) {
-        if (hashes == null) return false;
+        if (hashes == null)
+            return false;
 
         for (String hash : hashes) {
             // Check if address with checksum

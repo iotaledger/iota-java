@@ -255,7 +255,7 @@ public class IotaAPIProxy {
       getTransfers
       sendTransfer
       getBundle
-    
+
       getTransactionsObjects
       findTransactionObjects
 
@@ -335,7 +335,7 @@ public class IotaAPIProxy {
         }
         return trxs;
     }
-    
+
     /**
      * Wrapper function for findTransactions, getTrytes and transactionObjects
      * Returns the transactionObject of a transaction hash. The input can be a valid
@@ -628,7 +628,7 @@ public class IotaAPIProxy {
             bundleTrytes.add(IotaAPIUtils.transactionTrytes(element));
         }
 
-        return sendTrytes(bundleTrytes, minWeightMagnitude);
+        return sendTrytes(bundleTrytes.get(0), minWeightMagnitude);
     }
 
     /**
