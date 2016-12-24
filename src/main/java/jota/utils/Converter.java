@@ -2,13 +2,11 @@ package jota.utils;
 
 import jota.model.Transaction;
 import jota.pow.Curl;
-
-import java.util.Arrays;
-import java.util.Optional;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 public class Converter {
     
@@ -69,12 +67,39 @@ public class Converter {
     }
 
     public static int[] trits(final String trytes) {
-
         final int[] trits = new int[trytes.length() * NUMBER_OF_TRITS_IN_A_TRYTE];
-        for (int i = 0; i < trytes.length(); i++) {
-            System.arraycopy(TRYTE_TO_TRITS_MAPPINGS[Constants.TRYTE_ALPHABET.indexOf(trytes.charAt(i))], 0, trits, i * NUMBER_OF_TRITS_IN_A_TRYTE, NUMBER_OF_TRITS_IN_A_TRYTE);
-        }
 
+        if (InputValidator.isValue(trytes)) {
+
+            int value = Integer.parseInt(trytes);
+
+            long absoluteValue = value < 0 ? -value : value;
+
+            while (absoluteValue > 0) {
+
+                int remainder = (int) (absoluteValue % RADIX);
+                absoluteValue /= RADIX;
+
+                if (remainder > MAX_TRIT_VALUE) {
+                    remainder = MIN_TRIT_VALUE;
+                    absoluteValue++;
+                }
+
+                trits[trits.length] = remainder;
+            }
+            if (value < 0) {
+
+                for (int i = 0; i < trits.length; i++) {
+
+                    trits[i] = -trits[i];
+                }
+            }
+        } else {
+
+            for (int i = 0; i < trytes.length(); i++) {
+                System.arraycopy(TRYTE_TO_TRITS_MAPPINGS[Constants.TRYTE_ALPHABET.indexOf(trytes.charAt(i))], 0, trits, i * NUMBER_OF_TRITS_IN_A_TRYTE, NUMBER_OF_TRITS_IN_A_TRYTE);
+            }
+        }
         return trits;
     }
 
