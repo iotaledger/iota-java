@@ -495,10 +495,10 @@ public class IotaAPIProxy {
 
             List<Transaction> trxb = bundle.getTransactions();
             List<String> bundleTrytes = new ArrayList<>();
+
             for (Transaction tx : trxb) {
-                jota.utils.IotaAPIUtils.transactionTrytes(tx);
+                bundleTrytes.add(jota.utils.IotaAPIUtils.transactionTrytes(tx));
             }
-            Collections.reverse(bundleTrytes);
             return bundleTrytes;
         }
     }
