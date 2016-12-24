@@ -285,7 +285,7 @@ public class IotaAPIProxy {
      * @param {array} trytes
      * @param {int} depth
      * @param {int} minWeightMagnitude
-     * @return 
+     * @return
      */
     public List<Transaction> sendTrytes(final String trytes, final int minWeightMagnitude) {
         
@@ -335,7 +335,7 @@ public class IotaAPIProxy {
         }
         return trxs;
     }
-
+    
     /**
      * Wrapper function for findTransactions, getTrytes and transactionObjects
      * Returns the transactionObject of a transaction hash. The input can be a valid
@@ -557,10 +557,12 @@ public class IotaAPIProxy {
 
     //  Calls getBalances and formats the output
     //  returns the final inputsObject then
-    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, 
-            final List<String> balances, long threshold, int start, int end) {
+    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, List<String> balances, long threshold, int start, int end) {
 
-        GetBalancesResponse bres = getBalances(100, addresses);
+        if (balances == null || balances.isEmpty()) {
+            GetBalancesResponse getBalancesResponse = getBalances(100, addresses);
+            balances = Arrays.asList(getBalancesResponse.getBalances());
+        }
 
         // If threshold defined, keep track of whether reached or not
         // else set default to true
@@ -603,6 +605,30 @@ public class IotaAPIProxy {
      **/
     public GetBundleResponse getBundle(String transaction) {
         return null; //IotaAPIUtils.getBundle(transaction);
+    }
+
+    /**
+     *   Replays a transfer by doing Proof of Work again
+     *
+     *   @method replayBundle
+     *   @param {string} tail
+     *   @param {int} depth
+     *   @param {int} minWeightMagnitude
+     *   @param {function} callback
+     *   @returns {object} analyzed Transaction objects
+     **/
+    public List<Transaction> replayTransfer(String transaction, int depth, int minWeightMagnitude) {
+
+        List<String> bundleTrytes = new ArrayList<>();
+
+        GetBundleResponse bundle = getBundle(transaction);
+
+        for (Transaction element : bundle.getTransactions()) {
+
+            bundleTrytes.add(IotaAPIUtils.transactionTrytes(element));
+        }
+
+        return sendTrytes(bundleTrytes, minWeightMagnitude);
     }
 
     /**
