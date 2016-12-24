@@ -60,25 +60,14 @@ public class Bundle {
 
         for (int i = 0; i < this.getTransactions().size(); i++) {
 
-            int[] valueTrits = Converter.trits(this.getTransactions().get(i).getValue());
-            while (valueTrits.length < 81) {
-                valueTrits[valueTrits.length] = 0;
-            }
+            int[] valueTrits = Converter.trits(this.getTransactions().get(i).getValue(),81);
 
-            int[] timestampTrits = Converter.trits(this.getTransactions().get(i).getTimestamp());
-            while (timestampTrits.length < 27) {
-                timestampTrits[timestampTrits.length] = 0;
-            }
+            int[] timestampTrits = Converter.trits(this.getTransactions().get(i).getTimestamp(), 27);
 
-            int[] currentIndexTrits = Converter.trits(this.getTransactions().get(i).setCurrentIndex("" + i));
-            while (currentIndexTrits.length < 27) {
-                currentIndexTrits[currentIndexTrits.length] = 0;
-            }
+            int[] currentIndexTrits = Converter.trits(this.getTransactions().get(i).setCurrentIndex("" + i), 27);
 
-            int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).setLastIndex("" + (this.getTransactions().size() - 1)));
-            while (lastIndexTrits.length < 27) {
-                lastIndexTrits[lastIndexTrits.length] = 0;
-            }
+            int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).setLastIndex("" + (this.getTransactions().size() - 1)), 27);
+
 
             int[] t = Converter.trits(this.getTransactions().get(i).getAddress() + Converter.trytes(valueTrits) + this.getTransactions().get(i).getTag() + Converter.trytes(timestampTrits) + Converter.trytes(currentIndexTrits) + Converter.trytes(lastIndexTrits));
             curl.absorb(t, 0, t.length);

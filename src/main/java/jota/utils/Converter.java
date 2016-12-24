@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Converter {
     
@@ -66,6 +68,30 @@ public class Converter {
         }
     }
 
+    public static int[] convertToIntArray(List<Integer> integers)
+    {
+        int[] ret = new int[integers.size()];
+        for (int i=0; i < ret.length; i++)
+        {
+            ret[i] = integers.get(i).intValue();
+        }
+        return ret;
+    }
+
+    public static int[] trits(final String trytes, int length) {
+        int[] trits = trits(trytes);
+
+        List<Integer> tritsList = new LinkedList<>();
+
+        for(int i : trits)
+            tritsList.add(i);
+
+        while(tritsList.size() < length)
+            tritsList.add(0);
+
+        return convertToIntArray(tritsList);
+    }
+
     public static int[] trits(final String trytes) {
         final int[] trits = new int[trytes.length() * NUMBER_OF_TRITS_IN_A_TRYTE];
 
@@ -74,6 +100,8 @@ public class Converter {
             int value = Integer.parseInt(trytes);
 
             long absoluteValue = value < 0 ? -value : value;
+
+            int position = 0;
 
             while (absoluteValue > 0) {
 
@@ -85,7 +113,7 @@ public class Converter {
                     absoluteValue++;
                 }
 
-                trits[trits.length] = remainder;
+                trits[position++] = remainder;
             }
             if (value < 0) {
 

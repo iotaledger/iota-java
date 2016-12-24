@@ -44,25 +44,16 @@ public class IotaAPIUtils {
     }
 
     public static String transactionTrytes(Transaction trx) {
-        int[] valueTrits = Converter.trits(trx.getValue());
-        while (valueTrits.length < 81) {
-            valueTrits[valueTrits.length] = 0;
-        }
+        int[] valueTrits = Converter.trits(trx.getValue(), 81);
 
-        int[] timestampTrits = Converter.trits(trx.getTimestamp());
-        while (timestampTrits.length < 27) {
-            timestampTrits[timestampTrits.length] = 0;
-        }
+        int[] timestampTrits = Converter.trits(trx.getTimestamp(), 27);
 
-        int[] currentIndexTrits = Converter.trits(trx.getTimestamp());
-        while (currentIndexTrits.length < 27) {
-            currentIndexTrits[currentIndexTrits.length] = 0;
-        }
 
-        int[] lastIndexTrits = Converter.trits(trx.getCurrentIndex());
-        while (lastIndexTrits.length < 27) {
-            lastIndexTrits[lastIndexTrits.length] = 0;
-        }
+        int[] currentIndexTrits = Converter.trits(trx.getTimestamp(), 27);
+
+
+        int[] lastIndexTrits = Converter.trits(trx.getCurrentIndex(), 27);
+
 
         return trx.getSignatureFragments()
                 + trx.getAddress()
