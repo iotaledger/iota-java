@@ -1,48 +1,7 @@
 package jota;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import jota.dto.request.IotaAttachToTangleRequest;
-import jota.dto.request.IotaBroadcastTransactionRequest;
-import jota.dto.request.IotaCommandRequest;
-import jota.dto.request.IotaFindTransactionsRequest;
-import jota.dto.request.IotaGetBalancesRequest;
-import jota.dto.request.IotaGetInclusionStateRequest;
-import jota.dto.request.IotaGetTransactionsToApproveRequest;
-import jota.dto.request.IotaGetTrytesRequest;
-import jota.dto.request.IotaNeighborsRequest;
-import jota.dto.request.IotaStoreTransactionsRequest;
-import jota.dto.response.AddNeighborsResponse;
-import jota.dto.response.BroadcastTransactionsResponse;
-import jota.dto.response.FindTransactionResponse;
-import jota.dto.response.GetAttachToTangleResponse;
-import jota.dto.response.GetBalancesAndFormatResponse;
-import jota.dto.response.GetBalancesResponse;
-import jota.dto.response.GetBundleResponse;
-import jota.dto.response.GetInclusionStateResponse;
-import jota.dto.response.GetNeighborsResponse;
-import jota.dto.response.GetNewAddressResponse;
-import jota.dto.response.GetNodeInfoResponse;
-import jota.dto.response.GetTipsResponse;
-import jota.dto.response.GetTransactionsToApproveResponse;
-import jota.dto.response.GetTrytesResponse;
-import jota.dto.response.InterruptAttachingToTangleResponse;
-import jota.dto.response.RemoveNeighborsResponse;
-import jota.dto.response.StoreTransactionsResponse;
+import jota.dto.request.*;
+import jota.dto.response.*;
 import jota.model.Bundle;
 import jota.model.Input;
 import jota.model.Transaction;
@@ -51,10 +10,19 @@ import jota.utils.Converter;
 import jota.utils.InputValidator;
 import jota.utils.IotaAPIUtils;
 import okhttp3.OkHttpClient;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * IotaAPIProxy Builder. Usage:
@@ -282,15 +250,15 @@ public class IotaAPIProxy {
      * sendTrytes
      * prepareTransfers
      * getInputs
-       
+     * getLatestInclusion
+
       getTransfers
       sendTransfer
       getBundle
     
       getTransactionsObjects
       findTransactionObjects
-      getLatestInclusion
-       
+
       replayBundle
       broadcastBundle
       getAccountData
@@ -317,14 +285,14 @@ public class IotaAPIProxy {
      * @param {array} trytes
      * @param {int} depth
      * @param {int} minWeightMagnitude
-     * @return 
+     * @return
      */
     public List<Transaction> sendTrytes(final String trytes, final int minWeightMagnitude) {
         
         final GetTransactionsToApproveResponse txs = getTransactionsToApprove(minWeightMagnitude);
         
         // attach to tangle - do pow
-        final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransactionToApprove(), minWeightMagnitude, trytes);
+        final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
     
         try {
             broadcastAndStore(res.getTrytes());
@@ -341,13 +309,7 @@ public class IotaAPIProxy {
         }
         return trx;
     }
-    
-    public List<Transaction> findAndGetTxs(final String addresses) {
 
-        final FindTransactionResponse res = findTransactionsByAddresses(addresses);
-        return getTransactionsObjects(res.getHashes());
-    }
-    
     /**
     *   Wrapper function for getTrytes and transactionObjects
     *   gets the trytes and transaction object from a list of transaction hashes
@@ -358,7 +320,7 @@ public class IotaAPIProxy {
     *   @returns {function} callback
     *   @returns {object} success
     **/
-    public List<Transaction> getTransactionsObjects(String ... hashes) {
+    public List<Transaction> getTransactionsObjects(String[] hashes) {
 
         if (!InputValidator.isArrayOfHashes(hashes)) {
             throw new IllegalStateException("Not an Array of Hashes: " + Arrays.toString(hashes));
@@ -372,6 +334,26 @@ public class IotaAPIProxy {
             trxs.add(Converter.transactionObject(tryte));
         }
         return trxs;
+    }
+    
+    /**
+     * Wrapper function for findTransactions, getTrytes and transactionObjects
+     * Returns the transactionObject of a transaction hash. The input can be a valid
+     * findTransactions input
+     *
+     * @param {object} input
+     * @method getTransactionsObjects
+     * @returns {function} callback
+     * @returns {object} success
+     **/
+    public List<Transaction> findTransactionObjects(String[] input) {
+        FindTransactionResponse ftr = findTransactions(input, null, null, null);
+        if (ftr == null || ftr.getHashes() == null)
+
+            return null;
+
+        // get the transaction objects of the transactions
+        return getTransactionsObjects(ftr.getHashes());
     }
 
     /**
@@ -413,7 +395,7 @@ public class IotaAPIProxy {
                 // Get total length, message / maxLength (2187 trytes)
                 signatureMessageLength += Math.floor(transfer.getMessage().length() / 2187);
 
-                String msgCopy = new String(transfer.getMessage());
+                String msgCopy = transfer.getMessage();
 
                 // While there is still a message, copy it
                 while (!msgCopy.isEmpty()) {
@@ -575,10 +557,12 @@ public class IotaAPIProxy {
 
     //  Calls getBalances and formats the output
     //  returns the final inputsObject then
-    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, 
-            final List<String> balances, long threshold, int start, int end) {
+    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, List<String> balances, long threshold, int start, int end) {
 
-        GetBalancesResponse bres = getBalances(100, addresses);
+        if (balances == null || balances.isEmpty()) {
+            GetBalancesResponse getBalancesResponse = getBalances(100, addresses);
+            balances = Arrays.asList(getBalancesResponse.getBalances());
+        }
 
         // If threshold defined, keep track of whether reached or not
         // else set default to true
@@ -598,7 +582,7 @@ public class IotaAPIProxy {
                 // Increase totalBalance of all aggregated inputs
                 totalBalance += balance;
 
-                if (thresholdReached == false && totalBalance >= threshold) {
+                if (!thresholdReached && totalBalance >= threshold) {
                     thresholdReached = true;
                     break;
                 }
@@ -610,11 +594,60 @@ public class IotaAPIProxy {
         } 
         throw new IllegalStateException("Not enough balance");
     }
-    
+
+    /**
+     *   Gets the associated bundle transactions of a single transaction
+     *   Does validation of signatures, total sum as well as bundle order
+     *
+     *   @method getBundle
+     *   @param {string} transaction Hash of a tail transaction
+     *   @returns {list} bundle Transaction objects
+     **/
     public GetBundleResponse getBundle(String transaction) {
         return null; //IotaAPIUtils.getBundle(transaction);
     }
-    
+
+    /**
+     *   Replays a transfer by doing Proof of Work again
+     *
+     *   @method replayBundle
+     *   @param {string} tail
+     *   @param {int} depth
+     *   @param {int} minWeightMagnitude
+     *   @param {function} callback
+     *   @returns {object} analyzed Transaction objects
+     **/
+    public List<Transaction> replayTransfer(String transaction, int depth, int minWeightMagnitude) {
+
+        List<String> bundleTrytes = new ArrayList<>();
+
+        GetBundleResponse bundle = getBundle(transaction);
+
+        for (Transaction element : bundle.getTransactions()) {
+
+            bundleTrytes.add(IotaAPIUtils.transactionTrytes(element));
+        }
+
+        return sendTrytes(bundleTrytes, minWeightMagnitude);
+    }
+
+    /**
+     *   Wrapper function for getNodeInfo and getInclusionStates
+     *
+     *   @method getLatestInclusion
+     *   @param {array} hashes
+     *   @returns {function} callback
+     *   @returns {array} state
+     **/
+    public GetInclusionStateResponse getLatestInclusion(String[] hashes) {
+        GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
+        if (getNodeInfoResponse == null) return null;
+
+        String[] latestMilestone = {getNodeInfoResponse.getLatestSolidSubtangleMilestone()};
+
+        return getInclusionStates(hashes, latestMilestone);
+    }
+
     public static class Builder {
 
         String protocol, host, port;
