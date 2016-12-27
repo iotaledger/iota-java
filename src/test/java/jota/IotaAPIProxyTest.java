@@ -3,6 +3,9 @@ package jota;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jota.dto.response.*;
+import jota.error.ArgumentException;
+import jota.error.InvalidBundleException;
+import jota.error.InvalidSignatureException;
 import jota.model.Transfer;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
@@ -183,5 +186,16 @@ public class IotaAPIProxyTest {
     @Test
     public void shouldFindTransactionObjects() {
         assertThat(proxy.findTransactionObjects(new String[]{TEST_ADDRESS_WITH_CHECKSUM}), IsNull.notNullValue());
+    }
+
+    @Test
+    public void shouldGetBundle() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
+        assertThat(proxy.getBundle(TEST_HASH), IsNull.notNullValue());
+    }
+
+    @Test
+    public void shouldGetTrasfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
+        assertThat(proxy.getTransfers(TEST_SEED, 0, 2, true), IsNull.notNullValue());
+        assertThat(proxy.getTransfers(TEST_SEED, 0, 2, false), IsNull.notNullValue());
     }
 }
