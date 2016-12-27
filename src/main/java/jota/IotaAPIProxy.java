@@ -2,13 +2,15 @@ package jota;
 
 import jota.dto.request.*;
 import jota.dto.response.*;
-import jota.model.Bundle;
-import jota.model.Input;
-import jota.model.Transaction;
-import jota.model.Transfer;
+import jota.error.ArgumentException;
+import jota.error.InvalidBundleException;
+import jota.error.InvalidSignatureException;
+import jota.model.*;
+import jota.pow.Curl;
 import jota.utils.Converter;
 import jota.utils.InputValidator;
 import jota.utils.IotaAPIUtils;
+import jota.utils.Signing;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,13 +28,13 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * IotaAPIProxy Builder. Usage:
- *
+ * <p>
  * IotaApiProxy api = IotaApiProxy.Builder
  * .protocol("http")
  * .nodeAddress("localhost")
  * .port(12345)
  * .build();
- *
+ * <p>
  * GetNodeInfoResponse response = api.getNodeInfo();
  *
  * @author davassi
@@ -79,8 +81,8 @@ public class IotaAPIProxy {
         final String nodeUrl = protocol + "://" + host + ":" + port;
 
         final OkHttpClient client = new OkHttpClient.Builder()
-                .readTimeout(120, TimeUnit.SECONDS)
-                .connectTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(5000, TimeUnit.SECONDS)
+                .connectTimeout(5000, TimeUnit.SECONDS)
                 .build();
 
         final Retrofit retrofit = new Retrofit.Builder()
@@ -174,9 +176,9 @@ public class IotaAPIProxy {
         final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses));
         return wrapCheckedException(res).body();
     }
-    
+
     public GetBalancesResponse getBalances(Integer threshold, List<String> addresses) {
-        return getBalances(threshold, addresses.toArray(new String[] {}));
+        return getBalances(threshold, addresses.toArray(new String[]{}));
     }
 
     public InterruptAttachingToTangleResponse interruptAttachingToTangle() {
@@ -215,7 +217,7 @@ public class IotaAPIProxy {
     public GetNewAddressResponse getNewAddress(final String seed, final int index, final boolean checksum, final int total, final boolean returnAll) {
 
         final List<String> allAddresses = new ArrayList<>();
-        
+
         // If total number of addresses to generate is supplied, simply generate
         // and return the list of all addresses
         if (total != 0) {
@@ -227,10 +229,10 @@ public class IotaAPIProxy {
         // No total provided: Continue calling findTransactions to see if address was 
         // already created if null, return list of addresses
         for (int i = index; ; i++) {
-            
-        	final String newAddress = IotaAPIUtils.newAddress(seed, i, checksum);
+
+            final String newAddress = IotaAPIUtils.newAddress(seed, i, checksum);
             final FindTransactionResponse response = findTransactionsByAddresses(new String[]{newAddress});
-            
+
             allAddresses.add(newAddress);
             if (response.getHashes().length == 0) {
                 break;
@@ -239,9 +241,9 @@ public class IotaAPIProxy {
 
         // If !returnAll return only the last address that was generated
         if (!returnAll) {
-        	allAddresses.subList(0, allAddresses.size()-1).clear();
+            allAddresses.subList(0, allAddresses.size() - 1).clear();
         }
-        return GetNewAddressResponse.create(allAddresses);        
+        return GetNewAddressResponse.create(allAddresses);
     }
     
     /*
@@ -263,14 +265,101 @@ public class IotaAPIProxy {
       broadcastBundle
       getAccountData
     */
-    
+
     /**
-     * 
+     *   @method getTransfers
+     *   @param {string} seed
+     *   @param {object} options
+     *       @property {int} start Starting key index
+     *       @property {int} end Ending key index
+     *       @property {bool} inclusionStates returns confirmation status of all transactions
+     *   @param {function} callback
+     *   @returns {object} success
+     **/
+    public Bundle[] getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
+        start = start != null ? 0 : start;
+        end = end == null ? null : end;
+        inclusionStates = inclusionStates != null ? inclusionStates : null;
+
+        if (start > end || end > (start + 500)) {
+            throw new ArgumentException();
+        }
+
+        GetNewAddressResponse gnr = getNewAddress(seed, start, false, end == null ? end - start : end, true);
+        if (gnr != null && gnr.getAddresses() != null) {
+            return bundlesFromAddresses(gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]), inclusionStates);
+        }
+        return null;
+    }
+
+    public Bundle[] bundlesFromAddresses(String[] addresses, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException{
+
+        List<Transaction> trxs = findTransactionObjects(addresses);
+        // set of tail transactions
+        List<String> tailTransactions = new ArrayList<>();
+        List<String> nonTailBundleHashes = new ArrayList<>();
+
+        for (Transaction trx : trxs) {
+            // Sort tail and nonTails
+            if (Long.parseLong(trx.getCurrentIndex()) == 0) {
+                tailTransactions.add(trx.getHash());
+            } else {
+                nonTailBundleHashes.add(trx.getBundle());
+            }
+        }
+        if (nonTailBundleHashes.isEmpty()) return null;
+
+        List<Transaction> bundleObjects = findTransactionObjects(addresses);
+        for (Transaction trx : bundleObjects) {
+            // Sort tail and nonTails
+            if (Long.parseLong(trx.getCurrentIndex()) == 0) {
+                tailTransactions.add(trx.getHash());
+            }
+        }
+
+        List<Bundle> finalBundles = new ArrayList<>();
+        String[] tailTxArray = tailTransactions.toArray(new String[tailTransactions.size()]);
+
+        // If inclusionStates, get the confirmation status
+        // of the tail transactions, and thus the bundles
+        if (inclusionStates) {
+            GetInclusionStateResponse gisr = getLatestInclusion(tailTxArray);
+            if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0) return null;
+            for (String trx : tailTxArray) {
+                Bundle gbr = getBundle(trx);
+                if (gbr != null && gbr.getTransactions() != null) {
+                    if (inclusionStates) {
+                        boolean thisInclusion = gisr.getStates()[Arrays.asList(tailTxArray).indexOf(trx)];
+                        for (Transaction t : gbr.getTransactions()) {
+                            t.setPersistence(thisInclusion);
+                        }
+                    }
+                    finalBundles.add(gbr);
+                }
+            }
+        }
+        Collections.sort(finalBundles, new Comparator<Bundle>() {
+            public int compare(Bundle c1, Bundle c2) {
+                if (Long.parseLong(c1.getTransactions().get(0).getTimestamp()) > Long.parseLong(c2.getTransactions().get(0).getTimestamp()))
+                    return -1;
+                if (Long.parseLong(c1.getTransactions().get(0).getTimestamp()) < Long.parseLong(c2.getTransactions().get(0).getTimestamp()))
+                    return 1;
+                return 0;
+            }
+        });
+        Bundle[] returnValue = new Bundle[finalBundles.size()];
+        for (int i = 0; i < finalBundles.size(); i++) {
+            returnValue[i] = new Bundle(finalBundles.get(i).getTransactions(), finalBundles.get(i).getTransactions().size());
+        }
+        return returnValue;
+    }
+
+    /**
      * @param trytes
      * @return a StoreTransactionsResponse
      */
-    public StoreTransactionsResponse broadcastAndStore(final String ... trytes) {
-        
+    public StoreTransactionsResponse broadcastAndStore(final String... trytes) {
+
         try {
             broadcastTransactions(trytes);
         } catch (Exception e) {
@@ -279,30 +368,31 @@ public class IotaAPIProxy {
         }
         return storeTransactions(trytes);
     }
-    
+
     /**
      * Facade method: Gets transactions to approve, attaches to Tangle, broadcasts and stores
+     *
      * @param {array} trytes
-     * @param {int} depth
-     * @param {int} minWeightMagnitude
+     * @param {int}   depth
+     * @param {int}   minWeightMagnitude
      * @return
      */
     public List<Transaction> sendTrytes(final String[] trytes, final int minWeightMagnitude) {
         final GetTransactionsToApproveResponse txs = getTransactionsToApprove(minWeightMagnitude);
-        
+
         // attach to tangle - do pow
         final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
-    
+
         try {
             broadcastAndStore(res.getTrytes());
         } catch (Exception e) {
             log.error("Impossible to sendTrytes, aborting.", e);
             throw new IllegalStateException("sendTrytes Illegal state Exception");
         }
-        
+
         //return Arrays.stream(res.getTrytes()).map(Converter::transactionObject).collect(Collectors.toList());
         final List<Transaction> trx = new ArrayList<>();
-        
+
         for (final String tx : Arrays.asList(res.getTrytes())) {
             trx.add(Converter.transactionObject(tx));
         }
@@ -310,15 +400,15 @@ public class IotaAPIProxy {
     }
 
     /**
-    *   Wrapper function for getTrytes and transactionObjects
-    *   gets the trytes and transaction object from a list of transaction hashes
-    *
-    *   @method getTransactionsObjects
-    *   @param {array} hashes
-     * @return 
-    *   @returns {function} callback
-    *   @returns {object} success
-    **/
+     * Wrapper function for getTrytes and transactionObjects
+     * gets the trytes and transaction object from a list of transaction hashes
+     *
+     * @param {array} hashes
+     * @return
+     * @method getTransactionsObjects
+     * @returns {function} callback
+     * @returns {object} success
+     **/
     public List<Transaction> getTransactionsObjects(String[] hashes) {
 
         if (!InputValidator.isArrayOfHashes(hashes)) {
@@ -326,9 +416,9 @@ public class IotaAPIProxy {
         }
 
         final GetTrytesResponse trytesResponse = getTrytes(hashes);
-        
+
         final List<Transaction> trxs = new ArrayList<>();
-        
+
         for (final String tryte : trytesResponse.getTrytes()) {
             trxs.add(Converter.transactionObject(tryte));
         }
@@ -356,18 +446,18 @@ public class IotaAPIProxy {
     }
 
     /**
-    *   Prepares transfer by generating bundle, finding and signing inputs
-    *
-    *   @method prepareTransfers
-    *   @param {string} seed
-    *   @param {object} transfers
-    *   @param {object} options
-    *       @property {array} inputs Inputs used for signing. Needs to have correct keyIndex and address value
-    *       @property {string} address Remainder address
-    *   @param {function} callback
-     * @return 
-    *   @returns {array} trytes Returns bundle trytes
-    **/
+     * Prepares transfer by generating bundle, finding and signing inputs
+     *
+     * @param {string}   seed
+     * @param {object}   transfers
+     * @param {object}   options
+     * @param {function} callback
+     * @return
+     * @method prepareTransfers
+     * @property {array} inputs Inputs used for signing. Needs to have correct keyIndex and address value
+     * @property {string} address Remainder address
+     * @returns {array} trytes Returns bundle trytes
+     **/
     public List<String> prepareTransfers(final String seed, final List<Transfer> transfers, String remainder, List<Input> inputs) {
 
         // Input validation of transfers object
@@ -378,7 +468,7 @@ public class IotaAPIProxy {
         // Create a new bundle
         final Bundle bundle = new Bundle();
         final List<String> signatureFragments = new ArrayList<>();
-        
+
         int totalValue = 0;
         String tag;
 
@@ -398,7 +488,7 @@ public class IotaAPIProxy {
 
                 // While there is still a message, copy it
                 while (!msgCopy.isEmpty()) {
-                    
+
                     String fragment = StringUtils.substring(msgCopy, 0, 2187);
                     msgCopy = StringUtils.substring(msgCopy, 2187, msgCopy.length());
 
@@ -454,7 +544,8 @@ public class IotaAPIProxy {
                 String[] balances = resbalances.getBalances();
 
                 List<Input> confirmedInputs = new ArrayList<>();
-                int totalBalance = 0; int i = 0;
+                int totalBalance = 0;
+                int i = 0;
                 for (String balance : balances) {
                     long thisBalance = Integer.parseInt(balance);
                     totalBalance += thisBalance;
@@ -495,23 +586,23 @@ public class IotaAPIProxy {
             List<String> bundleTrytes = new ArrayList<>();
 
             for (Transaction tx : trxb) {
-                bundleTrytes.add(jota.utils.IotaAPIUtils.transactionTrytes(tx));
+                bundleTrytes.add(Converter.transactionTrytes(tx));
             }
             return bundleTrytes;
         }
     }
 
     /**
-    *   Gets the inputs of a seed
-    *
-    *   @method getInputs
-    *   @param {string} seed
-    *   @param {object} options
-    *       @property {int} start Starting key index
-    *       @property {int} end Ending key index
-    *       @property {int} threshold Min balance required
-    *   @param {function} callback
-    **/
+     * Gets the inputs of a seed
+     *
+     * @param {string}   seed
+     * @param {object}   options
+     * @param {function} callback
+     * @method getInputs
+     * @property {int} start Starting key index
+     * @property {int} end Ending key index
+     * @property {int} threshold Min balance required
+     **/
     public GetBalancesAndFormatResponse getInputs(final String seed, final List<String> balances, int start, int end, int threshold) {
 
         // validate the seed
@@ -564,18 +655,19 @@ public class IotaAPIProxy {
 
         // If threshold defined, keep track of whether reached or not
         // else set default to true
-        boolean thresholdReached = threshold != 0 ? false : true; int i = -1;
-        
+        boolean thresholdReached = threshold != 0 ? false : true;
+        int i = -1;
+
         List<Input> inputs = new ArrayList<>();
         long totalBalance = 0;
-        
+
         for (String address : addresses) {
-            
+
             long balance = Long.parseLong(balances.get(++i));
-            
+
             if (balance > 0) {
-                final Input newEntry = new Input(address, balance, start+i);
-                                        
+                final Input newEntry = new Input(address, balance, start + i);
+
                 inputs.add(newEntry);
                 // Increase totalBalance of all aggregated inputs
                 totalBalance += balance;
@@ -589,53 +681,121 @@ public class IotaAPIProxy {
 
         if (thresholdReached) {
             return GetBalancesAndFormatResponse.create(inputs, totalBalance);
-        } 
+        }
         throw new IllegalStateException("Not enough balance");
     }
 
     /**
-     *   Gets the associated bundle transactions of a single transaction
-     *   Does validation of signatures, total sum as well as bundle order
+     * Gets the associated bundle transactions of a single transaction
+     * Does validation of signatures, total sum as well as bundle order
      *
-     *   @method getBundle
-     *   @param {string} transaction Hash of a tail transaction
-     *   @returns {list} bundle Transaction objects
+     * @param {string} transaction Hash of a tail transaction
+     * @method getBundle
+     * @returns {list} bundle Transaction objects
      **/
-    public GetBundleResponse getBundle(String transaction) {
-        return null; //IotaAPIUtils.getBundle(transaction);
+    public Bundle getBundle(String transaction) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
+
+        Bundle bundle = traverseBundle(transaction, null, null);
+        if (bundle == null) {
+            return null;
+        }
+
+        long totalSum = 0;
+        int lastIndex = 0;
+        String bundleHash = bundle.getTransactions().get(0).getBundle();
+
+        Curl curl = new Curl();
+        curl.reset();
+
+        List<Signature> signaturesToValidate = new ArrayList<>();
+
+        for (int i = 0; i < bundle.getTransactions().size(); i++) {
+            Transaction trx = bundle.getTransactions().get(i);
+            Long bundleValue = Long.parseLong(trx.getValue());
+            totalSum += bundleValue;
+
+            if (i != Integer.parseInt(bundle.getTransactions().get(i).getCurrentIndex())) {
+                throw new ArgumentException("Invalid Bundle");
+            }
+
+            String trxTrytes = Converter.transactionTrytes(trx).substring(2187, 2187 + 162);
+
+            // Absorb bundle hash + value + timestamp + lastIndex + currentIndex trytes.
+            curl.absorb(Converter.trits(trxTrytes));
+            // Check if input transaction
+            if (bundleValue < 0) {
+                String address = trx.getAddress();
+                Signature sig = new Signature();
+                sig.setAddress(address);
+                sig.getSignatureFragments().add(trx.getSignatureFragments());
+
+                // Find the subsequent txs with the remaining signature fragment
+                for (int y = i; i < bundle.getTransactions().size() - 1; i++) {
+                    Transaction newBundleTx = bundle.getTransactions().get(i + 1);
+
+                    // Check if new tx is part of the signature fragment
+                    if (newBundleTx.getAddress().equals(address) && Long.parseLong(newBundleTx.getValue()) == 0) {
+                        sig.getSignatureFragments().add(newBundleTx.getSignatureFragments());
+                    }
+                }
+                signaturesToValidate.add(sig);
+            }
+        }
+
+        // Check for total sum, if not equal 0 return error
+        if (totalSum != 0) throw new InvalidBundleException("Invalid Bundle Sum");
+
+        int[] bundleFromTrxs = curl.squeeze(new int[243]);
+        String bundleFromTxString = Converter.trytes(bundleFromTrxs);
+
+        // Check if bundle hash is the same as returned by tx object
+        if (!bundleFromTxString.equals(bundleHash)) throw new InvalidBundleException("Invalid Bundle Hash");
+        // Last tx in the bundle should have currentIndex === lastIndex
+        if (!bundle.getTransactions().get(bundle.getLength() - 1).getCurrentIndex().equals(bundle.getTransactions().get(bundle.getLength() - 1).getLastIndex()))
+            throw new InvalidBundleException("Invalid Bundle");
+
+        // Validate the signatures
+        for (int i = 0; i < signaturesToValidate.size(); i++) {
+
+            boolean isValidSignature = Signing.validateSignatures(signaturesToValidate.get(i).getAddress(), signaturesToValidate.get(i).getSignatureFragments().toArray(new String[signaturesToValidate.size()]), bundleHash);
+
+            if (!isValidSignature) throw new InvalidSignatureException();
+        }
+
+        return bundle;
     }
 
     /**
-     *   Replays a transfer by doing Proof of Work again
+     * Replays a transfer by doing Proof of Work again
      *
-     *   @method replayBundle
-     *   @param {string} tail
-     *   @param {int} depth
-     *   @param {int} minWeightMagnitude
-     *   @param {function} callback
-     *   @returns {object} analyzed Transaction objects
+     * @param {string}   tail
+     * @param {int}      depth
+     * @param {int}      minWeightMagnitude
+     * @param {function} callback
+     * @method replayBundle
+     * @returns {object} analyzed Transaction objects
      **/
-    public List<Transaction> replayTransfer(String transaction, int depth, int minWeightMagnitude) {
+    public List<Transaction> replayTransfer(String transaction, int depth, int minWeightMagnitude) throws InvalidBundleException, InvalidSignatureException, ArgumentException {
 
         List<String> bundleTrytes = new ArrayList<>();
 
-        GetBundleResponse bundle = getBundle(transaction);
+        Bundle bundle = getBundle(transaction);
 
         for (Transaction element : bundle.getTransactions()) {
 
-            bundleTrytes.add(IotaAPIUtils.transactionTrytes(element));
+            bundleTrytes.add(Converter.transactionTrytes(element));
         }
 
         return sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), minWeightMagnitude);
     }
 
     /**
-     *   Wrapper function for getNodeInfo and getInclusionStates
+     * Wrapper function for getNodeInfo and getInclusionStates
      *
-     *   @method getLatestInclusion
-     *   @param {array} hashes
-     *   @returns {function} callback
-     *   @returns {array} state
+     * @param {array} hashes
+     * @method getLatestInclusion
+     * @returns {function} callback
+     * @returns {array} state
      **/
     public GetInclusionStateResponse getLatestInclusion(String[] hashes) {
         GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
@@ -648,9 +808,55 @@ public class IotaAPIProxy {
 
     public Transaction[] sendTransfer(String seed, int depth, int minWeightMagnitude, Transfer[] transactions, Input[] inputs, String address) {
 
-        List<String> trytes = prepareTransfers(seed, Arrays.asList(transactions), address, Arrays.asList(inputs));
+        List<String> trytes = prepareTransfers(seed, Arrays.asList(transactions), address, inputs == null ? null : Arrays.asList(inputs));
         List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), minWeightMagnitude);
         return trxs.toArray(new Transaction[trxs.size()]);
+    }
+
+    /**
+     * Basically traverse the Bundle by going down the trunkTransactions until
+     * the bundle hash of the transaction is no longer the same. In case the input
+     * transaction hash is not a tail, we return an error.
+     *
+     * @param {string} trunkTx Hash of a trunk or a tail transaction  of a bundle
+     * @param {string} bundleHash
+     * @param {array}  bundle List of bundles to be populated
+     * @method traverseBundle
+     * @returns {array} bundle Transaction objects
+     **/
+    public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
+        GetTrytesResponse gtr = getTrytes(trunkTx);
+        if (gtr != null & gtr.getTrytes().length != 0) {
+            Transaction trx = Converter.transactionObject(gtr.getTrytes()[0]);
+            if (trx == null || trx.getBundle() == null) {
+                throw new ArgumentException("Invalid trytes, could not create object");
+            }
+            // If first transaction to search is not a tail, return error
+            if (bundleHash == null && Integer.parseInt(trx.getCurrentIndex()) != 0) {
+                throw new ArgumentException("Invalid tail transaction supplied.");
+            }
+            // If no bundle hash, define it
+            if (bundleHash == null) {
+                bundleHash = trx.getBundle();
+            }
+            // If different bundle hash, return with bundle
+            if (bundleHash != trx.getBundle()) {
+                return bundle;
+            }
+            // If only one bundle element, return
+            if (Integer.parseInt(trx.getLastIndex()) == 0 && Integer.parseInt(trx.getCurrentIndex()) == 0) {
+                return new Bundle(Arrays.asList(trx), 1);
+            }
+            // Define new trunkTransaction for search
+            trunkTx = trx.getTrunkTransaction();
+            // Add transaction object to bundle
+            bundle.getTransactions().add(trx);
+
+            // Continue traversing with new trunkTx
+            return traverseBundle(trunkTx, bundleHash, bundle);
+        } else {
+            return null;
+        }
     }
 
     public static class Builder {

@@ -10,4 +10,8 @@ public class ArgumentException extends BaseException {
     public ArgumentException() {
         super("Wrong arguments passed to function");
     }
+
+    public ArgumentException(String msg) {
+        super(msg);
+    }
 }
