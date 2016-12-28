@@ -545,8 +545,8 @@ public class IotaAPIProxy {
                     inputsAddresses.add(i.getAddress());
                 }
 
-                GetBalancesResponse resbalances = getBalances(100, inputsAddresses);
-                String[] balances = resbalances.getBalances();
+                GetBalancesResponse balancesResponse = getBalances(100, inputsAddresses);
+                String[] balances = balancesResponse.getBalances();
 
                 List<Input> confirmedInputs = new ArrayList<>();
                 int totalBalance = 0;
@@ -816,7 +816,7 @@ public class IotaAPIProxy {
 
         List<String> trytes = prepareTransfers(seed, transfers, address, inputs == null ? null : Arrays.asList(inputs));
         List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), minWeightMagnitude);
-        return SendTransferResponse.create(true);
+        return SendTransferResponse.create(trxs.get(0).getPersistence());
     }
 
     /**
@@ -832,7 +832,7 @@ public class IotaAPIProxy {
      **/
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
         GetTrytesResponse gtr = getTrytes(trunkTx);
-        if (gtr != null & gtr.getTrytes().length != 0) {
+        if (gtr != null && gtr.getTrytes().length != 0) {
             Transaction trx = Converter.transactionObject(gtr.getTrytes()[0]);
             if (trx == null || trx.getBundle() == null) {
                 throw new ArgumentException("Invalid trytes, could not create object");
@@ -851,7 +851,7 @@ public class IotaAPIProxy {
             }
             // If only one bundle element, return
             if (Integer.parseInt(trx.getLastIndex()) == 0 && Integer.parseInt(trx.getCurrentIndex()) == 0) {
-                return new Bundle(Arrays.asList(trx), 1);
+                return new Bundle(Collections.singletonList(trx), 1);
             }
             // Define new trunkTransaction for search
             trunkTx = trx.getTrunkTransaction();
