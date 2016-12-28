@@ -287,7 +287,8 @@ public class IotaAPIProxy {
 
         GetNewAddressResponse gnr = getNewAddress(seed, start, false, end == null ? end - start : end, true);
         if (gnr != null && gnr.getAddresses() != null) {
-            return GetTransferResponse.create(bundlesFromAddresses(gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]), inclusionStates));
+            Bundle[] bundles = bundlesFromAddresses(gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]), inclusionStates);
+            return GetTransferResponse.create(bundles);
         }
         return null;
     }
@@ -322,24 +323,26 @@ public class IotaAPIProxy {
 
         // If inclusionStates, get the confirmation status
         // of the tail transactions, and thus the bundles
+        GetInclusionStateResponse gisr = null;
         if (inclusionStates) {
-            GetInclusionStateResponse gisr = getLatestInclusion(tailTxArray);
+            gisr = getLatestInclusion(tailTxArray);
             if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0) return null;
-            for (String trx : tailTxArray) {
+        }
+        for (String trx : tailTxArray) {
 
-                GetBundleResponse bundleResponse = getBundle(trx);
-                Bundle gbr = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
-                if (gbr != null && gbr.getTransactions() != null) {
-                    if (inclusionStates) {
-                        boolean thisInclusion = gisr.getStates()[Arrays.asList(tailTxArray).indexOf(trx)];
-                        for (Transaction t : gbr.getTransactions()) {
-                            t.setPersistence(thisInclusion);
-                        }
+            GetBundleResponse bundleResponse = getBundle(trx);
+            Bundle gbr = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
+            if (gbr != null && gbr.getTransactions() != null) {
+                if (inclusionStates) {
+                    boolean thisInclusion = gisr.getStates()[Arrays.asList(tailTxArray).indexOf(trx)];
+                    for (Transaction t : gbr.getTransactions()) {
+                        t.setPersistence(thisInclusion);
                     }
-                    finalBundles.add(gbr);
                 }
+                finalBundles.add(gbr);
             }
         }
+
         Collections.sort(finalBundles, new Comparator<Bundle>() {
             public int compare(Bundle c1, Bundle c2) {
                 if (Long.parseLong(c1.getTransactions().get(0).getTimestamp()) > Long.parseLong(c2.getTransactions().get(0).getTimestamp()))
@@ -472,7 +475,7 @@ public class IotaAPIProxy {
         final List<String> signatureFragments = new ArrayList<>();
 
         int totalValue = 0;
-        String tag;
+        String tag = "";
 
         //  Iterate over all transfers, get totalValue
         //  and prepare the signatureFragments, message and tag
@@ -565,7 +568,7 @@ public class IotaAPIProxy {
                     throw new IllegalStateException("Not enough balance");
                 }
 
-                return IotaAPIUtils.signInputsAndReturn(seed, confirmedInputs, bundle, signatureFragments);
+                return addRemainder(seed, confirmedInputs, bundle, tag, totalValue, null, signatureFragments);
             }
 
             //  Case 2: Get inputs deterministically
@@ -576,7 +579,7 @@ public class IotaAPIProxy {
 
                 GetBalancesAndFormatResponse newinputs = getInputs(seed, Collections.EMPTY_LIST, 0, 0, totalValue);
                 // If inputs with enough balance
-                return IotaAPIUtils.signInputsAndReturn(seed, newinputs.getInput(), bundle, signatureFragments);
+                return addRemainder(seed, newinputs.getInput(), bundle, tag, totalValue, null, signatureFragments);
             }
         } else {
 
@@ -697,7 +700,7 @@ public class IotaAPIProxy {
      **/
     public GetBundleResponse getBundle(String transaction) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
 
-        Bundle bundle = traverseBundle(transaction, null, null);
+        Bundle bundle = traverseBundle(transaction, null, new Bundle());
         if (bundle == null) {
             return null;
         }
@@ -746,8 +749,8 @@ public class IotaAPIProxy {
 
         // Check for total sum, if not equal 0 return error
         if (totalSum != 0) throw new InvalidBundleException("Invalid Bundle Sum");
-
-        int[] bundleFromTrxs = curl.squeeze(new int[243]);
+        int[] bundleFromTrxs = new int[243];
+        curl.squeeze(bundleFromTrxs);
         String bundleFromTxString = Converter.trytes(bundleFromTrxs);
 
         // Check if bundle hash is the same as returned by tx object
@@ -852,6 +855,8 @@ public class IotaAPIProxy {
             // Define new trunkTransaction for search
             trunkTx = trx.getTrunkTransaction();
             // Add transaction object to bundle
+            //if (bundle == null)
+            //    bundle = new Bundle();
             bundle.getTransactions().add(trx);
 
             // Continue traversing with new trunkTx

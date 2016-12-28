@@ -93,7 +93,7 @@ public class Bundle {
         for (int i = 0; i < this.getTransactions().size(); i++) {
 
             // Fill empty signatureMessageFragment
-            this.getTransactions().get(i).setSignatureFragments(!signatureFragments.get(i).isEmpty() ? signatureFragments.get(i) : emptySignatureFragment);
+            this.getTransactions().get(i).setSignatureFragments((signatureFragments.size() <= i || signatureFragments.get(i).isEmpty()) ? emptySignatureFragment : signatureFragments.get(i));
             // Fill empty trunkTransaction
             this.getTransactions().get(i).setTrunkTransaction(emptyHash);
 

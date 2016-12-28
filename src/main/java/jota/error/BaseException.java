@@ -1,5 +1,6 @@
 package jota.error;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -14,6 +15,10 @@ public class BaseException extends Exception {
 
     public BaseException(String msg) {
         super(msg);
+        if (messages == null) {
+            messages = new ArrayList<>();
+        }
+        messages.add(msg);
     }
 
     public BaseException(String msg, Exception cause) {

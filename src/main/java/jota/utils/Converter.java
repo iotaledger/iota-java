@@ -246,7 +246,7 @@ public class Converter {
         }
         
         int[] transactionTrits = Converter.trits(trytes);
-        int[] hash = new int[90];
+        int[] hash = new int[243];
 
         final Curl curl = new Curl(); // we need a fluent Curl.
 

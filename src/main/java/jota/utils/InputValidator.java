@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import jota.model.Transaction;
 import jota.model.Transfer;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * Created by pinpong on 02.12.16.
@@ -29,7 +30,7 @@ public class InputValidator {
     }
     
     public static boolean isValue(final String value) {
-        return StringUtils.isNumeric(value);
+        return NumberUtils.isNumber(value);
     }
 
     public static boolean isArrayOfHashes(String[] hashes) {
