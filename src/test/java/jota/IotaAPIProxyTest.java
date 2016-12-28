@@ -51,7 +51,7 @@ public class IotaAPIProxyTest {
         GetNodeInfoResponse nodeInfo = proxy.getNodeInfo();
         assertThat(nodeInfo.getAppVersion(), IsNull.notNullValue());
         assertThat(nodeInfo.getAppName(), IsNull.notNullValue());
-        //assertThat(nodeInfo.getJreVersion(), IsNull.notNullValue());
+        assertThat(nodeInfo.getJreVersion(), IsNull.notNullValue());
         assertThat(nodeInfo.getJreAvailableProcessors(), IsNull.notNullValue());
         assertThat(nodeInfo.getJreFreeMemory(), IsNull.notNullValue());
         assertThat(nodeInfo.getJreMaxMemory(), IsNull.notNullValue());
