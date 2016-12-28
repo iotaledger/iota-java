@@ -270,13 +270,13 @@ public class IotaAPIProxy {
      *   @method getTransfers
      *   @param {string} seed
      *   @param {object} options
-     *       @property {int} start Starting key index
+     *       @param {function} callback
+     *   @property {int} start Starting key index
      *       @property {int} end Ending key index
      *       @property {bool} inclusionStates returns confirmation status of all transactions
-     *   @param {function} callback
      *   @returns {object} success
      **/
-    public Bundle[] getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
+    public GetTransferResponse getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
         start = start != null ? 0 : start;
         end = end == null ? null : end;
         inclusionStates = inclusionStates != null ? inclusionStates : null;
@@ -287,7 +287,7 @@ public class IotaAPIProxy {
 
         GetNewAddressResponse gnr = getNewAddress(seed, start, false, end == null ? end - start : end, true);
         if (gnr != null && gnr.getAddresses() != null) {
-            return bundlesFromAddresses(gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]), inclusionStates);
+            return GetTransferResponse.create(bundlesFromAddresses(gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]), inclusionStates));
         }
         return null;
     }
@@ -808,11 +808,11 @@ public class IotaAPIProxy {
         return getInclusionStates(hashes, latestMilestone);
     }
 
-    public Transaction[] sendTransfer(String seed, int depth, int minWeightMagnitude, Transfer[] transactions, Input[] inputs, String address) {
+    public SendTransferResponse sendTransfer(String seed, int depth, int minWeightMagnitude, Transfer[] transactions, Input[] inputs, String address) {
 
         List<String> trytes = prepareTransfers(seed, Arrays.asList(transactions), address, inputs == null ? null : Arrays.asList(inputs));
         List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), minWeightMagnitude);
-        return trxs.toArray(new Transaction[trxs.size()]);
+        return SendTransferResponse.create(trxs.toArray(new Transaction[trxs.size()]));
     }
 
     /**
