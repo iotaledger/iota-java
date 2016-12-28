@@ -593,7 +593,8 @@ public class IotaAPIProxy {
             for (Transaction tx : trxb) {
                 bundleTrytes.add(Converter.transactionTrytes(tx));
             }
-            return bundleTrytes;
+            Collections.reverse(bundleTrytes);
+            return bundleTrytes ;
         }
     }
 
@@ -735,7 +736,7 @@ public class IotaAPIProxy {
                 sig.getSignatureFragments().add(trx.getSignatureFragments());
 
                 // Find the subsequent txs with the remaining signature fragment
-                for (int y = i; i < bundle.getTransactions().size() - 1; i++) {
+                for (int y = i; y < bundle.getTransactions().size() - 1; y++) {
                     Transaction newBundleTx = bundle.getTransactions().get(i + 1);
 
                     // Check if new tx is part of the signature fragment
@@ -845,7 +846,7 @@ public class IotaAPIProxy {
                 bundleHash = trx.getBundle();
             }
             // If different bundle hash, return with bundle
-            if (bundleHash != trx.getBundle()) {
+            if (!bundleHash.equals(trx.getBundle())) {
                 return bundle;
             }
             // If only one bundle element, return
@@ -855,8 +856,6 @@ public class IotaAPIProxy {
             // Define new trunkTransaction for search
             trunkTx = trx.getTrunkTransaction();
             // Add transaction object to bundle
-            //if (bundle == null)
-            //    bundle = new Bundle();
             bundle.getTransactions().add(trx);
 
             // Continue traversing with new trunkTx
