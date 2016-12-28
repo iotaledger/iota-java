@@ -7,15 +7,14 @@ import java.util.List;
 
 public class GetBundleResponse extends AbstractResponse {
 
-    public GetBundleResponse(){
-
-    }
-
-    public GetBundleResponse(List<Transaction> trxs){
-        this.transactions = trxs;
-    }
-
     private List<Transaction> transactions = new ArrayList<>();
+
+    public static GetBundleResponse create (List<Transaction> transactions){
+        GetBundleResponse res = new GetBundleResponse();
+        res.transactions = transactions;
+        return res;
+    }
+
 
     public List<Transaction> getTransactions() {
         return transactions;

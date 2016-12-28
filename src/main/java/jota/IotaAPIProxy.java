@@ -693,7 +693,7 @@ public class IotaAPIProxy {
      * @method getBundle
      * @returns {list} bundle Transaction objects
      **/
-    public Bundle getBundle(String transaction) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
+    public GetBundleResponse getBundle(String transaction) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
 
         Bundle bundle = traverseBundle(transaction, null, null);
         if (bundle == null) {
@@ -762,7 +762,7 @@ public class IotaAPIProxy {
             if (!isValidSignature) throw new InvalidSignatureException();
         }
 
-        return bundle;
+        return GetBundleResponse.create(bundle.getTransactions());
     }
 
     /**
