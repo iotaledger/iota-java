@@ -326,7 +326,9 @@ public class IotaAPIProxy {
             GetInclusionStateResponse gisr = getLatestInclusion(tailTxArray);
             if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0) return null;
             for (String trx : tailTxArray) {
-                Bundle gbr = getBundle(trx);
+
+                GetBundleResponse bundleResponse = getBundle(trx);
+                Bundle gbr = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
                 if (gbr != null && gbr.getTransactions() != null) {
                     if (inclusionStates) {
                         boolean thisInclusion = gisr.getStates()[Arrays.asList(tailTxArray).indexOf(trx)];
@@ -779,8 +781,8 @@ public class IotaAPIProxy {
 
         List<String> bundleTrytes = new ArrayList<>();
 
-        Bundle bundle = getBundle(transaction);
-
+        GetBundleResponse bundleResponse = getBundle(transaction);
+        Bundle bundle = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
         for (Transaction element : bundle.getTransactions()) {
 
             bundleTrytes.add(Converter.transactionTrytes(element));
