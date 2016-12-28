@@ -2,6 +2,8 @@ package jota.utils;
 
 import java.util.*;
 
+import jota.IotaAPIProxy;
+import jota.dto.response.GetNewAddressResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,56 +40,6 @@ public class IotaAPIUtils {
             address = Checksum.addChecksum(address);
         }
         return address;
-    }
-
-    public static List<String> addRemainder(final String seed,
-                                            final List<Input> inputs,
-                                            final Bundle bundle,
-                                            final String tag,
-                                            final long totalValue,
-                                            final String remainderAddress,
-                                            final List<String> signatureFragments) {
-        for (int i = 0; i < inputs.size(); i++) {
-            long thisBalance = inputs.get(i).getBalance();
-            long totalTransferValue = totalValue;
-            long toSubtract = 0 - thisBalance;
-            long timestamp = (new Date()).getTime();
-
-            // Add input as bundle entry
-            bundle.addEntry(2, inputs.get(i).getAddress(), toSubtract, tag, timestamp);
-            // If there is a remainder value
-            // Add extra output to send remaining funds to
-
-            if (thisBalance >= totalTransferValue) {
-                long remainder = thisBalance - totalTransferValue;
-
-                // If user has provided remainder address
-                // Use it to send remaining funds to
-                if (remainder > 0 && remainderAddress != null) {
-                    // Remainder bundle entry
-                    bundle.addEntry(1, remainderAddress, remainder, tag, timestamp);
-                    // Final function for signing inputs
-                    return signInputsAndReturn(seed, inputs, bundle, signatureFragments);
-                } else if (remainder > 0) {
-                    // Generate a new Address by calling getNewAddress
-                    String address = newAddress(seed, 0, false);
-                    // Remainder bundle entry
-                    bundle.addEntry(1, address, remainder, tag, timestamp);
-                    // Final function for signing inputs
-                    return signInputsAndReturn(seed, inputs, bundle, signatureFragments);
-                } else {
-                    // If there is no remainder, do not add transaction to bundle
-                    // simply sign and return
-                    return signInputsAndReturn(seed, inputs, bundle, signatureFragments);
-                }
-
-                // If multiple inputs provided, subtract the totalTransferValue by
-                // the inputs balance
-            } else {
-                totalTransferValue -= thisBalance;
-            }
-
-        }
     }
 
     public static List<String> signInputsAndReturn(final String seed,

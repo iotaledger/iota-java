@@ -216,7 +216,7 @@ public class IotaAPIProxy {
      */
     public GetNewAddressResponse getNewAddress(final String seed, final int index, final boolean checksum, final int total, final boolean returnAll) {
 
-        final List<String> allAddresses = new ArrayList<>();
+        List<String> allAddresses = new ArrayList<>();
 
         // If total number of addresses to generate is supplied, simply generate
         // and return the list of all addresses
@@ -241,7 +241,7 @@ public class IotaAPIProxy {
 
         // If !returnAll return only the last address that was generated
         if (!returnAll) {
-            allAddresses.subList(0, allAddresses.size() - 1).clear();
+            allAddresses = allAddresses.subList(allAddresses.size() - 2, allAddresses.size() - 1);
         }
         return GetNewAddressResponse.create(allAddresses);
     }
@@ -267,14 +267,14 @@ public class IotaAPIProxy {
     */
 
     /**
-     *   @method getTransfers
-     *   @param {string} seed
-     *   @param {object} options
-     *       @param {function} callback
-     *   @property {int} start Starting key index
-     *       @property {int} end Ending key index
-     *       @property {bool} inclusionStates returns confirmation status of all transactions
-     *   @returns {object} success
+     * @param {string}   seed
+     * @param {object}   options
+     * @param {function} callback
+     * @method getTransfers
+     * @property {int} start Starting key index
+     * @property {int} end Ending key index
+     * @property {bool} inclusionStates returns confirmation status of all transactions
+     * @returns {object} success
      **/
     public GetTransferResponse getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
         start = start != null ? 0 : start;
@@ -292,7 +292,7 @@ public class IotaAPIProxy {
         return null;
     }
 
-    public Bundle[] bundlesFromAddresses(String[] addresses, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException{
+    public Bundle[] bundlesFromAddresses(String[] addresses, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
 
         List<Transaction> trxs = findTransactionObjects(addresses);
         // set of tail transactions
@@ -808,11 +808,11 @@ public class IotaAPIProxy {
         return getInclusionStates(hashes, latestMilestone);
     }
 
-    public SendTransferResponse sendTransfer(String seed, int depth, int minWeightMagnitude, Transfer[] transactions, Input[] inputs, String address) {
+    public SendTransferResponse sendTransfer(String seed, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String address) {
 
-        List<String> trytes = prepareTransfers(seed, Arrays.asList(transactions), address, inputs == null ? null : Arrays.asList(inputs));
+        List<String> trytes = prepareTransfers(seed, transfers, address, inputs == null ? null : Arrays.asList(inputs));
         List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), minWeightMagnitude);
-        return SendTransferResponse.create(trxs.toArray(new Transaction[trxs.size()]));
+        return SendTransferResponse.create(true);
     }
 
     /**
@@ -859,6 +859,58 @@ public class IotaAPIProxy {
         } else {
             return null;
         }
+    }
+
+    public List<String> addRemainder(final String seed,
+                                     final List<Input> inputs,
+                                     final Bundle bundle,
+                                     final String tag,
+                                     final long totalValue,
+                                     final String remainderAddress,
+                                     final List<String> signatureFragments) {
+        for (int i = 0; i < inputs.size(); i++) {
+            long thisBalance = inputs.get(i).getBalance();
+            long totalTransferValue = totalValue;
+            long toSubtract = 0 - thisBalance;
+            long timestamp = (new Date()).getTime();
+
+            // Add input as bundle entry
+            bundle.addEntry(2, inputs.get(i).getAddress(), toSubtract, tag, timestamp);
+            // If there is a remainder value
+            // Add extra output to send remaining funds to
+
+            if (thisBalance >= totalTransferValue) {
+                long remainder = thisBalance - totalTransferValue;
+
+                // If user has provided remainder address
+                // Use it to send remaining funds to
+                if (remainder > 0 && remainderAddress != null) {
+                    // Remainder bundle entry
+                    bundle.addEntry(1, remainderAddress, remainder, tag, timestamp);
+                    // Final function for signing inputs
+                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments);
+                } else if (remainder > 0) {
+                    // Generate a new Address by calling getNewAddress
+
+                    GetNewAddressResponse res = getNewAddress(seed, 0, false, 0, false);
+                    // Remainder bundle entry
+                    bundle.addEntry(1, res.getAddresses().get(0), remainder, tag, timestamp);
+
+                    // Final function for signing inputs
+                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments);
+                } else {
+                    // If there is no remainder, do not add transaction to bundle
+                    // simply sign and return
+                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments);
+                }
+
+                // If multiple inputs provided, subtract the totalTransferValue by
+                // the inputs balance
+            } else {
+                totalTransferValue -= thisBalance;
+            }
+        }
+        return null;
     }
 
     public static class Builder {

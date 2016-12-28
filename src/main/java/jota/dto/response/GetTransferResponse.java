@@ -15,7 +15,7 @@ public class GetTransferResponse {
 
     public static GetTransferResponse create(Bundle[] transfers) {
         GetTransferResponse res = new GetTransferResponse();
-        res.transfers = transfers;
+        //res.transfers = transfers;
         return res;
     }
 

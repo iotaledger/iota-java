@@ -93,11 +93,10 @@ public class Converter {
     }
 
     public static int[] trits(final String trytes) {
-        final int[] trits = new int[trytes.length() * NUMBER_OF_TRITS_IN_A_TRYTE];
-
+        final List<Integer> trits = new LinkedList<>();
         if (InputValidator.isValue(trytes)) {
 
-            int value = Integer.parseInt(trytes);
+            long value = Long.parseLong(trytes);
 
             long absoluteValue = value < 0 ? -value : value;
 
@@ -113,22 +112,21 @@ public class Converter {
                     absoluteValue++;
                 }
 
-                trits[position++] = remainder;
+                trits.add(position++,remainder);
             }
             if (value < 0) {
-
-                for (int i = 0; i < trits.length; i++) {
-
-                    trits[i] = -trits[i];
+                for (int i = 0; i < trits.size(); i++) {
+                    trits.set(i,-trits.get(i));
                 }
             }
         } else {
-
+            int[] d = new int[3 * trytes.length()];
             for (int i = 0; i < trytes.length(); i++) {
-                System.arraycopy(TRYTE_TO_TRITS_MAPPINGS[Constants.TRYTE_ALPHABET.indexOf(trytes.charAt(i))], 0, trits, i * NUMBER_OF_TRITS_IN_A_TRYTE, NUMBER_OF_TRITS_IN_A_TRYTE);
+                System.arraycopy(TRYTE_TO_TRITS_MAPPINGS[Constants.TRYTE_ALPHABET.indexOf(trytes.charAt(i))], 0, d, i * NUMBER_OF_TRITS_IN_A_TRYTE, NUMBER_OF_TRITS_IN_A_TRYTE);
             }
+            return d;
         }
-        return trits;
+        return convertToIntArray(trits);
     }
 
     public static void copyTrits(final long value, final int[] destination, final int offset, final int size) {
@@ -213,10 +211,10 @@ public class Converter {
         int[] timestampTrits = Converter.trits(trx.getTimestamp(), 27);
 
 
-        int[] currentIndexTrits = Converter.trits(trx.getTimestamp(), 27);
+        int[] currentIndexTrits = Converter.trits(trx.getCurrentIndex(), 27);
 
 
-        int[] lastIndexTrits = Converter.trits(trx.getCurrentIndex(), 27);
+        int[] lastIndexTrits = Converter.trits(trx.getLastIndex(), 27);
 
 
         return trx.getSignatureFragments()

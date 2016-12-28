@@ -46,10 +46,9 @@ public class Bundle {
         for (int i = 0; i < signatureMessageLength; i++) {
 
             List<Transaction> transactions = new ArrayList<>(getTransactions());
-            transactions.add(new Transaction(address, String.valueOf(i == 0 ? value : 0), tag, String.valueOf(timestamp)));
-
+            Transaction trx = new Transaction(address, String.valueOf(i == 0 ? value : 0), tag, String.valueOf(timestamp));
+            transactions.add(trx);
             setTransactions(transactions);
-
         }
     }
 
@@ -60,7 +59,7 @@ public class Bundle {
 
         for (int i = 0; i < this.getTransactions().size(); i++) {
 
-            int[] valueTrits = Converter.trits(this.getTransactions().get(i).getValue(),81);
+            int[] valueTrits = Converter.trits(this.getTransactions().get(i).getValue(), 81);
 
             int[] timestampTrits = Converter.trits(this.getTransactions().get(i).getTimestamp(), 27);
 
@@ -73,7 +72,7 @@ public class Bundle {
             curl.absorb(t, 0, t.length);
         }
 
-        int[] hash = new int[90];
+        int[] hash = new int[243];
         curl.squeeze(hash, 0, hash.length);
         String hashInTrytes = Converter.trytes(hash);
 
@@ -94,7 +93,7 @@ public class Bundle {
         for (int i = 0; i < this.getTransactions().size(); i++) {
 
             // Fill empty signatureMessageFragment
-            this.getTransactions().get(i).setSignatureFragments(signatureFragments.get(i) == null ? signatureFragments.get(i) : emptySignatureFragment);
+            this.getTransactions().get(i).setSignatureFragments(!signatureFragments.get(i).isEmpty() ? signatureFragments.get(i) : emptySignatureFragment);
             // Fill empty trunkTransaction
             this.getTransactions().get(i).setTrunkTransaction(emptyHash);
 
