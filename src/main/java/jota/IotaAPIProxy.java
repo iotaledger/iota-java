@@ -305,16 +305,20 @@ public class IotaAPIProxy {
             if (Long.parseLong(trx.getCurrentIndex()) == 0) {
                 tailTransactions.add(trx.getHash());
             } else {
-                nonTailBundleHashes.add(trx.getBundle());
+                if(nonTailBundleHashes.indexOf(trx.getBundle()) == -1){
+                    nonTailBundleHashes.add(trx.getBundle());
+                }
             }
         }
         if (nonTailBundleHashes.isEmpty()) return null;
 
-        List<Transaction> bundleObjects = findTransactionObjects(addresses);
+        List<Transaction>  bundleObjects = findTransactionObjectsByBundle(nonTailBundleHashes.toArray(new String[nonTailBundleHashes.size()]));
         for (Transaction trx : bundleObjects) {
             // Sort tail and nonTails
             if (Long.parseLong(trx.getCurrentIndex()) == 0) {
-                tailTransactions.add(trx.getHash());
+                if(tailTransactions.indexOf(trx.getHash()) == -1) {
+                    tailTransactions.add(trx.getHash());
+                }
             }
         }
 
@@ -443,7 +447,25 @@ public class IotaAPIProxy {
     public List<Transaction> findTransactionObjects(String[] input) {
         FindTransactionResponse ftr = findTransactions(input, null, null, null);
         if (ftr == null || ftr.getHashes() == null)
+            return null;
 
+        // get the transaction objects of the transactions
+        return getTransactionsObjects(ftr.getHashes());
+    }
+
+    /**
+     * Wrapper function for findTransactions, getTrytes and transactionObjects
+     * Returns the transactionObject of a transaction hash. The input can be a valid
+     * findTransactions input
+     *
+     * @param {object} input
+     * @method getTransactionsObjects
+     * @returns {function} callback
+     * @returns {object} success
+     **/
+    public List<Transaction> findTransactionObjectsByBundle(String[] input) {
+        FindTransactionResponse ftr = findTransactions(null, null, null, input);
+        if (ftr == null || ftr.getHashes() == null)
             return null;
 
         // get the transaction objects of the transactions
@@ -594,7 +616,7 @@ public class IotaAPIProxy {
                 bundleTrytes.add(Converter.transactionTrytes(tx));
             }
             Collections.reverse(bundleTrytes);
-            return bundleTrytes ;
+            return bundleTrytes;
         }
     }
 
@@ -725,7 +747,7 @@ public class IotaAPIProxy {
             }
 
             String trxTrytes = Converter.transactionTrytes(trx).substring(2187, 2187 + 162);
-
+            //System.out.println("Bundlesize "+bundle.getTransactions().size()+" "+trxTrytes);
             // Absorb bundle hash + value + timestamp + lastIndex + currentIndex trytes.
             curl.absorb(Converter.trits(trxTrytes));
             // Check if input transaction
@@ -757,6 +779,7 @@ public class IotaAPIProxy {
         // Check if bundle hash is the same as returned by tx object
         if (!bundleFromTxString.equals(bundleHash)) throw new InvalidBundleException("Invalid Bundle Hash");
         // Last tx in the bundle should have currentIndex === lastIndex
+        bundle.setLength(bundle.getTransactions().size());
         if (!bundle.getTransactions().get(bundle.getLength() - 1).getCurrentIndex().equals(bundle.getTransactions().get(bundle.getLength() - 1).getLastIndex()))
             throw new InvalidBundleException("Invalid Bundle");
 
@@ -832,6 +855,9 @@ public class IotaAPIProxy {
      **/
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
         GetTrytesResponse gtr = getTrytes(trunkTx);
+        System.out.println("GetTrytesRequest "+trunkTx);
+        System.out.println("GetTrytesResponse "+gtr.getTrytes()[0]);
+
         if (gtr != null && gtr.getTrytes().length != 0) {
             Transaction trx = Converter.transactionObject(gtr.getTrytes()[0]);
             if (trx == null || trx.getBundle() == null) {

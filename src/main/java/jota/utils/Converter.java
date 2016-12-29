@@ -194,6 +194,15 @@ public class Converter {
         return value;
     }
 
+    public static long longValue(final int[] trits) {
+        long value = 0;
+
+        for (int i = trits.length; i-- > 0; ) {
+            value = value * 3 + trits[i];
+        }
+        return value;
+    }
+
     public static void increment(final int[] trits, final int size) {
 
         for (int i = 0; i < size; i++) {
@@ -260,7 +269,7 @@ public class Converter {
         trx.setHash(Converter.trytes(hash));
         trx.setSignatureFragments(trytes.substring(0, 2187));
         trx.setAddress(trytes.substring(2187, 2268));
-        trx.setValue("" + Converter.value(Arrays.copyOfRange(transactionTrits, 6804, 6837)));
+        trx.setValue("" + Converter.longValue(Arrays.copyOfRange(transactionTrits, 6804, 6837)));
         trx.setTag(trytes.substring(2295, 2322));
         trx.setTimestamp("" + Converter.value(Arrays.copyOfRange(transactionTrits, 6966, 6993)));
         trx.setCurrentIndex("" + Converter.value(Arrays.copyOfRange(transactionTrits, 6993, 7020)));

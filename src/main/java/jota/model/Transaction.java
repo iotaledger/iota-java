@@ -157,4 +157,12 @@ public class Transaction {
     public void setPersistence(Boolean persistence) {
         this.persistence = persistence;
     }
+
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (((Transaction) obj).getHash().equals(this.getHash())) return true;
+        return false;
+    }
 }
