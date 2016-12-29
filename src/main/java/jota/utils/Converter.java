@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Converter {
-    
+
     private static final Logger log = LoggerFactory.getLogger(Converter.class);
 
     private static final int RADIX = 3;
@@ -90,6 +90,13 @@ public class Converter {
             tritsList.add(0);
 
         return convertToIntArray(tritsList);
+    }
+    public static int[] tritsString(final String trytes){
+        int[] d = new int[3 * trytes.length()];
+        for (int i = 0; i < trytes.length(); i++) {
+            System.arraycopy(TRYTE_TO_TRITS_MAPPINGS[Constants.TRYTE_ALPHABET.indexOf(trytes.charAt(i))], 0, d, i * NUMBER_OF_TRITS_IN_A_TRYTE, NUMBER_OF_TRITS_IN_A_TRYTE);
+        }
+        return d;
     }
 
     public static int[] trits(final String trytes) {
@@ -238,14 +245,14 @@ public class Converter {
                 + trx.getBranchTransaction()
                 + trx.getNonce();
     }
-    
+
     public static Transaction transactionObject(final String trytes) {
-        
+
         if (StringUtils.isEmpty(trytes)) {
             log.warn("Warning: empty trytes in input for transactionObject");
             return null;
         }
-        
+
         // validity check
         for (int i = 2279; i < 2295; i++) {
             if (trytes.charAt(i) != '9') {
@@ -253,7 +260,7 @@ public class Converter {
                 return null;
             }
         }
-        
+
         int[] transactionTrits = Converter.trits(trytes);
         int[] hash = new int[243];
 

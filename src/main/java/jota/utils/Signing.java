@@ -163,7 +163,7 @@ public class Signing {
                 digests[i * 243 + j] = digestBuffer[j];
             }
         }
-        System.out.println(Arrays.toString(digests).replaceAll("\\s+",""));
+        //System.out.println(Arrays.toString(digests).replaceAll("\\s+",""));
         String address = Converter.trytes(address(digests));
 
         return (expectedAddress.equals(address));

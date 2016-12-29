@@ -335,6 +335,8 @@ public class IotaAPIProxy {
         for (String trx : tailTxArray) {
 
             GetBundleResponse bundleResponse = getBundle(trx);
+            // TODO: review possibly dirty WA
+            if(bundleResponse == null) continue;
             Bundle gbr = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
             if (gbr != null && gbr.getTransactions() != null) {
                 if (inclusionStates) {
@@ -349,9 +351,9 @@ public class IotaAPIProxy {
 
         Collections.sort(finalBundles, new Comparator<Bundle>() {
             public int compare(Bundle c1, Bundle c2) {
-                if (Long.parseLong(c1.getTransactions().get(0).getTimestamp()) > Long.parseLong(c2.getTransactions().get(0).getTimestamp()))
-                    return -1;
                 if (Long.parseLong(c1.getTransactions().get(0).getTimestamp()) < Long.parseLong(c2.getTransactions().get(0).getTimestamp()))
+                    return -1;
+                if (Long.parseLong(c1.getTransactions().get(0).getTimestamp()) > Long.parseLong(c2.getTransactions().get(0).getTimestamp()))
                     return 1;
                 return 0;
             }
@@ -790,7 +792,7 @@ public class IotaAPIProxy {
             String address = signaturesToValidate.get(i).getAddress();
             boolean isValidSignature = Signing.validateSignatures(address, signatureFragments, bundleHash);
 
-            //if (!isValidSignature) throw new InvalidSignatureException();
+            if (!isValidSignature) throw new InvalidSignatureException();
         }
 
         return GetBundleResponse.create(bundle.getTransactions());
