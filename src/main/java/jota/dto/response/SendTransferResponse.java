@@ -3,7 +3,7 @@ package jota.dto.response;
 /**
  * Created by pinpong on 28.12.16.
  */
-public class SendTransferResponse {
+public class SendTransferResponse extends AbstractResponse {
 
     private Boolean successfully;
 
