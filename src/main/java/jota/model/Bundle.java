@@ -43,12 +43,14 @@ public class Bundle {
     }
 
     public void addEntry(int signatureMessageLength, String address, long value, String tag, long timestamp) {
-        for (int i = 0; i < signatureMessageLength; i++) {
+        if (getTransactions() == null) {
+            this.transactions = new ArrayList<>(getTransactions());
+        }
 
+        for (int i = 0; i < signatureMessageLength; i++) {
             List<Transaction> transactions = new ArrayList<>(getTransactions());
             Transaction trx = new Transaction(address, String.valueOf(i == 0 ? value : 0), tag, String.valueOf(timestamp));
-            transactions.add(trx);
-            setTransactions(transactions);
+            getTransactions().add(trx);
         }
     }
 
