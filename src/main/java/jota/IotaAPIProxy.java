@@ -763,6 +763,7 @@ public class IotaAPIProxy {
 
                     // Check if new tx is part of the signature fragment
                     if (newBundleTx.getAddress().equals(address) && Long.parseLong(newBundleTx.getValue()) == 0) {
+                        if(sig.getSignatureFragments().indexOf(newBundleTx.getSignatureFragments()) == -1)
                         sig.getSignatureFragments().add(newBundleTx.getSignatureFragments());
                     }
                 }
@@ -855,8 +856,6 @@ public class IotaAPIProxy {
      **/
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
         GetTrytesResponse gtr = getTrytes(trunkTx);
-        System.out.println("GetTrytesRequest "+trunkTx);
-        System.out.println("GetTrytesResponse "+gtr.getTrytes()[0]);
 
         if (gtr != null && gtr.getTrytes().length != 0) {
             Transaction trx = Converter.transactionObject(gtr.getTrytes()[0]);

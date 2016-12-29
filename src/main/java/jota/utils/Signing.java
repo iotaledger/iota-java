@@ -151,7 +151,7 @@ public class Signing {
         }
 
         // Get digests
-        int[] digests = new int[signatureFragments.length * 243 + 243];
+        int[] digests = new int[signatureFragments.length * 243];
 
         for (int i = 0; i < signatureFragments.length; i++) {
 

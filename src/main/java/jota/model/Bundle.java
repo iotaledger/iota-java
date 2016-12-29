@@ -106,7 +106,7 @@ public class Bundle {
     }
 
     public int[] normalizedBundle(String bundleHash) {
-        int[] normalizedBundle = new int[33 * 27 + 27];
+        int[] normalizedBundle = new int[81];
 
         for (int i = 0; i < 3; i++) {
 
