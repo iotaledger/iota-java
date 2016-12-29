@@ -28,7 +28,8 @@ public class IotaAPIProxyTest {
 
     private static Gson gson = new GsonBuilder().create();
 
-    private static final String TEST_SEED = "AAA999999999999999999999999999999999999999999999999999999999999999999999999999999";
+    private static final String TEST_SEED1 = "AAA999999999999999999999999999999999999999999999999999999999999999999999999999999";
+    private static final String TEST_SEED2 = "AAA999999999999999999999999999999999999999999999999999999999999999999999999999999";
     private static final String TEST_ADDRESS_WITHOUT_CHECKSUM = "PNGMCSNRCTRHCHPXYTPKEJYPCOWKOMRXZFHH9N9VDIKMNVAZCMIYRHVJIAZARZTUETJVFDMBEBIQE9QTH";
     private static final String TEST_ADDRESS_WITH_CHECKSUM = "PNGMCSNRCTRHCHPXYTPKEJYPCOWKOMRXZFHH9N9VDIKMNVAZCMIYRHVJIAZARZTUETJVFDMBEBIQE9QTHBFWDAOEFA";
     private static final String TEST_HASH = "OAATQS9VQLSXCLDJVJJVYUGONXAXOFMJOZNSYWRZSWECMXAQQURHQBJNLD9IOFEPGZEPEMPXCIVRX9999";
@@ -141,6 +142,16 @@ public class IotaAPIProxyTest {
     }
 
     @Test
+    public void shouldGetInputs() {
+        GetBalancesAndFormatResponse res = proxy.getInputs(TEST_SEED2, null, 0,0, 0);
+        System.out.println(res);
+        assertThat(res, IsNull.notNullValue());
+        assertThat(res.getTotalBalance(), IsNull.notNullValue());
+        assertThat(res.getInput(), IsNull.notNullValue());
+
+    }
+
+    @Test
     public void shouldGetBalances() {
         GetBalancesResponse res = proxy.getBalances(100, new String[]{TEST_ADDRESS_WITH_CHECKSUM});
         System.err.println(res);
@@ -158,7 +169,7 @@ public class IotaAPIProxyTest {
 
     @Test
     public void shouldCreateANewAddress() {
-        final GetNewAddressResponse res = proxy.getNewAddress(TEST_SEED, 0, false, 1, false);
+        final GetNewAddressResponse res = proxy.getNewAddress(TEST_SEED1, 0, false, 1, false);
         assertThat(res.getAddresses(), Is.is(Collections.singletonList(TEST_ADDRESS_WITHOUT_CHECKSUM)));
     }
 
@@ -167,7 +178,7 @@ public class IotaAPIProxyTest {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 1, TEST_MESSAGE, TEST_TAG));
-        List<String> trytes = proxy.prepareTransfers(TEST_SEED, transfers, null, null);
+        List<String> trytes = proxy.prepareTransfers(TEST_SEED1, transfers, null, null);
         Assert.assertNotNull(trytes);
         assertThat(trytes.isEmpty(), Is.is(false));
     }
@@ -194,8 +205,9 @@ public class IotaAPIProxyTest {
     }
 
     @Test
-    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
-        assertThat(proxy.getTransfers(TEST_SEED, 0, 2, true), IsNull.notNullValue());
-        assertThat(proxy.getTransfers(TEST_SEED, 0, 2, false), IsNull.notNullValue());
+    public void shouldGetTrasfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
+        GetTransferResponse gtr = proxy.getTransfers(TEST_SEED1, 0, 0, true);
+        assertThat(gtr, IsNull.notNullValue());
+        assertThat(proxy.getTransfers(TEST_SEED2, 0, 0, false), IsNull.notNullValue());
     }
 }
