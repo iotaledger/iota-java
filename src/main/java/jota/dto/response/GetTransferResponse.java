@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by pinpong on 28.12.16.
  */
-public class GetTransferResponse {
+public class GetTransferResponse  extends AbstractResponse {
 
     private Bundle[] transfers;
 
