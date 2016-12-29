@@ -11,15 +11,15 @@ import java.util.List;
  */
 public class GetTransferResponse {
 
-    private List<Transfer> transfers = new ArrayList<>();
+    private Bundle[] transfers;
 
     public static GetTransferResponse create(Bundle[] transfers) {
         GetTransferResponse res = new GetTransferResponse();
-        //res.transfers = transfers;
+        res.transfers = transfers;
         return res;
     }
 
-    public List<Transfer> getTransfers() {
+    public Bundle[]  getTransfers() {
         return transfers;
     }
 }

@@ -127,9 +127,10 @@ public class Signing {
 
             for (int j = normalizedBundleFragment[i] + 13; j-- > 0; ) {
 
-                new Curl().reset()
-                          .absorb(buffer)
-                          .squeeze(buffer);
+                Curl jCurl = new Curl();
+                jCurl.reset();
+                jCurl.absorb(buffer);
+                jCurl.squeeze(buffer);
             }
             curl.absorb(buffer);
         }
@@ -162,7 +163,7 @@ public class Signing {
                 digests[i * 243 + j] = digestBuffer[j];
             }
         }
-
+        System.out.println(Arrays.toString(digests).replaceAll("\\s+",""));
         String address = Converter.trytes(address(digests));
 
         return (expectedAddress.equals(address));

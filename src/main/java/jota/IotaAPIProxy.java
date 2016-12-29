@@ -305,18 +305,18 @@ public class IotaAPIProxy {
             if (Long.parseLong(trx.getCurrentIndex()) == 0) {
                 tailTransactions.add(trx.getHash());
             } else {
-                if(nonTailBundleHashes.indexOf(trx.getBundle()) == -1){
+                if (nonTailBundleHashes.indexOf(trx.getBundle()) == -1) {
                     nonTailBundleHashes.add(trx.getBundle());
                 }
             }
         }
         if (nonTailBundleHashes.isEmpty()) return null;
 
-        List<Transaction>  bundleObjects = findTransactionObjectsByBundle(nonTailBundleHashes.toArray(new String[nonTailBundleHashes.size()]));
+        List<Transaction> bundleObjects = findTransactionObjectsByBundle(nonTailBundleHashes.toArray(new String[nonTailBundleHashes.size()]));
         for (Transaction trx : bundleObjects) {
             // Sort tail and nonTails
             if (Long.parseLong(trx.getCurrentIndex()) == 0) {
-                if(tailTransactions.indexOf(trx.getHash()) == -1) {
+                if (tailTransactions.indexOf(trx.getHash()) == -1) {
                     tailTransactions.add(trx.getHash());
                 }
             }
@@ -763,8 +763,8 @@ public class IotaAPIProxy {
 
                     // Check if new tx is part of the signature fragment
                     if (newBundleTx.getAddress().equals(address) && Long.parseLong(newBundleTx.getValue()) == 0) {
-                        if(sig.getSignatureFragments().indexOf(newBundleTx.getSignatureFragments()) == -1)
-                        sig.getSignatureFragments().add(newBundleTx.getSignatureFragments());
+                        if (sig.getSignatureFragments().indexOf(newBundleTx.getSignatureFragments()) == -1)
+                            sig.getSignatureFragments().add(newBundleTx.getSignatureFragments());
                     }
                 }
                 signaturesToValidate.add(sig);
@@ -786,10 +786,11 @@ public class IotaAPIProxy {
 
         // Validate the signatures
         for (int i = 0; i < signaturesToValidate.size(); i++) {
+            String[] signatureFragments = signaturesToValidate.get(i).getSignatureFragments().toArray(new String[signaturesToValidate.get(i).getSignatureFragments().size()]);
+            String address = signaturesToValidate.get(i).getAddress();
+            boolean isValidSignature = Signing.validateSignatures(address, signatureFragments, bundleHash);
 
-            boolean isValidSignature = Signing.validateSignatures(signaturesToValidate.get(i).getAddress(), signaturesToValidate.get(i).getSignatureFragments().toArray(new String[signaturesToValidate.size()]), bundleHash);
-
-            if (!isValidSignature) throw new InvalidSignatureException();
+            //if (!isValidSignature) throw new InvalidSignatureException();
         }
 
         return GetBundleResponse.create(bundle.getTransactions());
