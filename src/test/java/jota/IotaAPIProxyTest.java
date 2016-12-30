@@ -205,9 +205,11 @@ public class IotaAPIProxyTest {
     }
 
     @Test
-    public void shouldGetTrasfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
-        GetTransferResponse gtr = proxy.getTransfers(TEST_SEED2, 0, 0, true);
-        assertThat(gtr, IsNull.notNullValue());
-        assertThat(proxy.getTransfers(TEST_SEED2, 0, 0, false), IsNull.notNullValue());
+    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
+        GetTransferResponse gtr = proxy.getTransfers(TEST_SEED1, 0, 0, false);
+        assertThat(gtr.getTransfers(), IsNull.notNullValue());
+
+        GetTransferResponse gtr2 = proxy.getTransfers(TEST_SEED1, 0, 0, true);
+        assertThat(gtr2.getTransfers(), IsNull.notNullValue());
     }
 }
