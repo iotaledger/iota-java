@@ -245,26 +245,6 @@ public class IotaAPIProxy {
         }
         return GetNewAddressResponse.create(allAddresses);
     }
-    
-    /*
-     * newAddress
-     * broadcastAndStore
-     * sendTrytes
-     * prepareTransfers
-     * getInputs
-     * getLatestInclusion
-
-      getTransfers
-      sendTransfer
-      getBundle
-
-      getTransactionsObjects
-      findTransactionObjects
-
-      replayBundle
-      broadcastBundle
-      getAccountData
-    */
 
     /**
      * @param {string}   seed
@@ -310,7 +290,6 @@ public class IotaAPIProxy {
                 }
             }
         }
-        if (nonTailBundleHashes.isEmpty()) return null;
 
         List<Transaction> bundleObjects = findTransactionObjectsByBundle(nonTailBundleHashes.toArray(new String[nonTailBundleHashes.size()]));
         for (Transaction trx : bundleObjects) {

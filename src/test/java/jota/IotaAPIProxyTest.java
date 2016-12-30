@@ -29,7 +29,7 @@ public class IotaAPIProxyTest {
     private static Gson gson = new GsonBuilder().create();
 
     private static final String TEST_SEED1 = "AAA999999999999999999999999999999999999999999999999999999999999999999999999999999";
-    private static final String TEST_SEED2 = "AAA999999999999999999999999999999999999999999999999999999999999999999999999999999";
+    private static final String TEST_SEED2 = "IHDEENZYITYVYSPKAURUZAQKGVJEREFDJMYTANNXXGPZ9GJWTEOJJ9IPMXOGZNQLSNMFDSQOTZAEETUEA";
     private static final String TEST_ADDRESS_WITHOUT_CHECKSUM = "PNGMCSNRCTRHCHPXYTPKEJYPCOWKOMRXZFHH9N9VDIKMNVAZCMIYRHVJIAZARZTUETJVFDMBEBIQE9QTH";
     private static final String TEST_ADDRESS_WITH_CHECKSUM = "PNGMCSNRCTRHCHPXYTPKEJYPCOWKOMRXZFHH9N9VDIKMNVAZCMIYRHVJIAZARZTUETJVFDMBEBIQE9QTHBFWDAOEFA";
     private static final String TEST_HASH = "OAATQS9VQLSXCLDJVJJVYUGONXAXOFMJOZNSYWRZSWECMXAQQURHQBJNLD9IOFEPGZEPEMPXCIVRX9999";
@@ -205,11 +205,9 @@ public class IotaAPIProxyTest {
     }
 
     @Test
-    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
-        GetTransferResponse gtr = proxy.getTransfers(TEST_SEED1, 0, 0, false);
-        assertThat(gtr.getTransfers(), IsNull.notNullValue());
-
-        GetTransferResponse gtr2 = proxy.getTransfers(TEST_SEED1, 0, 0, true);
-        assertThat(gtr2.getTransfers(), IsNull.notNullValue());
+    public void shouldGetTrasfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
+        GetTransferResponse gtr = proxy.getTransfers(TEST_SEED2, 0, 0, true);
+        assertThat(gtr, IsNull.notNullValue());
+        assertThat(proxy.getTransfers(TEST_SEED2, 0, 0, false), IsNull.notNullValue());
     }
 }

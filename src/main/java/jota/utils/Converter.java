@@ -278,9 +278,9 @@ public class Converter {
         trx.setAddress(trytes.substring(2187, 2268));
         trx.setValue("" + Converter.longValue(Arrays.copyOfRange(transactionTrits, 6804, 6837)));
         trx.setTag(trytes.substring(2295, 2322));
-        trx.setTimestamp("" + Converter.value(Arrays.copyOfRange(transactionTrits, 6966, 6993)));
-        trx.setCurrentIndex("" + Converter.value(Arrays.copyOfRange(transactionTrits, 6993, 7020)));
-        trx.setLastIndex("" + Converter.value(Arrays.copyOfRange(transactionTrits, 7020, 7047)));
+        trx.setTimestamp("" + Converter.longValue(Arrays.copyOfRange(transactionTrits, 6966, 6993)));
+        trx.setCurrentIndex("" + Converter.longValue(Arrays.copyOfRange(transactionTrits, 6993, 7020)));
+        trx.setLastIndex("" + Converter.longValue(Arrays.copyOfRange(transactionTrits, 7020, 7047)));
         trx.setBundle(trytes.substring(2349, 2430));
         trx.setTrunkTransaction(trytes.substring(2430, 2511));
         trx.setBranchTransaction(trytes.substring(2511, 2592));
