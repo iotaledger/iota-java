@@ -29,7 +29,7 @@ public class IotaAPIProxyTest {
     private static Gson gson = new GsonBuilder().create();
 
     private static final String TEST_SEED1 = "AAA999999999999999999999999999999999999999999999999999999999999999999999999999999";
-    private static final String TEST_SEED2 = "IHDEENZYITYVYSPKAURUZAQKGVJEREFDJMYTANNXXGPZ9GJWTEOJJ9IPMXOGZNQLSNMFDSQOTZAEETUEA";
+    private static final String TEST_SEED2 = "AAA999999999999999999999999999999999999999999999999999999999999999999999999999999";
     private static final String TEST_ADDRESS_WITHOUT_CHECKSUM = "PNGMCSNRCTRHCHPXYTPKEJYPCOWKOMRXZFHH9N9VDIKMNVAZCMIYRHVJIAZARZTUETJVFDMBEBIQE9QTH";
     private static final String TEST_ADDRESS_WITH_CHECKSUM = "PNGMCSNRCTRHCHPXYTPKEJYPCOWKOMRXZFHH9N9VDIKMNVAZCMIYRHVJIAZARZTUETJVFDMBEBIQE9QTHBFWDAOEFA";
     private static final String TEST_HASH = "OAATQS9VQLSXCLDJVJJVYUGONXAXOFMJOZNSYWRZSWECMXAQQURHQBJNLD9IOFEPGZEPEMPXCIVRX9999";
@@ -211,5 +211,13 @@ public class IotaAPIProxyTest {
 
         GetTransferResponse gtr2 = proxy.getTransfers(TEST_SEED1, 0, 0, true);
         assertThat(gtr2.getTransfers(), IsNull.notNullValue());
+    }
+
+    @Test
+    public void shouldSendTransfer() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
+        List<Transfer> transfers = new ArrayList<>();
+        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM, 0, "", TEST_TAG));
+        SendTransferResponse str = proxy.sendTransfer(TEST_SEED1, 18, 27, transfers, null, null);
+        assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 }
