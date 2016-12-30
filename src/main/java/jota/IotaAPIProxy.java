@@ -315,7 +315,7 @@ public class IotaAPIProxy {
 
             GetBundleResponse bundleResponse = getBundle(trx);
             // TODO: review possibly dirty WA
-            if(bundleResponse == null) continue;
+            if (bundleResponse == null) continue;
             Bundle gbr = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
             if (gbr != null && gbr.getTransactions() != null) {
                 if (inclusionStates) {
@@ -839,7 +839,12 @@ public class IotaAPIProxy {
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
         GetTrytesResponse gtr = getTrytes(trunkTx);
 
-        if (gtr != null && gtr.getTrytes().length != 0) {
+        if (gtr != null) {
+
+            if (gtr.getTrytes().length == 0) {
+                throw new ArgumentException("Bundle transactions not visible");
+            }
+
             Transaction trx = Converter.transactionObject(gtr.getTrytes()[0]);
             if (trx == null || trx.getBundle() == null) {
                 throw new ArgumentException("Invalid trytes, could not create object");
@@ -868,7 +873,7 @@ public class IotaAPIProxy {
             // Continue traversing with new trunkTx
             return traverseBundle(trunkTx, bundleHash, bundle);
         } else {
-            return null;
+            throw new ArgumentException("Get Trytes Response was null");
         }
     }
 
