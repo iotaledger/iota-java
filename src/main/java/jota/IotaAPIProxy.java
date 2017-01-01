@@ -787,7 +787,7 @@ public class IotaAPIProxy {
      * @method replayBundle
      * @returns {object} analyzed Transaction objects
      **/
-    public List<Transaction> replayTransfer(String transaction, int depth, int minWeightMagnitude) throws InvalidBundleException, InvalidSignatureException, ArgumentException {
+    public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude) throws InvalidBundleException, InvalidSignatureException, ArgumentException {
 
         List<String> bundleTrytes = new ArrayList<>();
 
@@ -798,7 +798,9 @@ public class IotaAPIProxy {
             bundleTrytes.add(Converter.transactionTrytes(element));
         }
 
-        return sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), depth, minWeightMagnitude);
+        List<Transaction> trxs = sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), depth, minWeightMagnitude);
+        return ReplayBundleResponse.create(trxs.get(0).getPersistence());
+
     }
 
     /**
