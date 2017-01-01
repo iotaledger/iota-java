@@ -1,8 +1,7 @@
 package jota.utils;
 
-import org.apache.commons.lang3.StringUtils;
-
 import jota.pow.Curl;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by pinpong on 02.12.16.
@@ -33,8 +32,12 @@ public class Checksum {
         return addressWithRecalculateChecksum.equals(addressWithChecksum);
     }
 
-    private static boolean isAddressWithChecksum(String addressWithChecksum) {
-        return InputValidator.checkAddress(addressWithChecksum) && addressWithChecksum.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM;
+    public static boolean isAddressWithChecksum(String address) {
+        return InputValidator.checkAddress(address) && address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM;
+    }
+
+    public static boolean isAddressWithoutChecksum(String address) {
+        return InputValidator.checkAddress(address) && address.length() == Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM;
     }
 
     public static String calculateChecksum(String address) {
