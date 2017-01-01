@@ -367,8 +367,8 @@ public class IotaAPIProxy {
      * @param {int}   minWeightMagnitude
      * @return
      */
-    public List<Transaction> sendTrytes(final String[] trytes, final int minWeightMagnitude) {
-        final GetTransactionsToApproveResponse txs = getTransactionsToApprove(minWeightMagnitude);
+    public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude) {
+        final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth);
 
         // attach to tangle - do pow
         final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
@@ -798,7 +798,7 @@ public class IotaAPIProxy {
             bundleTrytes.add(Converter.transactionTrytes(element));
         }
 
-        return sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), minWeightMagnitude);
+        return sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), depth, minWeightMagnitude);
     }
 
     /**
@@ -821,7 +821,7 @@ public class IotaAPIProxy {
     public SendTransferResponse sendTransfer(String seed, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String address) {
 
         List<String> trytes = prepareTransfers(seed, transfers, address, inputs == null ? null : Arrays.asList(inputs));
-        List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), minWeightMagnitude);
+        List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude);
         return SendTransferResponse.create(trxs.get(0).getPersistence());
     }
 
