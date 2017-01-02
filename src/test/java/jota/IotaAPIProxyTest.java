@@ -185,7 +185,7 @@ public class IotaAPIProxyTest {
 
     @Test
     public void shouldSendTrytes() {
-        proxy.sendTrytes(new String[]{TEST_TRYTES}, 18);
+        proxy.sendTrytes(new String[]{TEST_TRYTES}, 18, 27);
     }
 
     @Test
