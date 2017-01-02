@@ -789,7 +789,7 @@ public class IotaAPIProxy {
      * @method replayBundle
      * @returns {object} analyzed Transaction objects
      **/
-    public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude) throws InvalidBundleException, InvalidSignatureException, ArgumentException {
+    public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude) throws InvalidBundleException, ArgumentException, InvalidSignatureException {
 
         List<String> bundleTrytes = new ArrayList<>();
 
@@ -801,8 +801,18 @@ public class IotaAPIProxy {
         }
 
         List<Transaction> trxs = sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), depth, minWeightMagnitude);
-        return ReplayBundleResponse.create(trxs.get(0).getPersistence());
 
+        Boolean[] successful = new Boolean[trxs.size()];
+
+        for (int i = 0; i < trxs.size(); i++) {
+
+            final FindTransactionResponse response = findTransactionsByBundles(trxs.get(i).getBundle());
+
+
+            successful[i] = response.getHashes().length != 0;
+        }
+
+        return ReplayBundleResponse.create(successful);
     }
 
     /**
@@ -826,7 +836,17 @@ public class IotaAPIProxy {
 
         List<String> trytes = prepareTransfers(seed, transfers, address, inputs == null ? null : Arrays.asList(inputs));
         List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude);
-        return SendTransferResponse.create(trxs.get(0).getPersistence());
+
+        Boolean[] successful = new Boolean[trxs.size()];
+
+        for (int i = 0; i < trxs.size(); i++) {
+
+            final FindTransactionResponse response = findTransactionsByBundles(trxs.get(i).getBundle());
+
+            successful[i] = response.getHashes().length != 0;
+        }
+
+        return SendTransferResponse.create(successful);
     }
 
     /**

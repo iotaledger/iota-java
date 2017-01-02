@@ -5,19 +5,19 @@ package jota.dto.response;
  */
 public class SendTransferResponse extends AbstractResponse {
 
-    private Boolean successfully;
+    private Boolean[] successfully;
 
-    public static SendTransferResponse create(Boolean successfully) {
+    public static SendTransferResponse create(Boolean[] successfully) {
         SendTransferResponse res = new SendTransferResponse();
         res.successfully = successfully;
         return res;
     }
 
-    public Boolean getSuccessfully() {
+    public Boolean[] getSuccessfully() {
         return successfully;
     }
 
-    public void setSuccessfully(Boolean successfully) {
+    public void setSuccessfully(Boolean[] successfully) {
         this.successfully = successfully;
     }
 
