@@ -231,7 +231,7 @@ public class IotaAPIProxy {
         for (int i = index; ; i++) {
 
             final String newAddress = IotaAPIUtils.newAddress(seed, i, checksum);
-            final FindTransactionResponse response = findTransactionsByAddresses(new String[]{newAddress});
+            final FindTransactionResponse response = findTransactionsByAddresses(newAddress);
 
             allAddresses.add(newAddress);
             if (response.getHashes().length == 0) {
@@ -241,7 +241,9 @@ public class IotaAPIProxy {
 
         // If !returnAll return only the last address that was generated
         if (!returnAll) {
-            allAddresses = allAddresses.subList(allAddresses.size() - 2, allAddresses.size() - 1);
+
+            //allAddresses = allAddresses.subList(allAddresses.size() - 2, allAddresses.size() - 1);
+            allAddresses = allAddresses.subList(allAddresses.size() - 1, allAddresses.size());
         }
         return GetNewAddressResponse.create(allAddresses);
     }
