@@ -328,9 +328,9 @@ public class IotaAPIProxy {
                     }
                     finalBundles.add(gbr);
                 }
-            // If error returned from getBundle, simply ignore it because the bundle was most likely incorrect
-            }catch(Exception e){
-                log.warn("GetBundleError: ",e);
+                // If error returned from getBundle, simply ignore it because the bundle was most likely incorrect
+            } catch (InvalidBundleException | ArgumentException | InvalidSignatureException e) {
+                log.warn("GetBundleError: ", e);
             }
 
         }
