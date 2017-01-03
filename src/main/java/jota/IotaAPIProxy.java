@@ -314,20 +314,25 @@ public class IotaAPIProxy {
             if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0) return null;
         }
         for (String trx : tailTxArray) {
-
-            GetBundleResponse bundleResponse = getBundle(trx);
-            // TODO: review possibly dirty WA
-            if (bundleResponse == null) continue;
-            Bundle gbr = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
-            if (gbr != null && gbr.getTransactions() != null) {
-                if (inclusionStates) {
-                    boolean thisInclusion = gisr.getStates()[Arrays.asList(tailTxArray).indexOf(trx)];
-                    for (Transaction t : gbr.getTransactions()) {
-                        t.setPersistence(thisInclusion);
+            try {
+                GetBundleResponse bundleResponse = getBundle(trx);
+                // TODO: review possibly dirty WA
+                if (bundleResponse == null) continue;
+                Bundle gbr = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
+                if (gbr != null && gbr.getTransactions() != null) {
+                    if (inclusionStates) {
+                        boolean thisInclusion = gisr.getStates()[Arrays.asList(tailTxArray).indexOf(trx)];
+                        for (Transaction t : gbr.getTransactions()) {
+                            t.setPersistence(thisInclusion);
+                        }
                     }
+                    finalBundles.add(gbr);
                 }
-                finalBundles.add(gbr);
+            // If error returned from getBundle, simply ignore it because the bundle was most likely incorrect
+            }catch(Exception e){
+                log.warn("GetBundleError: ",e);
             }
+
         }
 
         Collections.sort(finalBundles, new Comparator<Bundle>() {
