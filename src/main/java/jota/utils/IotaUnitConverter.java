@@ -16,24 +16,28 @@ public class IotaUnitConverter {
         return (long) (amount / Math.pow(10, toUnit.getValue()));
     }
 
-    public static String convertRawIotaAmountToDisplayText(long amount) {
+    public static String convertRawIotaAmountToDisplayText(long amount, boolean extended) {
         IotaUnits unit = findOptimalIotaUnitToDisplay(amount);
         double amountInDisplayUnit = convertAmountTo(amount, unit);
-        return createAmountWithUnitDisplayText(amountInDisplayUnit, unit);
+        return createAmountWithUnitDisplayText(amountInDisplayUnit, unit, extended);
     }
 
     public static double convertAmountTo(long amount, IotaUnits target) {
         return amount / Math.pow(10, target.getValue());
     }
 
-    private static String createAmountWithUnitDisplayText(double amountInUnit, IotaUnits unit) {
-        String result = createAmountDisplayText(amountInUnit, unit);
+    private static String createAmountWithUnitDisplayText(double amountInUnit, IotaUnits unit, boolean extended) {
+        String result = createAmountDisplayText(amountInUnit, unit, extended);
         result += " " + unit.getUnit();
         return result;
     }
 
-    public static String createAmountDisplayText(double amountInUnit, IotaUnits unit) {
-        DecimalFormat df = new DecimalFormat("##0.##################");
+    public static String createAmountDisplayText(double amountInUnit, IotaUnits unit, boolean extended) {
+        DecimalFormat df;
+        if (extended) df = new DecimalFormat("##0.##################");
+        else
+            df = new DecimalFormat("##0.##");
+
         String result = "";
         // display unit as integer if value is between 1-999 or in decimal format
         result += unit == IotaUnits.IOTA ? (long) amountInUnit : df.format(amountInUnit);
