@@ -13,6 +13,7 @@ import jota.utils.IotaAPIUtils;
 import jota.utils.Signing;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import retrofit2.Call;
@@ -259,6 +260,11 @@ public class IotaAPIProxy {
      * @returns {object} success
      **/
     public GetTransferResponse getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
+        // validate & if needed pad seed
+        if ( (seed = InputValidator.validateSeed(seed)) == null) {
+            throw new IllegalStateException("Invalid Seed");
+        }
+
         start = start != null ? 0 : start;
         end = end == null ? null : end;
         inclusionStates = inclusionStates != null ? inclusionStates : null;
@@ -266,12 +272,19 @@ public class IotaAPIProxy {
         if (start > end || end > (start + 500)) {
             throw new ArgumentException();
         }
-
+        StopWatch sw = new StopWatch();
+        sw.start();
+        System.out.println("GetTransfer started");
         GetNewAddressResponse gnr = getNewAddress(seed, start, false, end == null ? end - start : end, true);
         if (gnr != null && gnr.getAddresses() != null) {
+            System.out.println("GetTransfers after getNewAddresses " + sw.getTime() + " ms");
             Bundle[] bundles = bundlesFromAddresses(gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]), inclusionStates);
+            System.out.println("GetTransfers after bundlesFromAddresses " + sw.getTime() + " ms");
+            sw.stop();
+
             return GetTransferResponse.create(bundles);
         }
+        sw.stop();
         return null;
     }
 
@@ -310,7 +323,11 @@ public class IotaAPIProxy {
         // of the tail transactions, and thus the bundles
         GetInclusionStateResponse gisr = null;
         if (inclusionStates) {
-            gisr = getLatestInclusion(tailTxArray);
+            try {
+                gisr = getLatestInclusion(tailTxArray);
+            } catch (IllegalAccessError e) {
+
+            }
             if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0) return null;
         }
         for (String trx : tailTxArray) {
@@ -473,12 +490,18 @@ public class IotaAPIProxy {
      * @property {string} address Remainder address
      * @returns {array} trytes Returns bundle trytes
      **/
-    public List<String> prepareTransfers(final String seed, final List<Transfer> transfers, String remainder, List<Input> inputs) {
+    public List<String> prepareTransfers(String seed, final List<Transfer> transfers, String remainder, List<Input> inputs) {
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionCorrect(transfers)) {
             throw new IllegalStateException("Invalid Transfer");
         }
+
+        // validate & if needed pad seed
+        if ( (seed = InputValidator.validateSeed(seed)) == null) {
+            throw new IllegalStateException("Invalid Seed");
+        }
+
 
         // Create a new bundle
         final Bundle bundle = new Bundle();
@@ -619,10 +642,15 @@ public class IotaAPIProxy {
      * @property {int} end Ending key index
      * @property {int} threshold Min balance required
      **/
-    public GetBalancesAndFormatResponse getInputs(final String seed, final List<String> balances, int start, int end, int threshold) {
+    public GetBalancesAndFormatResponse getInputs(String seed, final List<String> balances, int start, int end, int threshold) {
 
         // validate the seed
         if (!InputValidator.isTrytes(seed, 0)) {
+            throw new IllegalStateException("Invalid Seed");
+        }
+
+        // validate & if needed pad seed
+        if ( (seed = InputValidator.validateSeed(seed)) == null) {
             throw new IllegalStateException("Invalid Seed");
         }
 
@@ -913,6 +941,7 @@ public class IotaAPIProxy {
                                      final long totalValue,
                                      final String remainderAddress,
                                      final List<String> signatureFragments) {
+
         for (int i = 0; i < inputs.size(); i++) {
             long thisBalance = inputs.get(i).getBalance();
             long totalTransferValue = totalValue;

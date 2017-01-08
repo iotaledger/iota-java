@@ -28,7 +28,7 @@ public class InputValidator {
     public static boolean isTrytes(final String trytes, final int length) {
         return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
     }
-    
+
     public static boolean isValue(final String value) {
         return NumberUtils.isNumber(value);
     }
@@ -51,16 +51,16 @@ public class InputValidator {
         }
         return true;
     }
-    
+
     /**
-    *   checks if input is correct hash collections
-    *
-    *   @method isTransfersArray
-    *   @param {array} hash
-    *   @returns {boolean}
-    **/
+     * checks if input is correct hash collections
+     *
+     * @param {array} hash
+     * @method isTransfersArray
+     * @returns {boolean}
+     **/
     public static boolean isTransfersCollectionCorrect(final List<Transfer> transfers) {
-        
+
         for (final Transfer transfer : transfers) {
             if (!isTransfersArray(transfer)) {
                 return false;
@@ -68,9 +68,9 @@ public class InputValidator {
         }
         return true;
     }
-    
+
     public static boolean isTransfersArray(final Transfer transfer) {
-        
+
         if (!isAddress(transfer.getAddress())) {
             return false;
         }
@@ -86,5 +86,11 @@ public class InputValidator {
         }
 
         return true;
+    }
+
+    public static String validateSeed(String seed) {
+        if (seed.length() > 81) return null;
+        while (seed.length() < 81) seed += 9;
+        return seed;
     }
 }
