@@ -165,4 +165,5 @@ public class Transaction {
         if (((Transaction) obj).getHash().equals(this.getHash())) return true;
         return false;
     }
+
 }

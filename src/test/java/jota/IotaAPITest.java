@@ -132,7 +132,7 @@ public class IotaAPITest {
             }
         }
     }
-
+/*
     @Test
     public void shouldSendTrytes() {
         iotaClient.sendTrytes(new String[]{TEST_TRYTES}, 9, 18);
@@ -145,5 +145,5 @@ public class IotaAPITest {
         SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED2, 9, 18, transfers, null, null);
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
-
+*/
 }

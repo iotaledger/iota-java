@@ -5,11 +5,21 @@ import java.util.Arrays;
 import java.util.List;
 
 import jota.model.Bundle;
+import jota.pow.ICurl;
 import jota.pow.JCurl;
 
 public class Signing {
+    private ICurl curl;
 
-    static int[] key(int[] seed, int index, int length) {
+    public Signing() {
+        this(null);
+    }
+
+    public Signing(ICurl curl) {
+        this.curl = curl == null ? new JCurl() : curl;
+    }
+
+    public int[] key(int[] seed, int index, int length) {
 
         for (int i = 0; i < index; i++) {
             for (int j = 0; j < 243; j++) {
@@ -21,7 +31,6 @@ public class Signing {
             }
         }
 
-        final JCurl curl = new JCurl();
         curl.reset();
         curl.absorbb(seed, 0, seed.length);
         curl.squeezee(seed, 0, seed.length);
@@ -44,7 +53,7 @@ public class Signing {
         return to(key);
     }
 
-    private static int[] to(List<Integer> key) {
+    private int[] to(List<Integer> key) {
         int a[] = new int[key.size()];
         int i = 0;
         for (Integer v : key) {
@@ -53,12 +62,10 @@ public class Signing {
         return a;
     }
 
-    public static int[] signatureFragment(int[] normalizedBundleFragment, int[] keyFragment) {
+    public int[] signatureFragment(int[] normalizedBundleFragment, int[] keyFragment) {
 
         int[] signatureFragment = keyFragment;
         int[] hash;
-
-        JCurl curl = new JCurl();
 
         for (int i = 0; i < 27; i++) {
 
@@ -66,8 +73,8 @@ public class Signing {
 
             for (int j = 0; j < 13 - normalizedBundleFragment[i]; j++) {
                 curl.reset()
-                    .absorbb(hash, 0, hash.length)
-                    .squeezee(hash, 0, hash.length);
+                        .absorbb(hash, 0, hash.length)
+                        .squeezee(hash, 0, hash.length);
             }
 
             for (int j = 0; j < 243; j++) {
@@ -78,17 +85,15 @@ public class Signing {
         return signatureFragment;
     }
 
-    public static int[] address(int[] digests) {
-        final JCurl curl = new JCurl();
+    public int[] address(int[] digests) {
         int[] address = new int[243];
         curl.reset()
-            .absorbb(digests)
-            .squeezee(address);
+                .absorbb(digests)
+                .squeezee(address);
         return address;
     }
-    
-    public static int[] digests(int[] key) {
-        final JCurl curl = new JCurl();
+
+    public int[] digests(int[] key) {
 
         int[] digests = new int[(int) Math.floor(key.length / 6561) * 243];
         int[] buffer = new int[243];
@@ -101,8 +106,8 @@ public class Signing {
                 buffer = Arrays.copyOfRange(keyFragment, j * 243, (j + 1) * 243);
                 for (int k = 0; k < 26; k++) {
                     curl.reset()
-                        .absorbb(buffer)
-                        .squeezee(buffer);
+                            .absorbb(buffer)
+                            .squeezee(buffer);
                 }
                 System.arraycopy(buffer, 0, keyFragment, j * 243, 243);
             }
@@ -116,18 +121,16 @@ public class Signing {
         return digests;
     }
 
-    public static int[] digest(int[] normalizedBundleFragment, int[] signatureFragment) {
-
+    public int[] digest(int[] normalizedBundleFragment, int[] signatureFragment) {
+        curl.reset();
         int[] buffer = new int[243];
-
-        JCurl curl = new JCurl().reset();
 
         for (int i = 0; i < 27; i++) {
             buffer = Arrays.copyOfRange(signatureFragment, i * 243, (i + 1) * 243);
 
             for (int j = normalizedBundleFragment[i] + 13; j-- > 0; ) {
 
-                JCurl jCurl = new JCurl();
+                ICurl jCurl = new JCurl();
                 jCurl.reset();
                 jCurl.absorbb(buffer);
                 jCurl.squeezee(buffer);
@@ -139,7 +142,7 @@ public class Signing {
         return buffer;
     }
 
-    public static Boolean validateSignatures(String expectedAddress, String[] signatureFragments, String bundleHash) {
+    public Boolean validateSignatures(String expectedAddress, String[] signatureFragments, String bundleHash) {
 
         Bundle bundle = new Bundle();
 

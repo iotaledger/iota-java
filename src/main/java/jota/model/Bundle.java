@@ -1,5 +1,6 @@
 package jota.model;
 
+import jota.pow.ICurl;
 import jota.pow.JCurl;
 import jota.utils.Converter;
 
@@ -54,9 +55,9 @@ public class Bundle implements Comparable {
         }
     }
 
-    public void finalize() {
+    public void finalize(ICurl customCurl) {
 
-        JCurl curl = new JCurl();
+        ICurl curl = customCurl == null ? new JCurl() : customCurl;
         curl.reset();
 
         for (int i = 0; i < this.getTransactions().size(); i++) {

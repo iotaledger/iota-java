@@ -2,6 +2,7 @@ package jota.utils;
 
 import java.util.*;
 
+import jota.pow.ICurl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +27,11 @@ public class IotaAPIUtils {
      * @param checksum
      * @return an String with address
      */
-    public static String newAddress(String seed, int index, boolean checksum) {
-
-        final int[] key = Signing.key(Converter.trits(seed), index, 2);
-        final int[] digests = Signing.digests(key);
-        final int[] addressTrits = Signing.address(digests);
+    public static String newAddress(String seed, int index, boolean checksum, ICurl curl) {
+        Signing signing = new Signing(curl);
+        final int[] key = signing.key(Converter.trits(seed), index, 2);
+        final int[] digests = signing.digests(key);
+        final int[] addressTrits = signing.address(digests);
 
         String address = Converter.trytes(addressTrits);
 
@@ -43,8 +44,8 @@ public class IotaAPIUtils {
     public static List<String> signInputsAndReturn(final String seed,
                                                    final List<Input> inputs,
                                                    final Bundle bundle,
-                                                   final List<String> signatureFragments) {
-        bundle.finalize();
+                                                   final List<String> signatureFragments, ICurl curl) {
+        bundle.finalize(curl);
         bundle.addTrytes(signatureFragments);
 
         //  SIGNING OF INPUTS
@@ -68,7 +69,7 @@ public class IotaAPIUtils {
                 String bundleHash = bundle.getTransactions().get(i).getBundle();
 
                 // Get corresponding private key of address
-                int[] key = Signing.key(Converter.trits(seed), keyIndex, 2);
+                int[] key = new Signing(curl).key(Converter.trits(seed), keyIndex, 2);
 
                 //  First 6561 trits for the firstFragment
                 int[] firstFragment = Arrays.copyOfRange(key, 0, 6561);
@@ -80,7 +81,7 @@ public class IotaAPIUtils {
                 int[] firstBundleFragment = Arrays.copyOfRange(normalizedBundleHash, 0, 27);
 
                 //  Calculate the new signatureFragment with the first bundle fragment
-                int[] firstSignedFragment = Signing.signatureFragment(firstBundleFragment, firstFragment);
+                int[] firstSignedFragment =  new Signing(curl).signatureFragment(firstBundleFragment, firstFragment);
 
                 //  Convert signature to trytes and assign the new signatureFragment
                 bundle.getTransactions().get(i).setSignatureFragments(Converter.trytes(firstSignedFragment));
@@ -97,7 +98,7 @@ public class IotaAPIUtils {
                         int[] secondBundleFragment = Arrays.copyOfRange(normalizedBundleHash, 27, 27 * 2);
 
                         //  Calculate the new signature
-                        int[] secondSignedFragment = Signing.signatureFragment(secondBundleFragment, secondFragment);
+                        int[] secondSignedFragment = new Signing(curl).signatureFragment(secondBundleFragment, secondFragment);
 
                         //  Convert signature to trytes and assign it again to this bundle entry
                         bundle.getTransactions().get(j).setSignatureFragments(Converter.trytes(secondSignedFragment));
