@@ -9,7 +9,7 @@ public class GetTransferResponse  extends AbstractResponse {
 
     private Bundle[] transferBundle;
 
-    public static GetTransferResponse create(Bundle[] transferBundle) {
+    public static GetTransferResponse create(Bundle[] transferBundle, long duration) {
         GetTransferResponse res = new GetTransferResponse();
         res.transferBundle = transferBundle;
         return res;

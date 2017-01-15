@@ -1,6 +1,6 @@
 package jota.utils;
 
-import jota.pow.Curl;
+import jota.pow.JCurl;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -41,7 +41,7 @@ public class Checksum {
     }
 
     public static String calculateChecksum(String address) {
-        Curl curl = new Curl();
+        JCurl curl = new JCurl();
         curl.reset();
         curl.setState(Converter.copyTrits(address, curl.getState()));
         curl.transform();

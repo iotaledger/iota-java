@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import jota.model.Bundle;
-import jota.pow.Curl;
+import jota.pow.JCurl;
 
 public class Signing {
 
@@ -21,12 +21,12 @@ public class Signing {
             }
         }
 
-        final Curl curl = new Curl();
+        final JCurl curl = new JCurl();
         curl.reset();
-        curl.absorb(seed, 0, seed.length);
-        curl.squeeze(seed, 0, seed.length);
+        curl.absorbb(seed, 0, seed.length);
+        curl.squeezee(seed, 0, seed.length);
         curl.reset();
-        curl.absorb(seed, 0, seed.length);
+        curl.absorbb(seed, 0, seed.length);
 
         final List<Integer> key = new ArrayList<>();
         int[] buffer = new int[seed.length];
@@ -35,7 +35,7 @@ public class Signing {
         while (length-- > 0) {
 
             for (int i = 0; i < 27; i++) {
-                curl.squeeze(buffer, offset, buffer.length);
+                curl.squeezee(buffer, offset, buffer.length);
                 for (int j = 0; j < 243; j++) {
                     key.add(buffer[j]);
                 }
@@ -58,7 +58,7 @@ public class Signing {
         int[] signatureFragment = keyFragment;
         int[] hash;
 
-        Curl curl = new Curl();
+        JCurl curl = new JCurl();
 
         for (int i = 0; i < 27; i++) {
 
@@ -66,8 +66,8 @@ public class Signing {
 
             for (int j = 0; j < 13 - normalizedBundleFragment[i]; j++) {
                 curl.reset()
-                    .absorb(hash, 0, hash.length)
-                    .squeeze(hash, 0, hash.length);
+                    .absorbb(hash, 0, hash.length)
+                    .squeezee(hash, 0, hash.length);
             }
 
             for (int j = 0; j < 243; j++) {
@@ -79,16 +79,16 @@ public class Signing {
     }
 
     public static int[] address(int[] digests) {
-        final Curl curl = new Curl();
+        final JCurl curl = new JCurl();
         int[] address = new int[243];
         curl.reset()
-            .absorb(digests)
-            .squeeze(address);
+            .absorbb(digests)
+            .squeezee(address);
         return address;
     }
     
     public static int[] digests(int[] key) {
-        final Curl curl = new Curl();
+        final JCurl curl = new JCurl();
 
         int[] digests = new int[(int) Math.floor(key.length / 6561) * 243];
         int[] buffer = new int[243];
@@ -101,15 +101,15 @@ public class Signing {
                 buffer = Arrays.copyOfRange(keyFragment, j * 243, (j + 1) * 243);
                 for (int k = 0; k < 26; k++) {
                     curl.reset()
-                        .absorb(buffer)
-                        .squeeze(buffer);
+                        .absorbb(buffer)
+                        .squeezee(buffer);
                 }
                 System.arraycopy(buffer, 0, keyFragment, j * 243, 243);
             }
 
             curl.reset();
-            curl.absorb(keyFragment, 0, keyFragment.length);
-            curl.squeeze(buffer, 0, buffer.length);
+            curl.absorbb(keyFragment, 0, keyFragment.length);
+            curl.squeezee(buffer, 0, buffer.length);
 
             System.arraycopy(buffer, 0, digests, i * 243, 243);
         }
@@ -120,21 +120,21 @@ public class Signing {
 
         int[] buffer = new int[243];
 
-        Curl curl = new Curl().reset();
+        JCurl curl = new JCurl().reset();
 
         for (int i = 0; i < 27; i++) {
             buffer = Arrays.copyOfRange(signatureFragment, i * 243, (i + 1) * 243);
 
             for (int j = normalizedBundleFragment[i] + 13; j-- > 0; ) {
 
-                Curl jCurl = new Curl();
+                JCurl jCurl = new JCurl();
                 jCurl.reset();
-                jCurl.absorb(buffer);
-                jCurl.squeeze(buffer);
+                jCurl.absorbb(buffer);
+                jCurl.squeezee(buffer);
             }
-            curl.absorb(buffer);
+            curl.absorbb(buffer);
         }
-        curl.squeeze(buffer);
+        curl.squeezee(buffer);
 
         return buffer;
     }

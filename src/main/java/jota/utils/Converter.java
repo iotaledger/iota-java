@@ -1,7 +1,7 @@
 package jota.utils;
 
 import jota.model.Transaction;
-import jota.pow.Curl;
+import jota.pow.JCurl;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -264,12 +264,12 @@ public class Converter {
         int[] transactionTrits = Converter.trits(trytes);
         int[] hash = new int[243];
 
-        final Curl curl = new Curl(); // we need a fluent Curl.
+        final JCurl curl = new JCurl(); // we need a fluent JCurl.
 
         // generate the correct transaction hash
         curl.reset();
-        curl.absorb(transactionTrits, 0, transactionTrits.length);
-        curl.squeeze(hash, 0, hash.length);
+        curl.absorbb(transactionTrits, 0, transactionTrits.length);
+        curl.squeezee(hash, 0, hash.length);
 
         Transaction trx = new Transaction();
 

@@ -1,6 +1,6 @@
 package jota.model;
 
-import jota.pow.Curl;
+import jota.pow.JCurl;
 import jota.utils.Converter;
 
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by pinpong on 09.12.16.
  */
-public class Bundle {
+public class Bundle implements Comparable {
 
     private List<Transaction> transactions;
     private int length;
@@ -56,7 +56,7 @@ public class Bundle {
 
     public void finalize() {
 
-        Curl curl = new Curl();
+        JCurl curl = new JCurl();
         curl.reset();
 
         for (int i = 0; i < this.getTransactions().size(); i++) {
@@ -71,11 +71,11 @@ public class Bundle {
 
 
             int[] t = Converter.trits(this.getTransactions().get(i).getAddress() + Converter.trytes(valueTrits) + this.getTransactions().get(i).getTag() + Converter.trytes(timestampTrits) + Converter.trytes(currentIndexTrits) + Converter.trytes(lastIndexTrits));
-            curl.absorb(t, 0, t.length);
+            curl.absorbb(t, 0, t.length);
         }
 
         int[] hash = new int[243];
-        curl.squeeze(hash, 0, hash.length);
+        curl.squeezee(hash, 0, hash.length);
         String hashInTrytes = Converter.trytes(hash);
 
         for (int i = 0; i < this.getTransactions().size(); i++) {
@@ -145,4 +145,12 @@ public class Bundle {
         return normalizedBundle;
     }
 
+    @Override
+    public int compareTo(Object o) {
+        if (Long.parseLong(this.getTransactions().get(0).getTimestamp()) < Long.parseLong(((Bundle) o).getTransactions().get(0).getTimestamp()))
+            return -1;
+        if (Long.parseLong(this.getTransactions().get(0).getTimestamp()) > Long.parseLong(((Bundle) o).getTransactions().get(0).getTimestamp()))
+            return 1;
+        return 0;
+    }
 }

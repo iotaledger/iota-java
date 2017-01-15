@@ -7,9 +7,10 @@ public class ReplayBundleResponse extends AbstractResponse {
 
     private Boolean[] successfully;
 
-    public static ReplayBundleResponse create(Boolean[] successfully) {
+    public static ReplayBundleResponse create(Boolean[] successfully, long duration) {
         ReplayBundleResponse res = new ReplayBundleResponse();
         res.successfully = successfully;
+        res.setDuration(duration);
         return res;
     }
 

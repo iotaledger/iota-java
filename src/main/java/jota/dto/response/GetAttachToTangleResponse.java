@@ -7,4 +7,8 @@ public class GetAttachToTangleResponse extends AbstractResponse {
     public String[] getTrytes() {
         return trytes;
     }
+
+    public GetAttachToTangleResponse(long duration) {
+        setDuration(duration);
+    }
 }

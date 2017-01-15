@@ -9,9 +9,10 @@ public class GetBundleResponse extends AbstractResponse {
 
     private List<Transaction> transactions = new ArrayList<>();
 
-    public static GetBundleResponse create (List<Transaction> transactions){
+    public static GetBundleResponse create(List<Transaction> transactions, long duration) {
         GetBundleResponse res = new GetBundleResponse();
         res.transactions = transactions;
+        res.setDuration(duration);
         return res;
     }
 

@@ -3,9 +3,9 @@ package jota.pow;
 /**
  * (c) 2016 Come-from-Beyond
  * <p>
- * Curl belongs to the sponge function family.
+ * JCurl belongs to the sponge function family.
  */
-public class Curl {
+public class JCurl implements ICurl {
 
     public static final int HASH_LENGTH = 243;
     private static final int STATE_LENGTH = 3 * HASH_LENGTH;
@@ -15,7 +15,7 @@ public class Curl {
 
     private int[] state = new int[STATE_LENGTH];
 
-    public Curl absorb(final int[] trits, int offset, int length) {
+    public JCurl absorbb(final int[] trits, int offset, int length) {
 
         do {
             System.arraycopy(trits, offset, state, 0, length < HASH_LENGTH ? length : HASH_LENGTH);
@@ -25,12 +25,14 @@ public class Curl {
         
         return this;
     }
-    
-    public Curl absorb(final int[] trits) {
-        return absorb(trits, 0, trits.length);
+
+
+
+    public JCurl absorbb(final int[] trits) {
+        return absorbb(trits, 0, trits.length);
     }
 
-    public Curl transform() {
+    public JCurl transform() {
 
         final int[] scratchpad = new int[STATE_LENGTH];
         int scratchpadIndex = 0;
@@ -43,14 +45,14 @@ public class Curl {
         return this;
     }
 
-    public Curl reset() {
+    public JCurl reset() {
         for (int stateIndex = 0; stateIndex < STATE_LENGTH; stateIndex++) {
             state[stateIndex] = 0;
         }
         return this;
     }
     
-    public int[] squeeze(final int[] trits, int offset, int length) {
+    public int[] squeezee(final int[] trits, int offset, int length) {
 
         do {
             System.arraycopy(state, 0, trits, offset, length < HASH_LENGTH ? length : HASH_LENGTH);
@@ -61,8 +63,8 @@ public class Curl {
         return state;
     }
     
-    public int[] squeeze(final int[] trits) {
-        return squeeze(trits, 0, trits.length);
+    public int[] squeezee(final int[] trits) {
+        return squeezee(trits, 0, trits.length);
     }
 
     public int[] getState() {

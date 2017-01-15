@@ -2,8 +2,6 @@ package jota.utils;
 
 import java.util.*;
 
-import jota.IotaAPIProxy;
-import jota.dto.response.GetNewAddressResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
