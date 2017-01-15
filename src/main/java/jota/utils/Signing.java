@@ -64,12 +64,11 @@ public class Signing {
 
     public int[] signatureFragment(int[] normalizedBundleFragment, int[] keyFragment) {
 
-        int[] signatureFragment = keyFragment;
         int[] hash;
 
         for (int i = 0; i < 27; i++) {
 
-            hash = Arrays.copyOfRange(signatureFragment, i * 243, (i + 1) * 243);
+            hash = Arrays.copyOfRange(keyFragment, i * 243, (i + 1) * 243);
 
             for (int j = 0; j < 13 - normalizedBundleFragment[i]; j++) {
                 curl.reset()
@@ -78,11 +77,11 @@ public class Signing {
             }
 
             for (int j = 0; j < 243; j++) {
-                signatureFragment[i * 243 + j] = hash[j];
+                System.arraycopy(hash, j, keyFragment, i * 243 + j, 1);
             }
         }
 
-        return signatureFragment;
+        return keyFragment;
     }
 
     public int[] address(int[] digests) {
@@ -162,8 +161,7 @@ public class Signing {
             int[] digestBuffer = digest(normalizedBundleFragments[i % 3], Converter.trits(signatureFragments[i]));
 
             for (int j = 0; j < 243; j++) {
-
-                digests[i * 243 + j] = digestBuffer[j];
+                System.arraycopy(digestBuffer, j, digests, i * 243 + j, 1);
             }
         }
         String address = Converter.trytes(address(digests));

@@ -2,9 +2,6 @@ package jota.utils;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
-import jota.model.Transaction;
 import jota.model.Transfer;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -81,11 +78,7 @@ public class InputValidator {
         }
 
         // Check if tag is correct trytes of {0,27} trytes
-        if (!isTrytes(transfer.getTag(), 27)) {
-            return false;
-        }
-
-        return true;
+        return isTrytes(transfer.getTag(), 27);
     }
 
     public static String validateSeed(String seed) {

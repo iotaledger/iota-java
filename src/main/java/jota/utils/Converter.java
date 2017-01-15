@@ -1,8 +1,6 @@
 package jota.utils;
 
 import jota.model.Transaction;
-import jota.pow.JCurl;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +71,7 @@ public class Converter {
         int[] ret = new int[integers.size()];
         for (int i=0; i < ret.length; i++)
         {
-            ret[i] = integers.get(i).intValue();
+            ret[i] = integers.get(i);
         }
         return ret;
     }

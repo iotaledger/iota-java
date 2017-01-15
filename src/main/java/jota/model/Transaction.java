@@ -159,11 +159,7 @@ public class Transaction {
     }
 
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (((Transaction) obj).getHash().equals(this.getHash())) return true;
-        return false;
+        return obj != null && ((Transaction) obj).getHash().equals(this.getHash());
     }
 
 }

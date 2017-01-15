@@ -14,4 +14,12 @@ public class IotaStoreTransactionsRequest extends IotaCommandRequest {
     public static IotaStoreTransactionsRequest createStoreTransactionsRequest(final String... trytes) {
         return new IotaStoreTransactionsRequest(trytes);
     }
+
+    public String[] getTrytes() {
+        return trytes;
+    }
+
+    public void setTrytes(String[] trytes) {
+        this.trytes = trytes;
+    }
 }

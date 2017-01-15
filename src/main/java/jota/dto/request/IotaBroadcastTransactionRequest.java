@@ -14,4 +14,12 @@ public class IotaBroadcastTransactionRequest extends IotaCommandRequest {
     public static IotaBroadcastTransactionRequest createBroadcastTransactionsRequest(final String... trytes) {
         return new IotaBroadcastTransactionRequest(trytes);
     }
+
+    public String[] getTrytes() {
+        return trytes;
+    }
+
+    public void setTrytes(String[] trytes) {
+        this.trytes = trytes;
+    }
 }

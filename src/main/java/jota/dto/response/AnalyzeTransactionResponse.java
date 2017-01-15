@@ -7,7 +7,7 @@ import java.util.List;
 
 public class AnalyzeTransactionResponse extends AbstractResponse {
 
-    private List<Transaction> transactions = new ArrayList<Transaction>();
+    private List<Transaction> transactions = new ArrayList<>();
 
     public List<Transaction> getTransactions() {
         return transactions;

@@ -59,9 +59,9 @@ public class IotaAPIUtils {
 
                 // Get the corresponding keyIndex of the address
                 int keyIndex = 0;
-                for (int k = 0; k < inputs.size(); k++) {
-                    if (inputs.get(k).getAddress().equals(thisAddress)) {
-                        keyIndex = inputs.get(k).getKeyIndex();
+                for (Input input : inputs) {
+                    if (input.getAddress().equals(thisAddress)) {
+                        keyIndex = input.getKeyIndex();
                         break;
                     }
                 }
@@ -90,7 +90,7 @@ public class IotaAPIUtils {
                 //  find the second transaction to add the remainder of the signature
                 for (int j = 0; j < bundle.getTransactions().size(); j++) {
                     //  Same address as well as value = 0 (as we already spent the input)
-                    if (bundle.getTransactions().get(j).getAddress() == thisAddress && Long.parseLong(bundle.getTransactions().get(j).getValue()) == 0) {
+                    if (bundle.getTransactions().get(j).getAddress().equals(thisAddress) && Long.parseLong(bundle.getTransactions().get(j).getValue()) == 0) {
                         // Use the second 6562 trits
                         int[] secondFragment = Arrays.copyOfRange(key, 6561, 6561 * 2);
 

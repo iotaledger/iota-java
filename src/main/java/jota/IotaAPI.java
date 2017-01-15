@@ -8,7 +8,6 @@ import jota.model.*;
 import jota.pow.ICurl;
 import jota.pow.JCurl;
 import jota.utils.*;
-import jota.utils.StopWatch;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,25 +27,16 @@ import java.util.*;
  *
  * @author davassi
  */
-public class IotaAPI {
+public class IotaAPI extends IotaAPICoreProxy {
 
     private static final Logger log = LoggerFactory.getLogger(IotaAPI.class);
-    private IotaAPICoreProxy coreProxy;
     private ICurl customCurl;
     private StopWatch stopWatch;
 
-    public IotaAPI() {
-        this(null);
+    protected IotaAPI(Builder builder) {
+        super(builder);
+        customCurl = builder.customCurl;
     }
-
-    public IotaAPI(ICurl customCurl) {
-        this.customCurl = customCurl;
-        coreProxy = new IotaAPICoreProxy.Builder().build();
-        stopWatch = new StopWatch();
-    }
-
-
-    // end of proxied calls.
 
     /**
      * Generates a new address from a seed and returns the remainderAddress.
@@ -77,7 +67,7 @@ public class IotaAPI {
         for (int i = index; ; i++) {
 
             final String newAddress = IotaAPIUtils.newAddress(seed, i, checksum, customCurl);
-            final FindTransactionResponse response = coreProxy.findTransactionsByAddresses(newAddress);
+            final FindTransactionResponse response = findTransactionsByAddresses(newAddress);
 
             allAddresses.add(newAddress);
             if (response.getHashes().length == 0) {
@@ -168,7 +158,7 @@ public class IotaAPI {
         if (inclusionStates) {
             try {
                 gisr = getLatestInclusion(tailTxArray);
-            } catch (IllegalAccessError e) {
+            } catch (IllegalAccessError ignored) {
 
             }
             if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0)
@@ -213,12 +203,12 @@ public class IotaAPI {
     public StoreTransactionsResponse broadcastAndStore(final String... trytes) {
 
         try {
-            coreProxy.broadcastTransactions(trytes);
+            broadcastTransactions(trytes);
         } catch (Exception e) {
             log.error("Impossible to broadcastAndStore, aborting.", e);
             throw new IllegalStateException("BroadcastAndStore Illegal state Exception");
         }
-        return coreProxy.storeTransactions(trytes);
+        return storeTransactions(trytes);
     }
 
     /**
@@ -230,10 +220,10 @@ public class IotaAPI {
      * @return
      */
     public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude) {
-        final GetTransactionsToApproveResponse txs = coreProxy.getTransactionsToApprove(depth);
+        final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth);
 
         // attach to tangle - do pow
-        final GetAttachToTangleResponse res = coreProxy.attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
+        final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
 
         try {
             broadcastAndStore(res.getTrytes());
@@ -267,7 +257,7 @@ public class IotaAPI {
             throw new IllegalStateException("Not an Array of Hashes: " + Arrays.toString(hashes));
         }
 
-        final GetTrytesResponse trytesResponse = coreProxy.getTrytes(hashes);
+        final GetTrytesResponse trytesResponse = getTrytes(hashes);
 
         final List<Transaction> trxs = new ArrayList<>();
 
@@ -288,7 +278,7 @@ public class IotaAPI {
      * @returns {object} success
      **/
     public List<Transaction> findTransactionObjects(String[] input) {
-        FindTransactionResponse ftr = coreProxy.findTransactions(input, null, null, null);
+        FindTransactionResponse ftr = findTransactions(input, null, null, null);
         if (ftr == null || ftr.getHashes() == null)
             return null;
 
@@ -307,7 +297,7 @@ public class IotaAPI {
      * @returns {object} success
      **/
     public List<Transaction> findTransactionObjectsByBundle(String[] input) {
-        FindTransactionResponse ftr = coreProxy.findTransactions(null, null, null, input);
+        FindTransactionResponse ftr = findTransactions(null, null, null, input);
         if (ftr == null || ftr.getHashes() == null)
             return null;
 
@@ -416,7 +406,7 @@ public class IotaAPI {
                     inputsAddresses.add(i.getAddress());
                 }
 
-                GetBalancesResponse balancesResponse = coreProxy.getBalances(100, inputsAddresses);
+                GetBalancesResponse balancesResponse = getBalances(100, inputsAddresses);
                 String[] balances = balancesResponse.getBalances();
 
                 List<Input> confirmedInputs = new ArrayList<>();
@@ -448,7 +438,7 @@ public class IotaAPI {
             //  confirm that the inputs exceed the threshold
             else {
 
-                GetBalancesAndFormatResponse newinputs = getInputs(seed, Collections.EMPTY_LIST, 0, 0, totalValue);
+                @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newinputs = getInputs(seed, Collections.EMPTY_LIST, 0, 0, totalValue);
                 // If inputs with enough balance
                 return addRemainder(seed, newinputs.getInput(), bundle, tag, totalValue, null, signatureFragments);
             }
@@ -530,13 +520,13 @@ public class IotaAPI {
     public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, List<String> balances, long threshold, int start, int end, StopWatch stopWatch) {
 
         if (balances == null || balances.isEmpty()) {
-            GetBalancesResponse getBalancesResponse = coreProxy.getBalances(100, addresses);
+            GetBalancesResponse getBalancesResponse = getBalances(100, addresses);
             balances = Arrays.asList(getBalancesResponse.getBalances());
         }
 
         // If threshold defined, keep track of whether reached or not
         // else set default to true
-        boolean thresholdReached = threshold != 0 ? false : true;
+        boolean thresholdReached = threshold == 0;
         int i = -1;
 
         List<Input> inputs = new ArrayList<>();
@@ -640,9 +630,9 @@ public class IotaAPI {
             throw new InvalidBundleException("Invalid Bundle");
 
         // Validate the signatures
-        for (int i = 0; i < signaturesToValidate.size(); i++) {
-            String[] signatureFragments = signaturesToValidate.get(i).getSignatureFragments().toArray(new String[signaturesToValidate.get(i).getSignatureFragments().size()]);
-            String address = signaturesToValidate.get(i).getAddress();
+        for (Signature aSignaturesToValidate : signaturesToValidate) {
+            String[] signatureFragments = aSignaturesToValidate.getSignatureFragments().toArray(new String[aSignaturesToValidate.getSignatureFragments().size()]);
+            String address = aSignaturesToValidate.getAddress();
             boolean isValidSignature = new Signing().validateSignatures(address, signatureFragments, bundleHash);
 
             if (!isValidSignature) throw new InvalidSignatureException();
@@ -679,7 +669,7 @@ public class IotaAPI {
 
         for (int i = 0; i < trxs.size(); i++) {
 
-            final FindTransactionResponse response = coreProxy.findTransactionsByBundles(trxs.get(i).getBundle());
+            final FindTransactionResponse response = findTransactionsByBundles(trxs.get(i).getBundle());
 
 
             successful[i] = response.getHashes().length != 0;
@@ -697,12 +687,12 @@ public class IotaAPI {
      * @returns {array} state
      **/
     public GetInclusionStateResponse getLatestInclusion(String[] hashes) {
-        GetNodeInfoResponse getNodeInfoResponse = coreProxy.getNodeInfo();
+        GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
         if (getNodeInfoResponse == null) return null;
 
         String[] latestMilestone = {getNodeInfoResponse.getLatestSolidSubtangleMilestone()};
 
-        return coreProxy.getInclusionStates(hashes, latestMilestone);
+        return getInclusionStates(hashes, latestMilestone);
     }
 
     public SendTransferResponse sendTransfer(String seed, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String address) {
@@ -715,7 +705,7 @@ public class IotaAPI {
 
         for (int i = 0; i < trxs.size(); i++) {
 
-            final FindTransactionResponse response = coreProxy.findTransactionsByBundles(trxs.get(i).getBundle());
+            final FindTransactionResponse response = findTransactionsByBundles(trxs.get(i).getBundle());
 
             successful[i] = response.getHashes().length != 0;
         }
@@ -735,7 +725,7 @@ public class IotaAPI {
      * @returns {array} bundle Transaction objects
      **/
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
-        GetTrytesResponse gtr = coreProxy.getTrytes(trunkTx);
+        GetTrytesResponse gtr = getTrytes(trunkTx);
 
         if (gtr != null) {
 
@@ -776,7 +766,7 @@ public class IotaAPI {
     }
 
     public String findTailTransactionHash(String hash) throws ArgumentException {
-        GetTrytesResponse gtr = coreProxy.getTrytes(hash);
+        GetTrytesResponse gtr = getTrytes(hash);
 
         if (gtr == null) throw new ArgumentException("Invalid hash");
 
@@ -843,5 +833,19 @@ public class IotaAPI {
             }
         }
         return null;
+    }
+
+    public static class Builder extends IotaAPICoreProxy.Builder<Builder> {
+        private ICurl customCurl;
+
+        public Builder withCustomCurl(ICurl curl) {
+            customCurl = curl;
+            return this;
+        }
+
+        public IotaAPI build() {
+            super.build();
+            return new IotaAPI(this);
+        }
     }
 }

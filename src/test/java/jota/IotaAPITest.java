@@ -65,12 +65,12 @@ public class IotaAPITest {
 
     @Before
     public void createApiClientInstance() {
-        iotaClient = new IotaAPI();
+        iotaClient = new IotaAPI.Builder().build();
     }
 
     @Test
     public void shouldCreateIotaApiProxyInstanceWithDefaultValues() {
-        IotaAPI proxy = new IotaAPI();
+        IotaAPI proxy = new IotaAPI.Builder().build();
         assertThat(proxy, IsNull.notNullValue());
     }
 

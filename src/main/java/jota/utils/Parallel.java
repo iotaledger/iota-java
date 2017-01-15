@@ -25,7 +25,7 @@ public class Parallel {
     }
 
     public static <T> Collection<Callable<Void>> createCallables(final Iterable<T> elements, final Operation<T> operation) {
-        List<Callable<Void>> callables = new LinkedList<Callable<Void>>();
+        List<Callable<Void>> callables = new LinkedList<>();
         for (final T elem : elements) {
             callables.add(new Callable<Void>() {
                 @Override
@@ -39,7 +39,7 @@ public class Parallel {
         return callables;
     }
 
-    public static interface Operation<T> {
-        public void perform(T pParameter);
+    public interface Operation<T> {
+        void perform(T pParameter);
     }
 }

@@ -17,5 +17,20 @@ public class IotaGetBalancesRequest extends IotaCommandRequest {
         return new IotaGetBalancesRequest(threshold, addresses);
     }
 
+    public String[] getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(String[] addresses) {
+        this.addresses = addresses;
+    }
+
+    public Integer getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(Integer threshold) {
+        this.threshold = threshold;
+    }
 }
 

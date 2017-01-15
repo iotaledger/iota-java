@@ -28,7 +28,7 @@ public class IotaAPICoreProxy {
     private IotaAPIService service;
     private String protocol, host, port;
 
-    private IotaAPICoreProxy(final Builder builder) {
+    protected IotaAPICoreProxy(final Builder builder) {
         protocol = builder.protocol;
         host = builder.host;
         port = builder.port;
@@ -52,7 +52,7 @@ public class IotaAPICoreProxy {
         }
     }
 
-    private static final String env(String env, String def) {
+    private static String env(String env, String def) {
         final String value = System.getenv(env);
         if (value == null) {
             log.warn("Environment variable '{}' is not defined, and actual value has not been specified. "
@@ -187,7 +187,8 @@ public class IotaAPICoreProxy {
         return wrapCheckedException(res).body();
     }
 
-    public static class Builder {
+    @SuppressWarnings("unchecked")
+    public static class Builder <T extends Builder<T>> {
 
         String protocol, host, port;
 
@@ -241,19 +242,19 @@ public class IotaAPICoreProxy {
             port = env("IOTA_NODE_PORT", "14265");
         }
 
-        public Builder host(String host) {
+        public T host(String host) {
             this.host = host;
-            return this;
+            return (T) this;
         }
 
-        public Builder port(String port) {
+        public T port(String port) {
             this.port = port;
-            return this;
+            return (T) this;
         }
 
-        public Builder protocol(String protocol) {
+        public T protocol(String protocol) {
             this.protocol = protocol;
-            return this;
+            return (T)  this;
         }
 
     }

@@ -14,4 +14,12 @@ public class IotaGetTrytesRequest extends IotaCommandRequest {
     public static IotaGetTrytesRequest createGetTrytesRequest(String... hashes) {
         return new IotaGetTrytesRequest(hashes);
     }
+
+    public String[] getHashes() {
+        return hashes;
+    }
+
+    public void setHashes(String[] hashes) {
+        this.hashes = hashes;
+    }
 }
