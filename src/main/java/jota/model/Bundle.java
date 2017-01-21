@@ -3,6 +3,7 @@ package jota.model;
 import jota.pow.ICurl;
 import jota.pow.JCurl;
 import jota.utils.Converter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +32,6 @@ public class Bundle implements Comparable {
         return transactions;
     }
 
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-
     public int getLength() {
         return length;
     }
@@ -49,7 +46,6 @@ public class Bundle implements Comparable {
         }
 
         for (int i = 0; i < signatureMessageLength; i++) {
-            List<Transaction> transactions = new ArrayList<>(getTransactions());
             Transaction trx = new Transaction(address, String.valueOf(i == 0 ? value : 0), tag, String.valueOf(timestamp));
             getTransactions().add(trx);
         }
@@ -89,9 +85,7 @@ public class Bundle implements Comparable {
         String emptySignatureFragment = "";
         String emptyHash = EMPTY_HASH;
 
-        for (int j = 0; emptySignatureFragment.length() < 2187; j++) {
-            emptySignatureFragment += '9';
-        }
+        emptySignatureFragment = StringUtils.rightPad(emptySignatureFragment, 2187, '9');
 
         for (int i = 0; i < this.getTransactions().size(); i++) {
 

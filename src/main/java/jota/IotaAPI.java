@@ -359,9 +359,8 @@ public class IotaAPI extends IotaAPICoreProxy {
                     msgCopy = StringUtils.substring(msgCopy, 2187, msgCopy.length());
 
                     // Pad remainder of fragment
-                    for (int j = 0; fragment.length() < 2187; j++) {
-                        fragment += "9";
-                    }
+
+                    fragment = StringUtils.rightPad(fragment, 2187, '9');
 
                     signatureFragments.add(fragment);
                 }
@@ -369,9 +368,7 @@ public class IotaAPI extends IotaAPICoreProxy {
                 // Else, get single fragment with 2187 of 9's trytes
                 String fragment = StringUtils.substring(transfer.getMessage(), 0, 2187);
 
-                for (int j = 0; fragment.length() < 2187; j++) {
-                    fragment += '9';
-                }
+                fragment = StringUtils.rightPad(fragment, 2187, '9');
 
                 signatureFragments.add(fragment);
             }
@@ -383,9 +380,7 @@ public class IotaAPI extends IotaAPICoreProxy {
             tag = transfer.getTag().isEmpty() ? "999999999999999999999999999" : transfer.getTag();
 
             // Pad for required 27 tryte length
-            for (int j = 0; tag.length() < 27; j++) {
-                tag += '9';
-            }
+            tag = StringUtils.rightPad(tag, 27, '9');
 
             // Add first entry to the bundle
             bundle.addEntry(signatureMessageLength, transfer.getAddress(), transfer.getValue(), tag, timestamp);
@@ -551,7 +546,6 @@ public class IotaAPI extends IotaAPICoreProxy {
         }
 
         if (thresholdReached) {
-            long duration = stopWatch.getElapsedTimeMili();
             return GetBalancesAndFormatResponse.create(inputs, totalBalance, stopWatch.getElapsedTimeMili());
         }
         throw new IllegalStateException("Not enough balance");
@@ -794,7 +788,7 @@ public class IotaAPI extends IotaAPICoreProxy {
             long thisBalance = inputs.get(i).getBalance();
             long totalTransferValue = totalValue;
             long toSubtract = 0 - thisBalance;
-            long timestamp = (new Date()).getTime();
+            long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
 
             // Add input as bundle entry
             bundle.addEntry(2, inputs.get(i).getAddress(), toSubtract, tag, timestamp);

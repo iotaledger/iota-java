@@ -1,9 +1,10 @@
 package jota.utils;
 
-import java.util.List;
-
 import jota.model.Transfer;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+
+import java.util.List;
 
 /**
  * Created by pinpong on 02.12.16.
@@ -82,8 +83,11 @@ public class InputValidator {
     }
 
     public static String validateSeed(String seed) {
-        if (seed.length() > 81) return null;
-        while (seed.length() < 81) seed += 9;
+        if (seed.length() > 81)
+            return null;
+
+        seed = StringUtils.rightPad(seed, 81, '9');
+
         return seed;
     }
 }
