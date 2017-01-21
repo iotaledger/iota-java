@@ -77,7 +77,7 @@ public class IotaAPITest {
 
     @Test
     public void shouldGetInputs() {
-        GetBalancesAndFormatResponse res = iotaClient.getInputs(TEST_SEED1, null, 0, 0, 0);
+        GetBalancesAndFormatResponse res = iotaClient.getInputs(TEST_SEED1, 0, 0, 0);
         System.out.println(res);
         assertThat(res, IsNull.notNullValue());
         assertThat(res.getTotalBalance(), IsNull.notNullValue());

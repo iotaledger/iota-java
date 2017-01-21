@@ -433,7 +433,7 @@ public class IotaAPI extends IotaAPICoreProxy {
             //  confirm that the inputs exceed the threshold
             else {
 
-                @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newinputs = getInputs(seed, Collections.EMPTY_LIST, 0, 0, totalValue);
+                @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newinputs = getInputs(seed, 0, 0, totalValue);
                 // If inputs with enough balance
                 return addRemainder(seed, newinputs.getInput(), bundle, tag, totalValue, null, signatureFragments);
             }
@@ -465,7 +465,7 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @property {int} end Ending key index
      * @property {int} threshold Min balance required
      **/
-    public GetBalancesAndFormatResponse getInputs(String seed, final List<String> balances, int start, int end, int threshold) {
+    public GetBalancesAndFormatResponse getInputs(String seed, int start, int end, int threshold) {
         StopWatch stopWatch = new StopWatch();
         // validate the seed
         if (!InputValidator.isTrytes(seed, 0)) {
@@ -497,7 +497,7 @@ public class IotaAPI extends IotaAPICoreProxy {
                 allAddresses.add(address);
             }
 
-            return getBalanceAndFormat(allAddresses, balances, threshold, start, end, stopWatch);
+            return getBalanceAndFormat(allAddresses, threshold, start, end, stopWatch);
         }
         //  Case 2: iterate till threshold || end
         //
@@ -506,18 +506,16 @@ public class IotaAPI extends IotaAPICoreProxy {
         //  We then do getBalance, format the output and return it
         else {
             final GetNewAddressResponse res = getNewAddress(seed, start, false, 0, true);
-            return getBalanceAndFormat(res.getAddresses(), balances, threshold, start, end, stopWatch);
+            return getBalanceAndFormat(res.getAddresses(), threshold, start, end, stopWatch);
         }
     }
 
     //  Calls getBalances and formats the output
     //  returns the final inputsObject then
-    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, List<String> balances, long threshold, int start, int end, StopWatch stopWatch) {
+    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, long threshold, int start, int end, StopWatch stopWatch) {
 
-        if (balances == null || balances.isEmpty()) {
-            GetBalancesResponse getBalancesResponse = getBalances(100, addresses);
-            balances = Arrays.asList(getBalancesResponse.getBalances());
-        }
+        GetBalancesResponse getBalancesResponse = getBalances(100, addresses);
+        List<String> balances = Arrays.asList(getBalancesResponse.getBalances());
 
         // If threshold defined, keep track of whether reached or not
         // else set default to true
