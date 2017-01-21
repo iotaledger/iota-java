@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by pinpong on 09.12.16.
  */
-public class Bundle implements Comparable {
+public class Bundle implements Comparable<Bundle> {
 
     private List<Transaction> transactions;
     private int length;
@@ -141,11 +141,7 @@ public class Bundle implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
-        if (Long.parseLong(this.getTransactions().get(0).getTimestamp()) < Long.parseLong(((Bundle) o).getTransactions().get(0).getTimestamp()))
-            return -1;
-        if (Long.parseLong(this.getTransactions().get(0).getTimestamp()) > Long.parseLong(((Bundle) o).getTransactions().get(0).getTimestamp()))
-            return 1;
-        return 0;
+    public int compareTo(Bundle o) {
+        return this.getTransactions().get(0).getTimestamp().compareTo(o.getTransactions().get(0).getTimestamp());
     }
 }
