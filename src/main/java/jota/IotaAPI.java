@@ -92,7 +92,7 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @property {bool} inclusionStates returns confirmation status of all transactions
      * @returns {object} success
      **/
-    public GetTransferResponse getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoAddressException, NoTransactionExcpection, NoNodeInfoException, NoInclusionStatesExcpection {
+    public GetTransferResponse getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoNodeInfoException, NoInclusionStatesExcpection {
         StopWatch stopWatch = new StopWatch();
         // validate & if needed pad seed
         if ((seed = InputValidator.validateSeed(seed)) == null) {
@@ -100,8 +100,6 @@ public class IotaAPI extends IotaAPICoreProxy {
         }
 
         start = start != null ? 0 : start;
-        end = end == null ? null : end;
-        inclusionStates = inclusionStates != null ? inclusionStates : null;
 
         if (start > end || end > (start + 500)) {
             throw new ArgumentException();
@@ -116,10 +114,10 @@ public class IotaAPI extends IotaAPICoreProxy {
             System.out.println("GetTransfers after bundlesFromAddresses " + sw.getElapsedTimeMili() + " ms");
             return GetTransferResponse.create(bundles, stopWatch.getElapsedTimeMili());
         }
-        throw new NoAddressException();
+        return GetTransferResponse.create(new Bundle[]{}, stopWatch.getElapsedTimeMili());
     }
 
-    public Bundle[] bundlesFromAddresses(String[] addresses, final Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoTransactionExcpection, NoNodeInfoException, NoInclusionStatesExcpection {
+    public Bundle[] bundlesFromAddresses(String[] addresses, final Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoNodeInfoException, NoInclusionStatesExcpection {
 
         List<Transaction> trxs = findTransactionObjects(addresses);
         // set of tail transactions
@@ -199,13 +197,13 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @param trytes
      * @return a StoreTransactionsResponse
      */
-    public StoreTransactionsResponse broadcastAndStore(final String... trytes) {
+    public StoreTransactionsResponse broadcastAndStore(final String... trytes) throws BroadcastAndStoreException {
 
         try {
             broadcastTransactions(trytes);
         } catch (Exception e) {
             log.error("Impossible to broadcastAndStore, aborting.", e);
-            throw new IllegalStateException("BroadcastAndStore Illegal state Exception");
+            throw new BroadcastAndStoreException();
         }
         return storeTransactions(trytes);
     }
@@ -218,7 +216,7 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @param {int}   minWeightMagnitude
      * @return
      */
-    public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude) {
+    public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude)  {
         final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth);
 
         // attach to tangle - do pow
@@ -226,9 +224,8 @@ public class IotaAPI extends IotaAPICoreProxy {
 
         try {
             broadcastAndStore(res.getTrytes());
-        } catch (Exception e) {
-            log.error("Impossible to sendTrytes, aborting.", e);
-            throw new IllegalStateException("sendTrytes Illegal state Exception");
+        } catch (BroadcastAndStoreException e) {
+            return new ArrayList<>();
         }
 
         final List<Transaction> trx = new ArrayList<>();
@@ -275,11 +272,10 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @returns {function} callback
      * @returns {object} success
      **/
-    public List<Transaction> findTransactionObjects(String[] input) throws NoTransactionExcpection {
+    public List<Transaction> findTransactionObjects(String[] input) {
         FindTransactionResponse ftr = findTransactions(input, null, null, null);
         if (ftr == null || ftr.getHashes() == null)
-            throw new NoTransactionExcpection();
-
+            return new ArrayList<>();
         // get the transaction objects of the transactions
         return getTransactionsObjects(ftr.getHashes());
     }
@@ -294,10 +290,10 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @returns {function} callback
      * @returns {object} success
      **/
-    public List<Transaction> findTransactionObjectsByBundle(String[] input) throws NoTransactionExcpection {
+    public List<Transaction> findTransactionObjectsByBundle(String[] input) {
         FindTransactionResponse ftr = findTransactions(null, null, null, input);
         if (ftr == null || ftr.getHashes() == null)
-            throw new NoTransactionExcpection();
+            return new ArrayList<>();
 
         // get the transaction objects of the transactions
         return getTransactionsObjects(ftr.getHashes());
