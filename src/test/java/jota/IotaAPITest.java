@@ -3,10 +3,7 @@ package jota;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jota.dto.response.*;
-import jota.error.ArgumentException;
-import jota.error.InvalidBundleException;
-import jota.error.InvalidSignatureException;
-import jota.error.NotEnoughBalanceException;
+import jota.error.*;
 import jota.model.Bundle;
 import jota.model.Transaction;
 import jota.model.Transfer;
@@ -110,13 +107,13 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldGetLastInclusionState() {
+    public void shouldGetLastInclusionState() throws NoNodeInfoException {
         GetInclusionStateResponse res = iotaClient.getLatestInclusion(new String[]{TEST_HASH});
         assertThat(res.getStates(), IsNull.notNullValue());
     }
 
     @Test
-    public void shouldFindTransactionObjects() {
+    public void shouldFindTransactionObjects() throws NoTransactionExcpection {
         List<Transaction> ftr = iotaClient.findTransactionObjects(TEST_ADDRESSES);
         assertThat(ftr, IsNull.notNullValue());
     }
@@ -128,7 +125,7 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
+    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException, NoAddressException, NoInclusionStatesExcpection, NoNodeInfoException, NoTransactionExcpection {
         GetTransferResponse gtr = iotaClient.getTransfers(TEST_SEED1, 0, 0, false);
         assertThat(gtr.getTransfers(), IsNull.notNullValue());
 
