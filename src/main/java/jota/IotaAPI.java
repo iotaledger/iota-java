@@ -783,9 +783,9 @@ public class IotaAPI extends IotaAPICoreProxy {
                                      final String remainderAddress,
                                      final List<String> signatureFragments) throws NotEnoughBalanceException {
 
+        long totalTransferValue = totalValue;
         for (int i = 0; i < inputs.size(); i++) {
             long thisBalance = inputs.get(i).getBalance();
-            long totalTransferValue = totalValue;
             long toSubtract = 0 - thisBalance;
             long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
 

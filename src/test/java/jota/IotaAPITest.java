@@ -6,6 +6,7 @@ import jota.dto.response.*;
 import jota.error.ArgumentException;
 import jota.error.InvalidBundleException;
 import jota.error.InvalidSignatureException;
+import jota.error.NotEnoughBalanceException;
 import jota.model.Bundle;
 import jota.model.Transaction;
 import jota.model.Transfer;
@@ -98,7 +99,12 @@ public class IotaAPITest {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 1, TEST_MESSAGE, TEST_TAG));
-        List<String> trytes = iotaClient.prepareTransfers(TEST_SEED1, transfers, null, null);
+        List<String> trytes = null;
+        try {
+            trytes = iotaClient.prepareTransfers(TEST_SEED1, transfers, null, null);
+        } catch (NotEnoughBalanceException e) {
+            e.printStackTrace();
+        }
         Assert.assertNotNull(trytes);
         assertThat(trytes.isEmpty(), Is.is(false));
     }
@@ -132,6 +138,7 @@ public class IotaAPITest {
             }
         }
     }
+
 /*
     @Test
     public void shouldSendTrytes() {
