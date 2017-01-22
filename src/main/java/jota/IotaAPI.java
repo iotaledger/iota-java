@@ -1,10 +1,7 @@
 package jota;
 
 import jota.dto.response.*;
-import jota.error.ArgumentException;
-import jota.error.InvalidBundleException;
-import jota.error.InvalidSignatureException;
-import jota.error.NotEnoughBalanceException;
+import jota.error.*;
 import jota.model.*;
 import jota.pow.ICurl;
 import jota.pow.JCurl;
@@ -95,7 +92,7 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @property {bool} inclusionStates returns confirmation status of all transactions
      * @returns {object} success
      **/
-    public GetTransferResponse getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
+    public GetTransferResponse getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoAddressException, NoTransactionExcpection, NoNodeInfoException {
         StopWatch stopWatch = new StopWatch();
         // validate & if needed pad seed
         if ((seed = InputValidator.validateSeed(seed)) == null) {
@@ -119,10 +116,10 @@ public class IotaAPI extends IotaAPICoreProxy {
             System.out.println("GetTransfers after bundlesFromAddresses " + sw.getElapsedTimeMili() + " ms");
             return GetTransferResponse.create(bundles, stopWatch.getElapsedTimeMili());
         }
-        return null;
+        throw new NoAddressException();
     }
 
-    public Bundle[] bundlesFromAddresses(String[] addresses, final Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
+    public Bundle[] bundlesFromAddresses(String[] addresses, final Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoTransactionExcpection, NoNodeInfoException {
 
         List<Transaction> trxs = findTransactionObjects(addresses);
         // set of tail transactions
@@ -278,10 +275,10 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @returns {function} callback
      * @returns {object} success
      **/
-    public List<Transaction> findTransactionObjects(String[] input) {
+    public List<Transaction> findTransactionObjects(String[] input) throws NoTransactionExcpection {
         FindTransactionResponse ftr = findTransactions(input, null, null, null);
         if (ftr == null || ftr.getHashes() == null)
-            return null;
+            throw new NoTransactionExcpection();
 
         // get the transaction objects of the transactions
         return getTransactionsObjects(ftr.getHashes());
@@ -297,10 +294,10 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @returns {function} callback
      * @returns {object} success
      **/
-    public List<Transaction> findTransactionObjectsByBundle(String[] input) {
+    public List<Transaction> findTransactionObjectsByBundle(String[] input) throws NoTransactionExcpection {
         FindTransactionResponse ftr = findTransactions(null, null, null, input);
         if (ftr == null || ftr.getHashes() == null)
-            return null;
+            throw new NoTransactionExcpection();
 
         // get the transaction objects of the transactions
         return getTransactionsObjects(ftr.getHashes());
@@ -679,9 +676,9 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @returns {function} callback
      * @returns {array} state
      **/
-    public GetInclusionStateResponse getLatestInclusion(String[] hashes) {
+    public GetInclusionStateResponse getLatestInclusion(String[] hashes) throws NoNodeInfoException {
         GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
-        if (getNodeInfoResponse == null) return null;
+        if (getNodeInfoResponse == null) throw new NoNodeInfoException();
 
         String[] latestMilestone = {getNodeInfoResponse.getLatestSolidSubtangleMilestone()};
 
