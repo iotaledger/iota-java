@@ -113,7 +113,7 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldFindTransactionObjects() throws NoTransactionExcpection {
+    public void shouldFindTransactionObjects() {
         List<Transaction> ftr = iotaClient.findTransactionObjects(TEST_ADDRESSES);
         assertThat(ftr, IsNull.notNullValue());
     }
@@ -125,7 +125,7 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException, NoAddressException, NoInclusionStatesExcpection, NoNodeInfoException, NoTransactionExcpection {
+    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException, NoInclusionStatesExcpection, NoNodeInfoException {
         GetTransferResponse gtr = iotaClient.getTransfers(TEST_SEED1, 0, 0, false);
         assertThat(gtr.getTransfers(), IsNull.notNullValue());
 
