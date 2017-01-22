@@ -92,7 +92,7 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @property {bool} inclusionStates returns confirmation status of all transactions
      * @returns {object} success
      **/
-    public GetTransferResponse getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoAddressException, NoTransactionExcpection, NoNodeInfoException {
+    public GetTransferResponse getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoAddressException, NoTransactionExcpection, NoNodeInfoException, NoInclusionStatesExcpection {
         StopWatch stopWatch = new StopWatch();
         // validate & if needed pad seed
         if ((seed = InputValidator.validateSeed(seed)) == null) {
@@ -119,7 +119,7 @@ public class IotaAPI extends IotaAPICoreProxy {
         throw new NoAddressException();
     }
 
-    public Bundle[] bundlesFromAddresses(String[] addresses, final Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoTransactionExcpection, NoNodeInfoException {
+    public Bundle[] bundlesFromAddresses(String[] addresses, final Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoTransactionExcpection, NoNodeInfoException, NoInclusionStatesExcpection {
 
         List<Transaction> trxs = findTransactionObjects(addresses);
         // set of tail transactions
@@ -153,14 +153,15 @@ public class IotaAPI extends IotaAPICoreProxy {
         // If inclusionStates, get the confirmation status
         // of the tail transactions, and thus the bundles
         GetInclusionStateResponse gisr = null;
-        if (inclusionStates) {
+        if (tailTxArray != null && tailTxArray.length != 0 && inclusionStates) {
             try {
                 gisr = getLatestInclusion(tailTxArray);
             } catch (IllegalAccessError ignored) {
-
+                throw new NoInclusionStatesExcpection();
             }
-            if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0)
-                throw new ArgumentException("Inclusion states not found");
+            if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0) {
+                throw new NoInclusionStatesExcpection();
+            }
         }
         final GetInclusionStateResponse finalInclusionStates = gisr;
         Parallel.For(Arrays.asList(tailTxArray),
@@ -230,7 +231,6 @@ public class IotaAPI extends IotaAPICoreProxy {
             throw new IllegalStateException("sendTrytes Illegal state Exception");
         }
 
-        //return Arrays.stream(res.getTrytes()).map(Converter::transactionObject).collect(Collectors.toList());
         final List<Transaction> trx = new ArrayList<>();
 
         for (final String tx : Arrays.asList(res.getTrytes())) {
