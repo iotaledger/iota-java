@@ -4,6 +4,7 @@ import jota.dto.response.*;
 import jota.error.ArgumentException;
 import jota.error.InvalidBundleException;
 import jota.error.InvalidSignatureException;
+import jota.error.NotEnoughBalanceException;
 import jota.model.*;
 import jota.pow.ICurl;
 import jota.pow.JCurl;
@@ -318,7 +319,7 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @property {string} address Remainder address
      * @returns {array} trytes Returns bundle trytes
      **/
-    public List<String> prepareTransfers(String seed, final List<Transfer> transfers, String remainder, List<Input> inputs) {
+    public List<String> prepareTransfers(String seed, final List<Transfer> transfers, String remainder, List<Input> inputs) throws NotEnoughBalanceException {
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionCorrect(transfers)) {
@@ -687,7 +688,7 @@ public class IotaAPI extends IotaAPICoreProxy {
         return getInclusionStates(hashes, latestMilestone);
     }
 
-    public SendTransferResponse sendTransfer(String seed, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String address) {
+    public SendTransferResponse sendTransfer(String seed, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String address) throws NotEnoughBalanceException {
         StopWatch stopWatch = new StopWatch();
 
         List<String> trytes = prepareTransfers(seed, transfers, address, inputs == null ? null : Arrays.asList(inputs));
@@ -780,7 +781,7 @@ public class IotaAPI extends IotaAPICoreProxy {
                                      final String tag,
                                      final long totalValue,
                                      final String remainderAddress,
-                                     final List<String> signatureFragments) {
+                                     final List<String> signatureFragments) throws NotEnoughBalanceException {
 
         for (int i = 0; i < inputs.size(); i++) {
             long thisBalance = inputs.get(i).getBalance();
@@ -824,7 +825,7 @@ public class IotaAPI extends IotaAPICoreProxy {
                 totalTransferValue -= thisBalance;
             }
         }
-        return null;
+        throw new NotEnoughBalanceException();
     }
 
     public static class Builder extends IotaAPICoreProxy.Builder<Builder> {
