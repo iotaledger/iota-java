@@ -46,8 +46,8 @@ public class TransactionConverter {
 
         // generate the correct transaction hash
         curl.reset();
-        curl.absorbb(transactionTrits, 0, transactionTrits.length);
-        curl.squeezee(hash, 0, hash.length);
+        curl.absorb(transactionTrits, 0, transactionTrits.length);
+        curl.squeeze(hash, 0, hash.length);
 
         Transaction trx = new Transaction();
 

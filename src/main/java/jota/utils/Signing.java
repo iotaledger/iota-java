@@ -32,10 +32,10 @@ public class Signing {
         }
 
         curl.reset();
-        curl.absorbb(seed, 0, seed.length);
-        curl.squeezee(seed, 0, seed.length);
+        curl.absorb(seed, 0, seed.length);
+        curl.squeeze(seed, 0, seed.length);
         curl.reset();
-        curl.absorbb(seed, 0, seed.length);
+        curl.absorb(seed, 0, seed.length);
 
         final List<Integer> key = new ArrayList<>();
         int[] buffer = new int[seed.length];
@@ -44,7 +44,7 @@ public class Signing {
         while (length-- > 0) {
 
             for (int i = 0; i < 27; i++) {
-                curl.squeezee(buffer, offset, buffer.length);
+                curl.squeeze(buffer, offset, buffer.length);
                 for (int j = 0; j < 243; j++) {
                     key.add(buffer[j]);
                 }
@@ -72,8 +72,8 @@ public class Signing {
 
             for (int j = 0; j < 13 - normalizedBundleFragment[i]; j++) {
                 curl.reset()
-                        .absorbb(hash, 0, hash.length)
-                        .squeezee(hash, 0, hash.length);
+                        .absorb(hash, 0, hash.length)
+                        .squeeze(hash, 0, hash.length);
             }
 
             for (int j = 0; j < 243; j++) {
@@ -87,8 +87,8 @@ public class Signing {
     public int[] address(int[] digests) {
         int[] address = new int[243];
         curl.reset()
-                .absorbb(digests)
-                .squeezee(address);
+                .absorb(digests)
+                .squeeze(address);
         return address;
     }
 
@@ -105,15 +105,15 @@ public class Signing {
                 buffer = Arrays.copyOfRange(keyFragment, j * 243, (j + 1) * 243);
                 for (int k = 0; k < 26; k++) {
                     curl.reset()
-                            .absorbb(buffer)
-                            .squeezee(buffer);
+                            .absorb(buffer)
+                            .squeeze(buffer);
                 }
                 System.arraycopy(buffer, 0, keyFragment, j * 243, 243);
             }
 
             curl.reset();
-            curl.absorbb(keyFragment, 0, keyFragment.length);
-            curl.squeezee(buffer, 0, buffer.length);
+            curl.absorb(keyFragment, 0, keyFragment.length);
+            curl.squeeze(buffer, 0, buffer.length);
 
             System.arraycopy(buffer, 0, digests, i * 243, 243);
         }
@@ -131,12 +131,12 @@ public class Signing {
 
                 ICurl jCurl = new JCurl();
                 jCurl.reset();
-                jCurl.absorbb(buffer);
-                jCurl.squeezee(buffer);
+                jCurl.absorb(buffer);
+                jCurl.squeeze(buffer);
             }
-            curl.absorbb(buffer);
+            curl.absorb(buffer);
         }
-        curl.squeezee(buffer);
+        curl.squeeze(buffer);
 
         return buffer;
     }

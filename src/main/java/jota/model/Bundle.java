@@ -68,11 +68,11 @@ public class Bundle implements Comparable<Bundle> {
 
 
             int[] t = Converter.trits(this.getTransactions().get(i).getAddress() + Converter.trytes(valueTrits) + this.getTransactions().get(i).getTag() + Converter.trytes(timestampTrits) + Converter.trytes(currentIndexTrits) + Converter.trytes(lastIndexTrits));
-            curl.absorbb(t, 0, t.length);
+            curl.absorb(t, 0, t.length);
         }
 
         int[] hash = new int[243];
-        curl.squeezee(hash, 0, hash.length);
+        curl.squeeze(hash, 0, hash.length);
         String hashInTrytes = Converter.trytes(hash);
 
         for (int i = 0; i < this.getTransactions().size(); i++) {

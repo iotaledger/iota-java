@@ -580,7 +580,7 @@ public class IotaAPI extends IotaAPICoreProxy {
             String trxTrytes = Converter.transactionTrytes(trx).substring(2187, 2187 + 162);
             //System.out.println("Bundlesize "+bundle.getTransactions().size()+" "+trxTrytes);
             // Absorb bundle hash + value + timestamp + lastIndex + currentIndex trytes.
-            curl.absorbb(Converter.trits(trxTrytes));
+            curl.absorb(Converter.trits(trxTrytes));
             // Check if input transaction
             if (bundleValue < 0) {
                 String address = trx.getAddress();
@@ -605,7 +605,7 @@ public class IotaAPI extends IotaAPICoreProxy {
         // Check for total sum, if not equal 0 return error
         if (totalSum != 0) throw new InvalidBundleException("Invalid Bundle Sum");
         int[] bundleFromTrxs = new int[243];
-        curl.squeezee(bundleFromTrxs);
+        curl.squeeze(bundleFromTrxs);
         String bundleFromTxString = Converter.trytes(bundleFromTrxs);
 
         // Check if bundle hash is the same as returned by tx object

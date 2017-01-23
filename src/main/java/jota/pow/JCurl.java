@@ -15,7 +15,7 @@ public class JCurl implements ICurl {
 
     private int[] state = new int[STATE_LENGTH];
 
-    public JCurl absorbb(final int[] trits, int offset, int length) {
+    public JCurl absorb(final int[] trits, int offset, int length) {
 
         do {
             System.arraycopy(trits, offset, state, 0, length < HASH_LENGTH ? length : HASH_LENGTH);
@@ -28,8 +28,8 @@ public class JCurl implements ICurl {
 
 
 
-    public JCurl absorbb(final int[] trits) {
-        return absorbb(trits, 0, trits.length);
+    public JCurl absorb(final int[] trits) {
+        return absorb(trits, 0, trits.length);
     }
 
     public JCurl transform() {
@@ -52,7 +52,7 @@ public class JCurl implements ICurl {
         return this;
     }
     
-    public int[] squeezee(final int[] trits, int offset, int length) {
+    public int[] squeeze(final int[] trits, int offset, int length) {
 
         do {
             System.arraycopy(state, 0, trits, offset, length < HASH_LENGTH ? length : HASH_LENGTH);
@@ -63,8 +63,8 @@ public class JCurl implements ICurl {
         return state;
     }
     
-    public int[] squeezee(final int[] trits) {
-        return squeezee(trits, 0, trits.length);
+    public int[] squeeze(final int[] trits) {
+        return squeeze(trits, 0, trits.length);
     }
 
     public int[] getState() {
