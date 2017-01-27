@@ -329,7 +329,7 @@ public class IotaAPI extends IotaAPICoreProxy {
         final Bundle bundle = new Bundle();
         final List<String> signatureFragments = new ArrayList<>();
 
-        int totalValue = 0;
+        long totalValue = 0;
         String tag = "";
 
         //  Iterate over all transfers, get totalValue
@@ -459,7 +459,7 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @property {int} end Ending key index
      * @property {int} threshold Min balance required
      **/
-    public GetBalancesAndFormatResponse getInputs(String seed, int start, int end, int threshold) {
+    public GetBalancesAndFormatResponse getInputs(String seed, int start, int end, long threshold) {
         StopWatch stopWatch = new StopWatch();
         // validate the seed
         if (!InputValidator.isTrytes(seed, 0)) {
