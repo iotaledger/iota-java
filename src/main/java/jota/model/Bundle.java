@@ -142,6 +142,6 @@ public class Bundle implements Comparable<Bundle> {
 
     @Override
     public int compareTo(Bundle o) {
-        return this.getTransactions().get(0).getTimestamp().compareTo(o.getTransactions().get(0).getTimestamp());
+        return Long.compare(Long.parseLong(this.getTransactions().get(0).getTimestamp()), Long.parseLong(o.getTransactions().get(0).getTimestamp()));
     }
 }

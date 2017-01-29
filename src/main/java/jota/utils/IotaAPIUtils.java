@@ -111,7 +111,7 @@ public class IotaAPIUtils {
 
         // Convert all bundle entries into trytes
         for (Transaction tx : bundle.getTransactions()) {
-            bundleTrytes.add(Converter.transactionTrytes(tx));
+            bundleTrytes.add(tx.toTrytes());
         }
         Collections.reverse(bundleTrytes);
         return bundleTrytes;

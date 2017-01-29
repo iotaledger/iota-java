@@ -16,11 +16,11 @@ public class IotaCoreApiTest {
     private static final String TEST_BUNDLE = "XZKJUUMQOYUQFKMWQZNTFMSS9FKJLOEV9DXXXWPMQRTNCOUSUQNTBIJTVORLOQPLYZOTMLFRHYKMTGZZU";
     private static final String TEST_ADDRESS_WITH_CHECKSUM = "PNGMCSNRCTRHCHPXYTPKEJYPCOWKOMRXZFHH9N9VDIKMNVAZCMIYRHVJIAZARZTUETJVFDMBEBIQE9QTHBFWDAOEFA";
     private static final String TEST_HASH = "OAATQS9VQLSXCLDJVJJVYUGONXAXOFMJOZNSYWRZSWECMXAQQURHQBJNLD9IOFEPGZEPEMPXCIVRX9999";
-    private static IotaAPICoreProxy proxy;
+    private static IotaAPICore proxy;
 
     @Before
     public void createProxyInstance() {
-        proxy = new IotaAPICoreProxy.Builder().build();
+        proxy = new IotaAPICore.Builder().build();
     }
 
     @Test
@@ -102,6 +102,12 @@ public class IotaCoreApiTest {
 
     @Test
     public void shouldGetInclusionStates() {
+        GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{"DBPECSH9YLSSTQDGERUHJBBJTKVUDBMTJLG9WPHBINGHIFOSJMDJLARTVOXXWEFQJLLBINOHCZGYFSMUEXWPPMTOFW"}, new String[]{"EJDQOQHMLJGBMFWB9WJSPRCYIGNPO9WRHDCEQXIMPVPIJ9JV9RJGVHNX9EPGXFOOKBABCVMMAAX999999"});
+        assertThat(res.getStates(), IsNull.notNullValue());
+    }
+
+    @Test(expected = IllegalAccessError.class)
+    public void shouldNotGetInclusionStates() {
         GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{TEST_ADDRESS_WITH_CHECKSUM}, new String[]{"DNSBRJWNOVUCQPILOQIFDKBFJMVOTGHLIMLLRXOHFTJZGRHJUEDAOWXQRYGDI9KHYFGYDWQJZKX999999"});
         assertThat(res.getStates(), IsNull.notNullValue());
     }

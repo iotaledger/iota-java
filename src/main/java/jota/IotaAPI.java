@@ -25,7 +25,7 @@ import java.util.*;
  *
  * @author davassi
  */
-public class IotaAPI extends IotaAPICoreProxy {
+public class IotaAPI extends IotaAPICore {
 
     private static final Logger log = LoggerFactory.getLogger(IotaAPI.class);
     private ICurl customCurl;
@@ -216,7 +216,7 @@ public class IotaAPI extends IotaAPICoreProxy {
      * @param {int}   minWeightMagnitude
      * @return
      */
-    public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude)  {
+    public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude) {
         final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth);
 
         // attach to tangle - do pow
@@ -230,8 +230,8 @@ public class IotaAPI extends IotaAPICoreProxy {
 
         final List<Transaction> trx = new ArrayList<>();
 
-        for (final String tx : Arrays.asList(res.getTrytes())) {
-            trx.add(new TransactionConverter(customCurl).transactionObject(tx));
+        for (final String tryte : Arrays.asList(res.getTrytes())) {
+            trx.add(new Transaction(tryte, customCurl));
         }
         return trx;
     }
@@ -257,7 +257,7 @@ public class IotaAPI extends IotaAPICoreProxy {
         final List<Transaction> trxs = new ArrayList<>();
 
         for (final String tryte : trytesResponse.getTrytes()) {
-            trxs.add(new TransactionConverter(customCurl).transactionObject(tryte));
+            trxs.add(new Transaction(tryte, customCurl));
         }
         return trxs;
     }
@@ -440,8 +440,8 @@ public class IotaAPI extends IotaAPICoreProxy {
             List<Transaction> trxb = bundle.getTransactions();
             List<String> bundleTrytes = new ArrayList<>();
 
-            for (Transaction tx : trxb) {
-                bundleTrytes.add(Converter.transactionTrytes(tx));
+            for (Transaction trx : trxb) {
+                bundleTrytes.add(trx.toTrytes());
             }
             Collections.reverse(bundleTrytes);
             return bundleTrytes;
@@ -577,7 +577,7 @@ public class IotaAPI extends IotaAPICoreProxy {
                 throw new ArgumentException("Invalid Bundle");
             }
 
-            String trxTrytes = Converter.transactionTrytes(trx).substring(2187, 2187 + 162);
+            String trxTrytes = trx.toTrytes().substring(2187, 2187 + 162);
             //System.out.println("Bundlesize "+bundle.getTransactions().size()+" "+trxTrytes);
             // Absorb bundle hash + value + timestamp + lastIndex + currentIndex trytes.
             curl.absorb(Converter.trits(trxTrytes));
@@ -644,9 +644,9 @@ public class IotaAPI extends IotaAPICoreProxy {
 
         GetBundleResponse bundleResponse = getBundle(transaction);
         Bundle bundle = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
-        for (Transaction element : bundle.getTransactions()) {
+        for (Transaction trx : bundle.getTransactions()) {
 
-            bundleTrytes.add(Converter.transactionTrytes(element));
+            bundleTrytes.add(trx.toTrytes());
         }
 
         List<Transaction> trxs = sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), depth, minWeightMagnitude);
@@ -719,7 +719,7 @@ public class IotaAPI extends IotaAPICoreProxy {
                 throw new ArgumentException("Bundle transactions not visible");
             }
 
-            Transaction trx = new TransactionConverter(customCurl).transactionObject(gtr.getTrytes()[0]);
+            Transaction trx = new Transaction(gtr.getTrytes()[0], customCurl);
             if (trx == null || trx.getBundle() == null) {
                 throw new ArgumentException("Invalid trytes, could not create object");
             }
@@ -760,7 +760,7 @@ public class IotaAPI extends IotaAPICoreProxy {
             throw new ArgumentException("Bundle transactions not visible");
         }
 
-        Transaction trx = new TransactionConverter(customCurl).transactionObject(gtr.getTrytes()[0]);
+        Transaction trx = new Transaction(gtr.getTrytes()[0], customCurl);
         if (trx == null || trx.getBundle() == null) {
             throw new ArgumentException("Invalid trytes, could not create object");
         }
@@ -821,7 +821,7 @@ public class IotaAPI extends IotaAPICoreProxy {
         throw new NotEnoughBalanceException();
     }
 
-    public static class Builder extends IotaAPICoreProxy.Builder<Builder> {
+    public static class Builder extends IotaAPICore.Builder<Builder> {
         private ICurl customCurl;
 
         public Builder withCustomCurl(ICurl curl) {

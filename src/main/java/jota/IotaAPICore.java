@@ -13,7 +13,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -21,14 +20,14 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Adrian on 15.01.2017.
  */
-public class IotaAPICoreProxy {
+public class IotaAPICore {
 
-    private static final Logger log = LoggerFactory.getLogger(IotaAPICoreProxy.class);
+    private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
 
     private IotaAPIService service;
     private String protocol, host, port;
 
-    protected IotaAPICoreProxy(final Builder builder) {
+    protected IotaAPICore(final Builder builder) {
         protocol = builder.protocol;
         host = builder.host;
         port = builder.port;
@@ -142,12 +141,6 @@ public class IotaAPICoreProxy {
         return wrapCheckedException(res).body();
     }
 
-    public GetInclusionStateResponse getInclusionStates(Collection<String> transactions, Collection<String> tips) {
-        final Call<GetInclusionStateResponse> res = service.getInclusionStates(IotaGetInclusionStateRequest
-                .createGetInclusionStateRequest(transactions, tips));
-        return wrapCheckedException(res).body();
-    }
-
     public GetTrytesResponse getTrytes(String... hashes) {
         final Call<GetTrytesResponse> res = service.getTrytes(IotaGetTrytesRequest.createGetTrytesRequest(hashes));
         return wrapCheckedException(res).body();
@@ -192,7 +185,7 @@ public class IotaAPICoreProxy {
 
         String protocol, host, port;
 
-        public IotaAPICoreProxy build() {
+        public IotaAPICore build() {
 
             if (protocol == null || host == null || port == null) {
 
@@ -205,7 +198,7 @@ public class IotaAPICoreProxy {
                 }
             }
 
-            return new IotaAPICoreProxy(this);
+            return new IotaAPICore(this);
         }
 
         private boolean checkPropertiesFiles() {

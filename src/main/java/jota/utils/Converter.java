@@ -219,29 +219,4 @@ public class Converter {
         }
     }
 
-    public static String transactionTrytes(Transaction trx) {
-        int[] valueTrits = Converter.trits(trx.getValue(), 81);
-
-        int[] timestampTrits = Converter.trits(trx.getTimestamp(), 27);
-
-
-        int[] currentIndexTrits = Converter.trits(trx.getCurrentIndex(), 27);
-
-
-        int[] lastIndexTrits = Converter.trits(trx.getLastIndex(), 27);
-
-
-        return trx.getSignatureFragments()
-                + trx.getAddress()
-                + Converter.trytes(valueTrits)
-                + trx.getTag()
-                + Converter.trytes(timestampTrits)
-                + Converter.trytes(currentIndexTrits)
-                + Converter.trytes(lastIndexTrits)
-                + trx.getBundle()
-                + trx.getTrunkTransaction()
-                + trx.getBranchTransaction()
-                + trx.getNonce();
-    }
-
 }
