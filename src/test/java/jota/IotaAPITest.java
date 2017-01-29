@@ -11,6 +11,7 @@ import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -136,18 +137,26 @@ public class IotaAPITest {
         }
     }
 
-/*
+    @Ignore
     @Test
     public void shouldSendTrytes() {
         iotaClient.sendTrytes(new String[]{TEST_TRYTES}, 9, 18);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void shouldNotSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException {
+        List<Transfer> transfers = new ArrayList<>();
+        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM, 10000990, "JUSTANOTHERTEST", TEST_TAG));
+        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED2, 9, 18, transfers, null, null);
+        assertThat(str.getSuccessfully(), IsNull.notNullValue());
+    }
+
+    @Ignore
     @Test
-    public void shouldSendTransfer() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
+    public void shouldSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM, 0, "JUSTANOTHERTEST", TEST_TAG));
         SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED2, 9, 18, transfers, null, null);
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
-*/
 }
