@@ -4,9 +4,17 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.iota</groupId>
     <artifactId>jota</artifactId>
-    <version>1.0.0-RELEASE</version>
+    <version>1.0.0-PRERELEASE</version>
     <name>JOTA</name>
     <description>JOTA library is a simple Java wrapper around IOTA Node's JSON-REST HTTP interface.</description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <properties>
         <java-version>1.7</java-version>
