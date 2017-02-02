@@ -7,10 +7,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public abstract class AbstractResponse {
 
-    private Integer duration;
+    private Long duration;
 
-    public Integer getDuration() {
+    public Long getDuration() {
         return duration;
+    }
+
+    public void setDuration(Long duration) {
+        this.duration = duration;
     }
 
     @Override

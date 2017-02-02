@@ -1,0 +1,13 @@
+language: java
+jdk:
+- oraclejdk8
+script: mvn package
+deploy:
+  provider: releases
+  file_glob: true
+  file: "/home/travis/build/iotaledger/iota.lib.java/target/jota*.jar"
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: iotaledger/iota.lib.java
+    all_branches: true

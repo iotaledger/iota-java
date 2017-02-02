@@ -18,5 +18,13 @@ public class IotaNeighborsRequest extends IotaCommandRequest {
     public static IotaNeighborsRequest createRemoveNeighborsRequest(String... uris) {
         return new IotaNeighborsRequest(IotaAPICommands.REMOVE_NEIGHBORS, uris);
     }
+
+    public String[] getUris() {
+        return uris;
+    }
+
+    public void setUris(String[] uris) {
+        this.uris = uris;
+    }
 }
 

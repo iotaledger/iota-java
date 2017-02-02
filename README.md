@@ -4,11 +4,11 @@ The JOTA library is a simple Java wrapper around [[IOTA]](http://www.iotatoken.c
 
 It allows to connect easily using java directly to a local or a remote [[IOTA node]](https://iota.readme.io/docs/syncing-to-the-network).
 
-* **Latest release:** 1.0.0 Release
-* **Compatibility:** in development to be fully compatible with IOTA IRI v1.1.0
+* **Latest release:** 0.9.0 RC1
+* **Compatibility:** fully compatible with IOTA IRI v1.2.4
 * **API coverage:** 14 of 14 commands fully implemented
 * **License:** Apache License 2.0 
-* **Readme updated:** 2016-11-12 21:05:02 (UTC)
+* **Readme updated:** 2016-01-19 21:05:02 (UTC)
 
 A list of all *IOTA* JSON-REST API commands currently supported by jota wrapper can be found in the `Commands` enum (see [here](https://github.com/davassi/JOTA/blob/master/src/main/java/jota/IotaAPICommands.java) for more details).
 
@@ -32,26 +32,32 @@ Other dependencies:
 
 Connect to your local node with the default settings is quite straightforward: it requires only 2 lines of code. For example, in order to fetch the Node Info:
 
-	IotaApiProxy api = new IotaApiProxy.Builder.build();
+	IotaApi api = new IotaApi.Builder.build();
 	GetNodeInfoResponse response = api.getNodeInfo();
 
-of if you need to connect to a remote node on https:
+of if you need to connect to a remote node:
 
-	IotaApiProxy api = new IotaApiProxy.Builder 
-		.protocol("https")
+	IotaApi api = new IotaApi.Builder 
+		.protocol("http")
 		.nodeAddress("somewhere_over_the_rainbow")
-		.port(54321) 
+		.port(14265) 
 		.build();
 	
 	GetNodeInfoResponse response = api.getNodeInfo();
 
-Jota is still *not* in the central maven repository. It will be available when it will cover 100% iota's rest interface.
+In order to communicate with *IOTA node*, JOTA needs to be aware of your node's exact configuration. If you dont want to use the builder the easiest way of providing this information is via a `node_config.properties` file, for example:
 
-In order to communicate with *IOTA node*, JOTA needs to be aware of your node's exact configuration. The easiest way of providing this information is via a `node_config.properties` file, for example:
-
-    iota.node.protocol=http
+    iota.node.protocol=http``****************``
     iota.node.host=127.0.0.1
     iota.node.port=14265
+
+Jota is still *not* in the central maven repository. It will be available when it will cover 100% iota's rest interface.
+
+##Warning
+ -   This is pre-release software!
+ -   There may be performance and stability issues.
+ -   You may loose all your money :)
+ -   Please report any issues using the <a href="">Issue Tracker</a>"
 
 That's it!
 	
@@ -63,7 +69,5 @@ There's an extensive list of test coverages on the src/test/java package of the 
 
 If JOTA has been useful to you and you feel like contributing, consider posting a bug report or a pull request. Alternatively, donations are very welcome too!
 
-* Bitcoin: `3FGCHqhG1SUpgn2eS1Agq2KnxJemWnQFbB`
-
-
-
+* Bitcoin (Gianni Davassi): `3FGCHqhG1SUpgn2eS1Agq2KnxJemWnQFbB`
+* Bitcoin (Adrian Ziser): `3FGCHqhG1SUpgn2eS1Agq2KnxJemWnQFbB`

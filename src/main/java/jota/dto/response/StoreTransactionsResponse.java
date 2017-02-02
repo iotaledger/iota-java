@@ -1,6 +1,8 @@
 package jota.dto.response;
 
 public class StoreTransactionsResponse extends AbstractResponse {
-    // empty response
+    public StoreTransactionsResponse(long duration) {
+        setDuration(duration);
+    }
 }
 

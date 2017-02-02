@@ -4,7 +4,7 @@ package jota.utils;
  * Created by pinpong on 01.12.16.
  */
 public class TrytesConverter {
-    
+
     /**
      * Conversion of ascii encoded bytes to trytes.
      * Input is a string (can be stringified JSON object), return value is Trytes
@@ -19,9 +19,9 @@ public class TrytesConverter {
      * b. The second value is the remainder (decimal value - first value), divided by 27
      * 3. The two values returned from Step 2. are then input as indices into the available values list ('9ABCDEFGHIJKLMNOPQRSTUVWXYZ') to get the correct tryte value
      * <p>
-     * 
+     * <p>
      * EXAMPLE
-     * 
+     * <p>
      * Lets say we want to convert the ASCII character "Z".
      * 1. 'Z' has a decimal value of 90.
      * 2. 90 can be represented as 9 + 3 * 27. To make it simpler:
@@ -32,10 +32,9 @@ public class TrytesConverter {
      * b. The second tryte value is '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'[3] === "C"
      * Our tryte pair is "IC"
      * <p>
-     * 
-     * @param   inputString
-     * @return
-     *          The ASCII char "Z" is represented as "IC" in trytes.
+     *
+     * @param inputString
+     * @return The ASCII char "Z" is represented as "IC" in trytes.
      */
     public static String toTrytes(String inputString) {
 

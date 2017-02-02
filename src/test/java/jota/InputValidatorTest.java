@@ -20,6 +20,7 @@ public class InputValidatorTest {
     private static final String TEST_HASH = "OAATQS9VQLSXCLDJVJJVYUGONXAXOFMJOZNSYWRZSWECMXAQQURHQBJNLD9IOFEPGZEPEMPXCIVRX9999";
     private static final String TEST_MESSAGE = "JOTA";
     private static final String TEST_TAG = "JOTASPAM9999999999999999999";
+
     @Test
     public void shouldIsAddress() {
         assertEquals(InputValidator.isAddress(TEST_ADDRESS_WITHOUT_CHECKSUM), true);

@@ -1,20 +1,22 @@
 package jota.model;
 
-import jota.pow.Curl;
+import jota.pow.ICurl;
+import jota.pow.JCurl;
 import jota.utils.Converter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by pinpong on 09.12.16.
  */
-public class Bundle {
-
-    private List<Transaction> transactions;
-    private int length;
+public class Bundle implements Comparable<Bundle> {
 
     public static String EMPTY_HASH = "999999999999999999999999999999999999999999999999999999999999999999999999999999999";
+    private List<Transaction> transactions;
+    private int length;
 
 
     public Bundle() {
@@ -30,10 +32,6 @@ public class Bundle {
         return transactions;
     }
 
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-
     public int getLength() {
         return length;
     }
@@ -43,48 +41,37 @@ public class Bundle {
     }
 
     public void addEntry(int signatureMessageLength, String address, long value, String tag, long timestamp) {
+        if (getTransactions() == null) {
+            this.transactions = new ArrayList<>(getTransactions());
+        }
+
         for (int i = 0; i < signatureMessageLength; i++) {
-
-            List<Transaction> transactions = new ArrayList<>(getTransactions());
-            transactions.add(new Transaction(address, String.valueOf(i == 0 ? value : 0), tag, String.valueOf(timestamp)));
-
-            setTransactions(transactions);
-
+            Transaction trx = new Transaction(address, String.valueOf(i == 0 ? value : 0), tag, String.valueOf(timestamp));
+            getTransactions().add(trx);
         }
     }
 
-    public void finalize() {
+    public void finalize(ICurl customCurl) {
 
-        Curl curl = new Curl();
+        ICurl curl = customCurl == null ? new JCurl() : customCurl;
         curl.reset();
 
         for (int i = 0; i < this.getTransactions().size(); i++) {
 
-            int[] valueTrits = Converter.trits(this.getTransactions().get(i).getValue());
-            while (valueTrits.length < 81) {
-                valueTrits[valueTrits.length] = 0;
-            }
+            int[] valueTrits = Converter.trits(this.getTransactions().get(i).getValue(), 81);
 
-            int[] timestampTrits = Converter.trits(this.getTransactions().get(i).getTimestamp());
-            while (timestampTrits.length < 27) {
-                timestampTrits[timestampTrits.length] = 0;
-            }
+            int[] timestampTrits = Converter.trits(this.getTransactions().get(i).getTimestamp(), 27);
 
-            int[] currentIndexTrits = Converter.trits(this.getTransactions().get(i).setCurrentIndex("" + i));
-            while (currentIndexTrits.length < 27) {
-                currentIndexTrits[currentIndexTrits.length] = 0;
-            }
+            int[] currentIndexTrits = Converter.trits(this.getTransactions().get(i).setCurrentIndex("" + i), 27);
 
-            int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).setLastIndex("" + (this.getTransactions().size() - 1)));
-            while (lastIndexTrits.length < 27) {
-                lastIndexTrits[lastIndexTrits.length] = 0;
-            }
+            int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).setLastIndex("" + (this.getTransactions().size() - 1)), 27);
+
 
             int[] t = Converter.trits(this.getTransactions().get(i).getAddress() + Converter.trytes(valueTrits) + this.getTransactions().get(i).getTag() + Converter.trytes(timestampTrits) + Converter.trytes(currentIndexTrits) + Converter.trytes(lastIndexTrits));
             curl.absorb(t, 0, t.length);
         }
 
-        int[] hash = new int[90];
+        int[] hash = new int[243];
         curl.squeeze(hash, 0, hash.length);
         String hashInTrytes = Converter.trytes(hash);
 
@@ -98,14 +85,12 @@ public class Bundle {
         String emptySignatureFragment = "";
         String emptyHash = EMPTY_HASH;
 
-        for (int j = 0; emptySignatureFragment.length() < 2187; j++) {
-            emptySignatureFragment += '9';
-        }
+        emptySignatureFragment = StringUtils.rightPad(emptySignatureFragment, 2187, '9');
 
         for (int i = 0; i < this.getTransactions().size(); i++) {
 
             // Fill empty signatureMessageFragment
-            this.getTransactions().get(i).setSignatureFragments(signatureFragments.get(i) == null ? signatureFragments.get(i) : emptySignatureFragment);
+            this.getTransactions().get(i).setSignatureFragments((signatureFragments.size() <= i || signatureFragments.get(i).isEmpty()) ? emptySignatureFragment : signatureFragments.get(i));
             // Fill empty trunkTransaction
             this.getTransactions().get(i).setTrunkTransaction(emptyHash);
 
@@ -118,14 +103,14 @@ public class Bundle {
     }
 
     public int[] normalizedBundle(String bundleHash) {
-        int[] normalizedBundle = new int[33 * 27 + 27];
+        int[] normalizedBundle = new int[81];
 
         for (int i = 0; i < 3; i++) {
 
             long sum = 0;
             for (int j = 0; j < 27; j++) {
 
-                sum += (normalizedBundle[i * 27 + j] = Converter.value(Converter.trits("" + bundleHash.charAt(i * 27 + j))));
+                sum += (normalizedBundle[i * 27 + j] = Converter.value(Converter.tritsString("" + bundleHash.charAt(i * 27 + j))));
             }
 
             if (sum >= 0) {
@@ -155,4 +140,8 @@ public class Bundle {
         return normalizedBundle;
     }
 
+    @Override
+    public int compareTo(Bundle o) {
+        return Long.compare(Long.parseLong(this.getTransactions().get(0).getTimestamp()), Long.parseLong(o.getTransactions().get(0).getTimestamp()));
+    }
 }

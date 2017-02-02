@@ -17,6 +17,38 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
         return new IotaFindTransactionsRequest();
     }
 
+    public String[] getBundles() {
+        return bundles;
+    }
+
+    public void setBundles(String[] bundles) {
+        this.bundles = bundles;
+    }
+
+    public String[] getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(String[] addresses) {
+        this.addresses = addresses;
+    }
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
+
+    public String[] getApprovees() {
+        return approvees;
+    }
+
+    public void setApprovees(String[] approvees) {
+        this.approvees = approvees;
+    }
+
     public IotaFindTransactionsRequest byBundles(String... bundles) {
         this.bundles = bundles;
         return this;
