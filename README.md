@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/iotaledger/iota.lib.java.svg?branch=dev)](https://travis-ci.org/iotaledger/iota.lib.java)
+
+
 ##Introduction
 
 The JOTA library is a simple Java wrapper around [[IOTA]](http://www.iotatoken.com/) Node's JSON-REST HTTP interface.
