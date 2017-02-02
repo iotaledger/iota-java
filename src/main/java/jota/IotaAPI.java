@@ -41,13 +41,19 @@ public class IotaAPI extends IotaAPICore {
      * This is either done deterministically, or by providing the index of the new remainderAddress
      *
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3
      * @param index     Optional (default null). Key index to start search from. If the index is provided, the generation of the address is not deterministic.
      * @param checksum  Optional (default false). Adds 9-tryte address checksum
      * @param total     Optional (default 1)Total number of addresses to generate
      * @param returnAll If true, it returns all addresses which were deterministically generated (until findTransactions returns null)
      * @return an array of strings with the specifed number of addresses
      */
-    public GetNewAddressResponse getNewAddress(final String seed, final int index, final boolean checksum, final int total, final boolean returnAll) {
+    public GetNewAddressResponse getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws InvalidSecurityLevelException {
+
+        if (security < 1 || security > 3) {
+            throw new InvalidSecurityLevelException();
+        }
+
         StopWatch stopWatch = new StopWatch();
 
         List<String> allAddresses = new ArrayList<>();
@@ -56,7 +62,7 @@ public class IotaAPI extends IotaAPICore {
         // and return the list of all addresses
         if (total != 0) {
             for (int i = index; i < index + total; i++) {
-                allAddresses.add(IotaAPIUtils.newAddress(seed, i, checksum, customCurl));
+                allAddresses.add(IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl));
             }
             return GetNewAddressResponse.create(allAddresses, stopWatch.getElapsedTimeMili());
         }
@@ -64,7 +70,7 @@ public class IotaAPI extends IotaAPICore {
         // already created if null, return list of addresses
         for (int i = index; ; i++) {
 
-            final String newAddress = IotaAPIUtils.newAddress(seed, i, checksum, customCurl);
+            final String newAddress = IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl);
             final FindTransactionResponse response = findTransactionsByAddresses(newAddress);
 
             allAddresses.add(newAddress);
@@ -83,20 +89,24 @@ public class IotaAPI extends IotaAPICore {
     }
 
     /**
-     * @param {string}   seed
-     * @param {object}   options
-     * @param {function} callback
-     * @method getTransfers
-     * @property {int} start Starting key index
-     * @property {int} end Ending key index
-     * @property {bool} inclusionStates returns confirmation status of all transactions
-     * @returns {object} success
+     * @param seed
+     * @param start
+     * @param end
+     * @param inclusionStates
+     * @param security
+     * @param seed
+     * @param seed
+     * @returns Bundle
      **/
-    public GetTransferResponse getTransfers(String seed, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoNodeInfoException, NoInclusionStatesExcpection {
+    public GetTransferResponse getTransfers(String seed, int security, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoNodeInfoException, NoInclusionStatesExcpection, InvalidSecurityLevelException {
         StopWatch stopWatch = new StopWatch();
         // validate & if needed pad seed
         if ((seed = InputValidator.validateSeed(seed)) == null) {
             throw new IllegalStateException("Invalid Seed");
+        }
+
+        if (security < 1 || security > 3) {
+            throw new InvalidSecurityLevelException();
         }
 
         start = start != null ? 0 : start;
@@ -107,7 +117,7 @@ public class IotaAPI extends IotaAPICore {
         StopWatch sw = new StopWatch();
 
         System.out.println("GetTransfer started");
-        GetNewAddressResponse gnr = getNewAddress(seed, start, false, end == null ? end - start : end, true);
+        GetNewAddressResponse gnr = getNewAddress(seed, security, start, false, end == null ? end - start : end, true);
         if (gnr != null && gnr.getAddresses() != null) {
             System.out.println("GetTransfers after getNewAddresses " + sw.getElapsedTimeMili() + " ms");
             Bundle[] bundles = bundlesFromAddresses(gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]), inclusionStates);
@@ -302,17 +312,15 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Prepares transfer by generating bundle, finding and signing inputs
      *
-     * @param {string}   seed
-     * @param {object}   transfers
-     * @param {object}   options
-     * @param {function} callback
-     * @return
-     * @method prepareTransfers
-     * @property {array} inputs Inputs used for signing. Needs to have correct keyIndex and address value
-     * @property {string} address Remainder address
+     * @param seed
+     * @param security
+     * @param transfers
+     * @param remainder
+     * @param inputs
+     * @param security
      * @returns {array} trytes Returns bundle trytes
      **/
-    public List<String> prepareTransfers(String seed, final List<Transfer> transfers, String remainder, List<Input> inputs) throws NotEnoughBalanceException {
+    public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs) throws NotEnoughBalanceException, InvalidSecurityLevelException {
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionCorrect(transfers)) {
@@ -324,6 +332,9 @@ public class IotaAPI extends IotaAPICore {
             throw new IllegalStateException("Invalid Seed");
         }
 
+        if (security < 1 || security > 3) {
+            throw new InvalidSecurityLevelException();
+        }
 
         // Create a new bundle
         final Bundle bundle = new Bundle();
@@ -403,13 +414,19 @@ public class IotaAPI extends IotaAPICore {
                 int i = 0;
                 for (String balance : balances) {
                     long thisBalance = Integer.parseInt(balance);
-                    totalBalance += thisBalance;
 
                     // If input has balance, add it to confirmedInputs
                     if (thisBalance > 0) {
+                        totalBalance += thisBalance;
                         Input inputEl = inputs.get(i++);
                         inputEl.setBalance(thisBalance);
                         confirmedInputs.add(inputEl);
+
+                        // if we've already reached the intended input value, break out of loop
+                        if (totalBalance >= totalValue) {
+                            log.info("Total balance already reached ");
+                            break;
+                    }
                     }
                 }
 
@@ -418,7 +435,7 @@ public class IotaAPI extends IotaAPICore {
                     throw new IllegalStateException("Not enough balance");
                 }
 
-                return addRemainder(seed, confirmedInputs, bundle, tag, totalValue, null, signatureFragments);
+                return addRemainder(seed, security, confirmedInputs, bundle, tag, totalValue, null, signatureFragments);
             }
 
             //  Case 2: Get inputs deterministically
@@ -427,9 +444,9 @@ public class IotaAPI extends IotaAPICore {
             //  confirm that the inputs exceed the threshold
             else {
 
-                @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newinputs = getInputs(seed, 0, 0, totalValue);
+                @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newinputs = getInputs(seed, security, 0, 0, totalValue);
                 // If inputs with enough balance
-                return addRemainder(seed, newinputs.getInput(), bundle, tag, totalValue, null, signatureFragments);
+                return addRemainder(seed, security, newinputs.getInput(), bundle, tag, totalValue, null, signatureFragments);
             }
         } else {
 
@@ -451,15 +468,13 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Gets the inputs of a seed
      *
-     * @param {string}   seed
-     * @param {object}   options
-     * @param {function} callback
-     * @method getInputs
-     * @property {int} start Starting key index
-     * @property {int} end Ending key index
-     * @property {int} threshold Min balance required
+     * @param seed
+     * @param security  security secuirty level of private key / seed
+     * @param start     start Starting key index
+     * @param end       end Ending key index
+     * @param threshold threshold Min balance required
      **/
-    public GetBalancesAndFormatResponse getInputs(String seed, int start, int end, long threshold) {
+    public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold) throws InvalidSecurityLevelException {
         StopWatch stopWatch = new StopWatch();
         // validate the seed
         if (!InputValidator.isTrytes(seed, 0)) {
@@ -469,6 +484,10 @@ public class IotaAPI extends IotaAPICore {
         // validate & if needed pad seed
         if ((seed = InputValidator.validateSeed(seed)) == null) {
             throw new IllegalStateException("Invalid Seed");
+        }
+
+        if (security < 1 || security > 3) {
+            throw new InvalidSecurityLevelException();
         }
 
         // If start value bigger than end, return error
@@ -487,11 +506,11 @@ public class IotaAPI extends IotaAPICore {
 
             for (int i = start; i < end; i++) {
 
-                String address = IotaAPIUtils.newAddress(seed, i, false, customCurl);
+                String address = IotaAPIUtils.newAddress(seed, security, i, false, customCurl);
                 allAddresses.add(address);
             }
 
-            return getBalanceAndFormat(allAddresses, threshold, start, end, stopWatch);
+            return getBalanceAndFormat(allAddresses, threshold, start, end, stopWatch, security);
         }
         //  Case 2: iterate till threshold || end
         //
@@ -499,14 +518,18 @@ public class IotaAPI extends IotaAPICore {
         //  Calls getNewAddress and deterministically generates and returns all addresses
         //  We then do getBalance, format the output and return it
         else {
-            final GetNewAddressResponse res = getNewAddress(seed, start, false, 0, true);
-            return getBalanceAndFormat(res.getAddresses(), threshold, start, end, stopWatch);
+            final GetNewAddressResponse res = getNewAddress(seed, security, start, false, 0, true);
+            return getBalanceAndFormat(res.getAddresses(), threshold, start, end, stopWatch, security);
         }
     }
 
     //  Calls getBalances and formats the output
     //  returns the final inputsObject then
-    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, long threshold, int start, int end, StopWatch stopWatch) {
+    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, long threshold, int start, int end, StopWatch stopWatch, int security) throws InvalidSecurityLevelException {
+
+        if (security < 1 || security > 3) {
+            throw new InvalidSecurityLevelException();
+        }
 
         GetBalancesResponse getBalancesResponse = getBalances(100, addresses);
         List<String> balances = Arrays.asList(getBalancesResponse.getBalances());
@@ -524,7 +547,7 @@ public class IotaAPI extends IotaAPICore {
             long balance = Long.parseLong(balances.get(++i));
 
             if (balance > 0) {
-                final Input newEntry = new Input(address, balance, start + i);
+                final Input newEntry = new Input(address, balance, start + i, security);
 
                 inputs.add(newEntry);
                 // Increase totalBalance of all aggregated inputs
@@ -680,10 +703,15 @@ public class IotaAPI extends IotaAPICore {
         return getInclusionStates(hashes, latestMilestone);
     }
 
-    public SendTransferResponse sendTransfer(String seed, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String address) throws NotEnoughBalanceException {
+    public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String address) throws NotEnoughBalanceException, InvalidSecurityLevelException {
+
+        if (security < 1 || security > 3) {
+            throw new InvalidSecurityLevelException();
+        }
+
         StopWatch stopWatch = new StopWatch();
 
-        List<String> trytes = prepareTransfers(seed, transfers, address, inputs == null ? null : Arrays.asList(inputs));
+        List<String> trytes = prepareTransfers(seed, security, transfers, address, inputs == null ? null : Arrays.asList(inputs));
         List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude);
 
         Boolean[] successful = new Boolean[trxs.size()];
@@ -768,12 +796,13 @@ public class IotaAPI extends IotaAPICore {
     }
 
     public List<String> addRemainder(final String seed,
+                                     final int security,
                                      final List<Input> inputs,
                                      final Bundle bundle,
                                      final String tag,
                                      final long totalValue,
                                      final String remainderAddress,
-                                     final List<String> signatureFragments) throws NotEnoughBalanceException {
+                                     final List<String> signatureFragments) throws NotEnoughBalanceException, InvalidSecurityLevelException {
 
         long totalTransferValue = totalValue;
         for (int i = 0; i < inputs.size(); i++) {
@@ -782,7 +811,7 @@ public class IotaAPI extends IotaAPICore {
             long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
 
             // Add input as bundle entry
-            bundle.addEntry(2, inputs.get(i).getAddress(), toSubtract, tag, timestamp);
+            bundle.addEntry(security, inputs.get(i).getAddress(), toSubtract, tag, timestamp);
             // If there is a remainder value
             // Add extra output to send remaining funds to
 
@@ -799,7 +828,7 @@ public class IotaAPI extends IotaAPICore {
                 } else if (remainder > 0) {
                     // Generate a new Address by calling getNewAddress
 
-                    GetNewAddressResponse res = getNewAddress(seed, 0, false, 0, false);
+                    GetNewAddressResponse res = getNewAddress(seed, security, 0, false, 0, false);
                     // Remainder bundle entry
                     bundle.addEntry(1, res.getAddresses().get(0), remainder, tag, timestamp);
 

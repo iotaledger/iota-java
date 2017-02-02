@@ -73,8 +73,8 @@ public class IotaAPITest {
 
 
     @Test
-    public void shouldGetInputs() {
-        GetBalancesAndFormatResponse res = iotaClient.getInputs(TEST_SEED1, 0, 0, 0);
+    public void shouldGetInputs() throws InvalidSecurityLevelException {
+        GetBalancesAndFormatResponse res = iotaClient.getInputs(TEST_SEED1, 2, 0, 0, 0);
         System.out.println(res);
         assertThat(res, IsNull.notNullValue());
         assertThat(res.getTotalBalance(), IsNull.notNullValue());
@@ -84,20 +84,20 @@ public class IotaAPITest {
 
 
     @Test
-    public void shouldCreateANewAddress() {
-        final GetNewAddressResponse res = iotaClient.getNewAddress(TEST_SEED1, 0, false, 100, false);
+    public void shouldCreateANewAddress() throws InvalidSecurityLevelException {
+        final GetNewAddressResponse res = iotaClient.getNewAddress(TEST_SEED1, 2, 0, false, 100, false);
         assertThat(res.getAddresses().get(0), Is.is(TEST_ADDRESS_WITHOUT_CHECKSUM));
         System.out.println(new Gson().toJson(res));
     }
 
     @Test
-    public void shouldPrepareTransfer() {
+    public void shouldPrepareTransfer() throws InvalidSecurityLevelException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 1, TEST_MESSAGE, TEST_TAG));
         List<String> trytes = null;
         try {
-            trytes = iotaClient.prepareTransfers(TEST_SEED1, transfers, null, null);
+            trytes = iotaClient.prepareTransfers(TEST_SEED1, 2, transfers, null, null);
         } catch (NotEnoughBalanceException e) {
             e.printStackTrace();
         }
@@ -124,8 +124,8 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException, NoInclusionStatesExcpection, NoNodeInfoException {
-        GetTransferResponse gtr = iotaClient.getTransfers(TEST_SEED1, 0, 0, false);
+    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException, NoInclusionStatesExcpection, NoNodeInfoException, InvalidSecurityLevelException {
+        GetTransferResponse gtr = iotaClient.getTransfers(TEST_SEED1, 2, 0, 0, false);
         assertThat(gtr.getTransfers(), IsNull.notNullValue());
 
         for (Bundle test : gtr.getTransfers()) {
@@ -142,19 +142,19 @@ public class IotaAPITest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void shouldNotSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException {
+    public void shouldNotSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM, 10000990, "JUSTANOTHERTEST", TEST_TAG));
-        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED2, 9, 18, transfers, null, null);
+        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED2, 2, 9, 18, transfers, null, null);
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 
     @Ignore
     @Test
-    public void shouldSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException {
+    public void shouldSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM, 0, "JUSTANOTHERTEST", TEST_TAG));
-        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED2, 9, 18, transfers, null, null);
+        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED2, 2, 9, 18, transfers, null, null);
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 }

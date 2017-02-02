@@ -10,11 +10,15 @@ public class Input {
     private String address;
     private long balance;
     private int keyIndex;
+    private int security;
 
-    public Input(String address, long balance, int keyIndex) {
+
+    public Input(String address, long balance, int keyIndex, int security) {
         this.address = address;
         this.balance = balance;
         this.keyIndex = keyIndex;
+        this.security = security;
+
     }
 
     @Override
@@ -44,5 +48,13 @@ public class Input {
 
     public void setKeyIndex(int keyIndex) {
         this.keyIndex = keyIndex;
+    }
+
+    public int getSecurity() {
+        return security;
+    }
+
+    public void setSecurity(int security) {
+        this.security = security;
     }
 }
