@@ -69,5 +69,5 @@ There's an extensive list of test coverages on the src/test/java package of the 
 
 If JOTA has been useful to you and you feel like contributing, consider posting a bug report or a pull request. Alternatively, donations are very welcome too!
 
-* Bitcoin (Gianni Davassi): `3FGCHqhG1SUpgn2eS1Agq2KnxJemWnQFbB`
-* Bitcoin (Adrian Ziser): `3FGCHqhG1SUpgn2eS1Agq2KnxJemWnQFbB`
+* Bitcoin (Gianluigi Davassi): `3FGCHqhG1SUpgn2eS1Agq2KnxJemWnQFbB`
+* Bitcoin (Adrian Ziser): `1MyCJP3yZtSJ3bMVEoQRPSY3D6Ev7CTvzo`
