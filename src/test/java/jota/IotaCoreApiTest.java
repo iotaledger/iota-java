@@ -133,6 +133,5 @@ public class IotaCoreApiTest {
         assertThat(res.getBalances(), IsNull.notNullValue());
         assertThat(res.getMilestone(), IsNull.notNullValue());
         assertThat(res.getMilestoneIndex(), IsNull.notNullValue());
-
     }
 }

@@ -29,7 +29,6 @@ public class IotaAPI extends IotaAPICore {
 
     private static final Logger log = LoggerFactory.getLogger(IotaAPI.class);
     private ICurl customCurl;
-    private StopWatch stopWatch;
 
     protected IotaAPI(Builder builder) {
         super(builder);
@@ -66,7 +65,7 @@ public class IotaAPI extends IotaAPICore {
             }
             return GetNewAddressResponse.create(allAddresses, stopWatch.getElapsedTimeMili());
         }
-        // No total provided: Continue calling findTransactions to see if address was 
+        // No total provided: Continue calling findTransactions to see if address was
         // already created if null, return list of addresses
         for (int i = index; ; i++) {
 
@@ -347,6 +346,10 @@ public class IotaAPI extends IotaAPICore {
         //  and prepare the signatureFragments, message and tag
         for (final Transfer transfer : transfers) {
 
+            // If address with checksum then remove checksum
+            if (Checksum.isAddressWithChecksum(transfer.getAddress()))
+                transfer.setAddress(Checksum.removeChecksum(transfer.getAddress()));
+
             int signatureMessageLength = 1;
 
             // If message longer than 2187 trytes, increase signatureMessageLength (add 2nd transaction)
@@ -426,7 +429,7 @@ public class IotaAPI extends IotaAPICore {
                         if (totalBalance >= totalValue) {
                             log.info("Total balance already reached ");
                             break;
-                    }
+                        }
                     }
                 }
 
