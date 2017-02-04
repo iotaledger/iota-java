@@ -2,6 +2,8 @@ package jota;
 
 import jota.dto.request.*;
 import jota.dto.response.*;
+import jota.error.InvalidTrytesException;
+import jota.utils.InputValidator;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,7 +167,11 @@ public class IotaAPICore {
         return wrapCheckedException(res).body();
     }
 
-    public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) {
+    public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws InvalidTrytesException {
+        if(InputValidator.isArrayOfTrytes(trytes)){
+            throw new InvalidTrytesException();
+        }
+
         final Call<GetAttachToTangleResponse> res = service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
         return wrapCheckedException(res).body();
     }
