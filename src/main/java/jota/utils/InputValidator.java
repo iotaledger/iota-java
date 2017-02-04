@@ -27,8 +27,22 @@ public class InputValidator {
         return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
     }
 
+    public static boolean isNinesTrytes(final String trytes, final int length) {
+        return trytes.matches("^[9]{" + (length == 0 ? "0," : length) + "}$");
+    }
+
     public static boolean isValue(final String value) {
         return NumberUtils.isNumber(value);
+    }
+
+    public static boolean isArrayOfTrytes(String[] trytes){
+        for (String tryte : trytes) {
+            // Check if correct 2673 trytes
+            if (!isTrytes(tryte, 2673)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static boolean isArrayOfHashes(String[] hashes) {
