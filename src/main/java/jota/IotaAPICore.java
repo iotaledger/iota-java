@@ -168,7 +168,7 @@ public class IotaAPICore {
     }
 
     public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws InvalidTrytesException {
-        if(InputValidator.isArrayOfTrytes(trytes)){
+        if(!InputValidator.isArrayOfTrytes(trytes)){
             throw new InvalidTrytesException();
         }
 
