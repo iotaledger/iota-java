@@ -124,7 +124,7 @@ public class IotaAPITest {
         assertThat(gbr, IsNull.notNullValue());
     }
 
-    @Test
+    @Test(expected = ArgumentException.class)
     public void shouldGetBundle() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
         GetBundleResponse gbr = iotaClient.getBundle(TEST_HASH);
         assertThat(gbr, IsNull.notNullValue());
@@ -140,6 +140,13 @@ public class IotaAPITest {
                 System.out.println(new Gson().toJson(trx));
             }
         }
+    }
+
+    @Ignore
+    @Test
+    public void shouldReplayBundle() throws InvalidTrytesException, InvalidBundleException, InvalidSignatureException, ArgumentException {
+        ReplayBundleResponse rbr = iotaClient.replayBundle(TEST_TRYTES, 9, 18);
+        assertThat(rbr, IsNull.notNullValue());
     }
 
     @Ignore
@@ -163,6 +170,7 @@ public class IotaAPITest {
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 
+    @Ignore
     @Test
     public void shouldSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
         List<Transfer> transfers = new ArrayList<>();

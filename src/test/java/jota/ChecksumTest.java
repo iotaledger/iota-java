@@ -18,7 +18,7 @@ public class ChecksumTest {
     public void shouldAddChecksum() throws InvalidAddressException {
         assertEquals(Checksum.addChecksum(TEST_ADDRESS_WITHOUT_CHECKSUM), TEST_ADDRESS_WITH_CHECKSUM);
     }
-
+    
     @Test
     public void shouldRemoveChecksum() throws InvalidAddressException {
         assertEquals(Checksum.removeChecksum(TEST_ADDRESS_WITH_CHECKSUM), TEST_ADDRESS_WITHOUT_CHECKSUM);
