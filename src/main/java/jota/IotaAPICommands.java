@@ -2,7 +2,7 @@ package jota;
 
 /**
  * IOTA's node command list
- * <p>
+ *
  * 'params' is not currently used.
  */
 public enum IotaAPICommands {

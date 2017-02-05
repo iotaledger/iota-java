@@ -7,6 +7,12 @@ import java.security.SecureRandom;
  */
 public class SeedRandomGenerator {
 
+
+    /**
+     * generate a new seed
+     *
+     * @return random generated seed
+     **/
     public static String generateNewSeed() {
         char[] chars = Constants.TRYTE_ALPHABET.toCharArray();
         StringBuilder builder = new StringBuilder();

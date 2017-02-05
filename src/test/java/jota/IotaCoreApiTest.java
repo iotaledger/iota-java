@@ -77,7 +77,7 @@ public class IotaCoreApiTest {
 
     @Test
     public void shouldFindTransactionsByApprovees() {
-        FindTransactionResponse trans = proxy.findTransactionsByApprovees(new String[]{TEST_HASH});
+        FindTransactionResponse trans = proxy.findTransactionsByApprovees(TEST_HASH);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 

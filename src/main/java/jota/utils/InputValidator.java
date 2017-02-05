@@ -11,11 +11,23 @@ import java.util.List;
  */
 public class InputValidator {
 
+    /**
+     * validates an address
+     *
+     * @param address address to validate
+     * @return boolean
+     **/
     public static boolean isAddress(String address) {
         return (address.length() == Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM ||
                 address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM) && isTrytes(address, address.length());
     }
 
+    /**
+     * checks whether the specified address is an address
+     *
+     * @param address address to validate
+     * @return boolean
+     **/
     public static boolean checkAddress(String address) {
         if (!isAddress(address)) {
             throw new RuntimeException("Invalid address: " + address);
@@ -23,18 +35,44 @@ public class InputValidator {
         return true;
     }
 
+    /**
+     * checks if input is correct trytes consisting of A-Z9 optionally validates length
+     *
+     * @param trytes the trytes
+     * @param length the length
+     * @return boolean
+     **/
     public static boolean isTrytes(final String trytes, final int length) {
         return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
     }
 
+    /**
+     * checks if input is correct trytes consisting of 9 optionally validates length
+     *
+     * @param trytes the trytes
+     * @param length the length
+     * @return boolean
+     **/
     public static boolean isNinesTrytes(final String trytes, final int length) {
         return trytes.matches("^[9]{" + (length == 0 ? "0," : length) + "}$");
     }
 
+    /**
+     * determines whether the specified string represents a signed integer
+     *
+     * @param value the value
+     * @return boolean
+     **/
     public static boolean isValue(final String value) {
         return NumberUtils.isNumber(value);
     }
 
+    /**
+     * determines whether the specified string represents a signed integer
+     *
+     * @param value the value
+     * @return boolean
+     **/
     public static boolean isArrayOfTrytes(String[] trytes){
         for (String tryte : trytes) {
             // Check if correct 2673 trytes
@@ -96,6 +134,12 @@ public class InputValidator {
         return isTrytes(transfer.getTag(), 27);
     }
 
+    /**
+     * validate the seed
+     *
+     * @param seed the seed
+     * @return validated seed
+     **/
     public static String validateSeed(String seed) {
         if (seed.length() > 81)
             return null;

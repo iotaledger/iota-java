@@ -7,6 +7,14 @@ import java.text.DecimalFormat;
  */
 public class IotaUnitConverter {
 
+    /**
+     * convert the iota amount
+     *
+     * @param amount   the amount
+     * @param fromUnit the source unit e.g. the unit of amount
+     * @param toUnit   the target unit
+     * @return the specified amount in the target unit
+     **/
     public static long convertUnits(long amount, IotaUnits fromUnit, IotaUnits toUnit) {
         long amountInSource = (long) (amount * Math.pow(10, fromUnit.getValue()));
         return convertUnits(amountInSource, toUnit);
@@ -16,6 +24,13 @@ public class IotaUnitConverter {
         return (long) (amount / Math.pow(10, toUnit.getValue()));
     }
 
+    /**
+     * convert the iota amount to text
+     *
+     * @param amount   the amount
+     * @param extended extended length
+     * @return the specified amount in the target unit
+     **/
     public static String convertRawIotaAmountToDisplayText(long amount, boolean extended) {
         IotaUnits unit = findOptimalIotaUnitToDisplay(amount);
         double amountInDisplayUnit = convertAmountTo(amount, unit);
@@ -44,6 +59,12 @@ public class IotaUnitConverter {
         return result;
     }
 
+    /**
+     * finds the optimal unit to display the specified amount in
+     *
+     * @param amount the amount
+     * @return the optimal IotaUnit
+     **/
     public static IotaUnits findOptimalIotaUnitToDisplay(long amount) {
         int length = String.valueOf(amount).length();
 

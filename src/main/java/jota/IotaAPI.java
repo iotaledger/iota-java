@@ -14,13 +14,13 @@ import java.util.*;
 
 /**
  * IotaAPI Builder. Usage:
- * <p>
+ *
  * IotaApiProxy api = IotaApiProxy.Builder
  * .protocol("http")
  * .nodeAddress("localhost")
  * .port(12345)
  * .build();
- * <p>
+ *
  * GetNodeInfoResponse response = api.getNodeInfo();
  *
  * @author davassi
@@ -39,11 +39,11 @@ public class IotaAPI extends IotaAPICore {
      * Generates a new address from a seed and returns the remainderAddress.
      * This is either done deterministically, or by providing the index of the new remainderAddress
      *
-     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred
-     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3
-     * @param index     Optional (default null). Key index to start search from. If the index is provided, the generation of the address is not deterministic.
-     * @param checksum  Optional (default false). Adds 9-tryte address checksum
-     * @param total     Optional (default 1)Total number of addresses to generate
+     * @param seed Tryte-encoded seed. It should be noted that this seed is not transferred
+     * @param security Security level to be used for the private key / address. Can be 1, 2 or 3
+     * @param index Optional (default null). Key index to start search from. If the index is provided, the generation of the address is not deterministic.
+     * @param checksum Optional (default false). Adds 9-tryte address checksum
+     * @param total Optional (default 1)Total number of addresses to generate
      * @param returnAll If true, it returns all addresses which were deterministically generated (until findTransactions returns null)
      * @return an array of strings with the specifed number of addresses
      */
@@ -88,14 +88,12 @@ public class IotaAPI extends IotaAPICore {
     }
 
     /**
-     * @param seed
-     * @param start
-     * @param end
-     * @param inclusionStates
-     * @param security
-     * @param seed
-     * @param seed
-     * @returns Bundle
+     * @param seed tryte-encoded seed. It should be noted that this seed is not transferred
+     * @param security security secuirty level of private key / seed
+     * @param start start Starting key index
+     * @param end end Ending key index
+     * @param inclusionStates Optional (default false). If True, it gets the inclusion states of the transfers.
+     * @return Bundle
      **/
     public GetTransferResponse getTransfers(String seed, int security, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoNodeInfoException, NoInclusionStatesExcpection, InvalidSecurityLevelException {
         StopWatch stopWatch = new StopWatch();
@@ -116,7 +114,7 @@ public class IotaAPI extends IotaAPICore {
         StopWatch sw = new StopWatch();
 
         System.out.println("GetTransfer started");
-        GetNewAddressResponse gnr = getNewAddress(seed, security, start, false, end == null ? end - start : end, true);
+        GetNewAddressResponse gnr = getNewAddress(seed, security, start, false, end, true);
         if (gnr != null && gnr.getAddresses() != null) {
             System.out.println("GetTransfers after getNewAddresses " + sw.getElapsedTimeMili() + " ms");
             Bundle[] bundles = bundlesFromAddresses(gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]), inclusionStates);
@@ -126,6 +124,13 @@ public class IotaAPI extends IotaAPICore {
         return GetTransferResponse.create(new Bundle[]{}, stopWatch.getElapsedTimeMili());
     }
 
+    /**
+     * Internal function to get the formatted bundles of a list of addresses
+     *
+     * @param addresses       List of addresses
+     * @param inclusionStates Optional (default false). If True, it gets the inclusion states of the transfers.
+     * @return bundles Transaction objects
+     **/
     public Bundle[] bundlesFromAddresses(String[] addresses, final Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoNodeInfoException, NoInclusionStatesExcpection {
 
         List<Transaction> trxs = findTransactionObjects(addresses);
@@ -160,7 +165,7 @@ public class IotaAPI extends IotaAPICore {
         // If inclusionStates, get the confirmation status
         // of the tail transactions, and thus the bundles
         GetInclusionStateResponse gisr = null;
-        if (tailTxArray != null && tailTxArray.length != 0 && inclusionStates) {
+        if (tailTxArray.length != 0 && inclusionStates) {
             try {
                 gisr = getLatestInclusion(tailTxArray);
             } catch (IllegalAccessError ignored) {
@@ -178,9 +183,12 @@ public class IotaAPI extends IotaAPICore {
                         try {
                             GetBundleResponse bundleResponse = getBundle(param);
                             Bundle gbr = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
-                            if (gbr != null && gbr.getTransactions() != null) {
+                            if (gbr.getTransactions() != null) {
                                 if (inclusionStates) {
-                                    boolean thisInclusion = finalInclusionStates.getStates()[Arrays.asList(tailTxArray).indexOf(param)];
+                                    boolean thisInclusion = false;
+                                    if (finalInclusionStates != null) {
+                                        thisInclusion = finalInclusionStates.getStates()[Arrays.asList(tailTxArray).indexOf(param)];
+                                    }
                                     for (Transaction t : gbr.getTransactions()) {
                                         t.setPersistence(thisInclusion);
                                     }
@@ -203,7 +211,7 @@ public class IotaAPI extends IotaAPICore {
     }
 
     /**
-     * @param trytes
+     * @param trytes the trytes
      * @return a StoreTransactionsResponse
      */
     public StoreTransactionsResponse broadcastAndStore(final String... trytes) throws BroadcastAndStoreException {
@@ -220,10 +228,10 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Facade method: Gets transactions to approve, attaches to Tangle, broadcasts and stores
      *
-     * @param {array} trytes
-     * @param {int}   depth
-     * @param {int}   minWeightMagnitude
-     * @return
+     * @param trytes the trytes
+     * @param depth the depth
+     * @param minWeightMagnitude  the minimum weight magnitude
+     * @return Transactions objects
      */
     public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude) throws InvalidTrytesException {
         final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth);
@@ -249,11 +257,9 @@ public class IotaAPI extends IotaAPICore {
      * Wrapper function for getTrytes and transactionObjects
      * gets the trytes and transaction object from a list of transaction hashes
      *
-     * @param {array} hashes
-     * @return
      * @method getTransactionsObjects
-     * @returns {function} callback
-     * @returns {object} success
+     * @param hashes the hashes
+     * @return Transaction objects
      **/
     public List<Transaction> getTransactionsObjects(String[] hashes) {
 
@@ -276,10 +282,9 @@ public class IotaAPI extends IotaAPICore {
      * Returns the transactionObject of a transaction hash. The input can be a valid
      * findTransactions input
      *
-     * @param {object} input
      * @method getTransactionsObjects
-     * @returns {function} callback
-     * @returns {object} success
+     * @param input the inputs
+     * @return Transactions
      **/
     public List<Transaction> findTransactionObjects(String[] input) {
         FindTransactionResponse ftr = findTransactions(input, null, null, null);
@@ -293,11 +298,9 @@ public class IotaAPI extends IotaAPICore {
      * Wrapper function for findTransactions, getTrytes and transactionObjects
      * Returns the transactionObject of a transaction hash. The input can be a valid
      * findTransactions input
-     *
-     * @param {object} input
      * @method getTransactionsObjects
-     * @returns {function} callback
-     * @returns {object} success
+     * @param input the inputs
+     * @return Transactions
      **/
     public List<Transaction> findTransactionObjectsByBundle(String[] input) {
         FindTransactionResponse ftr = findTransactions(null, null, null, input);
@@ -311,13 +314,12 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Prepares transfer by generating bundle, finding and signing inputs
      *
-     * @param seed
-     * @param security
-     * @param transfers
-     * @param remainder
-     * @param inputs
-     * @param security
-     * @returns {array} trytes Returns bundle trytes
+     * @param seed 81-tryte encoded address of recipient
+     * @param security security secuirty level of private key / seed
+     * @param transfers Array of transfer objects
+     * @param remainder Optional (default null). if defined, this address will be used for sending the remainder value (of the inputs) to.
+     * @param inputs the inputs
+     * @return trytes Returns bundle trytes
      **/
     public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs) throws NotEnoughBalanceException, InvalidSecurityLevelException {
 
@@ -471,10 +473,10 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Gets the inputs of a seed
      *
-     * @param seed
-     * @param security  security secuirty level of private key / seed
-     * @param start     start Starting key index
-     * @param end       end Ending key index
+     * @param seed tryte-encoded seed. It should be noted that this seed is not transferred
+     * @param security security secuirty level of private key / seed
+     * @param start start Starting key index
+     * @param end end Ending key index
      * @param threshold threshold Min balance required
      **/
     public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold) throws InvalidSecurityLevelException {
@@ -526,8 +528,18 @@ public class IotaAPI extends IotaAPICore {
         }
     }
 
-    //  Calls getBalances and formats the output
-    //  returns the final inputsObject then
+
+    /**
+     * Gets the balances and formats the output
+     *
+     * @param addresses the addresses
+     * @param threshold threshold Min balance required
+     * @param start     start Starting key index
+     * @param end       end Ending key index
+     * @param stopWatch the stopwatch
+     * @param security  security secuirty level of private key / seed
+     * @return Inputs object
+     **/
     public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, long threshold, int start, int end, StopWatch stopWatch, int security) throws InvalidSecurityLevelException {
 
         if (security < 1 || security > 3) {
@@ -572,10 +584,8 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Gets the associated bundle transactions of a single transaction
      * Does validation of signatures, total sum as well as bundle order
-     *
-     * @param {string} transaction Hash of a tail transaction
-     * @method getBundle
-     * @returns {list} bundle Transaction objects
+     * @param transaction the transaction encoded in trytes
+     * @return an array of bundle, if there are multiple arrays it means that there are conflicting bundles.
      **/
     public GetBundleResponse getBundle(String transaction) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
         StopWatch stopWatch = new StopWatch();
@@ -655,12 +665,10 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Replays a transfer by doing Proof of Work again
      *
-     * @param {string}   tail
-     * @param {int}      depth
-     * @param {int}      minWeightMagnitude
-     * @param {function} callback
-     * @method replayBundle
-     * @returns {object} analyzed Transaction objects
+     * @param transaction the transaction
+     * @param depth the depth
+     * @param minWeightMagnitude the minimum weight magnitude
+     * @return analyzed Transaction objects
      **/
     public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude) throws InvalidBundleException, ArgumentException, InvalidSignatureException, InvalidTrytesException {
         StopWatch stopWatch = new StopWatch();
@@ -692,10 +700,8 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Wrapper function for getNodeInfo and getInclusionStates
      *
-     * @param {array} hashes
-     * @method getLatestInclusion
-     * @returns {function} callback
-     * @returns {array} state
+     * @param hashes the hashes
+     * @return inclusion state
      **/
     public GetInclusionStateResponse getLatestInclusion(String[] hashes) throws NoNodeInfoException {
         GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
@@ -705,6 +711,19 @@ public class IotaAPI extends IotaAPICore {
 
         return getInclusionStates(hashes, latestMilestone);
     }
+
+    /**
+     * Wrapper function that basically does prepareTransfers, as well as attachToTangle and finally, it broadcasts and stores the transactions locally.
+     *
+     * @param seed               tryte-encoded seed
+     * @param security           security secuirty level of private key / seed
+     * @param depth              the depth
+     * @param minWeightMagnitude the minimum weight magnitude
+     * @param transfers          array of transfer objects
+     * @param inputs             Option (default null). List of inputs used for funding the transfer
+     * @param address            if defined, this address will be used for sending the remainder value (of the inputs) to
+     * @return array of Transaction objects
+     **/
 
     public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String address) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException {
 
@@ -734,11 +753,10 @@ public class IotaAPI extends IotaAPICore {
      * the bundle hash of the transaction is no longer the same. In case the input
      * transaction hash is not a tail, we return an error.
      *
-     * @param {string} trunkTx Hash of a trunk or a tail transaction  of a bundle
-     * @param {string} bundleHash
-     * @param {array}  bundle List of bundles to be populated
-     * @method traverseBundle
-     * @returns {array} bundle Transaction objects
+     * @param trunkTx Hash of a trunk or a tail transaction  of a bundle
+     * @param bundleHash the bundle hashes
+     * @param bundle List of bundles to be populated
+     * @return bundle Transaction objects
      **/
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
         GetTrytesResponse gtr = getTrytes(trunkTx);
@@ -750,7 +768,7 @@ public class IotaAPI extends IotaAPICore {
             }
 
             Transaction trx = new Transaction(gtr.getTrytes()[0], customCurl);
-            if (trx == null || trx.getBundle() == null) {
+            if (trx.getBundle() == null) {
                 throw new ArgumentException("Invalid trytes, could not create object");
             }
             // If first transaction to search is not a tail, return error
@@ -786,13 +804,10 @@ public class IotaAPI extends IotaAPICore {
      * Prepares transfer by generating the bundle with the corresponding cosigner transactions
      * Does not contain signatures
      *
-     * @param {object}         transfers
-     * @param {function}       callback
      * @param securitySum      sum of security levels used by all co-signers
      * @param inputAddress     array of input addresses as well as the securitySum
      * @param remainderAddress Has to be generated by the cosigners before initiating the transfer, can be null if fully spent
-     * @method initiateTransfer
-     * @returns {array} Array of transaction objects
+     * @return bundle of transaction objects
      **/
     private GetTransferResponse initiateTransfer(int securitySum, final List<String> inputAddress, String remainderAddress, final List<Transfer> transfers) {
         StopWatch sw = new StopWatch();
@@ -960,7 +975,7 @@ public class IotaAPI extends IotaAPICore {
         }
 
         Transaction trx = new Transaction(gtr.getTrytes()[0], customCurl);
-        if (trx == null || trx.getBundle() == null) {
+        if (trx.getBundle() == null) {
             throw new ArgumentException("Invalid trytes, could not create object");
         }
         if (Integer.parseInt(trx.getCurrentIndex()) == 0) return trx.getHash();
