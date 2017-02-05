@@ -20,4 +20,36 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
     public static IotaAttachToTangleRequest createAttachToTangleRequest(final String trunkTransaction, final String branchTransaction, final Integer minWeightMagnitude, final String... trytes) {
         return new IotaAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes);
     }
+
+    public String getTrunkTransaction() {
+        return trunkTransaction;
+    }
+
+    public void setTrunkTransaction(String trunkTransaction) {
+        this.trunkTransaction = trunkTransaction;
+    }
+
+    public String getBranchTransaction() {
+        return branchTransaction;
+    }
+
+    public void setBranchTransaction(String branchTransaction) {
+        this.branchTransaction = branchTransaction;
+    }
+
+    public Integer getMinWeightMagnitude() {
+        return minWeightMagnitude;
+    }
+
+    public void setMinWeightMagnitude(Integer minWeightMagnitude) {
+        this.minWeightMagnitude = minWeightMagnitude;
+    }
+
+    public String[] getTrytes() {
+        return trytes;
+    }
+
+    public void setTrytes(String[] trytes) {
+        this.trytes = trytes;
+    }
 }

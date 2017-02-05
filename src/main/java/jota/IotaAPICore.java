@@ -2,7 +2,6 @@ package jota;
 
 import jota.dto.request.*;
 import jota.dto.response.*;
-import jota.utils.IotaAPIUtils;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,31 +13,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
- * IotaAPIProxy Builder. Usage:
- *
- * IotaApiProxy api = IotaApiProxy.Builder
- * .protocol("http")
- * .nodeAddress("localhost")
- * .port(12345)
- * .build();
- *
- * GetNodeInfoResponse response = api.getNodeInfo();
- *
- * @author davassi
+ * Created by Adrian on 15.01.2017.
  */
-public class IotaAPIProxy {
+public class IotaAPICore {
 
-    private static final Logger log = LoggerFactory.getLogger(IotaAPIProxy.class);
+    private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
 
     private IotaAPIService service;
     private String protocol, host, port;
 
-    private IotaAPIProxy(final Builder builder) {
+    protected IotaAPICore(final Builder builder) {
         protocol = builder.protocol;
         host = builder.host;
         port = builder.port;
@@ -49,7 +38,11 @@ public class IotaAPIProxy {
         try {
             final Response<T> res = call.execute();
             if (res.code() == 400) {
-                throw new IllegalAccessError(res.errorBody().toString());
+                throw new IllegalAccessError("400 " + res.errorBody().string());
+            } else if (res.code() == 401) {
+                throw new IllegalAccessError("401 " + res.errorBody().string());
+            } else if (res.code() == 500) {
+                throw new IllegalAccessError("500 " + res.errorBody().string());
             }
             return res;
         } catch (IOException e) {
@@ -58,7 +51,7 @@ public class IotaAPIProxy {
         }
     }
 
-    private static final String env(String env, String def) {
+    private static String env(String env, String def) {
         final String value = System.getenv(env);
         if (value == null) {
             log.warn("Environment variable '{}' is not defined, and actual value has not been specified. "
@@ -73,8 +66,8 @@ public class IotaAPIProxy {
         final String nodeUrl = protocol + "://" + host + ":" + port;
 
         final OkHttpClient client = new OkHttpClient.Builder()
-                .readTimeout(120, TimeUnit.SECONDS)
-                .connectTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(5000, TimeUnit.SECONDS)
+                .connectTimeout(5000, TimeUnit.SECONDS)
                 .build();
 
         final Retrofit retrofit = new Retrofit.Builder()
@@ -148,12 +141,6 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    public GetInclusionStateResponse getInclusionStates(Collection<String> transactions, Collection<String> tips) {
-        final Call<GetInclusionStateResponse> res = service.getInclusionStates(IotaGetInclusionStateRequest
-                .createGetInclusionStateRequest(transactions, tips));
-        return wrapCheckedException(res).body();
-    }
-
     public GetTrytesResponse getTrytes(String... hashes) {
         final Call<GetTrytesResponse> res = service.getTrytes(IotaGetTrytesRequest.createGetTrytesRequest(hashes));
         return wrapCheckedException(res).body();
@@ -167,6 +154,10 @@ public class IotaAPIProxy {
     public GetBalancesResponse getBalances(Integer threshold, String[] addresses) {
         final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses));
         return wrapCheckedException(res).body();
+    }
+
+    public GetBalancesResponse getBalances(Integer threshold, List<String> addresses) {
+        return getBalances(threshold, addresses.toArray(new String[]{}));
     }
 
     public InterruptAttachingToTangleResponse interruptAttachingToTangle() {
@@ -184,26 +175,17 @@ public class IotaAPIProxy {
         return wrapCheckedException(res).body();
     }
 
-    // end of proxied calls.
-
     public BroadcastTransactionsResponse broadcastTransactions(String... trytes) {
         final Call<BroadcastTransactionsResponse> res = service.broadcastTransactions(IotaBroadcastTransactionRequest.createBroadcastTransactionsRequest(trytes));
         return wrapCheckedException(res).body();
     }
 
-    public GetBundleResponse getBundle(String transaction) {
-        return IotaAPIUtils.getBundle(transaction);
-    }
-
-    public GetNewAddressResponse getNewAddress(String seed, Integer securityLevel) {
-        return IotaAPIUtils.getNewAddress(seed, securityLevel);
-    }
-
-    public static class Builder {
+    @SuppressWarnings("unchecked")
+    public static class Builder <T extends Builder<T>> {
 
         String protocol, host, port;
 
-        public IotaAPIProxy build() {
+        public IotaAPICore build() {
 
             if (protocol == null || host == null || port == null) {
 
@@ -216,7 +198,7 @@ public class IotaAPIProxy {
                 }
             }
 
-            return new IotaAPIProxy(this);
+            return new IotaAPICore(this);
         }
 
         private boolean checkPropertiesFiles() {
@@ -253,19 +235,19 @@ public class IotaAPIProxy {
             port = env("IOTA_NODE_PORT", "14265");
         }
 
-        public Builder host(String host) {
+        public T host(String host) {
             this.host = host;
-            return this;
+            return (T) this;
         }
 
-        public Builder port(String port) {
+        public T port(String port) {
             this.port = port;
-            return this;
+            return (T) this;
         }
 
-        public Builder protocol(String protocol) {
+        public T protocol(String protocol) {
             this.protocol = protocol;
-            return this;
+            return (T)  this;
         }
 
     }

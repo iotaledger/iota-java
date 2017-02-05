@@ -25,4 +25,19 @@ public class IotaGetInclusionStateRequest extends IotaCommandRequest {
                 tips.toArray(new String[]{}));
     }
 
+    public String[] getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(String[] transactions) {
+        this.transactions = transactions;
+    }
+
+    public String[] getTips() {
+        return tips;
+    }
+
+    public void setTips(String[] tips) {
+        this.tips = tips;
+    }
 }

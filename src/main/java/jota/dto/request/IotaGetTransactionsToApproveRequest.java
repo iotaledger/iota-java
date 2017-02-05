@@ -14,4 +14,12 @@ public class IotaGetTransactionsToApproveRequest extends IotaCommandRequest {
     public static IotaGetTransactionsToApproveRequest createIotaGetTransactionsToApproveRequest(Integer depth) {
         return new IotaGetTransactionsToApproveRequest(depth);
     }
+
+    public Integer getDepth() {
+        return depth;
+    }
+
+    public void setDepth(Integer depth) {
+        this.depth = depth;
+    }
 }

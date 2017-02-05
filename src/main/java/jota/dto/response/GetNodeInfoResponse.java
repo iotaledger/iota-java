@@ -4,6 +4,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     private String appName;
     private String appVersion;
+    private String jreVersion;
     private int jreAvailableProcessors;
     private long jreFreeMemory;
     private long jreMaxMemory;
@@ -24,6 +25,10 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     public String getAppVersion() {
         return appVersion;
+    }
+
+    public String getJreVersion() {
+        return jreVersion;
     }
 
     public Integer getJreAvailableProcessors() {

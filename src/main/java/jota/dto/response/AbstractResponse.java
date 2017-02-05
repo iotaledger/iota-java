@@ -7,9 +7,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public abstract class AbstractResponse {
 
-    private Integer duration;
+    private Long duration;
 
-    public Integer getDuration() {
+    public Long getDuration() {
         return duration;
     }
 
@@ -26,5 +26,9 @@ public abstract class AbstractResponse {
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj, false);
+    }
+
+    public void setDuration(Long duration) {
+        this.duration = duration;
     }
 }
