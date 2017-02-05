@@ -90,6 +90,12 @@ public class Converter {
         return d;
     }
 
+    /**
+     * Converts trytes into trits
+     *
+     * @param trytes trytes to be converted
+     * @return array of trits
+     **/
     public static int[] trits(final String trytes) {
         final List<Integer> trits = new LinkedList<>();
         if (InputValidator.isValue(trytes)) {
@@ -160,6 +166,14 @@ public class Converter {
         return destination;
     }
 
+    /**
+     * Converts trites to trytes
+     *
+     * @param trits  trits to be converted
+     * @param offset
+     * @param size
+     * @return trytes
+     **/
     public static String trytes(final int[] trits, final int offset, final int size) {
 
         StringBuilder trytes = new StringBuilder();

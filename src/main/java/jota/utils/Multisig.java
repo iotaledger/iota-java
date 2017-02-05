@@ -24,17 +24,14 @@ public class Multisig {
     }
 
     /**
-     * Gets the digest value of a seed
-     *
-     * @param {string} seed
-     * @param {int}    index
-     * @param {int}    security
-     * @method getDigest
-     * @returns {string} digest trytes
+     * @param seed tryte-encoded seed. It should be noted that this seed is not transferred
+     * @param security security secuirty level of private key / seed
+     * @param index
+     * @return digest trytes
      **/
-    private String getDigest(String seed, int index, int security) {
+    private String getDigest(String seed, int security, int index) {
 
-        int[] key = signingInstance.key(Converter.trits(seed), index, security);
+        int[] key = signingInstance.key(Converter.trits(seed), security, index);
         return Converter.trytes(signingInstance.digests(key));
     }
 
@@ -44,7 +41,7 @@ public class Multisig {
      * @param digestTrytes
      * @param curlStateTrytes
      * @method addAddressDigest
-     * @returns {String}
+     * @return digest trytes
      **/
     private String addAddressDigest(String digestTrytes, String curlStateTrytes, ICurl customCurl) {
 
@@ -70,10 +67,9 @@ public class Multisig {
     /**
      * Gets the key value of a seed
      *
-     * @param {string} seed
-     * @param {int}    index
-     * @method getKey
-     * @returns {string} digest trytes
+     * @param seed tryte-encoded seed. It should be noted that this seed is not transferred
+     * @param index
+     * @return digest trytes
      **/
 
     private String getKey(String seed, int index, int security) {
@@ -84,10 +80,9 @@ public class Multisig {
     /**
      * Generates a new address
      *
-     * @param {string} curlStateTrytes
-     * @param {string}
-     * @method finalizeAddress
-     * @returns {String} address
+     * @param curlStateTrytes
+     * @param customCurl
+     * @return address
      **/
     private String finalizeAddress(String curlStateTrytes, ICurl customCurl) {
 
@@ -108,8 +103,8 @@ public class Multisig {
      *
      * @param multisigAddress
      * @param digests
-     * @method validateAddress
-     * @returns {bool}
+     * @param customCurl
+     * @returns boolean
      **/
     private boolean validateAddress(String multisigAddress, int[][] digests, ICurl customCurl) {
 
@@ -131,13 +126,10 @@ public class Multisig {
     /**
      * Adds the cosigner signatures to the corresponding bundle transaction
      *
-     * @param {array}    bundleToSign
-     * @param {int}      cosignerIndex
-     * @param {string}   inputAddress
-     * @param {string}   key
-     * @param {function} callback
-     * @method addSignature
-     * @returns {array} trytes Returns bundle trytes
+     * @param bundleToSign
+     * @param inputAddress
+     * @param keyTrytes
+     * @return trytes Returns bundle trytes
      **/
     private void addSignature(Bundle[] bundleToSign, String inputAddress, String keyTrytes) {
 

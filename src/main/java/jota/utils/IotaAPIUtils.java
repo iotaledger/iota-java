@@ -1,5 +1,6 @@
 package jota.utils;
 
+import jota.error.InvalidAddressException;
 import jota.model.Bundle;
 import jota.model.Input;
 import jota.model.Transaction;
@@ -20,13 +21,14 @@ public class IotaAPIUtils {
     /**
      * Generates a new address
      *
-     * @param seed
-     * @param index
-     * @param security
-     * @param checksum
+     * @param seed tryte-encoded seed. It should be noted that this seed is not transferred
+     * @param security security secuirty level of private key / seed
+     * @param index key index to start search from. If the index is provided, the generation of the address is not deterministic.
+     * @param checksum adds 9-tryte address checksum
+     * @param curl
      * @return an String with address
      */
-    public static String newAddress(String seed, int security, int index, boolean checksum, ICurl curl) {
+    public static String newAddress(String seed, int security, int index, boolean checksum, ICurl curl) throws InvalidAddressException {
         Signing signing = new Signing(curl);
         final int[] key = signing.key(Converter.trits(seed), index, security);
         final int[] digests = signing.digests(key);

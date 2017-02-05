@@ -1,5 +1,6 @@
 package jota.utils;
 
+import jota.error.InvalidAddressException;
 import jota.model.Transfer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -28,9 +29,9 @@ public class InputValidator {
      * @param address address to validate
      * @return boolean
      **/
-    public static boolean checkAddress(String address) {
+    public static boolean checkAddress(String address) throws InvalidAddressException {
         if (!isAddress(address)) {
-            throw new RuntimeException("Invalid address: " + address);
+            throw new InvalidAddressException();
         }
         return true;
     }
@@ -70,7 +71,7 @@ public class InputValidator {
     /**
      * determines whether the specified string represents a signed integer
      *
-     * @param value the value
+     * @param trytes the trytes
      * @return boolean
      **/
     public static boolean isArrayOfTrytes(String[] trytes){
@@ -83,6 +84,12 @@ public class InputValidator {
         return true;
     }
 
+    /**
+     * checks if input is array of hashes
+     *
+     * @param hashes
+     * @return boolean
+     **/
     public static boolean isArrayOfHashes(String[] hashes) {
         if (hashes == null)
             return false;
@@ -105,21 +112,26 @@ public class InputValidator {
     /**
      * checks if input is correct hash collections
      *
-     * @param {array} hash
-     * @method isTransfersArray
-     * @returns {boolean}
+     * @param transfers
+     * @return boolean
      **/
     public static boolean isTransfersCollectionCorrect(final List<Transfer> transfers) {
 
         for (final Transfer transfer : transfers) {
-            if (!isTransfersArray(transfer)) {
+            if (!isTransfer(transfer)) {
                 return false;
             }
         }
         return true;
     }
 
-    public static boolean isTransfersArray(final Transfer transfer) {
+    /**
+     * checks if input is correct transfer
+     *
+     * @param transfer
+     * @return boolean
+     **/
+    public static boolean isTransfer(final Transfer transfer) {
 
         if (!isAddress(transfer.getAddress())) {
             return false;

@@ -75,7 +75,7 @@ public class IotaAPITest {
 
 
     @Test
-    public void shouldGetInputs() throws InvalidSecurityLevelException {
+    public void shouldGetInputs() throws InvalidSecurityLevelException, InvalidAddressException {
         GetBalancesAndFormatResponse res = iotaClient.getInputs(TEST_SEED1, 2, 0, 0, 0);
         System.out.println(res);
         assertThat(res, IsNull.notNullValue());
@@ -85,7 +85,7 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldCreateANewAddressWithoutChecksum() throws InvalidSecurityLevelException {
+    public void shouldCreateANewAddressWithoutChecksum() throws InvalidSecurityLevelException, InvalidAddressException {
         final GetNewAddressResponse res1 = iotaClient.getNewAddress(TEST_SEED1, 1, 0, false, 5, false);
         assertThat(res1.getAddresses().get(0), Is.is(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_1));
 
@@ -97,16 +97,11 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldPrepareTransfer() throws InvalidSecurityLevelException {
+    public void shouldPrepareTransfer() throws InvalidSecurityLevelException, NotEnoughBalanceException, InvalidAddressException, InvalidTransferException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 0, TEST_MESSAGE, TEST_TAG));
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
-        List<String> trytes = null;
-        try {
-            trytes = iotaClient.prepareTransfers(TEST_SEED1, 2, transfers, null, null);
-        } catch (NotEnoughBalanceException e) {
-            e.printStackTrace();
-        }
+        List<String> trytes = iotaClient.prepareTransfers(TEST_SEED1, 2, transfers, null, null);
         Assert.assertNotNull(trytes);
         assertThat(trytes.isEmpty(), Is.is(false));
     }
@@ -136,7 +131,7 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException, NoInclusionStatesExcpection, NoNodeInfoException, InvalidSecurityLevelException {
+    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException, NoInclusionStatesExcpection, NoNodeInfoException, InvalidSecurityLevelException, InvalidAddressException {
         GetTransferResponse gtr = iotaClient.getTransfers(TEST_SEED1, 2, 0, 0, false);
         assertThat(gtr.getTransfers(), IsNull.notNullValue());
 
@@ -159,17 +154,17 @@ public class IotaAPITest {
         iotaClient.sendTrytes(new String[]{TEST_TRYTES}, 9, 18);
     }
 
+    @Ignore
     @Test(expected = IllegalStateException.class)
-    public void shouldNotSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException {
+    public void shouldNotSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 10000990, "JUSTANOTHERTEST", TEST_TAG));
         SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED2, 2, 9, 18, transfers, null, null);
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 
-    @Ignore
     @Test
-    public void shouldSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException {
+    public void shouldSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 0, "JUSTANOTHERTEST", TEST_TAG));
         SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED2, 2, 9, 18, transfers, null, null);

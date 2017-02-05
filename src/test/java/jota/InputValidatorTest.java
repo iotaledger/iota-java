@@ -1,5 +1,6 @@
 package jota;
 
+import jota.error.InvalidAddressException;
 import jota.model.Transfer;
 import jota.utils.InputValidator;
 import org.junit.Test;
@@ -27,7 +28,7 @@ public class InputValidatorTest {
     }
 
     @Test
-    public void shouldCheckAddress() {
+    public void shouldCheckAddress() throws InvalidAddressException {
         assertEquals(InputValidator.checkAddress(TEST_ADDRESS_WITHOUT_CHECKSUM), true);
     }
 

@@ -20,6 +20,13 @@ public class IotaUnitConverter {
         return convertUnits(amountInSource, toUnit);
     }
 
+    /**
+     * convert unit
+     *
+     * @param amount the amount
+     * @param toUnit the target unit
+     * @return the specified amount in the target unit
+     **/
     private static long convertUnits(long amount, IotaUnits toUnit) {
         return (long) (amount / Math.pow(10, toUnit.getValue()));
     }
@@ -37,16 +44,38 @@ public class IotaUnitConverter {
         return createAmountWithUnitDisplayText(amountInDisplayUnit, unit, extended);
     }
 
+    /**
+     * convert amount to target unit
+     *
+     * @param amount the amount
+     * @return the target unit
+     **/
     public static double convertAmountTo(long amount, IotaUnits target) {
         return amount / Math.pow(10, target.getValue());
     }
 
+    /**
+     * create amount with unit text
+     *
+     * @param amountInUnit the amount in units
+     * @param unit         the unit
+     * @param extended     extended length
+     * @return the target unit
+     **/
     private static String createAmountWithUnitDisplayText(double amountInUnit, IotaUnits unit, boolean extended) {
         String result = createAmountDisplayText(amountInUnit, unit, extended);
         result += " " + unit.getUnit();
         return result;
     }
 
+    /**
+     * create amount text
+     *
+     * @param amountInUnit the amount in units
+     * @param unit         the unit
+     * @param extended     extended length
+     * @return the target unit
+     **/
     public static String createAmountDisplayText(double amountInUnit, IotaUnits unit, boolean extended) {
         DecimalFormat df;
         if (extended) df = new DecimalFormat("##0.##################");
