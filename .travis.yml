@@ -1,12 +1,29 @@
 language: java
+
 jdk:
 - oraclejdk8
-script: mvn package
+
+before_install:
+- openssl aes-256-cbc -K $encrypted_943593fe7585_key -iv $encrypted_943593fe7585_iv -in codesigning.asc.enc -out codesigning.asc -d
+
+before_script: gpg --fast-import codesigning.asc
+
+script: mvn package -P build-extras
+
 deploy:
   provider: releases
   api_key:
     secure: YR8aDGTciBNQgI8GU5DSSm6dzKyZhgmixewIMkbjwrGkdLs/UnD2cfMh2ziNuivpmnIDj2rCMmf6gr1PhQno5nsPPrrFcJs0tIv2LAvAAJst/k32zMK3wv1x54eaTS3SK9VxUdAcnB0N3RvMKLiaqkwTcxa4PY9pWlHnZdc8h9oCqr7JAq8NH/94Ri4AiUc7hDgu6xnZNDqll6gJwdM8kUPQuUsAkkAl2dBVfqB7OeQFkmTvl6Hi5WCn9zbpBpKxE4t/SbgZvH5ccVBKOZveFG38/Mm1ur6VHQ8WvZFnEHps+aq8Sjz8irzcdGHC/hSGvMfsB2LRZHKd8KaRcSCypzuBjNt+ayEaaCd4AcNIsR/cEtC9aOzttNhS6eX4YpdaDjmvlqChjKvR+reKVXK7rb6Z08vHkJC1HOofovfjBP0RXT/O1CsUTpPS0lpNfrNZ0n0GfaHqtqxYrGDsXMFIHX5v39fqwAF2pmpJQaB3CeSLpEM7YbNcPlPRQ/w4XZ5SEN1ENS6a8oenOL+IZNMyspTywG3vQgdc82W5MhjFpUawrReeWd6y5xrHiWBLVPJGsgJQPIY0MkuAGiIGqiT8hSW8x8frYhX9IZ7/x4My6PYL8pCv+zn2V8LBr5KCtjVf3sGrxftlt1eLvQHkw290yRUgcfTAd2Dj8lk8H+jYgXA=
-  file: jota*.jar
+  file_glob: true
+  file:
+  - "/home/travis/build/iotaledger/iota.lib.jota/target/jota*.jar"
+  - "/home/travis/build/iotaledger/iota.lib.jota/target/jota*.jar.asc"
+  - "/home/travis/build/iotaledger/iota.lib.jota/target/jota*-sources.jar"
+  - "/home/travis/build/iotaledger/iota.lib.jota/target/jota*-sources.jar.asc"
+  - "/home/travis/build/iotaledger/iota.lib.jota/target/jota*-javadoc.jar"
+  - "/home/travis/build/iotaledger/iota.lib.jota/target/jota*-javadoc.jar.asc"
+  skip_cleanup: true
   on:
+    tags: true
     repo: iotaledger/iota.lib.java
-    branch: dev
+    all_branches: true
