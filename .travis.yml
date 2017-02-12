@@ -1,15 +1,11 @@
 language: java
-
 jdk:
 - oraclejdk8
-
 before_install:
-- openssl aes-256-cbc -K $encrypted_943593fe7585_key -iv $encrypted_943593fe7585_iv -in codesigning.asc.enc -out codesigning.asc -d
-
+- openssl aes-256-cbc -K $encrypted_404912dc11ca_key -iv $encrypted_404912dc11ca_iv
+  -in codesigning.asc.enc -out codesigning.asc -d
 before_script: gpg --fast-import codesigning.asc
-
 script: mvn package -P build-extras
-
 deploy:
   provider: releases
   api_key:

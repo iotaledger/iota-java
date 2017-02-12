@@ -1,7 +1,8 @@
 package jota.utils;
 
 /**
- * Created by pinpong on 02.12.16.
+ * This class defines the global constants
+ * @author pinpong
  */
 public class Constants {
 

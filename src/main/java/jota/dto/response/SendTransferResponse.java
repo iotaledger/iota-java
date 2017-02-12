@@ -1,8 +1,8 @@
 package jota.dto.response;
 
 /**
- * Created by pinpong on 28.12.16.
- */
+ * Response of api request 'sendTransfer'
+ **/
 public class SendTransferResponse extends AbstractResponse {
 
     private Boolean[] successfully;

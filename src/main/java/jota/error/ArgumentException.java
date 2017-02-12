@@ -1,7 +1,7 @@
 package jota.error;
 
 /**
- * Created by Adrian on 09.12.2016.
+ * @author Adrian
  */
 public class ArgumentException extends BaseException {
 

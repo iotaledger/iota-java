@@ -1,7 +1,7 @@
 package jota.error;
 
 /**
- * Created by pinpong on 05.02.17.
+ * @author Adrian
  */
 public class InvalidAddressException extends BaseException {
     public InvalidAddressException() {

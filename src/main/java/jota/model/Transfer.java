@@ -3,7 +3,8 @@ package jota.model;
 import com.google.gson.Gson;
 
 /**
- * Created by pinpong on 02.12.16.
+ * This class represents a Transfer
+ * @author pinpong
  */
 public class Transfer {
 

@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertThat;
 
 /**
- * Created by Adrian on 15.01.2017.
+ * @author Adrian
  */
 public class IotaCoreApiTest {
 

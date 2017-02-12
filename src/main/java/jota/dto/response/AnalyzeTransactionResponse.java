@@ -5,6 +5,9 @@ import jota.model.Transaction;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Response of {@link jota.dto.request.IotaGetBalancesRequest}
+ **/
 public class AnalyzeTransactionResponse extends AbstractResponse {
 
     private List<Transaction> transactions = new ArrayList<>();

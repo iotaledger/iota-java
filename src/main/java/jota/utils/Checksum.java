@@ -4,7 +4,8 @@ import jota.error.InvalidAddressException;
 import jota.pow.JCurl;
 
 /**
- * Created by pinpong on 02.12.16.
+ * This class defines utility methods to add/remove the checksum to/from an address
+ * @author pinpong
  */
 public class Checksum {
 

@@ -1,7 +1,8 @@
 package jota.utils;
 
 /**
- * Created by pinpong on 01.12.16.
+ * This class allows to convert between ASCII and tryte encoded strings
+ * @author pinpong
  */
 public class TrytesConverter {
 

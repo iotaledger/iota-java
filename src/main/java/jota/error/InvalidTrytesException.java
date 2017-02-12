@@ -1,7 +1,7 @@
 package jota.error;
 
 /**
- * Created by Adrian on 04.02.2017.
+ * @author Adrian
  */
 public class InvalidTrytesException extends BaseException {
 

@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 
 /**
- * Created by pinpong on 02.12.16.
+ * This class represents an iota transaction
+ * @author pinpong
  */
 public class Transaction {
     private static final Logger log = LoggerFactory.getLogger(Transaction.class);

@@ -5,8 +5,9 @@ import com.google.gson.Gson;
 import java.util.List;
 
 /**
- * Created by Adrian on 09.12.2016.
- */
+ * This class represents an Inputs
+ *  @author Adrian
+ **/
 public class Inputs {
     private List<Input> inputsList;
     private long totalBalance;

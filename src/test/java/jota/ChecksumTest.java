@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by pinpong on 02.12.16.
+ * @author pinpong
  */
 public class ChecksumTest {
 

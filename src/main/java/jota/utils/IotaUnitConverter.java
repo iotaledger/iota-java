@@ -3,7 +3,8 @@ package jota.utils;
 import java.text.DecimalFormat;
 
 /**
- * Created by Sascha on 30.11.16.
+ * This class provides methods to convert Iota to different units
+ * @author sascha
  */
 public class IotaUnitConverter {
 
