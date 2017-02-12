@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Adrian on 27.12.2016.
- */
+ * This class represents an Signature
+ * @author Adrian
+ **/
 public class Signature {
 
     String address;

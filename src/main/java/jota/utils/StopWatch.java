@@ -1,7 +1,7 @@
 package jota.utils;
 
 /**
- * Created by Adrian on 15.01.2017.
+ * @author adrian
  */
 public class StopWatch {
     private long startTime = 0;

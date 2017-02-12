@@ -7,7 +7,7 @@ import jota.pow.JCurl;
 import java.util.Arrays;
 
 /**
- * Created by pinpong on 02.02.17.
+ * @author pinpong
  */
 public class Multisig {
 

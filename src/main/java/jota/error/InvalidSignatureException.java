@@ -1,7 +1,7 @@
 package jota.error;
 
 /**
- * Created by Adrian on 27.12.2016.
+ * @author Adrian
  */
 public class InvalidSignatureException extends BaseException {
     public InvalidSignatureException() {

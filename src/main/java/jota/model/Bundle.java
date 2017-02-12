@@ -10,8 +10,9 @@ import java.util.List;
 
 
 /**
- * Created by pinpong on 09.12.16.
- */
+ * This class represents a Bundle, a set of transactions
+ * @author pinpong
+ **/
 public class Bundle implements Comparable<Bundle> {
 
     public static String EMPTY_HASH = "999999999999999999999999999999999999999999999999999999999999999999999999999999999";

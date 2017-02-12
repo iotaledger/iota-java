@@ -4,8 +4,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * Created by Adrian on 09.12.2016.
- */
+ * This class represents an Input
+ * @author Adrian
+ **/
 public class Input {
     private String address;
     private long balance;

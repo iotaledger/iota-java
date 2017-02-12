@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Created by Adrian on 09.12.2016.
+ * @author Adrian
  */
 public class BaseException extends Exception {
 

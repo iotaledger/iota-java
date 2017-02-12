@@ -1,8 +1,9 @@
 package jota.model;
 
 /**
- * Created by pinpong on 02.12.16.
- */
+ * This class represents an Neighbor
+ * @author pinpong
+ **/
 public class Neighbor {
 
     private String address;

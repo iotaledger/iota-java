@@ -1,7 +1,7 @@
 package jota.error;
 
 /**
- * Created by pinpong on 02.02.17.
+ * @author pinpong
  */
 public class InvalidSecurityLevelException extends BaseException {
 

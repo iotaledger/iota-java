@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by pinpong on 01.12.16.
+ * @author pinpong
  */
 public class TrytesConverterTest {
 

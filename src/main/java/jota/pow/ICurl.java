@@ -1,7 +1,7 @@
 package jota.pow;
 
 /**
- * Created by Adrian on 07.01.2017.
+ * @author Adrian
  */
 public interface ICurl {
     ICurl absorb(final int[] trits, int offset, int length);
