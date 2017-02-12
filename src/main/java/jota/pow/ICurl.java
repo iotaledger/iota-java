@@ -4,19 +4,21 @@ package jota.pow;
  * Created by Adrian on 07.01.2017.
  */
 public interface ICurl {
-    JCurl absorb(final int[] trits, int offset, int length);
+    ICurl absorb(final int[] trits, int offset, int length);
 
-    JCurl absorb(final int[] trits);
+    ICurl absorb(final int[] trits);
 
     int[] squeeze(final int[] trits, int offset, int length);
 
     int[] squeeze(final int[] trits);
 
-    JCurl transform();
+    ICurl transform();
 
-    JCurl reset();
+    ICurl reset();
 
     int[] getState();
 
     void setState(int[] state);
+
+    ICurl clone();
 }

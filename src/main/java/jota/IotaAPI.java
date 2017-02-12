@@ -61,7 +61,7 @@ public class IotaAPI extends IotaAPICore {
         // and return the list of all addresses
         if (total != 0) {
             for (int i = index; i < index + total; i++) {
-                allAddresses.add(IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl));
+                allAddresses.add(IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl.clone()));
             }
             return GetNewAddressResponse.create(allAddresses, stopWatch.getElapsedTimeMili());
         }
@@ -69,7 +69,7 @@ public class IotaAPI extends IotaAPICore {
         // already created if null, return list of addresses
         for (int i = index; ; i++) {
 
-            final String newAddress = IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl);
+            final String newAddress = IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl.clone());
             final FindTransactionResponse response = findTransactionsByAddresses(newAddress);
 
             allAddresses.add(newAddress);
@@ -245,7 +245,7 @@ public class IotaAPI extends IotaAPICore {
         final List<Transaction> trx = new ArrayList<>();
 
         for (final String tryte : Arrays.asList(res.getTrytes())) {
-            trx.add(new Transaction(tryte, customCurl));
+            trx.add(new Transaction(tryte, customCurl.clone()));
         }
         return trx;
     }
@@ -269,7 +269,7 @@ public class IotaAPI extends IotaAPICore {
         final List<Transaction> trxs = new ArrayList<>();
 
         for (final String tryte : trytesResponse.getTrytes()) {
-            trxs.add(new Transaction(tryte, customCurl));
+            trxs.add(new Transaction(tryte, customCurl.clone()));
         }
         return trxs;
     }
@@ -453,7 +453,7 @@ public class IotaAPI extends IotaAPICore {
         } else {
 
             // If no input required, don't sign and simply finalize the bundle
-            bundle.finalize(customCurl);
+            bundle.finalize(customCurl.clone());
             bundle.addTrytes(signatureFragments);
 
             List<Transaction> trxb = bundle.getTransactions();
@@ -508,7 +508,7 @@ public class IotaAPI extends IotaAPICore {
 
             for (int i = start; i < end; i++) {
 
-                String address = IotaAPIUtils.newAddress(seed, security, i, false, customCurl);
+                String address = IotaAPIUtils.newAddress(seed, security, i, false, customCurl.clone());
                 allAddresses.add(address);
             }
 
@@ -764,7 +764,7 @@ public class IotaAPI extends IotaAPICore {
                 throw new ArgumentException("Bundle transactions not visible");
             }
 
-            Transaction trx = new Transaction(gtr.getTrytes()[0], customCurl);
+            Transaction trx = new Transaction(gtr.getTrytes()[0], customCurl.clone());
             if (trx.getBundle() == null) {
                 throw new ArgumentException("Invalid trytes, could not create object");
             }
@@ -925,7 +925,7 @@ public class IotaAPI extends IotaAPICore {
 
                 // Add input as bundle entry
                 // Only a single entry, signatures will be added later
-                // TODO: fill in the right address
+                // TODO: unfinished stuff
                 bundle.addEntry(securitySum, "", toSubtract, tag, timestamp);
             }
 
@@ -947,13 +947,21 @@ public class IotaAPI extends IotaAPICore {
 
                 bundle.addEntry(1, remainderAddress, remainder, tag, timestamp);
             }
-
-
-            bundle.finalize(customCurl);
+            // TODO: unfinished stuff
+            /*
+            bundle.finalize(customCurl.clone());
             bundle.addTrytes(signatureFragments);
 
-            return GetTransferResponse.create(new Bundle[]{}, sw.getElapsedTimeMili());
+            List<Transaction> trxb = bundle.getTransactions();
+            List<String> bundleTrytes = new ArrayList<>();
 
+            for (Transaction trx : trxb) {
+                bundleTrytes.add(trx.toTrytes());
+            }
+
+            return GetTransferResponse.create(bundle.getTransactions(), sw.getElapsedTimeMili());
+            */
+            return null;
 
         } else {
 
@@ -971,7 +979,7 @@ public class IotaAPI extends IotaAPICore {
             throw new ArgumentException("Bundle transactions not visible");
         }
 
-        Transaction trx = new Transaction(gtr.getTrytes()[0], customCurl);
+        Transaction trx = new Transaction(gtr.getTrytes()[0], customCurl.clone());
         if (trx.getBundle() == null) {
             throw new ArgumentException("Invalid trytes, could not create object");
         }
@@ -1008,7 +1016,7 @@ public class IotaAPI extends IotaAPICore {
                     // Remainder bundle entry
                     bundle.addEntry(1, remainderAddress, remainder, tag, timestamp);
                     // Final function for signing inputs
-                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, customCurl);
+                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, customCurl.clone());
                 } else if (remainder > 0) {
                     // Generate a new Address by calling getNewAddress
 
@@ -1017,11 +1025,11 @@ public class IotaAPI extends IotaAPICore {
                     bundle.addEntry(1, res.getAddresses().get(0), remainder, tag, timestamp);
 
                     // Final function for signing inputs
-                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, customCurl);
+                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, customCurl.clone());
                 } else {
                     // If there is no remainder, do not add transaction to bundle
                     // simply sign and return
-                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, customCurl);
+                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, customCurl.clone());
                 }
 
                 // If multiple inputs provided, subtract the totalTransferValue by

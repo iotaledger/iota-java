@@ -73,4 +73,9 @@ public class JCurl implements ICurl {
     public void setState(int[] state) {
         this.state = state;
     }
+
+    @Override
+    public ICurl clone() {
+        return new JCurl();
+    }
 }

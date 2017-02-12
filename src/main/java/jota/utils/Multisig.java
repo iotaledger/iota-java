@@ -16,11 +16,11 @@ public class Multisig {
 
     public Multisig(ICurl customCurl) {
         this.curl = customCurl;
-        this.signingInstance = new Signing(curl);
+        this.signingInstance = new Signing(curl.clone());
     }
 
     public Multisig() {
-        this.curl = new JCurl();
+        this(new JCurl());
     }
 
     /**
