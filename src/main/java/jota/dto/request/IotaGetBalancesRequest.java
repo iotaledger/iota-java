@@ -2,6 +2,9 @@ package jota.dto.request;
 
 import jota.IotaAPICommands;
 
+/**
+ * This class represents the core api request 'getBalances'
+ **/
 public class IotaGetBalancesRequest extends IotaCommandRequest {
 
     private String[] addresses;

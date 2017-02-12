@@ -5,6 +5,9 @@ import jota.model.Transaction;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Response of api request 'getBundle
+ **/
 public class GetBundleResponse extends AbstractResponse {
 
     private List<Transaction> transactions = new ArrayList<>();

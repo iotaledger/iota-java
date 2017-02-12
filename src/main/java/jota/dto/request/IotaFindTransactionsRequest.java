@@ -2,6 +2,9 @@ package jota.dto.request;
 
 import jota.IotaAPICommands;
 
+/**
+ * This class represents the core api request 'findTransactions'
+ **/
 public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
     private String[] bundles; // List of bundle hashes. The hashes need to be extended to 81chars by padding the hash with 9's.
