@@ -8,7 +8,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import java.util.List;
 
 /**
- * Created by pinpong on 02.12.16.
+ * This class provides methods to validate the parameters of different iota API methods
+ * @author pinpong
  */
 public class InputValidator {
 

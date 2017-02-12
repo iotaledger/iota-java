@@ -2,6 +2,9 @@ package jota.dto.request;
 
 import jota.IotaAPICommands;
 
+/**
+ * This class represents the core API request 'addNeighbors' and 'removeNeighbors'
+ **/
 public class IotaNeighborsRequest extends IotaCommandRequest {
 
     private String[] uris;

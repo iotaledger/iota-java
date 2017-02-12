@@ -1,7 +1,7 @@
 package jota.error;
 
 /**
- * Created by pinpong on 05.02.17.
+ * @author pinpong
  */
 public class InvalidTransferException extends BaseException {
     public InvalidTransferException() {

@@ -2,6 +2,9 @@ package jota.dto.request;
 
 import jota.IotaAPICommands;
 
+/**
+ * This class represents the core API request 'getTrytes'
+ **/
 public class IotaGetTrytesRequest extends IotaCommandRequest {
 
     private String[] hashes;

@@ -1,8 +1,8 @@
 package jota.dto.response;
 
 /**
- * Created by pinpong on 01.01.17.
- */
+ * Response of api request 'replayBundle'
+ **/
 public class ReplayBundleResponse extends AbstractResponse {
 
     private Boolean[] successfully;

@@ -3,8 +3,8 @@ package jota.dto.response;
 import jota.model.Bundle;
 
 /**
- * Created by pinpong on 28.12.16.
- */
+ * Response of api request 'getTransfer'
+ **/
 public class GetTransferResponse extends AbstractResponse {
 
     private Bundle[] transferBundle;

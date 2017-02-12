@@ -2,6 +2,7 @@ package jota.utils;
 
 /**
  * Table of IOTA units based off of the standard system of Units
+ * @author pinpong
  **/
 public enum IotaUnits {
 

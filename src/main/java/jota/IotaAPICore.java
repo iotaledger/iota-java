@@ -20,7 +20,8 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Adrian on 15.01.2017.
+ * This class provides access to the Iota core API
+ * @author Adrian
  */
 public class IotaAPICore {
 

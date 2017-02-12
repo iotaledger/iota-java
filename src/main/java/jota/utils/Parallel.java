@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Created by Adrian on 15.01.2017.
+ * @author Adrian
  */
 public class Parallel {
     private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();

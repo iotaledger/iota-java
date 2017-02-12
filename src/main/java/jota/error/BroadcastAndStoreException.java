@@ -1,7 +1,7 @@
 package jota.error;
 
 /**
- * Created by Adrian on 22.01.2017.
+ * @author Adrian
  */
 public class BroadcastAndStoreException extends BaseException {
 

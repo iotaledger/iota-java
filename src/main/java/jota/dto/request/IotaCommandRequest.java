@@ -2,6 +2,9 @@ package jota.dto.request;
 
 import jota.IotaAPICommands;
 
+/**
+ * This class represents the core api request 'getNodeInfo', 'getNeighbors' and 'interruptAttachToTangle'
+ **/
 public class IotaCommandRequest {
 
     final String command;

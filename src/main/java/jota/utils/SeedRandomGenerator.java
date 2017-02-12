@@ -3,7 +3,8 @@ package jota.utils;
 import java.security.SecureRandom;
 
 /**
- * Created by pinpong on 13.12.16.
+ * This class allows to create a secure random generated seed
+ * @author pinpong
  */
 public class SeedRandomGenerator {
 
