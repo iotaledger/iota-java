@@ -60,7 +60,7 @@ Jota is still *not* in the central maven repository. It will be available when i
  -   This is pre-release software!
  -   There may be performance and stability issues.
  -   You may loose all your money :)
- -   Please report any issues using the <a href="https://github.com/iotaledger/iota.lib.java/issues">Issue Tracker</a>"
+ -   Please report any issues using the <a href="https://github.com/iotaledger/iota.lib.java/issues">Issue Tracker</a>
 
 That's it!
 	
