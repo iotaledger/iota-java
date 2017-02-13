@@ -20,6 +20,11 @@ public abstract class AbstractResponse {
         this.duration = duration;
     }
 
+    /**
+     * Returns a String that represents this object.
+     *
+     * @return Returns a string representation of this object.
+     */
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

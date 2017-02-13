@@ -20,27 +20,55 @@ public class Bundle implements Comparable<Bundle> {
     private int length;
 
 
+    /**
+     * Initializes a new instance of the Bundle class without transactions.
+     */
     public Bundle() {
         this(new ArrayList<Transaction>(), 0);
     }
 
+    /**
+     * Initializes a new instance of the Bundle class.
+     */
     public Bundle(List<Transaction> transactions, int length) {
         this.transactions = transactions;
         this.length = length;
     }
 
+    /**
+     * Gets the transactions
+     *
+     * @return transactions The transactions.
+     */
     public List<Transaction> getTransactions() {
         return transactions;
     }
 
+    /**
+     * Gets the length of the bundle
+     *
+     * @return length The length.
+     */
     public int getLength() {
         return length;
     }
 
+    /**
+     * Sets the length of the bundle
+     * @param length The length.
+     */
     public void setLength(int length) {
         this.length = length;
     }
 
+    /**
+     * Adds a bundle entry
+     * @param signatureMessageLength Length of the signature message.
+     * @param address The address.
+     * @param value The value.
+     * @param tag The tag.
+     * @param timestamp The timestamp.
+     */
     public void addEntry(int signatureMessageLength, String address, long value, String tag, long timestamp) {
         if (getTransactions() == null) {
             this.transactions = new ArrayList<>(getTransactions());
@@ -52,6 +80,10 @@ public class Bundle implements Comparable<Bundle> {
         }
     }
 
+    /**
+     * Finalizes the bundle using the specified curl implementation
+     * @param customCurl The custom curl.
+     */
     public void finalize(ICurl customCurl) {
 
         ICurl curl = customCurl == null ? new JCurl() : customCurl;
@@ -81,7 +113,10 @@ public class Bundle implements Comparable<Bundle> {
         }
     }
 
-
+    /**
+     * Adds the trytes.
+     * @param signatureFragments The signature fragments.
+     */
     public void addTrytes(List<String> signatureFragments) {
         String emptySignatureFragment = "";
         String emptyHash = EMPTY_HASH;
@@ -103,6 +138,12 @@ public class Bundle implements Comparable<Bundle> {
         }
     }
 
+
+    /**
+     * Normalized the bundle.
+     * @param bundleHash The bundle hash.
+     * @return normalizedBundle A normalized bundle hash.
+     */
     public int[] normalizedBundle(String bundleHash) {
         int[] normalizedBundle = new int[81];
 
@@ -141,6 +182,13 @@ public class Bundle implements Comparable<Bundle> {
         return normalizedBundle;
     }
 
+
+    /**
+     * Compares the current object with another object of the same type.
+     * @param o An object to compare with this object.
+     * @return A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other" /> parameter.Zero This object is equal to <paramref name="other" />. Greater than zero This object is greater than <paramref name="other" />.
+
+     */
     @Override
     public int compareTo(Bundle o) {
         return Long.compare(Long.parseLong(this.getTransactions().get(0).getTimestamp()), Long.parseLong(o.getTransactions().get(0).getTimestamp()));

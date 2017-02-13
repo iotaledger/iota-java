@@ -9,25 +9,46 @@ import java.util.List;
  **/
 public class Signature {
 
-    String address;
-    List<String> signatureFragments;
+    private String address;
+    private List<String> signatureFragments;
 
+    /**
+     * Initializes a new instance of the Signature class.
+     */
     public Signature() {
         this.signatureFragments = new ArrayList<>();
     }
 
+    /**
+     * Get the address.
+     *
+     * @return address The address.
+     */
     public String getAddress() {
         return address;
     }
 
+    /**
+     * Set the address.
+     *
+     * @param address The address.
+     */
     public void setAddress(String address) {
         this.address = address;
     }
 
+    /**
+     * Get the signatureFragments.
+     * @return signatureFragments The signatureFragments.
+     */
     public List<String> getSignatureFragments() {
         return signatureFragments;
     }
 
+    /**
+     * Set the signatureFragments.
+     * @param  signatureFragments The signatureFragments.
+     */
     public void setSignatureFragments(List<String> signatureFragments) {
         this.signatureFragments = signatureFragments;
     }

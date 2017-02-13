@@ -16,6 +16,7 @@ import java.util.Arrays;
  * @author pinpong
  */
 public class Transaction {
+
     private static final Logger log = LoggerFactory.getLogger(Transaction.class);
     private ICurl customCurl;
 
@@ -33,23 +34,38 @@ public class Transaction {
     private String nonce;
     private Boolean persistence;
 
+    /**
+     * Initializes a new instance of the Signature class.
+     */
     public Transaction(ICurl curl) {
         customCurl = curl;
     }
 
+    /**
+     * Initializes a new instance of the Signature class.
+     */
     public Transaction() {
         customCurl = null;
     }
 
+    /**
+     * Initializes a new instance of the Signature class.
+     */
     public Transaction(String trytes) {
         transactionObject(trytes);
     }
 
+    /**
+     * Initializes a new instance of the Signature class.
+     */
     public Transaction(String trytes, ICurl customCurl) {
         transactionObject(trytes);
         this.customCurl = customCurl;
     }
 
+    /**
+     * Initializes a new instance of the Signature class.
+     */
     public Transaction(String signatureFragments, String currentIndex, String lastIndex, String nonce, String hash, String tag, String timestamp, String trunkTransaction, String branchTransaction, String address, String value, String bundle) {
 
         this.hash = hash;
@@ -66,7 +82,9 @@ public class Transaction {
         this.nonce = nonce;
     }
 
-
+    /**
+     * Initializes a new instance of the Signature class.
+     */
     public Transaction(String address, String value, String tag, String timestamp) {
         this.address = address;
         this.value = value;
@@ -74,111 +92,221 @@ public class Transaction {
         this.timestamp = timestamp;
     }
 
+    /**
+     * Returns a String that represents this object.
+     *
+     * @return Returns a string representation of this object.
+     */
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
+    /**
+     * Get the hash.
+     *
+     * @return hash The hash.
+     */
     public String getHash() {
         return hash;
     }
 
+    /**
+     * Set the hash.
+     * @param hash The hash.
+     */
     public void setHash(String hash) {
         this.hash = hash;
     }
 
+    /**
+     * Get the signature fragments.
+     * @return signatureFragments The signature fragments.
+     */
     public String getSignatureFragments() {
         return signatureFragments;
     }
 
+    /**
+     * Set the signature fragments.
+     * @param signatureFragments The signature fragments.
+     */
     public String setSignatureFragments(String signatureFragments) {
         return this.signatureFragments = signatureFragments;
     }
 
+    /**
+     * Get the address.
+     * @return address The address.
+     */
     public String getAddress() {
         return address;
     }
 
+    /**
+     * Set the address.
+     * @param address The address.
+     */
     public void setAddress(String address) {
         this.address = address;
     }
 
+    /**
+     * Get the value.
+     * @return value The value.
+     */
     public String getValue() {
         return value;
     }
 
+    /**
+     * Set the value.
+     * @param value The value.
+     */
     public void setValue(String value) {
         this.value = value;
     }
 
+    /**
+     * Get the tag.
+     * @return tag The tag.
+     */
     public String getTag() {
         return tag;
     }
 
+    /**
+     * Set the tag.
+     * @param tag The tag.
+     */
     public void setTag(String tag) {
         this.tag = tag;
     }
 
+    /**
+     * Get the timestamp.
+     * @return timestamp The timestamp.
+     */
     public String getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Set the timestamp.
+     * @param timestamp The timestamp.
+     */
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
+    /**
+     * Get the current index.
+     * @return currentIndex The current index.
+     */
     public String getCurrentIndex() {
         return currentIndex;
     }
 
+    /**
+     * Set the current index.
+     * @param currentIndex The current index.
+     */
     public String setCurrentIndex(String currentIndex) {
         return this.currentIndex = currentIndex;
     }
 
+    /**
+     * Get the last index.
+     * @return lastIndex The last index.
+     */
     public String getLastIndex() {
         return lastIndex;
     }
 
+    /**
+     * Set the last index.
+     * @param lastIndex The last index.
+     */
     public String setLastIndex(String lastIndex) {
         return this.lastIndex = lastIndex;
     }
 
+    /**
+     * Get the bundle.
+     * @return bundle The bundle.
+     */
     public String getBundle() {
         return bundle;
     }
 
+    /**
+     * Set the bundle.
+     * @param bundle The bundle.
+     */
     public void setBundle(String bundle) {
         this.bundle = bundle;
     }
 
+    /**
+     * Get the trunk transaction.
+     * @return trunkTransaction The trunk transaction.
+     */
     public String getTrunkTransaction() {
         return trunkTransaction;
     }
 
+    /**
+     * Set the trunk transaction.
+     * @param trunkTransaction The trunk transaction.
+     */
     public void setTrunkTransaction(String trunkTransaction) {
         this.trunkTransaction = trunkTransaction;
     }
 
+    /**
+     * Get the branch transaction.
+     * @return branchTransaction The branch transaction.
+     */
     public String getBranchTransaction() {
         return branchTransaction;
     }
 
+    /**
+     * Set the branch transaction.
+     * @param branchTransaction The branch transaction.
+     */
     public void setBranchTransaction(String branchTransaction) {
         this.branchTransaction = branchTransaction;
     }
 
+    /**
+     * Get the nonce.
+     * @return nonce The nonce.
+     */
     public String getNonce() {
         return nonce;
     }
 
+    /**
+     * Set the nonce.
+     * @param nonce The trunk nonce.
+     */
     public void setNonce(String nonce) {
         this.nonce = nonce;
     }
 
+    /**
+     * Get the persistence.
+     * @return persistence The persistence.
+     */
     public Boolean getPersistence() {
         return persistence;
     }
 
+    /**
+     * Set the persistence.
+     * @param persistence The persistence.
+     */
     public void setPersistence(Boolean persistence) {
         this.persistence = persistence;
     }
@@ -187,6 +315,10 @@ public class Transaction {
         return obj != null && ((Transaction) obj).getHash().equals(this.getHash());
     }
 
+
+    /**
+     * Converts the transaction to the corresponding trytes representation
+     */
     public String toTrytes() {
         int[] valueTrits = Converter.trits(this.getValue(), 81);
 
@@ -212,6 +344,9 @@ public class Transaction {
                 + this.getNonce();
     }
 
+    /**
+     * Initializes a new instance of the Signature class.
+     */
     public void transactionObject(final String trytes) {
 
         if (StringUtils.isEmpty(trytes)) {
