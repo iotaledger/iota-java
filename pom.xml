@@ -146,6 +146,7 @@
                         <configuration>
                             <show>private</show>
                             <nohelp>true</nohelp>
+                            <additionalparam>-Xdoclint:none</additionalparam>
                         </configuration>
                         <executions>
                             <execution>
