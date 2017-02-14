@@ -27,6 +27,7 @@ public class IotaAPIUtils {
      * @param checksum adds 9-tryte address checksum
      * @param curl
      * @return an String with address
+     * @exception InvalidAddressException is thrown when the specified address is not an valid address
      */
     public static String newAddress(String seed, int security, int index, boolean checksum, ICurl curl) throws InvalidAddressException {
         Signing signing = new Signing(curl);

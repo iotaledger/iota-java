@@ -14,10 +14,10 @@ import java.util.List;
 public class InputValidator {
 
     /**
-     * validates an address
+     * Determines whether the specified string is an adrdress.
      *
      * @param address address to validate
-     * @return boolean
+     * @return <c>true</c> if the specified string is an address; otherwise, <c>false</c>.
      **/
     public static boolean isAddress(String address) {
         return (address.length() == Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM ||
@@ -25,10 +25,11 @@ public class InputValidator {
     }
 
     /**
-     * checks whether the specified address is an address
+     * Checks whether the specified address is an address and throws and exception if the address is invalid
      *
      * @param address address to validate
-     * @return boolean
+     * @return <c>true</c> if the specified string is an address; otherwise, <c>false</c>.
+     * @exception InvalidAddressException is thrown when the specified address is not an valid address
      **/
     public static boolean checkAddress(String address) throws InvalidAddressException {
         if (!isAddress(address)) {
@@ -38,42 +39,42 @@ public class InputValidator {
     }
 
     /**
-     * checks if input is correct trytes consisting of A-Z9 optionally validates length
+     * Determines whether the specified string contains only characters from the trytes alphabet (see <see cref="Constants.TryteAlphabet"/>)
      *
      * @param trytes the trytes
      * @param length the length
-     * @return boolean
+     * @return <c>true</c> if the specified trytes are trytes otherwise, <c>false</c>.
      **/
     public static boolean isTrytes(final String trytes, final int length) {
         return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
     }
 
     /**
-     * checks if input is correct trytes consisting of 9 optionally validates length
+     * Determines whether the specified string consist only of '9'.
      *
-     * @param trytes the trytes
-     * @param length the length
-     * @return boolean
+     * @param trytes The trytes.
+     * @param length The length.
+     * @return  <c>true</c> if the specified string consist only of '9'; otherwise, <c>false</c>.
      **/
     public static boolean isNinesTrytes(final String trytes, final int length) {
         return trytes.matches("^[9]{" + (length == 0 ? "0," : length) + "}$");
     }
 
     /**
-     * determines whether the specified string represents a signed integer
+     * Determines whether the specified string represents a signed integer
      *
      * @param value the value
-     * @return boolean
+     * @return <c>true</c> the specified string represents an integer value; otherwise, <c>false</c>.
      **/
     public static boolean isValue(final String value) {
         return NumberUtils.isNumber(value);
     }
 
     /**
-     * determines whether the specified string represents a signed integer
+     * Determines whether the specified string array contains only trytes
      *
-     * @param trytes the trytes
-     * @return boolean
+     * @param trytes The trytes.
+     * @return <c>true</c> if the specified array contains only valid trytes otherwise, <c>false</c>.
      **/
     public static boolean isArrayOfTrytes(String[] trytes){
         for (String tryte : trytes) {
@@ -86,10 +87,10 @@ public class InputValidator {
     }
 
     /**
-     * checks if input is array of hashes
+     * Determines whether the specified array contains only valid hashes
      *
-     * @param hashes
-     * @return boolean
+     * @param hashes The hashes.
+     * @return <c>true</c> the specified array contains only valid hashes; otherwise, <c>false</c>.
      **/
     public static boolean isArrayOfHashes(String[] hashes) {
         if (hashes == null)
@@ -111,15 +112,15 @@ public class InputValidator {
     }
 
     /**
-     * checks if input is correct hash collections
+     * Determines whether the specified transfers are valid
      *
-     * @param transfers
-     * @return boolean
+     * @param transfers The transfers.
+     * @return <c>true</c> if the specified transfers are valid; otherwise, <c>false</c>.
      **/
-    public static boolean isTransfersCollectionCorrect(final List<Transfer> transfers) {
+    public static boolean isTransfersCollectionValid(final List<Transfer> transfers) {
 
         for (final Transfer transfer : transfers) {
-            if (!isTransfer(transfer)) {
+            if (!isValidTransfer(transfer)) {
                 return false;
             }
         }
@@ -127,12 +128,12 @@ public class InputValidator {
     }
 
     /**
-     * checks if input is correct transfer
+     * Determines whether the specified transfer is valid.
      *
-     * @param transfer
-     * @return boolean
+     * @param transfer The transfer.
+     * @return <c>true</c> if the specified transfer is valid; otherwise, <c>false</c>.
      **/
-    public static boolean isTransfer(final Transfer transfer) {
+    public static boolean isValidTransfer(final Transfer transfer) {
 
         if (!isAddress(transfer.getAddress())) {
             return false;
@@ -148,14 +149,18 @@ public class InputValidator {
     }
 
     /**
-     * validate the seed
+     * Checks if the seed is valid. If not, an exception is thrown.
      *
      * @param seed the seed
      * @return validated seed
+     * @exception IllegalStateException Format not in trytes or Invalid Seed: Seed too long
      **/
     public static String validateSeed(String seed) {
         if (seed.length() > 81)
-            return null;
+            throw new IllegalStateException("Invalid Seed: Seed too long");
+
+        if (!isTrytes(seed, seed.length()))
+            throw new IllegalStateException("Invalid Seed: Format not in trytes");
 
         seed = StringUtils.rightPad(seed, 81, '9');
 

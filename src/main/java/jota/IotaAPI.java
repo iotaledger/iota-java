@@ -46,6 +46,8 @@ public class IotaAPI extends IotaAPICore {
      * @param total Optional (default 1)Total number of addresses to generate
      * @param returnAll If true, it returns all addresses which were deterministically generated (until findTransactions returns null)
      * @return an array of strings with the specifed number of addresses
+     * @exception InvalidAddressException is thrown when the specified address is not an valid address
+     * @exception InvalidSecurityLevelException is thrown when the specified security level is not valid
      */
     public GetNewAddressResponse getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws InvalidSecurityLevelException, InvalidAddressException {
 
@@ -94,7 +96,14 @@ public class IotaAPI extends IotaAPICore {
      * @param end end Ending key index
      * @param inclusionStates Optional (default false). If True, it gets the inclusion states of the transfers.
      * @return Bundle
-     **/
+     * @exception InvalidAddressException is thrown when the specified address is not an valid address
+     * @throws ArgumentException
+     * @throws InvalidBundleException
+     * @throws InvalidSignatureException
+     * @throws NoNodeInfoException
+     * @throws NoInclusionStatesExcpection
+     * @exception InvalidSecurityLevelException is thrown when the specified security level is not valid
+     */
     public GetTransferResponse getTransfers(String seed, int security, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoNodeInfoException, NoInclusionStatesExcpection, InvalidSecurityLevelException, InvalidAddressException {
         StopWatch stopWatch = new StopWatch();
         // validate & if needed pad seed
@@ -317,11 +326,15 @@ public class IotaAPI extends IotaAPICore {
      * @param remainder Optional (default null). if defined, this address will be used for sending the remainder value (of the inputs) to.
      * @param inputs the inputs
      * @return trytes Returns bundle trytes
-     **/
+     * @exception InvalidAddressException is thrown when the specified address is not an valid address
+     * @throws NotEnoughBalanceException
+     * @exception InvalidSecurityLevelException is thrown when the specified security level is not valid
+     * @throws InvalidTransferException
+     */
     public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException, InvalidTransferException {
 
         // Input validation of transfers object
-        if (!InputValidator.isTransfersCollectionCorrect(transfers)) {
+        if (!InputValidator.isTransfersCollectionValid(transfers)) {
             throw new InvalidTransferException();
         }
 
@@ -475,6 +488,9 @@ public class IotaAPI extends IotaAPICore {
      * @param start start Starting key index
      * @param end end Ending key index
      * @param threshold threshold Min balance required
+     * @exception InvalidAddressException is thrown when the specified address is not an valid address
+     * @exception InvalidSecurityLevelException
+
      **/
     public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold) throws InvalidSecurityLevelException, InvalidAddressException {
         StopWatch stopWatch = new StopWatch();
@@ -525,7 +541,6 @@ public class IotaAPI extends IotaAPICore {
         }
     }
 
-
     /**
      * Gets the balances and formats the output
      *
@@ -536,6 +551,7 @@ public class IotaAPI extends IotaAPICore {
      * @param stopWatch the stopwatch
      * @param security  security secuirty level of private key / seed
      * @return Inputs object
+     * @exception InvalidSecurityLevelException is thrown when the specified security level is not valid
      **/
     public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, long threshold, int start, int end, StopWatch stopWatch, int security) throws InvalidSecurityLevelException {
 
@@ -583,7 +599,10 @@ public class IotaAPI extends IotaAPICore {
      * Does validation of signatures, total sum as well as bundle order
      * @param transaction the transaction encoded in trytes
      * @return an array of bundle, if there are multiple arrays it means that there are conflicting bundles.
-     **/
+     * @throws ArgumentException
+     * @throws InvalidBundleException
+     * @throws InvalidSignatureException
+     */
     public GetBundleResponse getBundle(String transaction) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
         StopWatch stopWatch = new StopWatch();
 
@@ -666,7 +685,11 @@ public class IotaAPI extends IotaAPICore {
      * @param depth the depth
      * @param minWeightMagnitude the minimum weight magnitude
      * @return analyzed Transaction objects
-     **/
+     * @throws InvalidBundleException
+     * @throws ArgumentException
+     * @throws InvalidSignatureException
+     * @throws InvalidTrytesException
+     */
     public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude) throws InvalidBundleException, ArgumentException, InvalidSignatureException, InvalidTrytesException {
         StopWatch stopWatch = new StopWatch();
 
@@ -699,7 +722,8 @@ public class IotaAPI extends IotaAPICore {
      *
      * @param hashes the hashes
      * @return inclusion state
-     **/
+     * @throws NoNodeInfoException
+     */
     public GetInclusionStateResponse getLatestInclusion(String[] hashes) throws NoNodeInfoException {
         GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
         if (getNodeInfoResponse == null) throw new NoNodeInfoException();
@@ -712,16 +736,21 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Wrapper function that basically does prepareTransfers, as well as attachToTangle and finally, it broadcasts and stores the transactions locally.
      *
-     * @param seed               tryte-encoded seed
-     * @param security           security secuirty level of private key / seed
-     * @param depth              the depth
+     * @param seed tryte-encoded seed
+     * @param security security secuirty level of private key / seed
+     * @param depth the depth
      * @param minWeightMagnitude the minimum weight magnitude
-     * @param transfers          array of transfer objects
-     * @param inputs             Option (default null). List of inputs used for funding the transfer
-     * @param address            if defined, this address will be used for sending the remainder value (of the inputs) to
+     * @param transfers array of transfer objects
+     * @param inputs List of inputs used for funding the transfer
+     * @param address if defined, this address will be used for sending the remainder value (of the inputs) to
      * @return array of Transaction objects
-     **/
-
+     * @exception InvalidAddressException is thrown when the specified address is not an valid address
+     * @throws NotEnoughBalanceException
+     * @exception InvalidSecurityLevelException is thrown when the specified security level is not valid
+     * @throws InvalidTrytesException
+     * @throws InvalidAddressException
+     * @throws InvalidTransferException
+     */
     public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String address) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
 
         if (security < 1 || security > 3) {
@@ -754,7 +783,8 @@ public class IotaAPI extends IotaAPICore {
      * @param bundleHash the bundle hashes
      * @param bundle List of bundles to be populated
      * @return bundle Transaction objects
-     **/
+     * @throws ArgumentException
+     */
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
         GetTrytesResponse gtr = getTrytes(trunkTx);
 
@@ -805,7 +835,10 @@ public class IotaAPI extends IotaAPICore {
      * @param inputAddress array of input addresses as well as the securitySum
      * @param remainderAddress has to be generated by the cosigners before initiating the transfer, can be null if fully spent
      * @return bundle of transaction objects
-     **/
+     * @throws InvalidAddressException
+     * @throws InvalidBundleException
+     * @exception InvalidAddressException is thrown when the specified address is not an valid address
+     */
     private GetTransferResponse initiateTransfer(int securitySum, final List<String> inputAddress, String remainderAddress, final List<Transfer> transfers) throws InvalidAddressException, InvalidBundleException, InvalidTransferException {
         StopWatch sw = new StopWatch();
 
@@ -824,7 +857,7 @@ public class IotaAPI extends IotaAPICore {
         }
 
         // Input validation of transfers object
-        if (!InputValidator.isTransfersCollectionCorrect(transfers)) {
+        if (!InputValidator.isTransfersCollectionValid(transfers)) {
             throw new InvalidTransferException();
         }
 
@@ -970,6 +1003,11 @@ public class IotaAPI extends IotaAPICore {
 
     }
 
+    /**
+     * @param hash The hash.
+     * @return
+     * @throws ArgumentException
+     */
     public String findTailTransactionHash(String hash) throws ArgumentException {
         GetTrytesResponse gtr = getTrytes(hash);
 
@@ -987,6 +1025,20 @@ public class IotaAPI extends IotaAPICore {
         else return findTailTransactionHash(trx.getBundle());
     }
 
+    /**
+     * @param seed               tryte-encoded seed
+     * @param security           security secuirty level of private key / seed
+     * @param inputs             List of inputs used for funding the transfer
+     * @param bundle             to be populated
+     * @param tag                the tag.
+     * @param totalValue         The total value.
+     * @param remainderAddress   if defined, this address will be used for sending the remainder value (of the inputs) to
+     * @param signatureFragments The signature fragments.
+     * @return
+     * @throws NotEnoughBalanceException
+     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid
+     * @throws InvalidAddressException       is thrown when the specified address is not an valid address
+     */
     public List<String> addRemainder(final String seed,
                                      final int security,
                                      final List<Input> inputs,

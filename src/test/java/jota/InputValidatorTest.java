@@ -52,6 +52,6 @@ public class InputValidatorTest {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
-        assertEquals(InputValidator.isTransfersCollectionCorrect(transfers), true);
+        assertEquals(InputValidator.isTransfersCollectionValid(transfers), true);
     }
 }
