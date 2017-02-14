@@ -7,6 +7,12 @@ public class FindTransactionResponse extends AbstractResponse {
 
     String[] hashes;
 
+
+    /**
+     * Gets the hashes.
+     *
+     * @return hashes trytes The hashes.
+     */
     public String[] getHashes() {
         return hashes;
     }

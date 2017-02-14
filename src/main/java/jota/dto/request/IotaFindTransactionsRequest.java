@@ -12,42 +12,82 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
     private String[] tags;
     private String[] approvees;
 
+    /**
+     * Initializes a new instance of the IotaFindTransactionsRequest class.
+     */
     private IotaFindTransactionsRequest() {
         super(IotaAPICommands.FIND_TRANSACTIONS);
     }
 
+    /**
+     * Create a new instance of the IotaFindTransactionsRequest class.
+     */
     public static IotaFindTransactionsRequest createFindTransactionRequest() {
         return new IotaFindTransactionsRequest();
     }
 
+    /**
+     * Gets the bundles.
+     *
+     * @return bundles The bundles.
+     */
     public String[] getBundles() {
         return bundles;
     }
 
+    /**
+     * Sets the bundles.
+     *
+     * @param bundles The bundles.
+     */
     public void setBundles(String[] bundles) {
         this.bundles = bundles;
     }
 
+    /**
+     * Gets the addresses.
+     * @return addresses The addresses.
+     */
     public String[] getAddresses() {
         return addresses;
     }
 
+    /**
+     * Sets the addresses.
+     * @param addresses The addresses.
+     */
     public void setAddresses(String[] addresses) {
         this.addresses = addresses;
     }
 
+    /**
+     * Gets the tags.
+     * @return tags The tags.
+     */
     public String[] getTags() {
         return tags;
     }
 
+    /**
+     * Sets the tags.
+     * @param tags The tags.
+     */
     public void setTags(String[] tags) {
         this.tags = tags;
     }
 
+    /**
+     * Gets the approvees.
+     * @return approvees The approvees.
+     */
     public String[] getApprovees() {
         return approvees;
     }
 
+    /**
+     * Sets the approvees.
+     * @param approvees The approvees.
+     */
     public void setApprovees(String[] approvees) {
         this.approvees = approvees;
     }

@@ -12,6 +12,11 @@ public class GetNeighborsResponse extends AbstractResponse {
 
     private List<Neighbor> neighbors = new ArrayList<>();
 
+    /**
+     * Gets the neighbors.
+     *
+     * @return neighbors The neighbors.
+     */
     public List<Neighbor> getNeighbors() {
         return neighbors;
     }

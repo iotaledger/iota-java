@@ -9,12 +9,20 @@ public class GetTransferResponse extends AbstractResponse {
 
     private Bundle[] transferBundle;
 
+    /**
+     * Initializes a new instance of the GetTransferResponse class.
+     */
     public static GetTransferResponse create(Bundle[] transferBundle, long duration) {
         GetTransferResponse res = new GetTransferResponse();
         res.transferBundle = transferBundle;
         return res;
     }
 
+    /**
+     * Gets the transfer bundle.
+     *
+     * @return transferBundle The transfer bundle.
+     */
     public Bundle[] getTransfers() {
         return transferBundle;
     }

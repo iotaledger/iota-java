@@ -10,19 +10,35 @@ public class IotaStoreTransactionsRequest extends IotaCommandRequest {
 
     private String[] trytes;
 
+    /**
+     * Initializes a new instance of the IotaStoreTransactionsRequest class.
+     */
     private IotaStoreTransactionsRequest(final String... trytes) {
         super(IotaAPICommands.STORE_TRANSACTIONS);
         this.trytes = trytes;
     }
 
+    /**
+     * Create a new instance of the IotaStoreTransactionsRequest class.
+     */
     public static IotaStoreTransactionsRequest createStoreTransactionsRequest(final String... trytes) {
         return new IotaStoreTransactionsRequest(trytes);
     }
 
+    /**
+     * Gets the trytes.
+     *
+     * @return trytes The trytes.
+     */
     public String[] getTrytes() {
         return trytes;
     }
 
+    /**
+     * Sets the trytes.
+     *
+     * @param trytes The trytes.
+     */
     public void setTrytes(String[] trytes) {
         this.trytes = trytes;
     }

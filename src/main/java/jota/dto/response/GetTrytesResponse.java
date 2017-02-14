@@ -7,6 +7,11 @@ public class GetTrytesResponse extends AbstractResponse {
 
     private String[] trytes;
 
+    /**
+     * Gets the trytes.
+     *
+     * @return trytes The trytes.
+     */
     public String[] getTrytes() {
         return trytes;
     }

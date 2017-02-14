@@ -5,6 +5,9 @@ package jota.error;
  */
 public class ArgumentException extends BaseException {
 
+    /**
+     * Serial version UID
+     */
     private static final long serialVersionUID = -7850044681919575720L;
 
     public ArgumentException() {

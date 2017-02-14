@@ -12,6 +12,9 @@ public class GetBalancesAndFormatResponse extends AbstractResponse {
     private List<Input> input;
     private long totalBalance;
 
+    /**
+     * Initializes a new instance of the GetBalancesAndFormatResponse class.
+     */
     public static GetBalancesAndFormatResponse create(List<Input> inputs, long totalBalance2, long duration) {
         GetBalancesAndFormatResponse res = new GetBalancesAndFormatResponse();
         res.setInput(inputs);
@@ -20,18 +23,36 @@ public class GetBalancesAndFormatResponse extends AbstractResponse {
         return res;
     }
 
+    /**
+     * Gets the input.
+     *
+     * @return transactions The transactions.
+     */
     public List<Input> getInput() {
         return input;
     }
 
+    /**
+     * Sets the input.
+     *
+     * @param input The input.
+     */
     public void setInput(List<Input> input) {
         this.input = input;
     }
 
+    /**
+     * Gets the total balance.
+     * @return totalBalance The total balance.
+     */
     public long getTotalBalance() {
         return totalBalance;
     }
 
+    /**
+     * Sets the total balance.
+     * @param  totalBalance The total balance.
+     */
     public void setTotalBalance(long totalBalance) {
         this.totalBalance = totalBalance;
     }

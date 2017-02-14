@@ -7,6 +7,11 @@ public class GetInclusionStateResponse extends AbstractResponse {
 
     boolean[] states;
 
+    /**
+     * Gets the states.
+     *
+     * @return states The states.
+     */
     public boolean[] getStates() {
         return states;
     }

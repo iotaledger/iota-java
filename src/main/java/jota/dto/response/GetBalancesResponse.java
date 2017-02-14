@@ -9,14 +9,28 @@ public class GetBalancesResponse extends AbstractResponse {
     private String milestone;
     private int milestoneIndex;
 
+    /**
+     * Gets the milestone index.
+     *
+     * @return milestoneIndex The milestone index.
+     */
     public int getMilestoneIndex() {
         return milestoneIndex;
     }
 
+    /**
+     * Gets the milestone.
+     *
+     * @return milestone The milestone.
+     */
     public String getMilestone() {
         return milestone;
     }
 
+    /**
+     * Gets the balances.
+     * @return balances The balances.
+     */
     public String[] getBalances() {
         return balances;
     }

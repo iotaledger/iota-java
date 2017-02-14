@@ -12,6 +12,9 @@ public class GetBundleResponse extends AbstractResponse {
 
     private List<Transaction> transactions = new ArrayList<>();
 
+    /**
+     * Initializes a new instance of the GetBundleResponse class.
+     */
     public static GetBundleResponse create(List<Transaction> transactions, long duration) {
         GetBundleResponse res = new GetBundleResponse();
         res.transactions = transactions;
@@ -19,7 +22,11 @@ public class GetBundleResponse extends AbstractResponse {
         return res;
     }
 
-
+    /**
+     * Gets the transactions.
+     *
+     * @return transactions The transactions.
+     */
     public List<Transaction> getTransactions() {
         return transactions;
     }

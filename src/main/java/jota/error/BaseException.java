@@ -9,6 +9,9 @@ import java.util.Collection;
  */
 public class BaseException extends Exception {
 
+    /**
+     * Serial version UID
+     */
     private static final long serialVersionUID = 5617085097507773343L;
 
     protected Collection<String> messages;

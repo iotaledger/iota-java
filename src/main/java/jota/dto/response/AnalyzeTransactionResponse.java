@@ -12,6 +12,11 @@ public class AnalyzeTransactionResponse extends AbstractResponse {
 
     private List<Transaction> transactions = new ArrayList<>();
 
+    /**
+     * Gets the transactions.
+     *
+     * @return transactions trytes The transactions.
+     */
     public List<Transaction> getTransactions() {
         return transactions;
     }
