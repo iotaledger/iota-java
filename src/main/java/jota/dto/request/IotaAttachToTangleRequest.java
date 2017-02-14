@@ -51,6 +51,7 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
 
     /**
      * Gets the brancht ransaction.
+     *
      * @return branchTransaction The branch transaction.
      */
     public String getBranchTransaction() {
@@ -59,6 +60,7 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
 
     /**
      * Sets the branch transaction.
+     *
      * @param branchTransaction the branch transaction.
      */
     public void setBranchTransaction(String branchTransaction) {
@@ -67,6 +69,7 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
 
     /**
      * Gets the min weight magnitude.
+     *
      * @return minWeightMagnitude The min weight magnitude.
      */
     public Integer getMinWeightMagnitude() {
@@ -75,6 +78,7 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
 
     /**
      * Sets the min weight magnitude.
+     *
      * @param minWeightMagnitude The min weight magnitude.
      */
     public void setMinWeightMagnitude(Integer minWeightMagnitude) {
@@ -83,6 +87,7 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
 
     /**
      * Gets the trytes.
+     *
      * @return trytes The trytes.
      */
     public String[] getTrytes() {
@@ -91,6 +96,7 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
 
     /**
      * Sets the trytes.
+     *
      * @param trytes The trytes.
      */
     public void setTrytes(String[] trytes) {

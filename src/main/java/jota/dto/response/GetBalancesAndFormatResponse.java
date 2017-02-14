@@ -43,6 +43,7 @@ public class GetBalancesAndFormatResponse extends AbstractResponse {
 
     /**
      * Gets the total balance.
+     *
      * @return totalBalance The total balance.
      */
     public long getTotalBalance() {
@@ -51,6 +52,7 @@ public class GetBalancesAndFormatResponse extends AbstractResponse {
 
     /**
      * Sets the total balance.
+     *
      * @param  totalBalance The total balance.
      */
     public void setTotalBalance(long totalBalance) {

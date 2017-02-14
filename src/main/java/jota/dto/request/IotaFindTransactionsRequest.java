@@ -27,6 +27,38 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
     }
 
     /**
+     * Initializes a new instance of the IotaFindTransactionsRequest class.
+     */
+    public IotaFindTransactionsRequest byBundles(String... bundles) {
+        this.bundles = bundles;
+        return this;
+    }
+
+    /**
+     * Initializes a new instance of the IotaFindTransactionsRequest class.
+     */
+    public IotaFindTransactionsRequest byAddresses(String... addresses) {
+        this.addresses = addresses;
+        return this;
+    }
+
+    /**
+     * Initializes a new instance of the IotaFindTransactionsRequest class.
+     */
+    public IotaFindTransactionsRequest byTags(String... tags) {
+        this.tags = tags;
+        return this;
+    }
+
+    /**
+     * Initializes a new instance of the IotaFindTransactionsRequest class.
+     */
+    public IotaFindTransactionsRequest byApprovees(String... approvees) {
+        this.approvees = approvees;
+        return this;
+    }
+
+    /**
      * Gets the bundles.
      *
      * @return bundles The bundles.
@@ -46,6 +78,7 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
     /**
      * Gets the addresses.
+     *
      * @return addresses The addresses.
      */
     public String[] getAddresses() {
@@ -54,6 +87,7 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
     /**
      * Sets the addresses.
+     *
      * @param addresses The addresses.
      */
     public void setAddresses(String[] addresses) {
@@ -62,6 +96,7 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
     /**
      * Gets the tags.
+     *
      * @return tags The tags.
      */
     public String[] getTags() {
@@ -70,6 +105,7 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
     /**
      * Sets the tags.
+     *
      * @param tags The tags.
      */
     public void setTags(String[] tags) {
@@ -78,6 +114,7 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
     /**
      * Gets the approvees.
+     *
      * @return approvees The approvees.
      */
     public String[] getApprovees() {
@@ -86,29 +123,10 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
     /**
      * Sets the approvees.
+     *
      * @param approvees The approvees.
      */
     public void setApprovees(String[] approvees) {
         this.approvees = approvees;
-    }
-
-    public IotaFindTransactionsRequest byBundles(String... bundles) {
-        this.bundles = bundles;
-        return this;
-    }
-
-    public IotaFindTransactionsRequest byAddresses(String... addresses) {
-        this.addresses = addresses;
-        return this;
-    }
-
-    public IotaFindTransactionsRequest byTags(String... tags) {
-        this.tags = tags;
-        return this;
-    }
-
-    public IotaFindTransactionsRequest byApprovees(String... approvees) {
-        this.approvees = approvees;
-        return this;
     }
 }

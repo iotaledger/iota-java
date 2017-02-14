@@ -46,6 +46,7 @@ public class IotaGetBalancesRequest extends IotaCommandRequest {
 
     /**
      * Gets the threshold.
+     *
      * @return threshold The threshold.
      */
     public Integer getThreshold() {
@@ -54,6 +55,7 @@ public class IotaGetBalancesRequest extends IotaCommandRequest {
 
     /**
      * Sets the threshold.
+     *
      * @param threshold The threshold.
      */
     public void setThreshold(Integer threshold) {

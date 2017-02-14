@@ -42,6 +42,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * The version of running java version.
+     *
      * @return
      */
     public String getJreVersion() {
@@ -50,6 +51,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * Available cores on your machine for JRE.
+     *
      * @return
      */
     public Integer getJreAvailableProcessors() {
@@ -58,6 +60,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * The amount of free memory in the Java Virtual Machine.
+     *
      * @return
      */
     public long getJreFreeMemory() {
@@ -66,6 +69,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * The maximum amount of memory that the Java virtual machine will attempt to use.
+     *
      * @return
      */
     public long getJreMaxMemory() {
@@ -74,6 +78,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * The total amount of memory in the Java virtual machine.
+     *
      * @return
      */
     public long getJreTotalMemory() {
@@ -82,6 +87,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * Latest milestone that was signed off by the coordinator.
+     *
      * @return
      */
     public String getLatestMilestone() {
@@ -90,6 +96,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * Index of the latest milestone.
+     *
      * @return
      */
     public int getLatestMilestoneIndex() {
@@ -100,6 +107,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
      * The latest milestone which is solid and is used for sending transactions.
      * For a milestone to become solid your local node must basically approve the subtangle of coordinator-approved transactions,
      * and have a consistent view of all referenced transactions.
+     *
      * @return
      */
     public String getLatestSolidSubtangleMilestone() {
@@ -108,6 +116,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * Index of the latest solid subtangle.
+     *
      * @return
      */
     public int getLatestSolidSubtangleMilestoneIndex() {
@@ -116,6 +125,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * Number of neighbors you are directly connected with.
+     *
      * @return
      */
     public int getNeighbors() {
@@ -124,6 +134,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * Packets which are currently queued up
+     *
      * @return
      */
     public int getPacketsQueueSize() {
@@ -132,6 +143,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * Current UNIX timestamp.
+     *
      * @return
      */
     public Long getTime() {
@@ -140,6 +152,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * Number of tips in the network.
+     *
      * @return
      */
     public int getTips() {
@@ -148,6 +161,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * Transactions to request during syncing process.
+     *
      * @return
      */
     public int getTransactionsToRequest() {

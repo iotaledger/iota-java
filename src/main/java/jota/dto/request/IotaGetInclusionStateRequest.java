@@ -57,6 +57,7 @@ public class IotaGetInclusionStateRequest extends IotaCommandRequest {
 
     /**
      * Gets the tips.
+     *
      * @return tips The tips.
      */
     public String[] getTips() {
@@ -65,6 +66,7 @@ public class IotaGetInclusionStateRequest extends IotaCommandRequest {
 
     /**
      * Sets the tips.
+     *
      * @param  tips The tips.
      */
     public void setTips(String[] tips) {
