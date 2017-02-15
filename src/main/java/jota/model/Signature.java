@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represents an Signature
+ * This class represents an Signature.
+ *
  * @author Adrian
  **/
 public class Signature {
@@ -22,7 +23,7 @@ public class Signature {
     /**
      * Get the address.
      *
-     * @return address The address.
+     * @return The address.
      */
     public String getAddress() {
         return address;
@@ -39,7 +40,8 @@ public class Signature {
 
     /**
      * Get the signatureFragments.
-     * @return signatureFragments The signatureFragments.
+     *
+     * @return The signatureFragments.
      */
     public List<String> getSignatureFragments() {
         return signatureFragments;
@@ -47,6 +49,7 @@ public class Signature {
 
     /**
      * Set the signatureFragments.
+     *
      * @param  signatureFragments The signatureFragments.
      */
     public void setSignatureFragments(List<String> signatureFragments) {

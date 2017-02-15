@@ -5,7 +5,8 @@ import com.google.gson.Gson;
 import java.util.List;
 
 /**
- * This class represents an Inputs
+ * This class represents an Inputs.
+ *
  *  @author Adrian
  **/
 public class Inputs {
@@ -34,7 +35,7 @@ public class Inputs {
     /**
      * Get the input list.
      *
-     * @return inputList The input list.
+     * @return The input list.
      */
     public List<Input> getInputsList() {
         return inputsList;
@@ -42,6 +43,7 @@ public class Inputs {
 
     /**
      * Set the input list.
+     *
      * @param inputsList The input list.
      */
     public void setInputsList(List<Input> inputsList) {
@@ -50,7 +52,8 @@ public class Inputs {
 
     /**
      * Get the total balance.
-     * @return totalBalance The total balance.
+     *
+     * @return The total balance.
      */
     public long getTotalBalance() {
         return totalBalance;
@@ -58,6 +61,7 @@ public class Inputs {
 
     /**
      * Set the total balance.
+     *
      * @param totalBalance The total balance.
      */
     public void setTotalBalance(long totalBalance) {

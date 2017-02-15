@@ -17,7 +17,7 @@ public class GetAttachToTangleResponse extends AbstractResponse {
     /**
      * Gets the rytes.
      *
-     * @return trytes The trytes.
+     * @return The trytes.
      */
     public String[] getTrytes() {
         return trytes;

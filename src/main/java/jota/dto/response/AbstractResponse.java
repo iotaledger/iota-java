@@ -12,10 +12,20 @@ public abstract class AbstractResponse {
 
     private Long duration;
 
+    /**
+     * Gets the duration.
+     *
+     * @return The duration.
+     */
     public Long getDuration() {
         return duration;
     }
 
+    /**
+     * Sets the duration.
+     *
+     * @param duration The duration
+     */
     public void setDuration(Long duration) {
         this.duration = duration;
     }

@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 
 /**
- * This class represents an iota transaction
+ * This class represents an iota transaction.
+ *
  * @author pinpong
  */
 public class Transaction {
@@ -105,7 +106,7 @@ public class Transaction {
     /**
      * Get the hash.
      *
-     * @return hash The hash.
+     * @return The hash.
      */
     public String getHash() {
         return hash;
@@ -113,6 +114,7 @@ public class Transaction {
 
     /**
      * Set the hash.
+     *
      * @param hash The hash.
      */
     public void setHash(String hash) {
@@ -121,7 +123,8 @@ public class Transaction {
 
     /**
      * Get the signature fragments.
-     * @return signatureFragments The signature fragments.
+     *
+     * @return The signature fragments.
      */
     public String getSignatureFragments() {
         return signatureFragments;
@@ -129,6 +132,7 @@ public class Transaction {
 
     /**
      * Set the signature fragments.
+     *
      * @param signatureFragments The signature fragments.
      */
     public String setSignatureFragments(String signatureFragments) {
@@ -137,7 +141,8 @@ public class Transaction {
 
     /**
      * Get the address.
-     * @return address The address.
+     *
+     * @return The address.
      */
     public String getAddress() {
         return address;
@@ -145,6 +150,7 @@ public class Transaction {
 
     /**
      * Set the address.
+     *
      * @param address The address.
      */
     public void setAddress(String address) {
@@ -153,7 +159,8 @@ public class Transaction {
 
     /**
      * Get the value.
-     * @return value The value.
+     *
+     * @return The value.
      */
     public String getValue() {
         return value;
@@ -161,6 +168,7 @@ public class Transaction {
 
     /**
      * Set the value.
+     *
      * @param value The value.
      */
     public void setValue(String value) {
@@ -169,7 +177,8 @@ public class Transaction {
 
     /**
      * Get the tag.
-     * @return tag The tag.
+     *
+     * @return The tag.
      */
     public String getTag() {
         return tag;
@@ -177,6 +186,7 @@ public class Transaction {
 
     /**
      * Set the tag.
+     *
      * @param tag The tag.
      */
     public void setTag(String tag) {
@@ -185,7 +195,8 @@ public class Transaction {
 
     /**
      * Get the timestamp.
-     * @return timestamp The timestamp.
+     *
+     * @return The timestamp.
      */
     public String getTimestamp() {
         return timestamp;
@@ -193,6 +204,7 @@ public class Transaction {
 
     /**
      * Set the timestamp.
+     *
      * @param timestamp The timestamp.
      */
     public void setTimestamp(String timestamp) {
@@ -201,7 +213,8 @@ public class Transaction {
 
     /**
      * Get the current index.
-     * @return currentIndex The current index.
+     *
+     * @return The current index.
      */
     public String getCurrentIndex() {
         return currentIndex;
@@ -217,7 +230,8 @@ public class Transaction {
 
     /**
      * Get the last index.
-     * @return lastIndex The last index.
+     *
+     * @return The last index.
      */
     public String getLastIndex() {
         return lastIndex;
@@ -225,6 +239,7 @@ public class Transaction {
 
     /**
      * Set the last index.
+     *
      * @param lastIndex The last index.
      */
     public String setLastIndex(String lastIndex) {
@@ -233,7 +248,8 @@ public class Transaction {
 
     /**
      * Get the bundle.
-     * @return bundle The bundle.
+     *
+     * @return The bundle.
      */
     public String getBundle() {
         return bundle;
@@ -241,6 +257,7 @@ public class Transaction {
 
     /**
      * Set the bundle.
+     *
      * @param bundle The bundle.
      */
     public void setBundle(String bundle) {
@@ -249,7 +266,8 @@ public class Transaction {
 
     /**
      * Get the trunk transaction.
-     * @return trunkTransaction The trunk transaction.
+     *
+     * @return The trunk transaction.
      */
     public String getTrunkTransaction() {
         return trunkTransaction;
@@ -257,6 +275,7 @@ public class Transaction {
 
     /**
      * Set the trunk transaction.
+     *
      * @param trunkTransaction The trunk transaction.
      */
     public void setTrunkTransaction(String trunkTransaction) {
@@ -265,7 +284,8 @@ public class Transaction {
 
     /**
      * Get the branch transaction.
-     * @return branchTransaction The branch transaction.
+     *
+     * @return The branch transaction.
      */
     public String getBranchTransaction() {
         return branchTransaction;
@@ -273,6 +293,7 @@ public class Transaction {
 
     /**
      * Set the branch transaction.
+     *
      * @param branchTransaction The branch transaction.
      */
     public void setBranchTransaction(String branchTransaction) {
@@ -281,7 +302,8 @@ public class Transaction {
 
     /**
      * Get the nonce.
-     * @return nonce The nonce.
+     *
+     * @return The nonce.
      */
     public String getNonce() {
         return nonce;
@@ -289,6 +311,7 @@ public class Transaction {
 
     /**
      * Set the nonce.
+     *
      * @param nonce The trunk nonce.
      */
     public void setNonce(String nonce) {
@@ -297,7 +320,8 @@ public class Transaction {
 
     /**
      * Get the persistence.
-     * @return persistence The persistence.
+     *
+     * @return The persistence.
      */
     public Boolean getPersistence() {
         return persistence;
@@ -305,6 +329,7 @@ public class Transaction {
 
     /**
      * Set the persistence.
+     *
      * @param persistence The persistence.
      */
     public void setPersistence(Boolean persistence) {

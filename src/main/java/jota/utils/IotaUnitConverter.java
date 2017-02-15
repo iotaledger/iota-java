@@ -3,18 +3,19 @@ package jota.utils;
 import java.text.DecimalFormat;
 
 /**
- * This class provides methods to convert Iota to different units
+ * This class provides methods to convert Iota to different units.
+ *
  * @author sascha
  */
 public class IotaUnitConverter {
 
     /**
-     * convert the iota amount
+     * Convert the iota amount.
      *
-     * @param amount   the amount
-     * @param fromUnit the source unit e.g. the unit of amount
-     * @param toUnit   the target unit
-     * @return the specified amount in the target unit
+     * @param amount The amount.
+     * @param fromUnit The source unit e.g. the unit of amount.
+     * @param toUnit The target unit.
+     * @return The specified amount in the target unit.
      **/
     public static long convertUnits(long amount, IotaUnits fromUnit, IotaUnits toUnit) {
         long amountInSource = (long) (amount * Math.pow(10, fromUnit.getValue()));
@@ -22,22 +23,22 @@ public class IotaUnitConverter {
     }
 
     /**
-     * convert unit
+     * Convert unit.
      *
-     * @param amount the amount
-     * @param toUnit the target unit
-     * @return the specified amount in the target unit
+     * @param amount The amount.
+     * @param toUnit The target unit.
+     * @return The specified amount in the target unit.
      **/
     private static long convertUnits(long amount, IotaUnits toUnit) {
         return (long) (amount / Math.pow(10, toUnit.getValue()));
     }
 
     /**
-     * convert the iota amount to text
+     * Convert the iota amount to text.
      *
-     * @param amount   the amount
-     * @param extended extended length
-     * @return the specified amount in the target unit
+     * @param amount The amount.
+     * @param extended Extended length.
+     * @return The specified amount in the target unit.
      **/
     public static String convertRawIotaAmountToDisplayText(long amount, boolean extended) {
         IotaUnits unit = findOptimalIotaUnitToDisplay(amount);
@@ -46,22 +47,22 @@ public class IotaUnitConverter {
     }
 
     /**
-     * convert amount to target unit
+     * Convert amount to target unit.
      *
-     * @param amount the amount
-     * @return the target unit
+     * @param amount The amount.
+     * @return The target unit.
      **/
     public static double convertAmountTo(long amount, IotaUnits target) {
         return amount / Math.pow(10, target.getValue());
     }
 
     /**
-     * create amount with unit text
+     * Create amount with unit text.
      *
-     * @param amountInUnit the amount in units
-     * @param unit         the unit
-     * @param extended     extended length
-     * @return the target unit
+     * @param amountInUnit The amount in units.
+     * @param unit The unit.
+     * @param extended Extended length.
+     * @return The target unit.
      **/
     private static String createAmountWithUnitDisplayText(double amountInUnit, IotaUnits unit, boolean extended) {
         String result = createAmountDisplayText(amountInUnit, unit, extended);
@@ -70,12 +71,12 @@ public class IotaUnitConverter {
     }
 
     /**
-     * create amount text
+     * Create amount text.
      *
-     * @param amountInUnit the amount in units
-     * @param unit         the unit
-     * @param extended     extended length
-     * @return the target unit
+     * @param amountInUnit The amount in units.
+     * @param unit The unit.
+     * @param extended Extended length.
+     * @return The target unit.
      **/
     public static String createAmountDisplayText(double amountInUnit, IotaUnits unit, boolean extended) {
         DecimalFormat df;
@@ -90,10 +91,10 @@ public class IotaUnitConverter {
     }
 
     /**
-     * finds the optimal unit to display the specified amount in
+     * Finds the optimal unit to display the specified amount in.
      *
-     * @param amount the amount
-     * @return the optimal IotaUnit
+     * @param amount The amount.
+     * @return The optimal IotaUnit.
      **/
     public static IotaUnits findOptimalIotaUnitToDisplay(long amount) {
         int length = String.valueOf(amount).length();

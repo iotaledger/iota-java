@@ -34,7 +34,7 @@ public class IotaNeighborsRequest extends IotaCommandRequest {
     /**
      * Gets the uris.
      *
-     * @return uris The uris.
+     * @return The uris.
      */
     public String[] getUris() {
         return uris;

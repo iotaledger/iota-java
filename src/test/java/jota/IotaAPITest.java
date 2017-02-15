@@ -131,7 +131,7 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException, NoInclusionStatesExcpection, NoNodeInfoException, InvalidSecurityLevelException, InvalidAddressException {
+    public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException, NoInclusionStatesException, NoNodeInfoException, InvalidSecurityLevelException, InvalidAddressException {
         GetTransferResponse gtr = iotaClient.getTransfers(TEST_SEED1, 2, 0, 0, false);
         assertThat(gtr.getTransfers(), IsNull.notNullValue());
 

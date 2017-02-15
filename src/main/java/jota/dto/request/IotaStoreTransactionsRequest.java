@@ -28,7 +28,7 @@ public class IotaStoreTransactionsRequest extends IotaCommandRequest {
     /**
      * Gets the trytes.
      *
-     * @return trytes The trytes.
+     * @return The trytes.
      */
     public String[] getTrytes() {
         return trytes;

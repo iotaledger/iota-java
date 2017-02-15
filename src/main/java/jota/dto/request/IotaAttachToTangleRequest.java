@@ -34,7 +34,7 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
     /**
      * Gets the trunk transaction.
      *
-     * @return trunkTransaction The trunk transaction.
+     * @return The trunk transaction.
      */
     public String getTrunkTransaction() {
         return trunkTransaction;
@@ -50,9 +50,9 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
     }
 
     /**
-     * Gets the brancht ransaction.
+     * Gets the branch transaction.
      *
-     * @return branchTransaction The branch transaction.
+     * @return The branch transaction.
      */
     public String getBranchTransaction() {
         return branchTransaction;
@@ -70,7 +70,7 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
     /**
      * Gets the min weight magnitude.
      *
-     * @return minWeightMagnitude The min weight magnitude.
+     * @return The min weight magnitude.
      */
     public Integer getMinWeightMagnitude() {
         return minWeightMagnitude;
@@ -88,7 +88,7 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
     /**
      * Gets the trytes.
      *
-     * @return trytes The trytes.
+     * @return The trytes.
      */
     public String[] getTrytes() {
         return trytes;

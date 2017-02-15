@@ -1,7 +1,8 @@
 package jota.pow;
 
 /**
- * This interface abstracts the curl hashing algorithm
+ * This interface abstracts the curl hashing algorithm.
+ *
  * @author Adrian
  */
 public interface ICurl {
@@ -12,7 +13,7 @@ public interface ICurl {
      * @param trits  The trits.
      * @param offset The offset to start from.
      * @param length The length.
-     * @return
+     * @return The ICurl instance (used for method chaining).
      */
     ICurl absorb(final int[] trits, int offset, int length);
 
@@ -20,53 +21,60 @@ public interface ICurl {
      * Absorbs the specified trits.
      *
      * @param trits The trits.
-     * @return
+     * @return The ICurl instance (used for method chaining).
      */
     ICurl absorb(final int[] trits);
 
     /**
      * Squeezes the specified trits.
+     *
      * @param trits The trits.
      * @param offset The offset to start from.
      * @param length The length.
-     * @return
+     * @return The squeezed trits.
      */
     int[] squeeze(final int[] trits, int offset, int length);
 
     /**
      * Squeezes the specified trits.
+     *
      * @param trits The trits.
-     * @return
+     * @return The squeezed trits.
      */
     int[] squeeze(final int[] trits);
 
     /**
      * Transforms this instance.
-     * @return
+     *
+     * @return The ICurl instance (used for method chaining).
      */
     ICurl transform();
 
     /**
      * Resets this state.
-     * @return
+     *
+     * @return The ICurl instance (used for method chaining).
      */
     ICurl reset();
 
     /**
      * Gets or sets the state.
-     * @return
+     *
+     * @return The stae.
      */
     int[] getState();
 
     /**
      * Sets or sets the state.
-     * @param state
+     *
+     * @param state The state.
      */
     void setState(int[] state);
 
     /**
      * Clones this instance.
-     * @return
+     *
+     * @return A new instance.
      */
     ICurl clone();
 }

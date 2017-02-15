@@ -15,7 +15,7 @@ public class GetNeighborsResponse extends AbstractResponse {
     /**
      * Gets the neighbors.
      *
-     * @return neighbors The neighbors.
+     * @return The neighbors.
      */
     public List<Neighbor> getNeighbors() {
         return neighbors;

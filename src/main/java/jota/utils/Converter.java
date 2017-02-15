@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * This class provides a set of utility methods to are used to convert between different formats
+ * This class provides a set of utility methods to are used to convert between different formats.
  */
 public class Converter {
 
@@ -47,12 +47,12 @@ public class Converter {
     }
 
     /**
-     * Converts the specified trits array to bytes
+     * Converts the specified trits array to bytes.
      *
-     * @param trits  The trits.
+     * @param trits The trits.
      * @param offset The offset to start from.
-     * @param size   The size.
-     * @return bytes
+     * @param size The size.
+     * @return The bytes.
      */
     public static byte[] bytes(final int[] trits, final int offset, final int size) {
 
@@ -74,7 +74,7 @@ public class Converter {
     }
 
     /**
-     * Gets the trits from the specified bytes and stores it into the provided trits array
+     * Gets the trits from the specified bytes and stores it into the provided trits array.
      *
      * @param bytes The bytes.
      * @param trits The trits.
@@ -104,7 +104,7 @@ public class Converter {
      *
      * @param trytes The trytes.
      * @param length The length
-     * @return a trits array.
+     * @return A trits array.
      */
     public static int[] trits(final String trytes, int length) {
         int[] trits = trits(trytes);
@@ -121,10 +121,10 @@ public class Converter {
     }
 
     /**
-     * Converts the specified trinary encoded trytes string to trits
+     * Converts the specified trinary encoded trytes string to trits.
      *
      * @param trytes The trytes.
-     * @return a trits array
+     * @return A trits array.
      */
     public static int[] tritsString(final String trytes) {
         int[] d = new int[3 * trytes.length()];
@@ -135,10 +135,10 @@ public class Converter {
     }
 
     /**
-     * Converts trytes into trits
+     * Converts trytes into trits.
      *
-     * @param trytes trytes to be converted
-     * @return array of trits
+     * @param trytes The trytes to be converted.
+     * @return Array of trits.
      **/
     public static int[] trits(final String trytes) {
         final List<Integer> trits = new LinkedList<>();
@@ -180,9 +180,9 @@ public class Converter {
     /**
      * Copies the trits from the input string into the destination array
      *
-     * @param input       The input String.
+     * @param input The input String.
      * @param destination The destination array.
-     * @return destination The destination.
+     * @return The destination.
      */
     public static int[] copyTrits(final String input, final int[] destination) {
         for (int i = 0; i < input.length(); i++) {
@@ -195,12 +195,12 @@ public class Converter {
     }
 
     /**
-     * Converts trites to trytes
+     * Converts trites to trytes.
      *
-     * @param trits  trits to be converted
-     * @param offset
-     * @param size
-     * @return trytes
+     * @param trits Teh trits to be converted.
+     * @param offset The offset to start from.
+     * @param size The size.
+     * @return The trytes.
      **/
     public static String trytes(final int[] trits, final int offset, final int size) {
 
@@ -222,21 +222,21 @@ public class Converter {
     }
 
     /**
-     * Converts the specified trits array to trytes in integer representation
+     * Converts the specified trits array to trytes in integer representation.
      *
      * @param trits The trits.
-     * @param offset The offset.
-     * @return value The value.
+     * @param offset The offset to start from.
+     * @return The value.
      */
     public static int tryteValue(final int[] trits, final int offset) {
         return trits[offset] + trits[offset + 1] * 3 + trits[offset + 2] * 9;
     }
 
     /**
-     * Converts the specified trits to its corresponding integer value
+     * Converts the specified trits to its corresponding integer value.
      *
      * @param trits The trits.
-     * @return value The value.
+     * @return The value.
      */
     public static int value(final int[] trits) {
         int value = 0;
@@ -248,10 +248,10 @@ public class Converter {
     }
 
     /**
-     * Converts the specified trits to its corresponding integer value
+     * Converts the specified trits to its corresponding integer value.
      *
      * @param trits The trits.
-     * @return value The value
+     * @return The value.
      */
     public static long longValue(final int[] trits) {
         long value = 0;

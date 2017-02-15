@@ -1,7 +1,8 @@
 package jota.utils;
 
 /**
- * Table of IOTA units based off of the standard system of Units
+ * Table of IOTA units based off of the standard system of Units.
+ *
  * @author pinpong
  **/
 public enum IotaUnits {
@@ -27,7 +28,7 @@ public enum IotaUnits {
     /**
      * Gets the unit.
      *
-     * @return unit The IOTA Unit.
+     * @return The IOTA Unit.
      */
     public String getUnit() {
         return unit;
@@ -36,7 +37,7 @@ public enum IotaUnits {
     /**
      * Gets the value.
      *
-     * @return unit The value.
+     * @return The value.
      */
     public long getValue() {
         return value;

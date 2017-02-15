@@ -30,6 +30,11 @@ public class IotaAPICore {
     private IotaAPIService service;
     private String protocol, host, port;
 
+    /**
+     * Build the API core.
+     *
+     * @param builder The builder.
+     */
     protected IotaAPICore(final Builder builder) {
         protocol = builder.protocol;
         host = builder.host;
@@ -37,6 +42,11 @@ public class IotaAPICore {
         postConstruct();
     }
 
+    /**
+     * @param call
+     * @param <T>
+     * @return
+     */
     protected static <T> Response<T> wrapCheckedException(final Call<T> call) {
         try {
             final Response<T> res = call.execute();
@@ -54,6 +64,12 @@ public class IotaAPICore {
         }
     }
 
+    /**
+     *
+     * @param env
+     * @param def
+     * @return
+     */
     private static String env(String env, String def) {
         final String value = System.getenv(env);
         if (value == null) {
@@ -64,6 +80,9 @@ public class IotaAPICore {
         return value;
     }
 
+    /**
+     *
+     */
     private void postConstruct() {
 
         final String nodeUrl = protocol + "://" + host + ":" + port;
@@ -208,6 +227,9 @@ public class IotaAPICore {
             return new IotaAPICore(this);
         }
 
+        /**
+         * @return
+         */
         private boolean checkPropertiesFiles() {
 
             try {
@@ -236,22 +258,40 @@ public class IotaAPICore {
             return (port != null && protocol != null && host != null);
         }
 
+        /**
+         *
+         */
         private void checkEnviromentVariables() {
             protocol = env("IOTA_NODE_PROTOCOL", "http");
             host = env("IOTA_NODE_HOST", "localhost");
             port = env("IOTA_NODE_PORT", "14265");
         }
 
+        /**
+         *
+         * @param host
+         * @return
+         */
         public T host(String host) {
             this.host = host;
             return (T) this;
         }
 
+        /**
+         *
+         * @param port
+         * @return
+         */
         public T port(String port) {
             this.port = port;
             return (T) this;
         }
 
+        /**
+         *
+         * @param protocol
+         * @return
+         */
         public T protocol(String protocol) {
             this.protocol = protocol;
             return (T) this;

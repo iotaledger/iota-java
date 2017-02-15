@@ -8,16 +8,17 @@ import org.apache.commons.lang3.math.NumberUtils;
 import java.util.List;
 
 /**
- * This class provides methods to validate the parameters of different iota API methods
+ * This class provides methods to validate the parameters of different iota API methods.
+ *
  * @author pinpong
  */
 public class InputValidator {
 
     /**
-     * Determines whether the specified string is an adrdress.
+     * Determines whether the specified string is an address.
      *
-     * @param address address to validate
-     * @return <c>true</c> if the specified string is an address; otherwise, <c>false</c>.
+     * @param address The address to validate.
+     * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
      **/
     public static boolean isAddress(String address) {
         return (address.length() == Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM ||
@@ -25,11 +26,11 @@ public class InputValidator {
     }
 
     /**
-     * Checks whether the specified address is an address and throws and exception if the address is invalid
+     * Checks whether the specified address is an address and throws and exception if the address is invalid.
      *
-     * @param address address to validate
-     * @return <c>true</c> if the specified string is an address; otherwise, <c>false</c>.
-     * @exception InvalidAddressException is thrown when the specified address is not an valid address
+     * @param address The address to validate.
+     * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
+     * @throws InvalidAddressException is thrown when the specified address is not an valid address.
      **/
     public static boolean checkAddress(String address) throws InvalidAddressException {
         if (!isAddress(address)) {
@@ -39,11 +40,11 @@ public class InputValidator {
     }
 
     /**
-     * Determines whether the specified string contains only characters from the trytes alphabet (see <see cref="Constants.TryteAlphabet"/>)
+     * Determines whether the specified string contains only characters from the trytes alphabet (see <see cref="Constants.TryteAlphabet"/>).
      *
-     * @param trytes the trytes
-     * @param length the length
-     * @return <c>true</c> if the specified trytes are trytes otherwise, <c>false</c>.
+     * @param trytes The trytes to validate.
+     * @param length The length.
+     * @return <code>true</code> if the specified trytes are trytes otherwise, <code>false</code>.
      **/
     public static boolean isTrytes(final String trytes, final int length) {
         return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
@@ -52,29 +53,29 @@ public class InputValidator {
     /**
      * Determines whether the specified string consist only of '9'.
      *
-     * @param trytes The trytes.
+     * @param trytes The trytes to validate.
      * @param length The length.
-     * @return  <c>true</c> if the specified string consist only of '9'; otherwise, <c>false</c>.
+     * @return  <code>true</code> if the specified string consist only of '9'; otherwise, <code>false</code>.
      **/
     public static boolean isNinesTrytes(final String trytes, final int length) {
         return trytes.matches("^[9]{" + (length == 0 ? "0," : length) + "}$");
     }
 
     /**
-     * Determines whether the specified string represents a signed integer
+     * Determines whether the specified string represents a signed integer.
      *
-     * @param value the value
-     * @return <c>true</c> the specified string represents an integer value; otherwise, <c>false</c>.
+     * @param value The value to validate.
+     * @return <code>true</code> the specified string represents an integer value; otherwise, <code>false</code>.
      **/
     public static boolean isValue(final String value) {
         return NumberUtils.isNumber(value);
     }
 
     /**
-     * Determines whether the specified string array contains only trytes
+     * Determines whether the specified string array contains only trytes.
      *
-     * @param trytes The trytes.
-     * @return <c>true</c> if the specified array contains only valid trytes otherwise, <c>false</c>.
+     * @param trytes The trytes array to validate.
+     * @return <code>true</code> if the specified array contains only valid trytes otherwise, <code>false</code>.
      **/
     public static boolean isArrayOfTrytes(String[] trytes){
         for (String tryte : trytes) {
@@ -87,10 +88,10 @@ public class InputValidator {
     }
 
     /**
-     * Determines whether the specified array contains only valid hashes
+     * Determines whether the specified array contains only valid hashes.
      *
-     * @param hashes The hashes.
-     * @return <c>true</c> the specified array contains only valid hashes; otherwise, <c>false</c>.
+     * @param hashes The hashes array to validate.
+     * @return <code>true</code> the specified array contains only valid hashes; otherwise, <code>false</code>.
      **/
     public static boolean isArrayOfHashes(String[] hashes) {
         if (hashes == null)
@@ -112,10 +113,10 @@ public class InputValidator {
     }
 
     /**
-     * Determines whether the specified transfers are valid
+     * Determines whether the specified transfers are valid.
      *
-     * @param transfers The transfers.
-     * @return <c>true</c> if the specified transfers are valid; otherwise, <c>false</c>.
+     * @param transfers The transfers list to validate.
+     * @return <code>true</code> if the specified transfers are valid; otherwise, <code>false</code>.
      **/
     public static boolean isTransfersCollectionValid(final List<Transfer> transfers) {
 
@@ -130,8 +131,8 @@ public class InputValidator {
     /**
      * Determines whether the specified transfer is valid.
      *
-     * @param transfer The transfer.
-     * @return <c>true</c> if the specified transfer is valid; otherwise, <c>false</c>.
+     * @param transfer The transfer to validate.
+     * @return <code>true</code> if the specified transfer is valid; otherwise, <code>false</code>>.
      **/
     public static boolean isValidTransfer(final Transfer transfer) {
 
@@ -151,9 +152,9 @@ public class InputValidator {
     /**
      * Checks if the seed is valid. If not, an exception is thrown.
      *
-     * @param seed the seed
-     * @return validated seed
-     * @exception IllegalStateException Format not in trytes or Invalid Seed: Seed too long
+     * @param seed The seed to validate.
+     * @return The validated seed.
+     * @throws IllegalStateException Format not in trytes or Invalid Seed: Seed too long.
      **/
     public static String validateSeed(String seed) {
         if (seed.length() > 81)

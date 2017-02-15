@@ -61,7 +61,7 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
     /**
      * Gets the bundles.
      *
-     * @return bundles The bundles.
+     * @return The bundles.
      */
     public String[] getBundles() {
         return bundles;
@@ -79,7 +79,7 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
     /**
      * Gets the addresses.
      *
-     * @return addresses The addresses.
+     * @return The addresses.
      */
     public String[] getAddresses() {
         return addresses;
@@ -97,7 +97,7 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
     /**
      * Gets the tags.
      *
-     * @return tags The tags.
+     * @return The tags.
      */
     public String[] getTags() {
         return tags;
@@ -115,7 +115,7 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
     /**
      * Gets the approvees.
      *
-     * @return approvees The approvees.
+     * @return The approvees.
      */
     public String[] getApprovees() {
         return approvees;

@@ -11,7 +11,7 @@ public class FindTransactionResponse extends AbstractResponse {
     /**
      * Gets the hashes.
      *
-     * @return hashes trytes The hashes.
+     * @return The hashes.
      */
     public String[] getHashes() {
         return hashes;

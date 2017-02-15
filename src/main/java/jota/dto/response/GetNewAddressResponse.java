@@ -22,7 +22,7 @@ public class GetNewAddressResponse extends AbstractResponse {
     /**
      * Gets the addresses.
      *
-     * @return addresses The addresses.
+     * @return The addresses.
      */
     public List<String> getAddresses() {
         return addresses;

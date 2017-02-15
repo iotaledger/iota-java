@@ -3,7 +3,8 @@ package jota.model;
 import com.google.gson.Gson;
 
 /**
- * This class represents a Transfer
+ * This class represents a Transfer.
+ *
  * @author pinpong
  */
 public class Transfer {
@@ -54,14 +55,15 @@ public class Transfer {
     /**
      * Get the address.
      *
-     * @return address The address.
+     * @return The address.
      */
     public String getAddress() {
         return address;
     }
 
     /**
-     * Set the address
+     * Set the address.
+     *
      * @param address The address.
      */
     public void setAddress(String address) {
@@ -70,14 +72,16 @@ public class Transfer {
 
     /**
      * Get the hash.
-     * @return hash The hash.
+     *
+     * @return The hash.
      */
     public String getHash() {
         return hash;
     }
 
     /**
-     * Set the hash
+     * Set the hash.
+     *
      * @param hash The hash.
      */
     public void setHash(String hash) {
@@ -86,14 +90,16 @@ public class Transfer {
 
     /**
      * Get the persistence.
-     * @return persistence The persistence.
+     *
+     * @return The persistence.
      */
     public Boolean getPersistence() {
         return persistence;
     }
 
     /**
-     * Set the persistence
+     * Set the persistence.
+     *
      * @param persistence The persistence.
      */
     public void setPersistence(Boolean persistence) {
@@ -102,14 +108,16 @@ public class Transfer {
 
     /**
      * Get the timestamp.
-     * @return timestamp The timestamp.
+     *
+     * @return The timestamp.
      */
     public String getTimestamp() {
         return timestamp;
     }
 
     /**
-     * Set the timestamp
+     * Set the timestamp.
+     *
      * @param timestamp The timestamp.
      */
     public void setTimestamp(String timestamp) {
@@ -118,14 +126,16 @@ public class Transfer {
 
     /**
      * Get the value.
-     * @return value The value.
+     *
+     * @return The value.
      */
     public long getValue() {
         return value;
     }
 
     /**
-     * Set the value
+     * Set the value.
+     *
      * @param value The value.
      */
     public void setValue(long value) {
@@ -134,14 +144,16 @@ public class Transfer {
 
     /**
      * Get the message.
-     * @return message The message.
+     *
+     * @return The message.
      */
     public String getMessage() {
         return message;
     }
 
     /**
-     * Set the message
+     * Set the message.
+     *
      * @param message The message.
      */
     public void setMessage(String message) {
@@ -150,14 +162,16 @@ public class Transfer {
 
     /**
      * Get the tag.
-     * @return tag The tag.
+     *
+     * @return The tag.
      */
     public String getTag() {
         return tag;
     }
 
     /**
-     * Set the tag
+     * Set the tag.
+     *
      * @param tag The tag.
      */
     public void setTag(String tag) {

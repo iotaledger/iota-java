@@ -29,7 +29,7 @@ public class IotaGetBalancesRequest extends IotaCommandRequest {
     /**
      * Gets the addresses.
      *
-     * @return addresses The addresses.
+     * @return The addresses.
      */
     public String[] getAddresses() {
         return addresses;
@@ -47,7 +47,7 @@ public class IotaGetBalancesRequest extends IotaCommandRequest {
     /**
      * Gets the threshold.
      *
-     * @return threshold The threshold.
+     * @return The threshold.
      */
     public Integer getThreshold() {
         return threshold;

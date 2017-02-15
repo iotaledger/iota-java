@@ -27,7 +27,7 @@ public class IotaGetTrytesRequest extends IotaCommandRequest {
     /**
      * Gets the hashes.
      *
-     * @return hashes The hashes.
+     * @return The hashes.
      */
     public String[] getHashes() {
         return hashes;

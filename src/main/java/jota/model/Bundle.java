@@ -10,7 +10,8 @@ import java.util.List;
 
 
 /**
- * This class represents a Bundle, a set of transactions
+ * This class represents a Bundle, a set of transactions.
+ *
  * @author pinpong
  **/
 public class Bundle implements Comparable<Bundle> {
@@ -55,6 +56,7 @@ public class Bundle implements Comparable<Bundle> {
 
     /**
      * Sets the length of the bundle
+     *
      * @param length The length.
      */
     public void setLength(int length) {
@@ -62,7 +64,8 @@ public class Bundle implements Comparable<Bundle> {
     }
 
     /**
-     * Adds a bundle entry
+     * Adds a bundle entry.
+     *
      * @param signatureMessageLength Length of the signature message.
      * @param address The address.
      * @param value The value.
@@ -81,7 +84,8 @@ public class Bundle implements Comparable<Bundle> {
     }
 
     /**
-     * Finalizes the bundle using the specified curl implementation
+     * Finalizes the bundle using the specified curl implementation,
+     *
      * @param customCurl The custom curl.
      */
     public void finalize(ICurl customCurl) {
@@ -115,6 +119,7 @@ public class Bundle implements Comparable<Bundle> {
 
     /**
      * Adds the trytes.
+     *
      * @param signatureFragments The signature fragments.
      */
     public void addTrytes(List<String> signatureFragments) {
@@ -141,6 +146,7 @@ public class Bundle implements Comparable<Bundle> {
 
     /**
      * Normalized the bundle.
+     *
      * @param bundleHash The bundle hash.
      * @return normalizedBundle A normalized bundle hash.
      */
@@ -185,6 +191,7 @@ public class Bundle implements Comparable<Bundle> {
 
     /**
      * Compares the current object with another object of the same type.
+     *
      * @param o An object to compare with this object.
      * @return A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other" /> parameter.Zero This object is equal to <paramref name="other" />. Greater than zero This object is greater than <paramref name="other" />.
 

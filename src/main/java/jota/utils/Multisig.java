@@ -129,7 +129,7 @@ public class Multisig {
      * @param bundleToSign
      * @param inputAddress
      * @param keyTrytes
-     * @return trytes Returns bundle trytes
+     * @return Returns bundle trytes.
      **/
     private void addSignature(Bundle[] bundleToSign, String inputAddress, String keyTrytes) {
 

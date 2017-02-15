@@ -20,7 +20,7 @@ public class SendTransferResponse extends AbstractResponse {
     /**
      * Gets the successfully.
      *
-     * @return successfully The successfully.
+     * @return The successfully.
      */
     public Boolean[] getSuccessfully() {
         return successfully;

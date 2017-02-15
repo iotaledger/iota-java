@@ -1,7 +1,8 @@
 package jota.model;
 
 /**
- * This class represents an Neighbor
+ * This class represents an Neighbor.
+ *
  * @author pinpong
  **/
 public class Neighbor {
@@ -24,7 +25,7 @@ public class Neighbor {
     /**
      * Get the address.
      *
-     * @return address The address.
+     * @return The address.
      */
     public String getAddress() {
         return address;
@@ -33,7 +34,7 @@ public class Neighbor {
     /**
      * Get the number of all transactions.
      *
-     * @return numberOfAllTransactions The number of all transactions.
+     * @return The number of all transactions.
      */
     public Integer getNumberOfAllTransactions() {
         return numberOfAllTransactions;
@@ -41,7 +42,8 @@ public class Neighbor {
 
     /**
      * Get the number of invalid transactions.
-     * @return numberOfInvalidTransactions The number of invalid transactions.
+     *
+     * @return The number of invalid transactions.
      */
     public Integer getNumberOfInvalidTransactions() {
         return numberOfInvalidTransactions;
@@ -49,7 +51,8 @@ public class Neighbor {
 
     /**
      * Get the number of nwe transactions.
-     * @return numberOfNewTransactions The number of new transactions.
+     *
+     * @return The number of new transactions.
      */
     public Integer getNumberOfNewTransactions() {
         return numberOfNewTransactions;

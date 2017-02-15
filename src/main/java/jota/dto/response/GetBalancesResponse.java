@@ -12,7 +12,7 @@ public class GetBalancesResponse extends AbstractResponse {
     /**
      * Gets the milestone index.
      *
-     * @return milestoneIndex The milestone index.
+     * @return The milestone index.
      */
     public int getMilestoneIndex() {
         return milestoneIndex;
@@ -21,7 +21,7 @@ public class GetBalancesResponse extends AbstractResponse {
     /**
      * Gets the milestone.
      *
-     * @return milestone The milestone.
+     * @return The milestone.
      */
     public String getMilestone() {
         return milestone;
@@ -29,7 +29,7 @@ public class GetBalancesResponse extends AbstractResponse {
 
     /**
      * Gets the balances.
-     * @return balances The balances.
+     * @return The balances.
      */
     public String[] getBalances() {
         return balances;

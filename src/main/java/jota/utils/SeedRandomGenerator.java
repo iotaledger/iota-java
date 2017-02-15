@@ -3,16 +3,17 @@ package jota.utils;
 import java.security.SecureRandom;
 
 /**
- * This class allows to create a secure random generated seed
+ * This class allows to create a secure random generated seed.
+ *
  * @author pinpong
  */
 public class SeedRandomGenerator {
 
 
     /**
-     * generate a new seed
+     * Generate a new seed.
      *
-     * @return random generated seed
+     * @return Random generated seed.
      **/
     public static String generateNewSeed() {
         char[] chars = Constants.TRYTE_ALPHABET.toCharArray();

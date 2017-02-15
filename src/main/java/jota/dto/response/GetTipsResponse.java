@@ -10,7 +10,7 @@ public class GetTipsResponse extends AbstractResponse {
     /**
      * Gets the hashes.
      *
-     * @return hashes The hashes.
+     * @return The hashes.
      */
     public String[] getHashes() {
         return hashes;

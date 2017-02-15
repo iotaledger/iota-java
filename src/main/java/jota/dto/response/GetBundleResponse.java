@@ -25,7 +25,7 @@ public class GetBundleResponse extends AbstractResponse {
     /**
      * Gets the transactions.
      *
-     * @return transactions The transactions.
+     * @return The transactions.
      */
     public List<Transaction> getTransactions() {
         return transactions;

@@ -21,7 +21,7 @@ public class GetTransferResponse extends AbstractResponse {
     /**
      * Gets the transfer bundle.
      *
-     * @return transferBundle The transfer bundle.
+     * @return The transfer bundle.
      */
     public Bundle[] getTransfers() {
         return transferBundle;

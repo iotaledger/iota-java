@@ -40,7 +40,7 @@ public class IotaGetInclusionStateRequest extends IotaCommandRequest {
     /**
      * Gets the transactions.
      *
-     * @return transactions The transactions.
+     * @return The transactions.
      */
     public String[] getTransactions() {
         return transactions;
@@ -58,7 +58,7 @@ public class IotaGetInclusionStateRequest extends IotaCommandRequest {
     /**
      * Gets the tips.
      *
-     * @return tips The tips.
+     * @return The tips.
      */
     public String[] getTips() {
         return tips;
@@ -67,7 +67,7 @@ public class IotaGetInclusionStateRequest extends IotaCommandRequest {
     /**
      * Sets the tips.
      *
-     * @param  tips The tips.
+     * @param tips The tips.
      */
     public void setTips(String[] tips) {
         this.tips = tips;

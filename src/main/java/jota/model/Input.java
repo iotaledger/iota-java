@@ -4,7 +4,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * This class represents an Input
+ * This class represents an Input.
+ *
  * @author Adrian
  **/
 public class Input {
@@ -38,7 +39,7 @@ public class Input {
     /**
      * Get the address.
      *
-     * @return address The address.
+     * @return The address.
      */
     public String getAddress() {
         return address;
@@ -46,7 +47,8 @@ public class Input {
 
     /**
      * Get the address.
-     * @param  address The address.
+     *
+     * @param address The address.
      */
     public void setAddress(String address) {
         this.address = address;
@@ -54,7 +56,8 @@ public class Input {
 
     /**
      * Get the balance.
-     * @return address The balance.
+     *
+     * @return The balance.
      */
     public long getBalance() {
         return balance;
@@ -62,7 +65,8 @@ public class Input {
 
     /**
      * Get the balance.
-     * @param  balance The balance.
+     *
+     * @param balance The balance.
      */
     public void setBalance(long balance) {
         this.balance = balance;
@@ -70,7 +74,8 @@ public class Input {
 
     /**
      * Get the keyIndex.
-     * @return keyIndex The keyIndex.
+     *
+     * @return The keyIndex.
      */
     public int getKeyIndex() {
         return keyIndex;
@@ -78,7 +83,8 @@ public class Input {
 
     /**
      * Get the keyIndex.
-     * @param  keyIndex The keyIndex.
+     *
+     * @param keyIndex The keyIndex.
      */
     public void setKeyIndex(int keyIndex) {
         this.keyIndex = keyIndex;
@@ -86,7 +92,8 @@ public class Input {
 
     /**
      * Get the security.
-     * @return security The security.
+     *
+     * @return The security.
      */
     public int getSecurity() {
         return security;
@@ -94,7 +101,8 @@ public class Input {
 
     /**
      * Get the security.
-     * @param  security The security.
+     *
+     * @param security The security.
      */
     public void setSecurity(int security) {
         this.security = security;

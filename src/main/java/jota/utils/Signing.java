@@ -9,6 +9,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Signing {
+
+    /**
+     * Ask @come-from-beyond
+     */
     private ICurl curl;
 
     public Signing() {

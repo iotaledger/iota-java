@@ -11,7 +11,7 @@ public class GetTransactionsToApproveResponse extends AbstractResponse {
     /**
      * Gets the trunk transaction.
      *
-     * @return trunkTransaction The trunk transaction.
+     * @return The trunk transaction.
      */
     public String getTrunkTransaction() {
         return trunkTransaction;
@@ -20,7 +20,7 @@ public class GetTransactionsToApproveResponse extends AbstractResponse {
     /**
      * Gets the branch transaction.
      *
-     * @return branchTransaction The branch transaction.
+     * @return The branch transaction.
      */
     public String getBranchTransaction() {
         return branchTransaction;

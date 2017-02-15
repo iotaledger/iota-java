@@ -34,7 +34,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * The version of the IOTA software you're currently running.
      *
-     * @return
+     * @return The version of the IOTA software you're currently running.
      */
     public String getAppVersion() {
         return appVersion;
@@ -43,7 +43,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * The version of running java version.
      *
-     * @return
+     * @return The version of running java version.
      */
     public String getJreVersion() {
         return jreVersion;
@@ -52,7 +52,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * Available cores on your machine for JRE.
      *
-     * @return
+     * @return Available cores on your machine for JRE.
      */
     public Integer getJreAvailableProcessors() {
         return jreAvailableProcessors;
@@ -61,7 +61,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * The amount of free memory in the Java Virtual Machine.
      *
-     * @return
+     * @return The amount of free memory in the Java Virtual Machine.
      */
     public long getJreFreeMemory() {
         return jreFreeMemory;
@@ -70,7 +70,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * The maximum amount of memory that the Java virtual machine will attempt to use.
      *
-     * @return
+     * @return The maximum amount of memory that the Java virtual machine will attempt to use.
      */
     public long getJreMaxMemory() {
         return jreMaxMemory;
@@ -79,7 +79,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * The total amount of memory in the Java virtual machine.
      *
-     * @return
+     * @return The total amount of memory in the Java virtual machine.
      */
     public long getJreTotalMemory() {
         return jreTotalMemory;
@@ -88,7 +88,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * Latest milestone that was signed off by the coordinator.
      *
-     * @return
+     * @return Latest milestone that was signed off by the coordinator.
      */
     public String getLatestMilestone() {
         return latestMilestone;
@@ -97,7 +97,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * Index of the latest milestone.
      *
-     * @return
+     * @return Index of the latest milestone.
      */
     public int getLatestMilestoneIndex() {
         return latestMilestoneIndex;
@@ -108,7 +108,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
      * For a milestone to become solid your local node must basically approve the subtangle of coordinator-approved transactions,
      * and have a consistent view of all referenced transactions.
      *
-     * @return
+     * @return The latest milestone which is solid and is used for sending transactions.
      */
     public String getLatestSolidSubtangleMilestone() {
         return latestSolidSubtangleMilestone;
@@ -117,7 +117,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * Index of the latest solid subtangle.
      *
-     * @return
+     * @return Index of the latest solid subtangle.
      */
     public int getLatestSolidSubtangleMilestoneIndex() {
         return latestSolidSubtangleMilestoneIndex;
@@ -126,16 +126,16 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * Number of neighbors you are directly connected with.
      *
-     * @return
+     * @return Number of neighbors you are directly connected with.
      */
     public int getNeighbors() {
         return neighbors;
     }
 
     /**
-     * Packets which are currently queued up
+     * Packets which are currently queued up.
      *
-     * @return
+     * @return Packets which are currently queued up.
      */
     public int getPacketsQueueSize() {
         return packetsQueueSize;
@@ -144,7 +144,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * Current UNIX timestamp.
      *
-     * @return
+     * @return Current UNIX timestamp.
      */
     public Long getTime() {
         return time;
@@ -153,7 +153,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * Number of tips in the network.
      *
-     * @return
+     * @return Number of tips in the network.
      */
     public int getTips() {
         return tips;
@@ -162,7 +162,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     /**
      * Transactions to request during syncing process.
      *
-     * @return
+     * @return Transactions to request during syncing process.
      */
     public int getTransactionsToRequest() {
         return transactionsToRequest;

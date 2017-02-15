@@ -27,7 +27,7 @@ public class IotaGetTransactionsToApproveRequest extends IotaCommandRequest {
     /**
      * Gets the depth.
      *
-     * @return depth The depth.
+     * @return The depth.
      */
     public Integer getDepth() {
         return depth;

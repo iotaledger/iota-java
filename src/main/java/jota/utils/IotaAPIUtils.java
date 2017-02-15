@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Client Side computation service
+ * Client Side computation service.
  *
  * @author davassi
  */
@@ -21,13 +21,13 @@ public class IotaAPIUtils {
     /**
      * Generates a new address
      *
-     * @param seed tryte-encoded seed. It should be noted that this seed is not transferred
-     * @param security security secuirty level of private key / seed
-     * @param index key index to start search from. If the index is provided, the generation of the address is not deterministic.
-     * @param checksum adds 9-tryte address checksum
-     * @param curl
-     * @return an String with address
-     * @exception InvalidAddressException is thrown when the specified address is not an valid address
+     * @param seed The tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security The secuirty level of private key / seed.
+     * @param index The index to start search from. If the index is provided, the generation of the address is not deterministic.
+     * @param checksum The adds 9-tryte address checksum
+     * @param curl The curl instance.
+     * @return An String with address.
+     * @throws InvalidAddressException is thrown when the specified address is not an valid address.
      */
     public static String newAddress(String seed, int security, int index, boolean checksum, ICurl curl) throws InvalidAddressException {
         Signing signing = new Signing(curl);

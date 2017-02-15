@@ -4,17 +4,18 @@ import jota.error.InvalidAddressException;
 import jota.pow.JCurl;
 
 /**
- * This class defines utility methods to add/remove the checksum to/from an address
+ * This class defines utility methods to add/remove the checksum to/from an address.
+ *
  * @author pinpong
  */
 public class Checksum {
 
     /**
-     * Adds the checksum to the specified address
+     * Adds the checksum to the specified address.
      *
-     * @param address address without checksum
-     * @return the address with the appended checksum
-     * @exception InvalidAddressException is thrown when the specified address is not an valid address
+     * @param address The address without checksum.
+     * @return The address with the appended checksum.
+     * @throws InvalidAddressException is thrown when the specified address is not an valid address.
      **/
     public static String addChecksum(String address) throws InvalidAddressException {
         InputValidator.checkAddress(address);
@@ -24,35 +25,29 @@ public class Checksum {
     }
 
     /**
-     * Remove the checksum to the specified address
+     * Remove the checksum to the specified address.
      *
-     * @param address address with checksum
-     * @return the address without checksum
-     * @exception InvalidAddressException is thrown when the specified address is not an address with checksum
+     * @param address The address with checksum.
+     * @return The address without checksum.
+     * @throws InvalidAddressException is thrown when the specified address is not an address with checksum.
      **/
     public static String removeChecksum(String address) throws InvalidAddressException {
         if (isAddressWithChecksum(address)) {
-            return getAddress(address);
+            return removeChecksumFromAddress(address);
         }
         throw new InvalidAddressException();
     }
 
-    /**
-     * remove checksum length
-     *
-     * @param addressWithChecksum address with checksum
-     * @return address without checksum
-     **/
-    private static String getAddress(String addressWithChecksum) {
+    private static String removeChecksumFromAddress(String addressWithChecksum) {
         return addressWithChecksum.substring(0, Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM);
     }
 
     /**
      * Determines whether the specified address with checksum has a valid checksum.
      *
-     * @param addressWithChecksum address
-     * @return <c>true</c> if the specified address with checksum has a valid checksum [the specified address with checksum]; otherwise, <c>false</c>.
-     * @exception InvalidAddressException is thrown when the specified address is not an valid address
+     * @param addressWithChecksum The address with checksum.
+     * @return <code>true</code> if the specified address with checksum has a valid checksum [the specified address with checksum]; otherwise, <code>false</code>.
+     * @throws InvalidAddressException is thrown when the specified address is not an valid address.
      **/
     public static boolean isValidChecksum(String addressWithChecksum) throws InvalidAddressException {
         String addressWithoutChecksum = removeChecksum(addressWithChecksum);
@@ -62,11 +57,11 @@ public class Checksum {
 
 
     /**
-     * check if specified address is a address with checksum
+     * Check if specified address is a address with checksum.
      *
-     * @param address address
-     * @return boolean
-     * @exception InvalidAddressException is thrown when the specified address is not an valid address
+     * @param address The address to check.
+     * @return <code>true</code> if the specified address is with checksum ; otherwise, <code>false</code>.
+     * @throws InvalidAddressException is thrown when the specified address is not an valid address
      **/
     public static boolean isAddressWithChecksum(String address) throws InvalidAddressException {
         return InputValidator.checkAddress(address) && address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM;
@@ -78,18 +73,12 @@ public class Checksum {
      *
      * @param address address
      * @return boolean
-     * @exception InvalidAddressException is thrown when the specified address is not an valid address
+     * @throws InvalidAddressException is thrown when the specified address is not an valid address
      **/
     public static boolean isAddressWithoutChecksum(String address) throws InvalidAddressException {
         return InputValidator.checkAddress(address) && address.length() == Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM;
     }
 
-    /**
-     * calculate the checksum to the specified address
-     *
-     * @param address address
-     * @return the checksum
-     **/
     private static String calculateChecksum(String address) {
         JCurl curl = new JCurl();
         curl.reset();

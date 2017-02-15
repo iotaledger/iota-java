@@ -26,7 +26,7 @@ public class GetBalancesAndFormatResponse extends AbstractResponse {
     /**
      * Gets the input.
      *
-     * @return transactions The transactions.
+     * @return The transactions.
      */
     public List<Input> getInput() {
         return input;
@@ -44,7 +44,7 @@ public class GetBalancesAndFormatResponse extends AbstractResponse {
     /**
      * Gets the total balance.
      *
-     * @return totalBalance The total balance.
+     * @return The total balance.
      */
     public long getTotalBalance() {
         return totalBalance;
@@ -53,7 +53,7 @@ public class GetBalancesAndFormatResponse extends AbstractResponse {
     /**
      * Sets the total balance.
      *
-     * @param  totalBalance The total balance.
+     * @param totalBalance The total balance.
      */
     public void setTotalBalance(long totalBalance) {
         this.totalBalance = totalBalance;

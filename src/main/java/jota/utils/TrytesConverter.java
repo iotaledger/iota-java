@@ -1,7 +1,8 @@
 package jota.utils;
 
 /**
- * This class allows to convert between ASCII and tryte encoded strings
+ * This class allows to convert between ASCII and tryte encoded strings.
+ *
  * @author pinpong
  */
 public class TrytesConverter {
@@ -34,7 +35,7 @@ public class TrytesConverter {
      * Our tryte pair is "IC"
      *
      *
-     * @param inputString
+     * @param inputString The input String.
      * @return The ASCII char "Z" is represented as "IC" in trytes.
      */
     public static String toTrytes(String inputString) {
