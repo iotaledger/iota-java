@@ -1100,7 +1100,7 @@ public class IotaAPI extends IotaAPICore {
     }
 
     public static class Builder extends IotaAPICore.Builder<Builder> {
-        private ICurl customCurl;
+        private ICurl customCurl = new JCurl();
 
         public Builder withCustomCurl(ICurl curl) {
             customCurl = curl;
