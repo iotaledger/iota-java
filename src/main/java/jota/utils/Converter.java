@@ -121,6 +121,26 @@ public class Converter {
     }
 
     /**
+     * Converts the specified trinary encoded string into a trits array of the specified length.
+     * @param trytes The trytes.
+     * @param length The length.
+     * @return A trits array.
+     */
+    public static int[] trits(final long trytes, int length) {
+        int[] trits = trits(String.valueOf(trytes));
+
+        List<Integer> tritsList = new LinkedList<>();
+
+        for (int i : trits)
+            tritsList.add(i);
+
+        while (tritsList.size() < length)
+            tritsList.add(0);
+
+        return convertToIntArray(tritsList);
+    }
+
+    /**
      * Converts the specified trinary encoded trytes string to trits.
      *
      * @param trytes The trytes.

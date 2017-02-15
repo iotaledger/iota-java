@@ -24,11 +24,11 @@ public class Transaction {
     private String hash;
     private String signatureFragments;
     private String address;
-    private String value;
+    private long value;
     private String tag;
-    private String timestamp;
-    private String currentIndex;
-    private String lastIndex;
+    private long timestamp;
+    private long currentIndex;
+    private long lastIndex;
     private String bundle;
     private String trunkTransaction;
     private String branchTransaction;
@@ -67,7 +67,7 @@ public class Transaction {
     /**
      * Initializes a new instance of the Signature class.
      */
-    public Transaction(String signatureFragments, String currentIndex, String lastIndex, String nonce, String hash, String tag, String timestamp, String trunkTransaction, String branchTransaction, String address, String value, String bundle) {
+    public Transaction(String signatureFragments, long currentIndex, long lastIndex, String nonce, String hash, String tag, long timestamp, String trunkTransaction, String branchTransaction, String address, long value, String bundle) {
 
         this.hash = hash;
         this.tag = tag;
@@ -86,7 +86,7 @@ public class Transaction {
     /**
      * Initializes a new instance of the Signature class.
      */
-    public Transaction(String address, String value, String tag, String timestamp) {
+    public Transaction(String address, long value, String tag, long timestamp) {
         this.address = address;
         this.value = value;
         this.tag = tag;
@@ -135,8 +135,8 @@ public class Transaction {
      *
      * @param signatureFragments The signature fragments.
      */
-    public String setSignatureFragments(String signatureFragments) {
-        return this.signatureFragments = signatureFragments;
+    public void setSignatureFragments(String signatureFragments) {
+        this.signatureFragments = signatureFragments;
     }
 
     /**
@@ -162,7 +162,7 @@ public class Transaction {
      *
      * @return The value.
      */
-    public String getValue() {
+    public long getValue() {
         return value;
     }
 
@@ -171,7 +171,7 @@ public class Transaction {
      *
      * @param value The value.
      */
-    public void setValue(String value) {
+    public void setValue(long value) {
         this.value = value;
     }
 
@@ -198,7 +198,7 @@ public class Transaction {
      *
      * @return The timestamp.
      */
-    public String getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
@@ -207,7 +207,7 @@ public class Transaction {
      *
      * @param timestamp The timestamp.
      */
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -216,7 +216,7 @@ public class Transaction {
      *
      * @return The current index.
      */
-    public String getCurrentIndex() {
+    public long getCurrentIndex() {
         return currentIndex;
     }
 
@@ -224,8 +224,8 @@ public class Transaction {
      * Set the current index.
      * @param currentIndex The current index.
      */
-    public String setCurrentIndex(String currentIndex) {
-        return this.currentIndex = currentIndex;
+    public void setCurrentIndex(long currentIndex) {
+        this.currentIndex = currentIndex;
     }
 
     /**
@@ -233,7 +233,7 @@ public class Transaction {
      *
      * @return The last index.
      */
-    public String getLastIndex() {
+    public long getLastIndex() {
         return lastIndex;
     }
 
@@ -242,8 +242,8 @@ public class Transaction {
      *
      * @param lastIndex The last index.
      */
-    public String setLastIndex(String lastIndex) {
-        return this.lastIndex = lastIndex;
+    public void setLastIndex(long lastIndex) {
+        this.lastIndex = lastIndex;
     }
 
     /**
@@ -400,11 +400,11 @@ public class Transaction {
         this.setHash(Converter.trytes(hash));
         this.setSignatureFragments(trytes.substring(0, 2187));
         this.setAddress(trytes.substring(2187, 2268));
-        this.setValue("" + Converter.longValue(Arrays.copyOfRange(transactionTrits, 6804, 6837)));
+        this.setValue(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6804, 6837)));
         this.setTag(trytes.substring(2295, 2322));
-        this.setTimestamp("" + Converter.longValue(Arrays.copyOfRange(transactionTrits, 6966, 6993)));
-        this.setCurrentIndex("" + Converter.longValue(Arrays.copyOfRange(transactionTrits, 6993, 7020)));
-        this.setLastIndex("" + Converter.longValue(Arrays.copyOfRange(transactionTrits, 7020, 7047)));
+        this.setTimestamp(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6966, 6993)));
+        this.setCurrentIndex(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6993, 7020)));
+        this.setLastIndex(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7020, 7047)));
         this.setBundle(trytes.substring(2349, 2430));
         this.setTrunkTransaction(trytes.substring(2430, 2511));
         this.setBranchTransaction(trytes.substring(2511, 2592));

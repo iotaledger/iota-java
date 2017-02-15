@@ -57,7 +57,7 @@ public class IotaAPIUtils {
         //  Iterate over all bundle transactions, find the inputs
         //  Get the corresponding private key and calculate the signatureFragment
         for (int i = 0; i < bundle.getTransactions().size(); i++) {
-            if (Long.parseLong(bundle.getTransactions().get(i).getValue()) < 0) {
+            if (bundle.getTransactions().get(i).getValue() < 0) {
                 String thisAddress = bundle.getTransactions().get(i).getAddress();
 
                 // Get the corresponding keyIndex of the address
@@ -98,7 +98,7 @@ public class IotaAPIUtils {
                     //  find the second transaction to add the remainder of the signature
                     for (int k = 0; k < bundle.getTransactions().size(); k++) {
                         //  Same address as well as value = 0 (as we already spent the input)
-                        if (bundle.getTransactions().get(k).getAddress().equals(thisAddress) && Long.parseLong(bundle.getTransactions().get(k).getValue()) == 0) {
+                        if (bundle.getTransactions().get(k).getAddress().equals(thisAddress) && bundle.getTransactions().get(k).getValue() == 0) {
                             // Use the second 6562 trits
                             int[] secondFragment = Arrays.copyOfRange(key, 6561, 6561 * 2);
 

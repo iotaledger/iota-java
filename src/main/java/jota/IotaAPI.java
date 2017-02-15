@@ -151,7 +151,7 @@ public class IotaAPI extends IotaAPICore {
 
         for (Transaction trx : trxs) {
             // Sort tail and nonTails
-            if (Long.parseLong(trx.getCurrentIndex()) == 0) {
+            if (trx.getCurrentIndex() == 0) {
                 tailTransactions.add(trx.getHash());
             } else {
                 if (nonTailBundleHashes.indexOf(trx.getBundle()) == -1) {
@@ -163,7 +163,7 @@ public class IotaAPI extends IotaAPICore {
         List<Transaction> bundleObjects = findTransactionObjectsByBundle(nonTailBundleHashes.toArray(new String[nonTailBundleHashes.size()]));
         for (Transaction trx : bundleObjects) {
             // Sort tail and nonTails
-            if (Long.parseLong(trx.getCurrentIndex()) == 0) {
+            if (trx.getCurrentIndex() == 0) {
                 if (tailTransactions.indexOf(trx.getHash()) == -1) {
                     tailTransactions.add(trx.getHash());
                 }
@@ -628,10 +628,10 @@ public class IotaAPI extends IotaAPICore {
 
         for (int i = 0; i < bundle.getTransactions().size(); i++) {
             Transaction trx = bundle.getTransactions().get(i);
-            Long bundleValue = Long.parseLong(trx.getValue());
+            Long bundleValue = trx.getValue();
             totalSum += bundleValue;
 
-            if (i != Integer.parseInt(bundle.getTransactions().get(i).getCurrentIndex())) {
+            if (i != bundle.getTransactions().get(i).getCurrentIndex()) {
                 throw new ArgumentException("Invalid Bundle");
             }
 
@@ -651,7 +651,7 @@ public class IotaAPI extends IotaAPICore {
                     Transaction newBundleTx = bundle.getTransactions().get(i + 1);
 
                     // Check if new tx is part of the signature fragment
-                    if (newBundleTx.getAddress().equals(address) && Long.parseLong(newBundleTx.getValue()) == 0) {
+                    if (newBundleTx.getAddress().equals(address) && newBundleTx.getValue() == 0) {
                         if (sig.getSignatureFragments().indexOf(newBundleTx.getSignatureFragments()) == -1)
                             sig.getSignatureFragments().add(newBundleTx.getSignatureFragments());
                     }
@@ -670,7 +670,7 @@ public class IotaAPI extends IotaAPICore {
         if (!bundleFromTxString.equals(bundleHash)) throw new InvalidBundleException("Invalid Bundle Hash");
         // Last tx in the bundle should have currentIndex === lastIndex
         bundle.setLength(bundle.getTransactions().size());
-        if (!bundle.getTransactions().get(bundle.getLength() - 1).getCurrentIndex().equals(bundle.getTransactions().get(bundle.getLength() - 1).getLastIndex()))
+        if (!(bundle.getTransactions().get(bundle.getLength() - 1).getCurrentIndex() == (bundle.getTransactions().get(bundle.getLength() - 1).getLastIndex())))
             throw new InvalidBundleException("Invalid Bundle");
 
         // Validate the signatures
@@ -806,7 +806,7 @@ public class IotaAPI extends IotaAPICore {
                 throw new ArgumentException("Invalid trytes, could not create object");
             }
             // If first transaction to search is not a tail, return error
-            if (bundleHash == null && Integer.parseInt(trx.getCurrentIndex()) != 0) {
+            if (bundleHash == null && trx.getCurrentIndex() != 0) {
                 throw new ArgumentException("Invalid tail transaction supplied.");
             }
             // If no bundle hash, define it
@@ -818,7 +818,7 @@ public class IotaAPI extends IotaAPICore {
                 return bundle;
             }
             // If only one bundle element, return
-            if (Integer.parseInt(trx.getLastIndex()) == 0 && Integer.parseInt(trx.getCurrentIndex()) == 0) {
+            if (trx.getLastIndex() == 0 && trx.getCurrentIndex() == 0) {
                 return new Bundle(Collections.singletonList(trx), 1);
             }
             // Define new trunkTransaction for search
@@ -1027,7 +1027,7 @@ public class IotaAPI extends IotaAPICore {
         if (trx.getBundle() == null) {
             throw new ArgumentException("Invalid trytes, could not create object");
         }
-        if (Integer.parseInt(trx.getCurrentIndex()) == 0) return trx.getHash();
+        if (trx.getCurrentIndex() == 0) return trx.getHash();
         else return findTailTransactionHash(trx.getBundle());
     }
 

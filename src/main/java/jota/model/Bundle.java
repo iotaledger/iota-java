@@ -78,7 +78,7 @@ public class Bundle implements Comparable<Bundle> {
         }
 
         for (int i = 0; i < signatureMessageLength; i++) {
-            Transaction trx = new Transaction(address, String.valueOf(i == 0 ? value : 0), tag, String.valueOf(timestamp));
+            Transaction trx = new Transaction(address, i == 0 ? value : 0, tag, timestamp);
             getTransactions().add(trx);
         }
     }
@@ -99,9 +99,9 @@ public class Bundle implements Comparable<Bundle> {
 
             int[] timestampTrits = Converter.trits(this.getTransactions().get(i).getTimestamp(), 27);
 
-            int[] currentIndexTrits = Converter.trits(this.getTransactions().get(i).setCurrentIndex("" + i), 27);
+            int[] currentIndexTrits = Converter.trits(i + (this.getTransactions().get(i).getCurrentIndex()), 27);
 
-            int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).setLastIndex("" + (this.getTransactions().size() - 1)), 27);
+            int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).getLastIndex() - 1, 27);
 
 
             int[] t = Converter.trits(this.getTransactions().get(i).getAddress() + Converter.trytes(valueTrits) + this.getTransactions().get(i).getTag() + Converter.trytes(timestampTrits) + Converter.trytes(currentIndexTrits) + Converter.trytes(lastIndexTrits));
@@ -198,6 +198,6 @@ public class Bundle implements Comparable<Bundle> {
      */
     @Override
     public int compareTo(Bundle o) {
-        return Long.compare(Long.parseLong(this.getTransactions().get(0).getTimestamp()), Long.parseLong(o.getTransactions().get(0).getTimestamp()));
+        return Long.compare(this.getTransactions().get(0).getTimestamp(), o.getTransactions().get(0).getTimestamp());
     }
 }

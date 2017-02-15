@@ -129,7 +129,6 @@ public class IotaCoreApiTest {
     @Test
     public void shouldGetBalances() {
         GetBalancesResponse res = proxy.getBalances(100, new String[]{TEST_ADDRESS_WITH_CHECKSUM});
-        System.err.println(res);
         assertThat(res.getBalances(), IsNull.notNullValue());
         assertThat(res.getMilestone(), IsNull.notNullValue());
         assertThat(res.getMilestoneIndex(), IsNull.notNullValue());
