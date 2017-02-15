@@ -5,7 +5,6 @@ import jota.model.Bundle;
 import jota.model.Input;
 import jota.model.Transaction;
 import jota.pow.ICurl;
-import jota.pow.JCurl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,10 +29,7 @@ public class IotaAPIUtils {
      * @return An String with address.
      * @throws InvalidAddressException is thrown when the specified address is not an valid address.
      */
-    public static String newAddress(String seed, int security, int index, boolean checksum, ICurl customCurl) throws InvalidAddressException {
-
-        ICurl curl = customCurl == null ? new JCurl() : customCurl;
-
+    public static String newAddress(String seed, int security, int index, boolean checksum, ICurl curl) throws InvalidAddressException {
         Signing signing = new Signing(curl);
         final int[] key = signing.key(Converter.trits(seed), index, security);
         final int[] digests = signing.digests(key);
