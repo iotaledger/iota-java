@@ -99,10 +99,13 @@ public class Bundle implements Comparable<Bundle> {
 
             int[] timestampTrits = Converter.trits(this.getTransactions().get(i).getTimestamp(), 27);
 
-            int[] currentIndexTrits = Converter.trits(i + (this.getTransactions().get(i).getCurrentIndex()), 27);
+            this.getTransactions().get(i).setCurrentIndex(i);
 
-            int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).getLastIndex() - 1, 27);
+            int[] currentIndexTrits = Converter.trits(this.getTransactions().get(i).getCurrentIndex(), 27);
 
+            this.getTransactions().get(i).setLastIndex(this.getTransactions().size() - 1);
+
+            int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).getLastIndex(), 27);
 
             int[] t = Converter.trits(this.getTransactions().get(i).getAddress() + Converter.trytes(valueTrits) + this.getTransactions().get(i).getTag() + Converter.trytes(timestampTrits) + Converter.trytes(currentIndexTrits) + Converter.trytes(lastIndexTrits));
             curl.absorb(t, 0, t.length);
