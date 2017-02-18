@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * This class provides access to the Iota core API
+ *
  * @author Adrian
  */
 public class IotaAPICore {
@@ -65,7 +66,6 @@ public class IotaAPICore {
     }
 
     /**
-     *
      * @param env
      * @param def
      * @return
@@ -188,7 +188,7 @@ public class IotaAPICore {
     }
 
     public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws InvalidTrytesException {
-        if(!InputValidator.isArrayOfTrytes(trytes)){
+        if (!InputValidator.isArrayOfTrytes(trytes)) {
             throw new InvalidTrytesException();
         }
 
@@ -268,7 +268,6 @@ public class IotaAPICore {
         }
 
         /**
-         *
          * @param host
          * @return
          */
@@ -278,7 +277,6 @@ public class IotaAPICore {
         }
 
         /**
-         *
          * @param port
          * @return
          */
@@ -288,7 +286,6 @@ public class IotaAPICore {
         }
 
         /**
-         *
          * @param protocol
          * @return
          */

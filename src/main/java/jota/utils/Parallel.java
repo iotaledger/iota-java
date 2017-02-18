@@ -51,7 +51,6 @@ public class Parallel {
     }
 
     /**
-     *
      * @param <T>
      */
     public interface Operation<T> {

@@ -67,10 +67,10 @@ public class Bundle implements Comparable<Bundle> {
      * Adds a bundle entry.
      *
      * @param signatureMessageLength Length of the signature message.
-     * @param address The address.
-     * @param value The value.
-     * @param tag The tag.
-     * @param timestamp The timestamp.
+     * @param address                The address.
+     * @param value                  The value.
+     * @param tag                    The tag.
+     * @param timestamp              The timestamp.
      */
     public void addEntry(int signatureMessageLength, String address, long value, String tag, long timestamp) {
         if (getTransactions() == null) {
@@ -79,7 +79,7 @@ public class Bundle implements Comparable<Bundle> {
 
         for (int i = 0; i < signatureMessageLength; i++) {
             Transaction trx = new Transaction(address, i == 0 ? value : 0, tag, timestamp);
-            getTransactions().add(trx);
+            transactions.add(trx);
         }
     }
 
@@ -197,7 +197,6 @@ public class Bundle implements Comparable<Bundle> {
      *
      * @param o An object to compare with this object.
      * @return A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other" /> parameter.Zero This object is equal to <paramref name="other" />. Greater than zero This object is greater than <paramref name="other" />.
-
      */
     @Override
     public int compareTo(Bundle o) {

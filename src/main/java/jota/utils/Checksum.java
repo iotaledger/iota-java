@@ -34,6 +34,8 @@ public class Checksum {
     public static String removeChecksum(String address) throws InvalidAddressException {
         if (isAddressWithChecksum(address)) {
             return removeChecksumFromAddress(address);
+        } else if (isAddressWithoutChecksum(address)) {
+            return address;
         }
         throw new InvalidAddressException();
     }

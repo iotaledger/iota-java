@@ -50,7 +50,7 @@ public class Signature {
     /**
      * Set the signatureFragments.
      *
-     * @param  signatureFragments The signatureFragments.
+     * @param signatureFragments The signatureFragments.
      */
     public void setSignatureFragments(List<String> signatureFragments) {
         this.signatureFragments = signatureFragments;

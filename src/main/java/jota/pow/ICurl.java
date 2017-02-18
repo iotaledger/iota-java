@@ -28,7 +28,7 @@ public interface ICurl {
     /**
      * Squeezes the specified trits.
      *
-     * @param trits The trits.
+     * @param trits  The trits.
      * @param offset The offset to start from.
      * @param length The length.
      * @return The squeezed trits.

@@ -2,6 +2,7 @@ package jota.error;
 
 /**
  * This exception occurs when invalid trytes is provided.
+ *
  * @author Adrian
  */
 public class InvalidTrytesException extends BaseException {

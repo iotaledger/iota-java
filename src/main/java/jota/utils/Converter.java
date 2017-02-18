@@ -49,9 +49,9 @@ public class Converter {
     /**
      * Converts the specified trits array to bytes.
      *
-     * @param trits The trits.
+     * @param trits  The trits.
      * @param offset The offset to start from.
-     * @param size The size.
+     * @param size   The size.
      * @return The bytes.
      */
     public static byte[] bytes(final int[] trits, final int offset, final int size) {
@@ -122,6 +122,7 @@ public class Converter {
 
     /**
      * Converts the specified trinary encoded string into a trits array of the specified length.
+     *
      * @param trytes The trytes.
      * @param length The length.
      * @return A trits array.
@@ -200,7 +201,7 @@ public class Converter {
     /**
      * Copies the trits from the input string into the destination array
      *
-     * @param input The input String.
+     * @param input       The input String.
      * @param destination The destination array.
      * @return The destination.
      */
@@ -217,9 +218,9 @@ public class Converter {
     /**
      * Converts trites to trytes.
      *
-     * @param trits Teh trits to be converted.
+     * @param trits  Teh trits to be converted.
      * @param offset The offset to start from.
-     * @param size The size.
+     * @param size   The size.
      * @return The trytes.
      **/
     public static String trytes(final int[] trits, final int offset, final int size) {
@@ -244,7 +245,7 @@ public class Converter {
     /**
      * Converts the specified trits array to trytes in integer representation.
      *
-     * @param trits The trits.
+     * @param trits  The trits.
      * @param offset The offset to start from.
      * @return The value.
      */
@@ -286,7 +287,7 @@ public class Converter {
      * Increments the specified trits.
      *
      * @param trits The trits.
-     * @param size The size.
+     * @param size  The size.
      */
     public static void increment(final int[] trits, final int size) {
 

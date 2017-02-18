@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * This class represents an Inputs.
  *
- *  @author Adrian
+ * @author Adrian
  **/
 public class Inputs {
 

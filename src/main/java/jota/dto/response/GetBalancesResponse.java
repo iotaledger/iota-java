@@ -29,6 +29,7 @@ public class GetBalancesResponse extends AbstractResponse {
 
     /**
      * Gets the balances.
+     *
      * @return The balances.
      */
     public String[] getBalances() {

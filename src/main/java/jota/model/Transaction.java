@@ -222,6 +222,7 @@ public class Transaction {
 
     /**
      * Set the current index.
+     *
      * @param currentIndex The current index.
      */
     public void setCurrentIndex(long currentIndex) {

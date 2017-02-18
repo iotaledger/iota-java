@@ -12,9 +12,9 @@ public class IotaUnitConverter {
     /**
      * Convert the iota amount.
      *
-     * @param amount The amount.
+     * @param amount   The amount.
      * @param fromUnit The source unit e.g. the unit of amount.
-     * @param toUnit The target unit.
+     * @param toUnit   The target unit.
      * @return The specified amount in the target unit.
      **/
     public static long convertUnits(long amount, IotaUnits fromUnit, IotaUnits toUnit) {
@@ -36,7 +36,7 @@ public class IotaUnitConverter {
     /**
      * Convert the iota amount to text.
      *
-     * @param amount The amount.
+     * @param amount   The amount.
      * @param extended Extended length.
      * @return The specified amount in the target unit.
      **/
@@ -60,8 +60,8 @@ public class IotaUnitConverter {
      * Create amount with unit text.
      *
      * @param amountInUnit The amount in units.
-     * @param unit The unit.
-     * @param extended Extended length.
+     * @param unit         The unit.
+     * @param extended     Extended length.
      * @return The target unit.
      **/
     private static String createAmountWithUnitDisplayText(double amountInUnit, IotaUnits unit, boolean extended) {
@@ -74,8 +74,8 @@ public class IotaUnitConverter {
      * Create amount text.
      *
      * @param amountInUnit The amount in units.
-     * @param unit The unit.
-     * @param extended Extended length.
+     * @param unit         The unit.
+     * @param extended     Extended length.
      * @return The target unit.
      **/
     public static String createAmountDisplayText(double amountInUnit, IotaUnits unit, boolean extended) {

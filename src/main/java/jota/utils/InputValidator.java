@@ -55,7 +55,7 @@ public class InputValidator {
      *
      * @param trytes The trytes to validate.
      * @param length The length.
-     * @return  <code>true</code> if the specified string consist only of '9'; otherwise, <code>false</code>.
+     * @return <code>true</code> if the specified string consist only of '9'; otherwise, <code>false</code>.
      **/
     public static boolean isNinesTrytes(final String trytes, final int length) {
         return trytes.matches("^[9]{" + (length == 0 ? "0," : length) + "}$");
@@ -77,7 +77,7 @@ public class InputValidator {
      * @param trytes The trytes array to validate.
      * @return <code>true</code> if the specified array contains only valid trytes otherwise, <code>false</code>.
      **/
-    public static boolean isArrayOfTrytes(String[] trytes){
+    public static boolean isArrayOfTrytes(String[] trytes) {
         for (String tryte : trytes) {
             // Check if correct 2673 trytes
             if (!isTrytes(tryte, 2673)) {
