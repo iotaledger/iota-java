@@ -24,7 +24,7 @@ deploy:
       repo: iotaledger/iota.lib.java
       all_branches: true
   - provider: script
-    script: .travis/push-jdoc-gh-pages.sh
+    script: ".travis/push-jdoc-gh-pages.sh"
     skip_cleanup: true
     on:
       tags: true
