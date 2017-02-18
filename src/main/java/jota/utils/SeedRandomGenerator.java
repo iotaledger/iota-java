@@ -3,10 +3,18 @@ package jota.utils;
 import java.security.SecureRandom;
 
 /**
- * Created by pinpong on 13.12.16.
+ * This class allows to create a secure random generated seed.
+ *
+ * @author pinpong
  */
 public class SeedRandomGenerator {
 
+
+    /**
+     * Generate a new seed.
+     *
+     * @return Random generated seed.
+     **/
     public static String generateNewSeed() {
         char[] chars = Constants.TRYTE_ALPHABET.toCharArray();
         StringBuilder builder = new StringBuilder();

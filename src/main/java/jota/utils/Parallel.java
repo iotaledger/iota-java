@@ -8,13 +8,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Created by Adrian on 15.01.2017.
+ * @author Adrian
  */
 public class Parallel {
-    private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 
+    private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
     private static final ExecutorService forPool = Executors.newFixedThreadPool(NUM_CORES * 2, new NamedThreadFactory("Parallel.For"));
 
+    /**
+     * @param elements
+     * @param operation
+     * @param <T>
+     */
     public static <T> void For(final Iterable<T> elements, final Operation<T> operation) {
         try {
             // invokeAll blocks for us until all submitted tasks in the call complete
@@ -24,6 +29,12 @@ public class Parallel {
         }
     }
 
+    /**
+     * @param elements
+     * @param operation
+     * @param <T>
+     * @return
+     */
     public static <T> Collection<Callable<Void>> createCallables(final Iterable<T> elements, final Operation<T> operation) {
         List<Callable<Void>> callables = new LinkedList<>();
         for (final T elem : elements) {
@@ -39,6 +50,9 @@ public class Parallel {
         return callables;
     }
 
+    /**
+     * @param <T>
+     */
     public interface Operation<T> {
         void perform(T pParameter);
     }

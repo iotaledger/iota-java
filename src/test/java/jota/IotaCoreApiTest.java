@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertThat;
 
 /**
- * Created by Adrian on 15.01.2017.
+ * @author Adrian
  */
 public class IotaCoreApiTest {
 
@@ -51,13 +51,13 @@ public class IotaCoreApiTest {
         assertThat(neighbors.getNeighbors(), IsNull.notNullValue());
     }
 
-    @Test
+    @Test(expected = IllegalAccessError.class)
     public void shouldAddNeighbors() {
         AddNeighborsResponse res = proxy.addNeighbors("udp://8.8.8.8:14265");
         assertThat(res, IsNull.notNullValue());
     }
 
-    @Test
+    @Test(expected = IllegalAccessError.class)
     public void shouldRemoveNeighbors() {
         RemoveNeighborsResponse res = proxy.removeNeighbors("udp://8.8.8.8:14265");
         assertThat(res, IsNull.notNullValue());
@@ -77,7 +77,7 @@ public class IotaCoreApiTest {
 
     @Test
     public void shouldFindTransactionsByApprovees() {
-        FindTransactionResponse trans = proxy.findTransactionsByApprovees(new String[]{TEST_HASH});
+        FindTransactionResponse trans = proxy.findTransactionsByApprovees(TEST_HASH);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
@@ -100,15 +100,15 @@ public class IotaCoreApiTest {
 
     }
 
-    @Test
-    public void shouldGetInclusionStates() {
+    @Test(expected = IllegalAccessError.class)
+    public void shouldNotGetInclusionStates() {
         GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{"DBPECSH9YLSSTQDGERUHJBBJTKVUDBMTJLG9WPHBINGHIFOSJMDJLARTVOXXWEFQJLLBINOHCZGYFSMUEXWPPMTOFW"}, new String[]{"EJDQOQHMLJGBMFWB9WJSPRCYIGNPO9WRHDCEQXIMPVPIJ9JV9RJGVHNX9EPGXFOOKBABCVMMAAX999999"});
         assertThat(res.getStates(), IsNull.notNullValue());
     }
 
-    @Test(expected = IllegalAccessError.class)
-    public void shouldNotGetInclusionStates() {
-        GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{TEST_ADDRESS_WITH_CHECKSUM}, new String[]{"DNSBRJWNOVUCQPILOQIFDKBFJMVOTGHLIMLLRXOHFTJZGRHJUEDAOWXQRYGDI9KHYFGYDWQJZKX999999"});
+    @Test
+    public void shouldGetInclusionStates() {
+        GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{TEST_ADDRESS_WITH_CHECKSUM}, new String[]{proxy.getNodeInfo().getLatestSolidSubtangleMilestone()});
         assertThat(res.getStates(), IsNull.notNullValue());
     }
 
@@ -129,10 +129,9 @@ public class IotaCoreApiTest {
     @Test
     public void shouldGetBalances() {
         GetBalancesResponse res = proxy.getBalances(100, new String[]{TEST_ADDRESS_WITH_CHECKSUM});
-        System.err.println(res);
         assertThat(res.getBalances(), IsNull.notNullValue());
         assertThat(res.getMilestone(), IsNull.notNullValue());
         assertThat(res.getMilestoneIndex(), IsNull.notNullValue());
-
+        assertThat(res.getDuration(), IsNull.notNullValue());
     }
 }

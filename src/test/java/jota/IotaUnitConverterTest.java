@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by pinpong on 30.11.16.
+ * @author pinpong
  */
 public class IotaUnitConverterTest {
 
@@ -48,11 +48,11 @@ public class IotaUnitConverterTest {
 
     @Test
     public void shouldConvertRawIotaAmountToDisplayText() {
-        assertEquals(IotaUnitConverter.convertRawIotaAmountToDisplayText(1,false), "1 i");
-        assertEquals(IotaUnitConverter.convertRawIotaAmountToDisplayText(1000,false), "1 Ki");
-        assertEquals(IotaUnitConverter.convertRawIotaAmountToDisplayText(1000000,false), "1 Mi"  );
-        assertEquals(IotaUnitConverter.convertRawIotaAmountToDisplayText(1000000000,false), "1 Gi" );
-        assertEquals(IotaUnitConverter.convertRawIotaAmountToDisplayText(1000000000000L,false), "1 Ti");
-        assertEquals(IotaUnitConverter.convertRawIotaAmountToDisplayText(1000000000000000L,false), "1 Pi");
+        assertEquals(IotaUnitConverter.convertRawIotaAmountToDisplayText(1, false), "1 i");
+        assertEquals(IotaUnitConverter.convertRawIotaAmountToDisplayText(1000, false), "1 Ki");
+        assertEquals(IotaUnitConverter.convertRawIotaAmountToDisplayText(1000000, false), "1 Mi");
+        assertEquals(IotaUnitConverter.convertRawIotaAmountToDisplayText(1000000000, false), "1 Gi");
+        assertEquals(IotaUnitConverter.convertRawIotaAmountToDisplayText(1000000000000L, false), "1 Ti");
+        assertEquals(IotaUnitConverter.convertRawIotaAmountToDisplayText(1000000000000000L, false), "1 Pi");
     }
 }
