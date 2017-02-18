@@ -1,24 +1,41 @@
 package jota.utils;
 
+import jota.model.Bundle;
+import jota.model.Transaction;
+import jota.pow.ICurl;
+import jota.pow.JCurl;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import jota.model.Bundle;
-import jota.pow.ICurl;
-import jota.pow.JCurl;
 
 public class Signing {
+
+    /**
+     * Ask @come-from-beyond
+     */
     private ICurl curl;
 
-    public Signing() {
-        this(null);
-    }
-
+    /**
+     * public Signing() {
+     * this(null);
+     * }
+     * <p>
+     * /**
+     *
+     * @param curl
+     */
     public Signing(ICurl curl) {
         this.curl = curl == null ? new JCurl() : curl;
     }
 
+    /**
+     * @param seed
+     * @param index
+     * @param length
+     * @return
+     */
     public int[] key(int[] seed, int index, int length) {
 
         for (int i = 0; i < index; i++) {
@@ -140,6 +157,31 @@ public class Signing {
 
         return buffer;
     }
+
+    public Boolean validateSignatures(Bundle signedBundle, String inputAddress) {
+        String bundleHash = "";
+        Transaction trx;
+        List<String> signatureFragments = new ArrayList<>();
+        for (int i = 0; i < signedBundle.getTransactions().size(); i++) {
+
+            trx = signedBundle.getTransactions().get(i);
+
+            if (trx.getAddress().equals(inputAddress)) {
+                bundleHash = trx.getBundle();
+
+                // if we reached remainder bundle
+                String signatureFragment = trx.getSignatureFragments();
+                if (InputValidator.isNinesTrytes(signatureFragment, signatureFragment.length())) {
+                    break;
+                }
+                signatureFragments.add(signatureFragment);
+            }
+        }
+
+
+        return validateSignatures(inputAddress, signatureFragments.toArray(new String[signatureFragments.size()]), bundleHash);
+    }
+
 
     public Boolean validateSignatures(String expectedAddress, String[] signatureFragments, String bundleHash) {
 

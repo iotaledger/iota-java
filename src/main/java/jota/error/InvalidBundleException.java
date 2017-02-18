@@ -1,15 +1,23 @@
 package jota.error;
 
 /**
- * Created by Adrian on 27.12.2016.
+ * This exceptions occurs if an invalid bundle was found or provided.
+ *
+ * @author Adrian
  */
 public class InvalidBundleException extends BaseException {
 
-    public InvalidBundleException(){
+    /**
+     * Initializes a new instance of the InvalidBundleException.
+     */
+    public InvalidBundleException() {
         super("Invalid Bundle");
     }
 
-    public InvalidBundleException(String msg){
+    /**
+     * Initializes a new instance of the InvalidBundleException.
+     */
+    public InvalidBundleException(String msg) {
         super(msg);
     }
 }

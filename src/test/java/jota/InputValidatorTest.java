@@ -1,5 +1,6 @@
 package jota;
 
+import jota.error.InvalidAddressException;
 import jota.model.Transfer;
 import jota.utils.InputValidator;
 import org.junit.Test;
@@ -10,7 +11,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by pinpong on 02.12.16.
+ * @author pinpong
  */
 public class InputValidatorTest {
 
@@ -20,13 +21,14 @@ public class InputValidatorTest {
     private static final String TEST_HASH = "OAATQS9VQLSXCLDJVJJVYUGONXAXOFMJOZNSYWRZSWECMXAQQURHQBJNLD9IOFEPGZEPEMPXCIVRX9999";
     private static final String TEST_MESSAGE = "JOTA";
     private static final String TEST_TAG = "JOTASPAM9999999999999999999";
+
     @Test
     public void shouldIsAddress() {
         assertEquals(InputValidator.isAddress(TEST_ADDRESS_WITHOUT_CHECKSUM), true);
     }
 
     @Test
-    public void shouldCheckAddress() {
+    public void shouldCheckAddress() throws InvalidAddressException {
         assertEquals(InputValidator.checkAddress(TEST_ADDRESS_WITHOUT_CHECKSUM), true);
     }
 
@@ -50,6 +52,6 @@ public class InputValidatorTest {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
-        assertEquals(InputValidator.isTransfersCollectionCorrect(transfers), true);
+        assertEquals(InputValidator.isTransfersCollectionValid(transfers), true);
     }
 }

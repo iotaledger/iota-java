@@ -7,6 +7,9 @@ package jota.pow;
  */
 public class JCurl implements ICurl {
 
+    /**
+     * The hash length.
+     */
     public static final int HASH_LENGTH = 243;
     private static final int STATE_LENGTH = 3 * HASH_LENGTH;
 
@@ -15,6 +18,14 @@ public class JCurl implements ICurl {
 
     private int[] state = new int[STATE_LENGTH];
 
+    /**
+     * Absorbs the specified trits.
+     *
+     * @param trits  The trits.
+     * @param offset The offset to start from.
+     * @param length The length.
+     * @return The ICurl instance (used for method chaining).
+     */
     public JCurl absorb(final int[] trits, int offset, int length) {
 
         do {
@@ -22,16 +33,25 @@ public class JCurl implements ICurl {
             transform();
             offset += HASH_LENGTH;
         } while ((length -= HASH_LENGTH) > 0);
-        
+
         return this;
     }
 
-
-
+    /**
+     * Absorbs the specified trits.
+     *
+     * @param trits The trits.
+     * @return The ICurl instance (used for method chaining).
+     */
     public JCurl absorb(final int[] trits) {
         return absorb(trits, 0, trits.length);
     }
 
+    /**
+     * Transforms this instance.
+     *
+     * @return The ICurl instance (used for method chaining).
+     */
     public JCurl transform() {
 
         final int[] scratchpad = new int[STATE_LENGTH];
@@ -45,13 +65,26 @@ public class JCurl implements ICurl {
         return this;
     }
 
+    /**
+     * Resets this state.
+     *
+     * @return The ICurl instance (used for method chaining).
+     */
     public JCurl reset() {
         for (int stateIndex = 0; stateIndex < STATE_LENGTH; stateIndex++) {
             state[stateIndex] = 0;
         }
         return this;
     }
-    
+
+    /**
+     * Squeezes the specified trits.
+     *
+     * @param trits  The trits.
+     * @param offset The offset to start from.
+     * @param length The length.
+     * @return The squeezes trits.
+     */
     public int[] squeeze(final int[] trits, int offset, int length) {
 
         do {
@@ -62,15 +95,42 @@ public class JCurl implements ICurl {
 
         return state;
     }
-    
+
+    /**
+     * Squeezes the specified trits.
+     *
+     * @param trits The trits.
+     * @return The squeezes trits.
+     */
     public int[] squeeze(final int[] trits) {
         return squeeze(trits, 0, trits.length);
     }
 
+    /**
+     * Gets the states.
+     *
+     * @return The state.
+     */
     public int[] getState() {
         return state;
     }
-    public void setState(int[] state) { 
-        this.state = state; 
+
+    /**
+     * Sets the state.
+     *
+     * @param state The states.
+     */
+    public void setState(int[] state) {
+        this.state = state;
+    }
+
+    /**
+     * Clones this instance.
+     *
+     * @return A new instance.
+     */
+    @Override
+    public ICurl clone() {
+        return new JCurl();
     }
 }

@@ -1,11 +1,14 @@
+[![Build Status](https://travis-ci.org/iotaledger/iota.lib.java.svg?branch=dev)](https://travis-ci.org/iotaledger/iota.lib.java)
+
+
 ##Introduction
 
 The JOTA library is a simple Java wrapper around [[IOTA]](http://www.iotatoken.com/) Node's JSON-REST HTTP interface.
 
 It allows to connect easily using java directly to a local or a remote [[IOTA node]](https://iota.readme.io/docs/syncing-to-the-network).
 
-* **Latest release:** 0.9.0 RC1
-* **Compatibility:** fully compatible with IOTA IRI v1.2.4
+* **Latest release:** 0.9.1
+* **Compatibility:** fully compatible with IOTA IRI v1.2.6
 * **API coverage:** 14 of 14 commands fully implemented
 * **License:** Apache License 2.0 
 * **Readme updated:** 2016-01-19 21:05:02 (UTC)
@@ -51,13 +54,13 @@ In order to communicate with *IOTA node*, JOTA needs to be aware of your node's 
     iota.node.host=127.0.0.1
     iota.node.port=14265
 
-Jota is still *not* in the central maven repository. It will be available when it will cover 100% iota's rest interface.
+Jota is still *not* in the central maven repository. 
 
 ##Warning
  -   This is pre-release software!
  -   There may be performance and stability issues.
  -   You may loose all your money :)
- -   Please report any issues using the <a href="">Issue Tracker</a>"
+ -   Please report any issues using the <a href="https://github.com/iotaledger/iota.lib.java/issues">Issue Tracker</a>
 
 That's it!
 	
@@ -67,7 +70,4 @@ There's an extensive list of test coverages on the src/test/java package of the 
 
 ##Supporting the project
 
-If JOTA has been useful to you and you feel like contributing, consider posting a bug report or a pull request. Alternatively, donations are very welcome too!
-
-* Bitcoin (Gianni Davassi): `3FGCHqhG1SUpgn2eS1Agq2KnxJemWnQFbB`
-* Bitcoin (Adrian Ziser): `3FGCHqhG1SUpgn2eS1Agq2KnxJemWnQFbB`
+If JOTA has been useful to you and you feel like contributing, consider posting a bug report or a pull request.

@@ -1,10 +1,15 @@
 package jota.error;
 
 /**
- * Created by Adrian on 22.01.2017.
+ * This exceptions occurs if its not possible to broadcast and store.
+ *
+ * @author Adrian
  */
 public class BroadcastAndStoreException extends BaseException {
 
+    /**
+     * Initializes a new instance of the BroadcastAndStoreException.
+     */
     public BroadcastAndStoreException() {
         super("Impossible to broadcastAndStore, aborting.");
     }

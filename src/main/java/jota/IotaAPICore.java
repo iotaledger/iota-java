@@ -2,6 +2,8 @@ package jota;
 
 import jota.dto.request.*;
 import jota.dto.response.*;
+import jota.error.InvalidTrytesException;
+import jota.utils.InputValidator;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +20,9 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Adrian on 15.01.2017.
+ * This class provides access to the Iota core API
+ *
+ * @author Adrian
  */
 public class IotaAPICore {
 
@@ -27,6 +31,11 @@ public class IotaAPICore {
     private IotaAPIService service;
     private String protocol, host, port;
 
+    /**
+     * Build the API core.
+     *
+     * @param builder The builder.
+     */
     protected IotaAPICore(final Builder builder) {
         protocol = builder.protocol;
         host = builder.host;
@@ -34,6 +43,11 @@ public class IotaAPICore {
         postConstruct();
     }
 
+    /**
+     * @param call
+     * @param <T>
+     * @return
+     */
     protected static <T> Response<T> wrapCheckedException(final Call<T> call) {
         try {
             final Response<T> res = call.execute();
@@ -51,6 +65,11 @@ public class IotaAPICore {
         }
     }
 
+    /**
+     * @param env
+     * @param def
+     * @return
+     */
     private static String env(String env, String def) {
         final String value = System.getenv(env);
         if (value == null) {
@@ -61,6 +80,9 @@ public class IotaAPICore {
         return value;
     }
 
+    /**
+     *
+     */
     private void postConstruct() {
 
         final String nodeUrl = protocol + "://" + host + ":" + port;
@@ -165,7 +187,11 @@ public class IotaAPICore {
         return wrapCheckedException(res).body();
     }
 
-    public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) {
+    public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws InvalidTrytesException {
+        if (!InputValidator.isArrayOfTrytes(trytes)) {
+            throw new InvalidTrytesException();
+        }
+
         final Call<GetAttachToTangleResponse> res = service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
         return wrapCheckedException(res).body();
     }
@@ -181,7 +207,7 @@ public class IotaAPICore {
     }
 
     @SuppressWarnings("unchecked")
-    public static class Builder <T extends Builder<T>> {
+    public static class Builder<T extends Builder<T>> {
 
         String protocol, host, port;
 
@@ -201,6 +227,9 @@ public class IotaAPICore {
             return new IotaAPICore(this);
         }
 
+        /**
+         * @return
+         */
         private boolean checkPropertiesFiles() {
 
             try {
@@ -229,25 +258,40 @@ public class IotaAPICore {
             return (port != null && protocol != null && host != null);
         }
 
+        /**
+         *
+         */
         private void checkEnviromentVariables() {
             protocol = env("IOTA_NODE_PROTOCOL", "http");
             host = env("IOTA_NODE_HOST", "localhost");
             port = env("IOTA_NODE_PORT", "14265");
         }
 
+        /**
+         * @param host
+         * @return
+         */
         public T host(String host) {
             this.host = host;
             return (T) this;
         }
 
+        /**
+         * @param port
+         * @return
+         */
         public T port(String port) {
             this.port = port;
             return (T) this;
         }
 
+        /**
+         * @param protocol
+         * @return
+         */
         public T protocol(String protocol) {
             this.protocol = protocol;
-            return (T)  this;
+            return (T) this;
         }
 
     }
