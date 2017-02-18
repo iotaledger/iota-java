@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/iotaledger/iota.lib.java.svg?branch=dev)](https://travis-ci.org/iotaledger/iota.lib.java)
+[![Build Status](https://travis-ci.org/iotaledger/iota.lib.java.svg?branch=master)](https://travis-ci.org/iotaledger/iota.lib.java)
 
 
 ##Introduction
@@ -54,7 +54,8 @@ In order to communicate with *IOTA node*, JOTA needs to be aware of your node's 
     iota.node.host=127.0.0.1
     iota.node.port=14265
 
-Jota is still *not* in the central maven repository. 
+Jota is still *not* in the central maven repository.
+
 
 ##Warning
  -   This is pre-release software!
@@ -62,12 +63,17 @@ Jota is still *not* in the central maven repository.
  -   You may loose all your money :)
  -   Please report any issues using the <a href="https://github.com/iotaledger/iota.lib.java/issues">Issue Tracker</a>
 
-That's it!
-	
 ##Examples
 
 There's an extensive list of test coverages on the src/test/java package of the project that can be used as reference.
 
+##Documentation
+
+A hosted version of the javadoc for the latest release can be found [here](https://iotaledger.github.io/iota.lib.java/javadoc/)
+
+
 ##Supporting the project
 
 If JOTA has been useful to you and you feel like contributing, consider posting a bug report or a pull request.
+
+That's it!
