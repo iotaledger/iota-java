@@ -1,7 +1,7 @@
 package jota.dto.response;
 
 /**
- * Response of {@link jota.dto.request.IotaStoreTransactionsRequest}
+ * Response of {@link jota.dto.request.IotaStoreTransactionsRequest}.
  **/
 public class StoreTransactionsResponse extends AbstractResponse {
 

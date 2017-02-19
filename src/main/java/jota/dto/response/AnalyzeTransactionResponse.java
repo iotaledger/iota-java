@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Response of {@link jota.dto.request.IotaGetBalancesRequest}
+ * Response of {@link jota.dto.request.IotaGetBalancesRequest}.
  **/
 public class AnalyzeTransactionResponse extends AbstractResponse {
 

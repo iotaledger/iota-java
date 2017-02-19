@@ -1,7 +1,7 @@
 package jota.dto.response;
 
 /**
- * Response of {@link jota.dto.request.IotaNeighborsRequest}
+ * Response of {@link jota.dto.request.IotaNeighborsRequest}.
  **/
 public class GetNodeInfoResponse extends AbstractResponse {
 

@@ -3,7 +3,7 @@ package jota.dto.response;
 import java.util.List;
 
 /**
- * Response of api request 'getNewAddress'
+ * Response of api request 'getNewAddress'.
  **/
 public class GetNewAddressResponse extends AbstractResponse {
 

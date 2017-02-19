@@ -14,21 +14,27 @@ public class Multisig {
     private ICurl curl;
     private Signing signingInstance;
 
+    /**
+     * Initializes a new instance of the Multisig class.
+     */
     public Multisig(ICurl customCurl) {
         this.curl = customCurl;
         this.curl.reset();
         this.signingInstance = new Signing(curl.clone());
     }
 
+    /**
+     * Initializes a new instance of the Multisig class.
+     */
     public Multisig() {
         this(new JCurl());
     }
 
     /**
-     * @param seed     tryte-encoded seed. It should be noted that this seed is not transferred
-     * @param security security secuirty level of private key / seed
-     * @param index
-     * @return digest trytes
+     * @param seed Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security Secuirty level of private key / seed.
+     * @param index Key index to start search from. If the index is provided, the generation of the address is not deterministic.
+     * @return trytes
      **/
     public String getDigest(String seed, int security, int index) {
         int[] key = signingInstance.key(Converter.trits(seed, 243), index, security);
@@ -40,8 +46,7 @@ public class Multisig {
      *
      * @param digestTrytes
      * @param curlStateTrytes
-     * @return digest trytes
-     * @method addAddressDigest
+     * @return trytes.
      **/
     public String addAddressDigest(String digestTrytes, String curlStateTrytes) {
 
@@ -65,9 +70,9 @@ public class Multisig {
     /**
      * Gets the key value of a seed
      *
-     * @param seed  tryte-encoded seed. It should be noted that this seed is not transferred
-     * @param index
-     * @return digest trytes
+     * @param seed Tryte-encoded seed. It should be noted that this seed is not transferred
+     * @param index Key index to start search from. If the index is provided, the generation of the address is not deterministic.
+     * @return trytes.
      **/
 
     public String getKey(String seed, int index, int security) {

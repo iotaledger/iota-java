@@ -5,7 +5,7 @@ import jota.model.Input;
 import java.util.List;
 
 /**
- * Response of api request 'getBalancesAndFormatResponse'
+ * Response of api request 'getBalancesAndFormatResponse'.
  **/
 public class GetBalancesAndFormatResponse extends AbstractResponse {
 

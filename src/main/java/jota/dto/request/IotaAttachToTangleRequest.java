@@ -4,6 +4,7 @@ import jota.IotaAPICommands;
 
 /**
  * This class represents the core API request 'attachToTangle'.
+ *
  * It is used to attach trytes to the tangle.
  **/
 public class IotaAttachToTangleRequest extends IotaCommandRequest {
