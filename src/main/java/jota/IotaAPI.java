@@ -456,7 +456,7 @@ public class IotaAPI extends IotaAPICore {
                     throw new IllegalStateException("Not enough balance");
                 }
 
-                return addRemainder(seed, security, confirmedInputs, bundle, tag, totalValue, null, signatureFragments);
+                return addRemainder(seed, security, confirmedInputs, bundle, tag, totalValue, remainder, signatureFragments);
             }
 
             //  Case 2: Get inputs deterministically
@@ -467,7 +467,7 @@ public class IotaAPI extends IotaAPICore {
 
                 @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newinputs = getInputs(seed, security, 0, 0, totalValue);
                 // If inputs with enough balance
-                return addRemainder(seed, security, newinputs.getInput(), bundle, tag, totalValue, null, signatureFragments);
+                return addRemainder(seed, security, newinputs.getInput(), bundle, tag, totalValue, remainder, signatureFragments);
             }
         } else {
 
