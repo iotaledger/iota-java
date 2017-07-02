@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/iotaledger/iota.lib.java.svg?branch=dev)](https://travis-ci.org/iotaledger/iota.lib.java)
+[![Build Status](https://travis-ci.org/iotaledger/iota.lib.java.svg?branch=master)](https://travis-ci.org/iotaledger/iota.lib.java)
 
 
-##Introduction
+## Introduction
 
 The JOTA library is a simple Java wrapper around [[IOTA]](http://www.iotatoken.com/) Node's JSON-REST HTTP interface.
 
@@ -18,7 +18,7 @@ A list of all *IOTA* JSON-REST API commands currently supported by jota wrapper 
 JOTA java wrapper is being designed to be thread-safe and simplest as possible in order to be easily mantainable, accordingly with the ongoing natural evolution of IOTA'api.
 All the boilerplate code for connecting to the node rest interface has been eliminated using Retrofit.
 
-##Technologies & dependencies
+## Technologies & dependencies
 
 The JOTA library has been designed to be used with Java6+, in order to promote compatibility with Android.
 
@@ -31,7 +31,7 @@ Other dependencies:
 * Simple Logging Facade for Java 1.7.21 [[link]](http://www.slf4j.org/)
 * Apache Commons Lang 3.3.2 [[link]](http://commons.apache.org/proper/commons-lang/)
 
-##Getting started <a name="getting-started"></a>
+## Getting started <a name="getting-started"></a>
 
 Connect to your local node with the default settings is quite straightforward: it requires only 2 lines of code. For example, in order to fetch the Node Info:
 
@@ -54,20 +54,26 @@ In order to communicate with *IOTA node*, JOTA needs to be aware of your node's 
     iota.node.host=127.0.0.1
     iota.node.port=14265
 
-Jota is still *not* in the central maven repository. 
+Jota is still *not* in the central maven repository.
 
-##Warning
+
+## Warning
  -   This is pre-release software!
  -   There may be performance and stability issues.
  -   You may loose all your money :)
  -   Please report any issues using the <a href="https://github.com/iotaledger/iota.lib.java/issues">Issue Tracker</a>
 
-That's it!
-	
-##Examples
+## Examples
 
 There's an extensive list of test coverages on the src/test/java package of the project that can be used as reference.
 
-##Supporting the project
+## Documentation
+
+A hosted version of the javadoc for the latest release can be found [here](https://iotaledger.github.io/iota.lib.java/javadoc/)
+
+
+## Supporting the project
 
 If JOTA has been useful to you and you feel like contributing, consider posting a bug report or a pull request.
+
+That's it!

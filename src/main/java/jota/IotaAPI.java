@@ -438,6 +438,8 @@ public class IotaAPI extends IotaAPICore {
                 return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
             //  Case 1: user provided inputs
             //  Validate the inputs by calling getBalances
+            if(!validateInputs)
+                return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
             if (inputs != null && !inputs.isEmpty()) {
 
                 // Get list if addresses of the provided inputs
