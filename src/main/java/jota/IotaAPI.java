@@ -338,6 +338,24 @@ public class IotaAPI extends IotaAPICore {
      * @throws InvalidTransferException      is thrown when an invalid transfer is provided.
      */
     public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException, InvalidTransferException {
+        return prepareTransfers(seed, security, transfers, remainder, inputs, true);
+    }
+    /**
+     * Prepares transfer by generating bundle, finding and signing inputs.
+     *
+     * @param seed      81-tryte encoded address of recipient.
+     * @param security  The security level of private key / seed.
+     * @param transfers Array of transfer objects.
+     * @param remainder If defined, this address will be used for sending the remainder value (of the inputs) to.
+     * @param inputs    The inputs.
+     * @param validateInputs whether or not to validate the balances of the provided inputs
+     * @return Returns bundle trytes.
+     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
+     * @throws NotEnoughBalanceException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
+     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws InvalidTransferException      is thrown when an invalid transfer is provided.
+     */
+    public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs, boolean validateInputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException, InvalidTransferException {
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionValid(transfers)) {
@@ -419,6 +437,8 @@ public class IotaAPI extends IotaAPICore {
 
             //  Case 1: user provided inputs
             //  Validate the inputs by calling getBalances
+            if(!validateInputs)
+                return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
             if (inputs != null && !inputs.isEmpty()) {
 
                 // Get list if addresses of the provided inputs
@@ -456,7 +476,7 @@ public class IotaAPI extends IotaAPICore {
                     throw new IllegalStateException("Not enough balance");
                 }
 
-                return addRemainder(seed, security, confirmedInputs, bundle, tag, totalValue, null, signatureFragments);
+                return addRemainder(seed, security, confirmedInputs, bundle, tag, totalValue, remainder, signatureFragments);
             }
 
             //  Case 2: Get inputs deterministically
@@ -467,7 +487,7 @@ public class IotaAPI extends IotaAPICore {
 
                 @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newinputs = getInputs(seed, security, 0, 0, totalValue);
                 // If inputs with enough balance
-                return addRemainder(seed, security, newinputs.getInput(), bundle, tag, totalValue, null, signatureFragments);
+                return addRemainder(seed, security, newinputs.getInput(), bundle, tag, totalValue, remainder, signatureFragments);
             }
         } else {
 
