@@ -338,6 +338,24 @@ public class IotaAPI extends IotaAPICore {
      * @throws InvalidTransferException      is thrown when an invalid transfer is provided.
      */
     public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException, InvalidTransferException {
+        return prepareTransfers(seed, security, transfers, remainder, inputs, true);
+    }
+    /**
+     * Prepares transfer by generating bundle, finding and signing inputs.
+     *
+     * @param seed      81-tryte encoded address of recipient.
+     * @param security  The security level of private key / seed.
+     * @param transfers Array of transfer objects.
+     * @param remainder If defined, this address will be used for sending the remainder value (of the inputs) to.
+     * @param inputs    The inputs.
+     * @param validateInputs whether or not to validate the balances of the provided inputs
+     * @return Returns bundle trytes.
+     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
+     * @throws NotEnoughBalanceException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
+     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws InvalidTransferException      is thrown when an invalid transfer is provided.
+     */
+    public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs, boolean validateInputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException, InvalidTransferException {
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionValid(transfers)) {
@@ -416,7 +434,8 @@ public class IotaAPI extends IotaAPICore {
 
         // Get inputs if we are sending tokens
         if (totalValue != 0) {
-
+            if(!validateInputs)
+                return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
             //  Case 1: user provided inputs
             //  Validate the inputs by calling getBalances
             if (inputs != null && !inputs.isEmpty()) {
