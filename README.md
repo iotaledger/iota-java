@@ -35,15 +35,15 @@ Other dependencies:
 
 Connect to your local node with the default settings is quite straightforward: it requires only 2 lines of code. For example, in order to fetch the Node Info:
 
-	IotaApi api = new IotaApi.Builder.build();
-	GetNodeInfoResponse response = api.getNodeInfo();
+        IotaAPI api = new IotaAPI.Builder().build();
+        GetNodeInfoResponse response = api.getNodeInfo();
 
 of if you need to connect to a remote node:
 
-	IotaApi api = new IotaApi.Builder 
+	IotaAPI api = new IotaAPI.Builder() 
 		.protocol("http")
-		.nodeAddress("somewhere_over_the_rainbow")
-		.port(14265) 
+		.host("somewhere_over_the_rainbow")
+		.port("14265") 
 		.build();
 	
 	GetNodeInfoResponse response = api.getNodeInfo();
