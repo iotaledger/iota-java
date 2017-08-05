@@ -145,8 +145,12 @@ public class InputValidator {
             return false;
         }
 
-        // Check if tag is correct trytes of {0,27} trytes
-        return isTrytes(transfer.getTag(), 27);
+        if (null == transfer.getTag() || transfer.getTag().isEmpty()) {
+            return true;
+        } else {
+            // Check if tag is correct trytes of {0,27} trytes
+            return isTrytes(transfer.getTag(), 27);
+        }
     }
 
     /**
