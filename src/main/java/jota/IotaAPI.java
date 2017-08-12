@@ -1,10 +1,11 @@
 package jota;
 
+import com.google.gson.Gson;
 import jota.dto.response.*;
 import jota.error.*;
 import jota.model.*;
 import jota.pow.ICurl;
-import jota.pow.JCurl;
+import jota.pow.SpongeFactory;
 import jota.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -252,6 +253,7 @@ public class IotaAPI extends IotaAPICore {
         final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth);
 
         // attach to tangle - do pow
+        System.out.println(new Gson().toJson(txs));
         final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
 
         try {
@@ -641,7 +643,7 @@ public class IotaAPI extends IotaAPICore {
         long totalSum = 0;
         String bundleHash = bundle.getTransactions().get(0).getBundle();
 
-        ICurl curl = new JCurl();
+        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
         curl.reset();
 
         List<Signature> signaturesToValidate = new ArrayList<>();
@@ -1108,7 +1110,7 @@ public class IotaAPI extends IotaAPICore {
     }
 
     public static class Builder extends IotaAPICore.Builder<Builder> {
-        private ICurl customCurl = new JCurl();
+        private ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
 
         public Builder withCustomCurl(ICurl curl) {
             customCurl = curl;

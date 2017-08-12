@@ -31,6 +31,9 @@ public class Converter {
     private static final int[][] BYTE_TO_TRITS_MAPPINGS = new int[243][];
     private static final int[][] TRYTE_TO_TRITS_MAPPINGS = new int[27][];
 
+    public static final int HIGH_INTEGER_BITS = 0xFFFFFFFF;
+    public static final long HIGH_LONG_BITS = 0xFFFFFFFFFFFFFFFFL;
+
     static {
 
         final int[] trits = new int[NUMBER_OF_TRITS_IN_A_BYTE];

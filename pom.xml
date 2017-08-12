@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.iota</groupId>
     <artifactId>jota</artifactId>
-    <version>0.9.1</version>
+    <version>0.9.2</version>
     <name>JOTA</name>
     <description>JOTA library is a simple Java wrapper around IOTA Node's JSON-REST HTTP interface.</description>
 
@@ -23,6 +23,13 @@
     </properties>
 
     <dependencies>
+
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.57</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit -->
         <dependency>

@@ -2,7 +2,7 @@ package jota.utils;
 
 import jota.model.Bundle;
 import jota.pow.ICurl;
-import jota.pow.JCurl;
+import jota.pow.SpongeFactory;
 
 import java.util.Arrays;
 
@@ -27,7 +27,7 @@ public class Multisig {
      * Initializes a new instance of the Multisig class.
      */
     public Multisig() {
-        this(new JCurl());
+        this(SpongeFactory.create(SpongeFactory.Mode.KERL));
     }
 
     /**

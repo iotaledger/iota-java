@@ -3,7 +3,7 @@ package jota.utils;
 import jota.model.Bundle;
 import jota.model.Transaction;
 import jota.pow.ICurl;
-import jota.pow.JCurl;
+import jota.pow.SpongeFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +27,7 @@ public class Signing {
      * @param curl
      */
     public Signing(ICurl curl) {
-        this.curl = curl == null ? new JCurl() : curl;
+        this.curl = curl == null ? SpongeFactory.create(SpongeFactory.Mode.KERL) : curl;
     }
 
     /**
@@ -146,7 +146,7 @@ public class Signing {
 
             for (int j = normalizedBundleFragment[i] + 13; j-- > 0; ) {
 
-                ICurl jCurl = new JCurl();
+                ICurl jCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
                 jCurl.reset();
                 jCurl.absorb(buffer);
                 jCurl.squeeze(buffer);
