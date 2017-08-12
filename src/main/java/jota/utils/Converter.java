@@ -166,7 +166,7 @@ public class Converter {
      **/
     public static int[] trits(final String trytes) {
         final List<Integer> trits = new LinkedList<>();
-        if (InputValidator.isValue(trytes)) {
+        if (trytes.length() < 20 && InputValidator.isValue(trytes)) {
 
             long value = Long.parseLong(trytes);
 

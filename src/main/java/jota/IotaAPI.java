@@ -68,6 +68,8 @@ public class IotaAPI extends IotaAPICore {
             }
             return GetNewAddressResponse.create(allAddresses, stopWatch.getElapsedTimeMili());
         }
+
+
         // No total provided: Continue calling findTransactions to see if address was
         // already created if null, return list of addresses
         for (int i = index; ; i++) {

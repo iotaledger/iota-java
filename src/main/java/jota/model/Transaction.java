@@ -392,8 +392,7 @@ public class Transaction {
         int[] transactionTrits = Converter.trits(trytes);
         int[] hash = new int[243];
 
-        final ICurl curl = customCurl == null ? SpongeFactory.create(SpongeFactory.Mode.KERL) : customCurl; // we need a fluent JCurl.
-
+        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.CURL);
         // generate the correct transaction hash
         curl.reset();
         curl.absorb(transactionTrits, 0, transactionTrits.length);
