@@ -732,23 +732,7 @@ public class IotaAPI extends IotaAPICore {
             throws InvalidBundleException, ArgumentException, InvalidSignatureException,
             InvalidTrytesException, InvalidSecurityLevelException, InvalidAddressException, NoInclusionStatesException, NoNodeInfoException {
 
-
         StopWatch stopWatch = new StopWatch();
-
-        // validate seed
-        if ((!InputValidator.isValidSeed(seed))) {
-            throw new IllegalStateException("Invalid Seed");
-        }
-
-        if (security < 1 || security > 3) {
-            throw new InvalidSecurityLevelException();
-        }
-
-        // If start value bigger than end, return error
-        // or if difference between end and start is bigger than 500 keys
-        if (start > end || end > (start + 500)) {
-            throw new IllegalStateException("Invalid inputs provided");
-        }
 
         GetNewAddressResponse gna = getNewAddress(seed, security, index, checksum, total, returnAll);
         GetTransferResponse gtr = getTransfers(seed, security, start, end, inclusionStates);
