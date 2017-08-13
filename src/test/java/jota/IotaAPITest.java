@@ -18,6 +18,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -101,10 +102,10 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldCreate100Adresses() throws InvalidSecurityLevelException, InvalidAddressException {
-        iotaClient.getNewAddress(TEST_SEED1, 2, 0, false, 10, false);
+    public void shouldCreate100Addresses() throws InvalidSecurityLevelException, InvalidAddressException {
+        GetNewAddressResponse res =  iotaClient.getNewAddress(TEST_SEED1, 2, 0, false, 100, false);
+        assertEquals(res.getAddresses().size(), 100);
     }
-
 
     @Test
     public void shouldPrepareTransfer() throws InvalidSecurityLevelException, NotEnoughBalanceException, InvalidAddressException, InvalidTransferException {
