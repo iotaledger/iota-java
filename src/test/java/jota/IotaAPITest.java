@@ -103,7 +103,7 @@ public class IotaAPITest {
 
     @Test
     public void shouldCreate100Addresses() throws InvalidSecurityLevelException, InvalidAddressException {
-        GetNewAddressResponse res =  iotaClient.getNewAddress(TEST_SEED1, 2, 0, false, 100, false);
+        GetNewAddressResponse res = iotaClient.getNewAddress(TEST_SEED1, 2, 0, false, 100, false);
         assertEquals(res.getAddresses().size(), 100);
     }
 
@@ -128,6 +128,12 @@ public class IotaAPITest {
         List<Transaction> ftr = iotaClient.findTransactionObjects(TEST_ADDRESSES);
         System.out.println(ftr);
         assertThat(ftr, IsNull.notNullValue());
+    }
+
+    @Test
+    public void shouldGetAccountData() throws NoInclusionStatesException, InvalidTrytesException, NoNodeInfoException, ArgumentException, InvalidBundleException, InvalidSecurityLevelException, InvalidAddressException, InvalidSignatureException {
+        GetAccountDataResponse gad = iotaClient.getAccountData(TEST_SEED1, 2, 0, 0, true, 100);
+        assertThat(gad, IsNull.notNullValue());
     }
 
     @Test(expected = IllegalAccessError.class)

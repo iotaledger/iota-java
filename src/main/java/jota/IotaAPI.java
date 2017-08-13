@@ -707,6 +707,53 @@ public class IotaAPI extends IotaAPICore {
     }
 
     /**
+     * Similar to getTransfers, just that it returns additional account data
+     *
+     * @param seed            Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security        The Security level of private key / seed.
+     * @param start           Starting key index.
+     * @param end             Ending key index.
+     * @param inclusionStates If <code>true</code>, it gets the inclusion states of the transfers.
+     * @param threshold       Min balance required.
+     * @throws InvalidBundleException        is thrown if an invalid bundle was found or provided.
+     * @throws ArgumentException             is thrown when an invalid argument is provided.
+     * @throws InvalidSignatureException     is thrown when an invalid signature is encountered.
+     * @throws InvalidTrytesException        is thrown when invalid trytes is provided.
+     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
+     * @throws NoInclusionStatesException    when it not possible to get a inclusion state.
+     * @throws NoNodeInfoException           is thrown when its not possible to get node info.
+     */
+    public GetAccountDataResponse getAccountData(String seed, int security, int start, int end, boolean inclusionStates, long threshold)
+            throws InvalidBundleException, ArgumentException, InvalidSignatureException,
+            InvalidTrytesException, InvalidSecurityLevelException, InvalidAddressException, NoInclusionStatesException, NoNodeInfoException {
+
+
+        StopWatch stopWatch = new StopWatch();
+
+        // validate seed
+        if ((!InputValidator.isValidSeed(seed))) {
+            throw new IllegalStateException("Invalid Seed");
+        }
+
+        if (security < 1 || security > 3) {
+            throw new InvalidSecurityLevelException();
+        }
+
+        // If start value bigger than end, return error
+        // or if difference between end and start is bigger than 500 keys
+        if (start > end || end > (start + 500)) {
+            throw new IllegalStateException("Invalid inputs provided");
+        }
+
+        GetNewAddressResponse gna = getNewAddress(seed, security, 0, true, 0, true);
+        GetTransferResponse gtr = getTransfers(seed, security, start, end, inclusionStates);
+        GetBalancesAndFormatResponse gbr = getInputs(seed, security, start, end, threshold);
+
+        return GetAccountDataResponse.create(gna.getAddresses(), gtr.getTransfers(), gbr.getTotalBalance(), stopWatch.getElapsedTimeMili());
+    }
+
+    /**
      * Replays a transfer by doing Proof of Work again.
      *
      * @param transaction        The transaction.
