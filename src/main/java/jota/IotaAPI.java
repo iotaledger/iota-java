@@ -109,8 +109,8 @@ public class IotaAPI extends IotaAPICore {
      */
     public GetTransferResponse getTransfers(String seed, int security, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoNodeInfoException, NoInclusionStatesException, InvalidSecurityLevelException, InvalidAddressException {
         StopWatch stopWatch = new StopWatch();
-        // validate & if needed pad seed
-        if ((seed = InputValidator.validateSeed(seed)) == null) {
+        // validate seed
+        if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException("Invalid Seed");
         }
 
@@ -344,14 +344,15 @@ public class IotaAPI extends IotaAPICore {
     public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException, InvalidTransferException {
         return prepareTransfers(seed, security, transfers, remainder, inputs, true);
     }
+
     /**
      * Prepares transfer by generating bundle, finding and signing inputs.
      *
-     * @param seed      81-tryte encoded address of recipient.
-     * @param security  The security level of private key / seed.
-     * @param transfers Array of transfer objects.
-     * @param remainder If defined, this address will be used for sending the remainder value (of the inputs) to.
-     * @param inputs    The inputs.
+     * @param seed           81-tryte encoded address of recipient.
+     * @param security       The security level of private key / seed.
+     * @param transfers      Array of transfer objects.
+     * @param remainder      If defined, this address will be used for sending the remainder value (of the inputs) to.
+     * @param inputs         The inputs.
      * @param validateInputs whether or not to validate the balances of the provided inputs
      * @return Returns bundle trytes.
      * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
@@ -366,8 +367,8 @@ public class IotaAPI extends IotaAPICore {
             throw new InvalidTransferException();
         }
 
-        // validate & if needed pad seed
-        if ((seed = InputValidator.validateSeed(seed)) == null) {
+        // validate seed
+        if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException("Invalid Seed");
         }
 
@@ -438,11 +439,11 @@ public class IotaAPI extends IotaAPICore {
 
         // Get inputs if we are sending tokens
         if (totalValue != 0) {
-            if(!validateInputs)
+            if (!validateInputs)
                 return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
             //  Case 1: user provided inputs
             //  Validate the inputs by calling getBalances
-            if(!validateInputs)
+            if (!validateInputs)
                 return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
             if (inputs != null && !inputs.isEmpty()) {
 
@@ -524,13 +525,9 @@ public class IotaAPI extends IotaAPICore {
      **/
     public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold) throws InvalidSecurityLevelException, InvalidAddressException {
         StopWatch stopWatch = new StopWatch();
-        // validate the seed
-        if (!InputValidator.isTrytes(seed, 0)) {
-            throw new IllegalStateException("Invalid Seed");
-        }
 
-        // validate & if needed pad seed
-        if ((seed = InputValidator.validateSeed(seed)) == null) {
+        // validate the seed
+        if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException("Invalid Seed");
         }
 

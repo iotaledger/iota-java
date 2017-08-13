@@ -43,6 +43,7 @@ public class JCurl implements ICurl {
             stateLow = null;
         }
     }
+
     /**
      * Absorbs the specified trits.
      *

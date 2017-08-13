@@ -9,30 +9,26 @@ import java.util.List;
  */
 public class Converter {
 
+    public static final int HIGH_INTEGER_BITS = 0xFFFFFFFF;
+    public static final long HIGH_LONG_BITS = 0xFFFFFFFFFFFFFFFFL;
     /**
      * The radix
      */
     private static final int RADIX = 3;
-
     /**
      * The maximum trit value
      */
     private static final int MAX_TRIT_VALUE = (RADIX - 1) / 2, MIN_TRIT_VALUE = -MAX_TRIT_VALUE;
-
     /**
      * The number of trits in a byte
      */
     private static final int NUMBER_OF_TRITS_IN_A_BYTE = 5;
-
     /**
      * The number of trits in a tryte
      */
     private static final int NUMBER_OF_TRITS_IN_A_TRYTE = 3;
     private static final int[][] BYTE_TO_TRITS_MAPPINGS = new int[243][];
     private static final int[][] TRYTE_TO_TRITS_MAPPINGS = new int[27][];
-
-    public static final int HIGH_INTEGER_BITS = 0xFFFFFFFF;
-    public static final long HIGH_LONG_BITS = 0xFFFFFFFFFFFFFFFFL;
 
     static {
 

@@ -31,9 +31,9 @@ public class Multisig {
     }
 
     /**
-     * @param seed Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param seed     Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security Secuirty level of private key / seed.
-     * @param index Key index to start search from. If the index is provided, the generation of the address is not deterministic.
+     * @param index    Key index to start search from. If the index is provided, the generation of the address is not deterministic.
      * @return trytes
      **/
     public String getDigest(String seed, int security, int index) {
@@ -70,7 +70,7 @@ public class Multisig {
     /**
      * Gets the key value of a seed
      *
-     * @param seed Tryte-encoded seed. It should be noted that this seed is not transferred
+     * @param seed  Tryte-encoded seed. It should be noted that this seed is not transferred
      * @param index Key index to start search from. If the index is provided, the generation of the address is not deterministic.
      * @return trytes.
      **/
