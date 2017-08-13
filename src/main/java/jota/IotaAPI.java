@@ -711,6 +711,10 @@ public class IotaAPI extends IotaAPICore {
      *
      * @param seed            Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security        The Security level of private key / seed.
+     * @param index           Key index to start search from. If the index is provided, the generation of the address is not deterministic.
+     * @param checksum        Adds 9-tryte address checksum.
+     * @param total           Total number of addresses to generate.
+     * @param returnAll       If <code>true</code>, it returns all addresses which were deterministically generated (until findTransactions returns null).
      * @param start           Starting key index.
      * @param end             Ending key index.
      * @param inclusionStates If <code>true</code>, it gets the inclusion states of the transfers.
@@ -721,10 +725,10 @@ public class IotaAPI extends IotaAPICore {
      * @throws InvalidTrytesException        is thrown when invalid trytes is provided.
      * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
-     * @throws NoInclusionStatesException    when it not possible to get a inclusion state.
+     * @throws NoInclusionStatesException    is thrown when it not possible to get a inclusion state.
      * @throws NoNodeInfoException           is thrown when its not possible to get node info.
      */
-    public GetAccountDataResponse getAccountData(String seed, int security, int start, int end, boolean inclusionStates, long threshold)
+    public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, boolean returnAll, int start, int end, boolean inclusionStates, long threshold)
             throws InvalidBundleException, ArgumentException, InvalidSignatureException,
             InvalidTrytesException, InvalidSecurityLevelException, InvalidAddressException, NoInclusionStatesException, NoNodeInfoException {
 
@@ -746,7 +750,7 @@ public class IotaAPI extends IotaAPICore {
             throw new IllegalStateException("Invalid inputs provided");
         }
 
-        GetNewAddressResponse gna = getNewAddress(seed, security, 0, true, 0, true);
+        GetNewAddressResponse gna = getNewAddress(seed, security, index, checksum, total, returnAll);
         GetTransferResponse gtr = getTransfers(seed, security, start, end, inclusionStates);
         GetBalancesAndFormatResponse gbr = getInputs(seed, security, start, end, threshold);
 
