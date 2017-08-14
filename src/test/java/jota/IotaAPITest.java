@@ -132,7 +132,7 @@ public class IotaAPITest {
 
     @Test
     public void shouldGetAccountData() throws NoInclusionStatesException, InvalidTrytesException, NoNodeInfoException, ArgumentException, InvalidBundleException, InvalidSecurityLevelException, InvalidAddressException, InvalidSignatureException {
-        GetAccountDataResponse gad = iotaClient.getAccountData(TEST_SEED1, 2, 0, true, 0, true, 0, 0, true, 100);
+        GetAccountDataResponse gad = iotaClient.getAccountData(TEST_SEED1, 2, 0, true, 0, true, 0, 0, true, 0);
         assertThat(gad, IsNull.notNullValue());
     }
 
