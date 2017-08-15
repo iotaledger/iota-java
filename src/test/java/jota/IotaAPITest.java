@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -76,8 +77,40 @@ public class IotaAPITest {
     public void shouldCreateIotaApiProxyInstanceWithDefaultValues() {
         IotaAPI proxy = new IotaAPI.Builder().build();
         assertThat(proxy, IsNull.notNullValue());
+        assertThat(proxy.getHost(), Is.is("localhost"));
+        assertThat(proxy.getPort(), Is.is("14265"));
+        assertThat(proxy.getProtocol(), Is.is("http"));
     }
 
+    @Test
+    public void shouldRetainValuesFromBuilder() {
+        IotaAPI proxy = new IotaAPI.Builder().host("somewhere_over_the_rainbow").build();
+        assertThat(proxy.getHost(), Is.is("somewhere_over_the_rainbow"));
+
+        proxy = new IotaAPI.Builder().port("15515").build();
+        assertThat(proxy.getPort(), Is.is("15515"));
+
+        proxy = new IotaAPI.Builder().protocol("https").build();
+        assertThat(proxy.getProtocol(), Is.is("https"));
+    }
+
+    @Test
+    public void shouldGetValuesFromProperties() {
+        Properties properties = new Properties();
+        properties.put("iota.node.host", "somewhere_over_the_rainbow");
+        IotaAPI proxy = new IotaAPI.Builder().config(properties).build();
+        assertThat(proxy.getHost(), Is.is("somewhere_over_the_rainbow"));
+
+        properties = new Properties();
+        properties.put("iota.node.port", "15515");
+        proxy = new IotaAPI.Builder().config(properties).build();
+        assertThat(proxy.getPort(), Is.is("15515"));
+
+        properties = new Properties();
+        properties.put("iota.node.protocol", "https");
+        proxy = new IotaAPI.Builder().config(properties).build();
+        assertThat(proxy.getProtocol(), Is.is("https"));
+    }
 
     @Test
     public void shouldGetInputs() throws InvalidSecurityLevelException, InvalidAddressException {
