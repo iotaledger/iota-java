@@ -4,7 +4,7 @@ if [ "$TRAVIS_REPO_SLUG" == "iotaledger/iota.lib.java" ] && [ "$TRAVIS_PULL_REQU
 
   echo -e "Publishing javadoc...\n"
 
-  cp -R "/home/travis/build/iotaledger/iota.lib.java/target/apidocs/" $HOME/javadoc-latest
+  cp -R "/home/travis/build/iotaledger/iota.lib.java/jota/target/apidocs/" $HOME/javadoc-latest
 
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
