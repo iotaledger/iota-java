@@ -1,9 +1,10 @@
 package jota.pow;
 
+import jota.utils.Pair;
 import org.bouncycastle.jcajce.provider.digest.Keccak;
 
-import java.math.BigInteger;
-import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class Kerl extends JCurl {
 
@@ -17,75 +18,259 @@ public class Kerl extends JCurl {
     private byte[] byte_state;
     private int[] trit_state;
 
-    public Kerl() {
+    private static final int[] HALF_3 = new int[]{
+            0xa5ce8964, 0x9f007669, 0x1484504f, 0x3ade00d9, 0x0c24486e, 0x50979d57, 0x79a4c702, 0x48bbae36, 0xa9f6808b, 0xaa06a805, 0xa87fabdf, 0x5e69ebef};
+    private static int BYTE_LENGTH = 48;
+    private static int INT_LENGTH = BYTE_LENGTH / 4;
+
+    Kerl() {
         super();
         this.keccak = new Keccak.Digest384();
         this.byte_state = new byte[BYTE_HASH_LENGTH];
         this.trit_state = new int[HASH_LENGTH];
     }
 
-    public static BigInteger convertTritsToBigint(final int[] trits, final int offset, final int size) {
+    private static final long toUnsignedLong(int i) {
+        return i & 0xFFFFFFFFL;
+    }
 
-        BigInteger value = BigInteger.ZERO;
+    private static int toUnsignedInt(byte x) {
+        return x & 0xff;
+    }
 
-        for (int i = size; i-- > 0; ) {
-
-            value = value.multiply(BigInteger.valueOf(RADIX)).add(BigInteger.valueOf(trits[offset + i]));
+    private static int sum(int[] toSum) {
+        int sum = 0;
+        for (int i = 0; i < toSum.length; i++) {
+            sum += toSum[i];
         }
-
-        return value;
+        return sum;
     }
 
-    private static BigInteger convertBytesToBigInt(final byte[] bytes, final int offset, final int size) {
+    public static byte[] convertTritsToBytes(final int[] trits) {
+        if (trits.length != Kerl.HASH_LENGTH) {
+            throw new RuntimeException("Input trits length must be " + Kerl.HASH_LENGTH + "in length");
+        }
+        int[] base = new int[INT_LENGTH];
 
-        return new BigInteger(Arrays.copyOfRange(bytes, offset, offset + size));
-    }
+        Set<Integer> setUniqueNumbers = new LinkedHashSet<Integer>();
+        for (int x : trits) {
+            setUniqueNumbers.add(x);
+        }
+        if (setUniqueNumbers.size() == 1 && setUniqueNumbers.contains(-1)) {
+            base = HALF_3.clone();
+            bigint_not(base);
+            bigint_add(base, 1);
+        } else {
+            int size = INT_LENGTH;
+            for (int i = Kerl.HASH_LENGTH - 1; i-- > 0; ) {
+                { // Multiply by radix
+                    int sz = size;
+                    int carry = 0;
 
-    private static int[] convertBigintToTrits(final BigInteger value, int size) {
+                    for (int j = 0; j < sz; j++) {
+                        // full_mul
+                        long v = Kerl.toUnsignedLong(base[j]) * (Kerl.toUnsignedLong(RADIX)) + Kerl.toUnsignedLong(carry);
+                        carry = (int) ((v >> Integer.SIZE) & 0xFFFFFFFF);
+                        base[j] = (int) (v & 0xFFFFFFFF);
+                    }
 
-        int[] destination = new int[size];
-        BigInteger absoluteValue = value.compareTo(BigInteger.ZERO) < 0 ? value.negate() : value;
-        for (int i = 0; i < size; i++) {
-
-            BigInteger[] divRemainder = absoluteValue.divideAndRemainder(BigInteger.valueOf(RADIX));
-            int remainder = divRemainder[1].intValue();
-            absoluteValue = divRemainder[0];
-
-            if (remainder > MAX_TRIT_VALUE) {
-
-                remainder = MIN_TRIT_VALUE;
-                absoluteValue = absoluteValue.add(BigInteger.ONE);
+                    if (carry > 0) {
+                        base[sz] = carry;
+                        size += 1;
+                    }
+                }
+                final int in = trits[i] + 1;
+                { // Add
+                    int sz = bigint_add(base, in);
+                    if (sz > size) {
+                        size = sz;
+                    }
+                }
             }
-            destination[i] = remainder;
+
+            if (sum(base) != 0) {
+                if (bigint_cmp(HALF_3, base) <= 0) {
+                    // base is >= HALF_3.
+                    // just do base - HALF_3
+                    base = bigint_sub(base, HALF_3);
+                } else {
+                    // we don't have a wrapping sub.
+                    // so we need to be clever.
+                    base = bigint_sub(HALF_3, base);
+                    bigint_not(base);
+                    bigint_add(base, 1);
+                }
+            }
+
         }
 
-        if (value.compareTo(BigInteger.ZERO) < 0) {
+        byte[] out = new byte[BYTE_LENGTH];
 
-            for (int i = 0; i < size; i++) {
+        for (int i = 0; i < INT_LENGTH; i++) {
+            out[i * 4 + 0] = (byte) ((base[INT_LENGTH - 1 - i] & 0xFF000000) >> 24);
+            out[i * 4 + 1] = (byte) ((base[INT_LENGTH - 1 - i] & 0x00FF0000) >> 16);
+            out[i * 4 + 2] = (byte) ((base[INT_LENGTH - 1 - i] & 0x0000FF00) >> 8);
+            out[i * 4 + 3] = (byte) ((base[INT_LENGTH - 1 - i] & 0x000000FF) >> 0);
+        }
+        return out;
+    }
 
-                destination[i] = -destination[i];
+    public static int[] convertBytesToTrits(byte[] bytes) {
+        int[] base = new int[INT_LENGTH];
+        int[] out = new int[243];
+        out[Kerl.HASH_LENGTH - 1] = 0;
+
+        if (bytes.length != BYTE_LENGTH) {
+            throw new RuntimeException("Input base must be " + BYTE_LENGTH + " in length");
+        }
+
+        for (int i = 0; i < INT_LENGTH; i++) {
+            base[INT_LENGTH - 1 - i] = Kerl.toUnsignedInt(bytes[i * 4]) << 24;
+            base[INT_LENGTH - 1 - i] |= Kerl.toUnsignedInt(bytes[i * 4 + 1]) << 16;
+            base[INT_LENGTH - 1 - i] |= Kerl.toUnsignedInt(bytes[i * 4 + 2]) << 8;
+            base[INT_LENGTH - 1 - i] |= Kerl.toUnsignedInt(bytes[i * 4 + 3]);
+        }
+
+        if (bigint_cmp(base, HALF_3) == 0) {
+            int val = 0;
+            if (base[0] > 0) {
+                val = -1;
+            } else if (base[0] < 0) {
+                val = 1;
+            }
+            for (int i = 0; i < Kerl.HASH_LENGTH - 1; i++) {
+                out[i] = val;
+            }
+
+        } else {
+            boolean flipTrits = false;
+            // See if we have a positive or negative two's complement number.
+            if (Kerl.toUnsignedLong(base[INT_LENGTH - 1]) >> 31 != 0) {
+                // negative value.
+                bigint_not(base);
+                if (bigint_cmp(base, HALF_3) > 0) {
+                    base = bigint_sub(base, HALF_3);
+                    flipTrits = true;
+                } else {
+                    bigint_add(base, 1);
+                    base = bigint_sub(HALF_3, base);
+                }
+            } else {
+                // positive. we need to shift right by HALF_3
+                base = bigint_add(HALF_3, base);
+            }
+
+            int size = INT_LENGTH;
+
+            int remainder = 0;
+            for (int i = 0; i < Kerl.HASH_LENGTH - 1; i++) {
+                { //div_rem
+                    remainder = 0;
+
+                    for (int j = size - 1; j >= 0; j--) {
+                        long lhs = (Kerl.toUnsignedLong(remainder) << 32) | Kerl.toUnsignedLong(base[j]);
+                        long rhs = Kerl.toUnsignedLong(RADIX);
+
+                        int q = (int) (lhs / rhs);
+                        int r = (int) (lhs % rhs);
+                        base[j] = q;
+                        remainder = r;
+                    }
+                }
+                out[i] = remainder - 1;
+            }
+
+            if (flipTrits) {
+                for (int i = 0; i < out.length; i++) {
+                    out[i] = -out[i];
+                }
             }
         }
 
-        return destination;
+        return out;
     }
 
-    private static byte[] convertBigintToBytes(final BigInteger value, int size) {
-
-        final byte[] result = new byte[BYTE_HASH_LENGTH];
-
-        final byte[] bytes = value.toByteArray();
-        int i = 0;
-        while (i + bytes.length < BYTE_HASH_LENGTH) {
-
-            result[i++] = (byte) (bytes[0] < 0 ? -1 : 0);
+    private static void bigint_not(int[] base) {
+        for (int i = 0; i < base.length; i++) {
+            base[i] = ~base[i];
         }
-        for (int j = bytes.length; j-- > 0; ) {
+    }
 
-            result[i++] = bytes[bytes.length - 1 - j];
+    private static int bigint_add(int[] base, final int rh) {
+        Pair<Integer, Boolean> res = full_add(base[0], rh, false);
+        base[0] = res.low;
+
+        int j = 1;
+        while (res.hi) {
+            res = full_add(base[j], 0, true);
+            base[j] = res.low;
+            j += 1;
         }
 
-        return result;
+        return j;
+    }
+
+    private static int[] bigint_add(final int[] lh, final int[] rh) {
+        int[] out = new int[INT_LENGTH];
+        boolean carry = false;
+        Pair<Integer, Boolean> ret;
+        for (int i = 0; i < INT_LENGTH; i++) {
+            ret = full_add(lh[i], rh[i], carry);
+            out[i] = ret.low;
+            carry = ret.hi;
+        }
+
+        if (carry) {
+            throw new RuntimeException("Exceeded max value.");
+        }
+
+        return out;
+    }
+
+    private static int bigint_cmp(final int[] lh, final int[] rh) {
+        for (int i = INT_LENGTH - 1; i >= 0; i--) {
+            int ret = Long.compare(Kerl.toUnsignedLong(lh[i]), Kerl.toUnsignedLong(rh[i]));
+            if (ret != 0) {
+                return ret;
+            }
+        }
+        return 0;
+    }
+
+    private static int[] bigint_sub(final int[] lh, final int[] rh) {
+        int[] out = new int[INT_LENGTH];
+        boolean noborrow = true;
+        Pair<Integer, Boolean> ret;
+        for (int i = 0; i < INT_LENGTH; i++) {
+            ret = full_add(lh[i], ~rh[i], noborrow);
+            out[i] = ret.low;
+            noborrow = ret.hi;
+        }
+
+        if (!noborrow) {
+            throw new RuntimeException("noborrow");
+        }
+
+        return out;
+    }
+
+    private static Pair<Integer, Boolean> full_add(final int ia, final int ib, final boolean carry) {
+        long a = Kerl.toUnsignedLong(ia);
+        long b = Kerl.toUnsignedLong(ib);
+
+        long v = a + b;
+        long l = v >> 32;
+        long r = v & 0xFFFFFFFF;
+        boolean carry1 = l != 0;
+
+        if (carry) {
+            v = r + 1;
+        }
+        l = (v >> 32) & 0xFFFFFFFF;
+        r = v & 0xFFFFFFFF;
+        boolean carry2 = l != 0;
+
+        return new Pair<>((int) r, carry1 || carry2);
     }
 
     @Override
@@ -108,7 +293,7 @@ public class Kerl extends JCurl {
 
             //convert to bits
             trit_state[HASH_LENGTH - 1] = 0;
-            byte[] bytes = convertBigintToBytes(convertTritsToBigint(trit_state, 0, HASH_LENGTH), BYTE_HASH_LENGTH);
+            byte[] bytes = convertTritsToBytes(trit_state);
 
             //run keccak
             keccak.update(bytes);
@@ -128,7 +313,7 @@ public class Kerl extends JCurl {
 
             byte_state = this.keccak.digest();
             //convert to trits
-            trit_state = convertBigintToTrits(convertBytesToBigInt(byte_state, 0, BYTE_HASH_LENGTH), HASH_LENGTH);
+            trit_state = convertBytesToTrits(byte_state);
 
             //copy with offset
             trit_state[HASH_LENGTH - 1] = 0;
