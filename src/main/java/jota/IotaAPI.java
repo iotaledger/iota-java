@@ -216,7 +216,7 @@ public class IotaAPI extends IotaAPICore {
                     }
                 });
 
-        Collections.sort(finalBundles);
+        if (finalBundles != null) Collections.sort(finalBundles);
         Bundle[] returnValue = new Bundle[finalBundles.size()];
         for (int i = 0; i < finalBundles.size(); i++) {
             returnValue[i] = new Bundle(finalBundles.get(i).getTransactions(), finalBundles.get(i).getTransactions().size());
@@ -439,8 +439,6 @@ public class IotaAPI extends IotaAPICore {
 
         // Get inputs if we are sending tokens
         if (totalValue != 0) {
-            if (!validateInputs)
-                return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
             //  Case 1: user provided inputs
             //  Validate the inputs by calling getBalances
             if (!validateInputs)
@@ -491,9 +489,9 @@ public class IotaAPI extends IotaAPICore {
             //  confirm that the inputs exceed the threshold
             else {
 
-                @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newinputs = getInputs(seed, security, 0, 0, totalValue);
+                @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newInputs = getInputs(seed, security, 0, 0, totalValue);
                 // If inputs with enough balance
-                return addRemainder(seed, security, newinputs.getInput(), bundle, tag, totalValue, remainder, signatureFragments);
+                return addRemainder(seed, security, newInputs.getInput(), bundle, tag, totalValue, remainder, signatureFragments);
             }
         } else {
 
@@ -805,16 +803,16 @@ public class IotaAPI extends IotaAPICore {
      * @param minWeightMagnitude The minimum weight magnitude.
      * @param transfers          Array of transfer objects.
      * @param inputs             List of inputs used for funding the transfer.
-     * @param address            If defined, this address will be used for sending the remainder value (of the inputs) to.
+     * @param remainderAddress            If defined, this remainderAddress will be used for sending the remainder value (of the inputs) to.
      * @return Array of Transaction objects.
-     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
+     * @throws InvalidAddressException       is thrown when the specified remainderAddress is not an valid remainderAddress.
      * @throws NotEnoughBalanceException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
      * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      * @throws InvalidTrytesException        is thrown when invalid trytes is provided.
-     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
+     * @throws InvalidAddressException       is thrown when the specified remainderAddress is not an valid remainderAddress.
      * @throws InvalidTransferException      is thrown when an invalid transfer is provided.
      */
-    public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String address) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
+    public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String remainderAddress) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
 
         if (security < 1 || security > 3) {
             throw new InvalidSecurityLevelException();
@@ -822,7 +820,7 @@ public class IotaAPI extends IotaAPICore {
 
         StopWatch stopWatch = new StopWatch();
 
-        List<String> trytes = prepareTransfers(seed, security, transfers, address, inputs == null ? null : Arrays.asList(inputs));
+        List<String> trytes = prepareTransfers(seed, security, transfers, remainderAddress, inputs == null ? null : Arrays.asList(inputs));
         List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude);
 
         Boolean[] successful = new Boolean[trxs.size()];
