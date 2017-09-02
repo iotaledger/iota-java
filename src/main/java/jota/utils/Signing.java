@@ -93,9 +93,7 @@ public class Signing {
                         .squeeze(hash, 0, hash.length);
             }
 
-            for (int j = 0; j < 243; j++) {
-                System.arraycopy(hash, j, keyFragment, i * 243 + j, 1);
-            }
+            System.arraycopy(hash, 0, keyFragment, i * 243, 243);
         }
 
         return keyFragment;
@@ -202,9 +200,7 @@ public class Signing {
 
             int[] digestBuffer = digest(normalizedBundleFragments[i % 3], Converter.trits(signatureFragments[i]));
 
-            for (int j = 0; j < 243; j++) {
-                System.arraycopy(digestBuffer, j, digests, i * 243 + j, 1);
-            }
+            System.arraycopy(digestBuffer, 0, digests, i * 243, 243);
         }
         String address = Converter.trytes(address(digests));
 
