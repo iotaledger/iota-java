@@ -54,29 +54,16 @@ public class Signing {
         curl.reset();
         curl.absorb(seed, 0, seed.length);
 
-        final List<Integer> key = new ArrayList<>();
-        int[] buffer = new int[seed.length];
+        final int[] key = new int[length * seed.length * 27];
         int offset = 0;
 
         while (length-- > 0) {
-
             for (int i = 0; i < 27; i++) {
-                curl.squeeze(buffer, offset, buffer.length);
-                for (int j = 0; j < 243; j++) {
-                    key.add(buffer[j]);
-                }
+                curl.squeeze(key, offset, seed.length);
+                offset += seed.length;
             }
         }
-        return to(key);
-    }
-
-    private int[] to(List<Integer> key) {
-        int a[] = new int[key.size()];
-        int i = 0;
-        for (Integer v : key) {
-            a[i++] = v;
-        }
-        return a;
+        return key;
     }
 
     public int[] signatureFragment(int[] normalizedBundleFragment, int[] keyFragment) {
