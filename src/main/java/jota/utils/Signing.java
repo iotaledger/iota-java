@@ -81,19 +81,12 @@ public class Signing {
 
     public int[] signatureFragment(int[] normalizedBundleFragment, int[] keyFragment) {
 
-        int[] hash;
-
         for (int i = 0; i < 27; i++) {
-
-            hash = Arrays.copyOfRange(keyFragment, i * 243, (i + 1) * 243);
-
             for (int j = 0; j < 13 - normalizedBundleFragment[i]; j++) {
                 curl.reset()
-                        .absorb(hash, 0, hash.length)
-                        .squeeze(hash, 0, hash.length);
+                        .absorb(keyFragment, i * 243, 243)
+                        .squeeze(keyFragment, i * 243, 243);
             }
-
-            System.arraycopy(hash, 0, keyFragment, i * 243, 243);
         }
 
         return keyFragment;
@@ -110,41 +103,34 @@ public class Signing {
     public int[] digests(int[] key) {
 
         int[] digests = new int[(int) Math.floor(key.length / 6561) * 243];
-        int[] buffer = new int[243];
 
         for (int i = 0; i < Math.floor(key.length / 6561); i++) {
             int[] keyFragment = Arrays.copyOfRange(key, i * 6561, (i + 1) * 6561);
 
             for (int j = 0; j < 27; j++) {
-
-                buffer = Arrays.copyOfRange(keyFragment, j * 243, (j + 1) * 243);
                 for (int k = 0; k < 26; k++) {
                     curl.reset()
-                            .absorb(buffer)
-                            .squeeze(buffer);
+                            .absorb(keyFragment, j * 243, 243)
+                            .squeeze(keyFragment, j * 243, 243);
                 }
-                System.arraycopy(buffer, 0, keyFragment, j * 243, 243);
             }
 
             curl.reset();
             curl.absorb(keyFragment, 0, keyFragment.length);
-            curl.squeeze(buffer, 0, buffer.length);
-
-            System.arraycopy(buffer, 0, digests, i * 243, 243);
+            curl.squeeze(digests, i * 243, 243);
         }
         return digests;
     }
 
     public int[] digest(int[] normalizedBundleFragment, int[] signatureFragment) {
         curl.reset();
+        ICurl jCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
         int[] buffer = new int[243];
 
         for (int i = 0; i < 27; i++) {
             buffer = Arrays.copyOfRange(signatureFragment, i * 243, (i + 1) * 243);
 
             for (int j = normalizedBundleFragment[i] + 13; j-- > 0; ) {
-
-                ICurl jCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
                 jCurl.reset();
                 jCurl.absorb(buffer);
                 jCurl.squeeze(buffer);
