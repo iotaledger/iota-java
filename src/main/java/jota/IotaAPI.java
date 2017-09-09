@@ -118,7 +118,7 @@ public class IotaAPI extends IotaAPICore {
             throw new InvalidSecurityLevelException();
         }
 
-        start = start != null ? 0 : start;
+        start = start == null ? 0 : start;
 
         if (start > end || end > (start + 500)) {
             throw new ArgumentException();
