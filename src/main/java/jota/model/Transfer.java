@@ -28,18 +28,18 @@ public class Transfer {
         this.persistence = persistence;
         this.value = value;
         this.message = message;
-        this.tag = tag;
-
+        if(tag.length() < 27) {
+            this.tag = tag + new String(new char[27 - tag.length()]).replace("\0", "9");
+        } else {
+            this.tag = tag;
+        }
     }
 
     /**
      * Initializes a new instance of the Transfer class.
      */
     public Transfer(String address, long value, String message, String tag) {
-        this.address = address;
-        this.value = value;
-        this.message = message;
-        this.tag = tag;
+        this(null, address, null, null, value, message, tag);
     }
 
     /**
