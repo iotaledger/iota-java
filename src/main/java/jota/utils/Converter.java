@@ -9,21 +9,20 @@ import java.util.List;
  */
 public class Converter {
 
+    public static final int HIGH_INTEGER_BITS = 0xFFFFFFFF;
+    public static final long HIGH_LONG_BITS = 0xFFFFFFFFFFFFFFFFL;
     /**
      * The radix
      */
     private static final int RADIX = 3;
-
     /**
      * The maximum trit value
      */
     private static final int MAX_TRIT_VALUE = (RADIX - 1) / 2, MIN_TRIT_VALUE = -MAX_TRIT_VALUE;
-
     /**
      * The number of trits in a byte
      */
     private static final int NUMBER_OF_TRITS_IN_A_BYTE = 5;
-
     /**
      * The number of trits in a tryte
      */
@@ -108,16 +107,7 @@ public class Converter {
      */
     public static int[] trits(final String trytes, int length) {
         int[] trits = trits(trytes);
-
-        List<Integer> tritsList = new LinkedList<>();
-
-        for (int i : trits)
-            tritsList.add(i);
-
-        while (tritsList.size() < length)
-            tritsList.add(0);
-
-        return convertToIntArray(tritsList);
+        return Arrays.copyOf(trits, length);
     }
 
     /**
@@ -128,17 +118,8 @@ public class Converter {
      * @return A trits array.
      */
     public static int[] trits(final long trytes, int length) {
-        int[] trits = trits(String.valueOf(trytes));
-
-        List<Integer> tritsList = new LinkedList<>();
-
-        for (int i : trits)
-            tritsList.add(i);
-
-        while (tritsList.size() < length)
-            tritsList.add(0);
-
-        return convertToIntArray(tritsList);
+        int[] trits = trits(trytes);
+        return Arrays.copyOf(trits, length);
     }
 
     /**
@@ -147,12 +128,41 @@ public class Converter {
      * @param trytes The trytes.
      * @return A trits array.
      */
+    @Deprecated
     public static int[] tritsString(final String trytes) {
-        int[] d = new int[3 * trytes.length()];
-        for (int i = 0; i < trytes.length(); i++) {
-            System.arraycopy(TRYTE_TO_TRITS_MAPPINGS[Constants.TRYTE_ALPHABET.indexOf(trytes.charAt(i))], 0, d, i * NUMBER_OF_TRITS_IN_A_TRYTE, NUMBER_OF_TRITS_IN_A_TRYTE);
+        return trits(trytes);
+    }
+
+    /**
+     * Converts trytes into trits.
+     *
+     * @param trytes The trytes to be converted.
+     * @return Array of trits.
+     **/
+    public static int[] trits(final long trytes) {
+        final List<Integer> trits = new LinkedList<>();
+        long absoluteValue = trytes < 0 ? -trytes : trytes;
+
+        int position = 0;
+
+        while (absoluteValue > 0) {
+
+            int remainder = (int) (absoluteValue % RADIX);
+            absoluteValue /= RADIX;
+
+            if (remainder > MAX_TRIT_VALUE) {
+                remainder = MIN_TRIT_VALUE;
+                absoluteValue++;
+            }
+
+            trits.add(position++, remainder);
         }
-        return d;
+        if (trytes < 0) {
+            for (int i = 0; i < trits.size(); i++) {
+                trits.set(i, -trits.get(i));
+            }
+        }
+        return convertToIntArray(trits);
     }
 
     /**
@@ -162,40 +172,11 @@ public class Converter {
      * @return Array of trits.
      **/
     public static int[] trits(final String trytes) {
-        final List<Integer> trits = new LinkedList<>();
-        if (InputValidator.isValue(trytes)) {
-
-            long value = Long.parseLong(trytes);
-
-            long absoluteValue = value < 0 ? -value : value;
-
-            int position = 0;
-
-            while (absoluteValue > 0) {
-
-                int remainder = (int) (absoluteValue % RADIX);
-                absoluteValue /= RADIX;
-
-                if (remainder > MAX_TRIT_VALUE) {
-                    remainder = MIN_TRIT_VALUE;
-                    absoluteValue++;
-                }
-
-                trits.add(position++, remainder);
-            }
-            if (value < 0) {
-                for (int i = 0; i < trits.size(); i++) {
-                    trits.set(i, -trits.get(i));
-                }
-            }
-        } else {
-            int[] d = new int[3 * trytes.length()];
-            for (int i = 0; i < trytes.length(); i++) {
-                System.arraycopy(TRYTE_TO_TRITS_MAPPINGS[Constants.TRYTE_ALPHABET.indexOf(trytes.charAt(i))], 0, d, i * NUMBER_OF_TRITS_IN_A_TRYTE, NUMBER_OF_TRITS_IN_A_TRYTE);
-            }
-            return d;
+        int[] d = new int[3 * trytes.length()];
+        for (int i = 0; i < trytes.length(); i++) {
+            System.arraycopy(TRYTE_TO_TRITS_MAPPINGS[Constants.TRYTE_ALPHABET.indexOf(trytes.charAt(i))], 0, d, i * NUMBER_OF_TRITS_IN_A_TRYTE, NUMBER_OF_TRITS_IN_A_TRYTE);
         }
-        return convertToIntArray(trits);
+        return d;
     }
 
     /**

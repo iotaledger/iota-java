@@ -1,7 +1,7 @@
 package jota.dto.response;
 
 /**
- * Response of {@link jota.dto.request.IotaGetTransactionsToApproveRequest}
+ * Response of {@link jota.dto.request.IotaGetTransactionsToApproveRequest}.
  **/
 public class GetTransactionsToApproveResponse extends AbstractResponse {
 

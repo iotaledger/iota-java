@@ -1,10 +1,11 @@
 package jota;
 
+import com.google.gson.Gson;
 import jota.dto.response.*;
 import jota.error.*;
 import jota.model.*;
 import jota.pow.ICurl;
-import jota.pow.JCurl;
+import jota.pow.SpongeFactory;
 import jota.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -67,6 +68,8 @@ public class IotaAPI extends IotaAPICore {
             }
             return GetNewAddressResponse.create(allAddresses, stopWatch.getElapsedTimeMili());
         }
+
+
         // No total provided: Continue calling findTransactions to see if address was
         // already created if null, return list of addresses
         for (int i = index; ; i++) {
@@ -106,8 +109,8 @@ public class IotaAPI extends IotaAPICore {
      */
     public GetTransferResponse getTransfers(String seed, int security, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoNodeInfoException, NoInclusionStatesException, InvalidSecurityLevelException, InvalidAddressException {
         StopWatch stopWatch = new StopWatch();
-        // validate & if needed pad seed
-        if ((seed = InputValidator.validateSeed(seed)) == null) {
+        // validate seed
+        if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException("Invalid Seed");
         }
 
@@ -115,7 +118,7 @@ public class IotaAPI extends IotaAPICore {
             throw new InvalidSecurityLevelException();
         }
 
-        start = start != null ? 0 : start;
+        start = start == null ? 0 : start;
 
         if (start > end || end > (start + 500)) {
             throw new ArgumentException();
@@ -252,6 +255,7 @@ public class IotaAPI extends IotaAPICore {
         final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth);
 
         // attach to tangle - do pow
+        System.out.println(new Gson().toJson(txs));
         final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
 
         try {
@@ -338,14 +342,33 @@ public class IotaAPI extends IotaAPICore {
      * @throws InvalidTransferException      is thrown when an invalid transfer is provided.
      */
     public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException, InvalidTransferException {
+        return prepareTransfers(seed, security, transfers, remainder, inputs, true);
+    }
+
+    /**
+     * Prepares transfer by generating bundle, finding and signing inputs.
+     *
+     * @param seed           81-tryte encoded address of recipient.
+     * @param security       The security level of private key / seed.
+     * @param transfers      Array of transfer objects.
+     * @param remainder      If defined, this address will be used for sending the remainder value (of the inputs) to.
+     * @param inputs         The inputs.
+     * @param validateInputs whether or not to validate the balances of the provided inputs
+     * @return Returns bundle trytes.
+     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
+     * @throws NotEnoughBalanceException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
+     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws InvalidTransferException      is thrown when an invalid transfer is provided.
+     */
+    public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs, boolean validateInputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException, InvalidTransferException {
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionValid(transfers)) {
             throw new InvalidTransferException();
         }
 
-        // validate & if needed pad seed
-        if ((seed = InputValidator.validateSeed(seed)) == null) {
+        // validate seed
+        if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException("Invalid Seed");
         }
 
@@ -416,9 +439,12 @@ public class IotaAPI extends IotaAPICore {
 
         // Get inputs if we are sending tokens
         if (totalValue != 0) {
-
+            if (!validateInputs)
+                return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
             //  Case 1: user provided inputs
             //  Validate the inputs by calling getBalances
+            if (!validateInputs)
+                return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
             if (inputs != null && !inputs.isEmpty()) {
 
                 // Get list if addresses of the provided inputs
@@ -456,7 +482,7 @@ public class IotaAPI extends IotaAPICore {
                     throw new IllegalStateException("Not enough balance");
                 }
 
-                return addRemainder(seed, security, confirmedInputs, bundle, tag, totalValue, null, signatureFragments);
+                return addRemainder(seed, security, confirmedInputs, bundle, tag, totalValue, remainder, signatureFragments);
             }
 
             //  Case 2: Get inputs deterministically
@@ -467,7 +493,7 @@ public class IotaAPI extends IotaAPICore {
 
                 @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newinputs = getInputs(seed, security, 0, 0, totalValue);
                 // If inputs with enough balance
-                return addRemainder(seed, security, newinputs.getInput(), bundle, tag, totalValue, null, signatureFragments);
+                return addRemainder(seed, security, newinputs.getInput(), bundle, tag, totalValue, remainder, signatureFragments);
             }
         } else {
 
@@ -499,13 +525,9 @@ public class IotaAPI extends IotaAPICore {
      **/
     public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold) throws InvalidSecurityLevelException, InvalidAddressException {
         StopWatch stopWatch = new StopWatch();
-        // validate the seed
-        if (!InputValidator.isTrytes(seed, 0)) {
-            throw new IllegalStateException("Invalid Seed");
-        }
 
-        // validate & if needed pad seed
-        if ((seed = InputValidator.validateSeed(seed)) == null) {
+        // validate the seed
+        if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException("Invalid Seed");
         }
 
@@ -620,7 +642,7 @@ public class IotaAPI extends IotaAPICore {
         long totalSum = 0;
         String bundleHash = bundle.getTransactions().get(0).getBundle();
 
-        ICurl curl = new JCurl();
+        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
         curl.reset();
 
         List<Signature> signaturesToValidate = new ArrayList<>();
@@ -682,6 +704,41 @@ public class IotaAPI extends IotaAPICore {
         }
 
         return GetBundleResponse.create(bundle.getTransactions(), stopWatch.getElapsedTimeMili());
+    }
+
+    /**
+     * Similar to getTransfers, just that it returns additional account data
+     *
+     * @param seed            Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security        The Security level of private key / seed.
+     * @param index           Key index to start search from. If the index is provided, the generation of the address is not deterministic.
+     * @param checksum        Adds 9-tryte address checksum.
+     * @param total           Total number of addresses to generate.
+     * @param returnAll       If <code>true</code>, it returns all addresses which were deterministically generated (until findTransactions returns null).
+     * @param start           Starting key index.
+     * @param end             Ending key index.
+     * @param inclusionStates If <code>true</code>, it gets the inclusion states of the transfers.
+     * @param threshold       Min balance required.
+     * @throws InvalidBundleException        is thrown if an invalid bundle was found or provided.
+     * @throws ArgumentException             is thrown when an invalid argument is provided.
+     * @throws InvalidSignatureException     is thrown when an invalid signature is encountered.
+     * @throws InvalidTrytesException        is thrown when invalid trytes is provided.
+     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
+     * @throws NoInclusionStatesException    is thrown when it not possible to get a inclusion state.
+     * @throws NoNodeInfoException           is thrown when its not possible to get node info.
+     */
+    public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, boolean returnAll, int start, int end, boolean inclusionStates, long threshold)
+            throws InvalidBundleException, ArgumentException, InvalidSignatureException,
+            InvalidTrytesException, InvalidSecurityLevelException, InvalidAddressException, NoInclusionStatesException, NoNodeInfoException {
+
+        StopWatch stopWatch = new StopWatch();
+
+        GetNewAddressResponse gna = getNewAddress(seed, security, index, checksum, total, returnAll);
+        GetTransferResponse gtr = getTransfers(seed, security, start, end, inclusionStates);
+        GetBalancesAndFormatResponse gbr = getInputs(seed, security, start, end, threshold);
+
+        return GetAccountDataResponse.create(gna.getAddresses(), gtr.getTransfers(), gbr.getTotalBalance(), stopWatch.getElapsedTimeMili());
     }
 
     /**
@@ -1087,7 +1144,7 @@ public class IotaAPI extends IotaAPICore {
     }
 
     public static class Builder extends IotaAPICore.Builder<Builder> {
-        private ICurl customCurl = new JCurl();
+        private ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
 
         public Builder withCustomCurl(ICurl curl) {
             customCurl = curl;

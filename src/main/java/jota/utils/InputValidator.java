@@ -2,7 +2,6 @@ package jota.utils;
 
 import jota.error.InvalidAddressException;
 import jota.model.Transfer;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.List;
@@ -145,26 +144,21 @@ public class InputValidator {
             return false;
         }
 
-        // Check if tag is correct trytes of {0,27} trytes
-        return isTrytes(transfer.getTag(), 27);
+        if (null == transfer.getTag() || transfer.getTag().isEmpty()) {
+            return true;
+        } else {
+            // Check if tag is correct trytes of {0,27} trytes
+            return isTrytes(transfer.getTag(), 27);
+        }
     }
 
     /**
      * Checks if the seed is valid. If not, an exception is thrown.
      *
      * @param seed The seed to validate.
-     * @return The validated seed.
-     * @throws IllegalStateException Format not in trytes or Invalid Seed: Seed too long.
+     * @return <code>true</code> if the specified seed is valid; otherwise, <code>false</code>.
      **/
-    public static String validateSeed(String seed) {
-        if (seed.length() > 81)
-            throw new IllegalStateException("Invalid Seed: Seed too long");
-
-        if (!isTrytes(seed, seed.length()))
-            throw new IllegalStateException("Invalid Seed: Format not in trytes");
-
-        seed = StringUtils.rightPad(seed, 81, '9');
-
-        return seed;
+    public static boolean isValidSeed(String seed) {
+        return isTrytes(seed, seed.length());
     }
 }

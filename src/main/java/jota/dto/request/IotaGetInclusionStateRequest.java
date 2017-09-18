@@ -5,7 +5,7 @@ import jota.IotaAPICommands;
 import java.util.Collection;
 
 /**
- * This class represents the core API request 'getInclusionStates'
+ * This class represents the core API request 'getInclusionStates'.
  **/
 public class IotaGetInclusionStateRequest extends IotaCommandRequest {
 

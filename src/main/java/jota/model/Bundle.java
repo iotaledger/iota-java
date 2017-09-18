@@ -1,7 +1,7 @@
 package jota.model;
 
 import jota.pow.ICurl;
-import jota.pow.JCurl;
+import jota.pow.SpongeFactory;
 import jota.utils.Converter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -90,7 +90,7 @@ public class Bundle implements Comparable<Bundle> {
      */
     public void finalize(ICurl customCurl) {
 
-        ICurl curl = customCurl == null ? new JCurl() : customCurl;
+        ICurl curl = customCurl == null ? SpongeFactory.create(SpongeFactory.Mode.KERL) : customCurl;
         curl.reset();
 
         for (int i = 0; i < this.getTransactions().size(); i++) {

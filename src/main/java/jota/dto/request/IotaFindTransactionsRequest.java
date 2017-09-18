@@ -3,7 +3,7 @@ package jota.dto.request;
 import jota.IotaAPICommands;
 
 /**
- * This class represents the core api request 'findTransactions'
+ * This class represents the core api request 'findTransactions'.
  **/
 public class IotaFindTransactionsRequest extends IotaCommandRequest {
 

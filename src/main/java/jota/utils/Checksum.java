@@ -1,7 +1,9 @@
 package jota.utils;
 
 import jota.error.InvalidAddressException;
+import jota.pow.ICurl;
 import jota.pow.JCurl;
+import jota.pow.SpongeFactory;
 
 /**
  * This class defines utility methods to add/remove the checksum to/from an address.
@@ -53,7 +55,7 @@ public class Checksum {
      **/
     public static boolean isValidChecksum(String addressWithChecksum) throws InvalidAddressException {
         String addressWithoutChecksum = removeChecksum(addressWithChecksum);
-        String addressWithRecalculateChecksum = addressWithChecksum += calculateChecksum(addressWithoutChecksum);
+        String addressWithRecalculateChecksum = addressWithoutChecksum += calculateChecksum(addressWithoutChecksum);
         return addressWithRecalculateChecksum.equals(addressWithChecksum);
     }
 
@@ -82,10 +84,13 @@ public class Checksum {
     }
 
     private static String calculateChecksum(String address) {
-        JCurl curl = new JCurl();
+        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
         curl.reset();
-        curl.setState(Converter.copyTrits(address, curl.getState()));
-        curl.transform();
-        return Converter.trytes(curl.getState()).substring(0, 9);
+        curl.absorb(Converter.trits(address));
+        int[] checksumTrits = new int[JCurl.HASH_LENGTH];
+        curl.squeeze(checksumTrits);
+        String checksum = Converter.trytes(checksumTrits);
+        String checksumPrt = checksum.substring(72, 81);
+        return checksumPrt;
     }
 }

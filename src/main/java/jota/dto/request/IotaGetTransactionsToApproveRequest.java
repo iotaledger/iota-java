@@ -3,7 +3,7 @@ package jota.dto.request;
 import jota.IotaAPICommands;
 
 /**
- * This class represents the core API request 'getTransactionsToApprove'
+ * This class represents the core API request 'getTransactionsToApprove'.
  **/
 public class IotaGetTransactionsToApproveRequest extends IotaCommandRequest {
 

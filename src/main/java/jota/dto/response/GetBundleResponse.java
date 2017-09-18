@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Response of api request 'getBundle
+ * Response of api request 'getBundle.
  **/
 public class GetBundleResponse extends AbstractResponse {
 

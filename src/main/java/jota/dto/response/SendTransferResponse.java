@@ -1,7 +1,7 @@
 package jota.dto.response;
 
 /**
- * Response of api request 'sendTransfer'
+ * Response of api request 'sendTransfer'.
  **/
 public class SendTransferResponse extends AbstractResponse {
 

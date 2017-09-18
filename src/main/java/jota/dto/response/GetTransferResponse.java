@@ -3,7 +3,7 @@ package jota.dto.response;
 import jota.model.Bundle;
 
 /**
- * Response of api request 'getTransfer'
+ * Response of api request 'getTransfer'.
  **/
 public class GetTransferResponse extends AbstractResponse {
 

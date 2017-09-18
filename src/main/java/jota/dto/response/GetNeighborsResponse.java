@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Response of {@link jota.dto.request.IotaCommandRequest}
+ * Response of {@link jota.dto.request.IotaCommandRequest}.
  **/
 public class GetNeighborsResponse extends AbstractResponse {
 

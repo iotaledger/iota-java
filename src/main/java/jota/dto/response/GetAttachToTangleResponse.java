@@ -1,7 +1,7 @@
 package jota.dto.response;
 
 /**
- * Response of {@link jota.dto.request.IotaAttachToTangleRequest}
+ * Response of {@link jota.dto.request.IotaAttachToTangleRequest}.
  **/
 public class GetAttachToTangleResponse extends AbstractResponse {
 

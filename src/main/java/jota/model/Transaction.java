@@ -1,7 +1,7 @@
 package jota.model;
 
 import jota.pow.ICurl;
-import jota.pow.JCurl;
+import jota.pow.SpongeFactory;
 import jota.utils.Converter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -18,8 +18,9 @@ import java.util.Arrays;
  */
 public class Transaction {
 
-    private static final Logger log = LoggerFactory.getLogger(Transaction.class);
-    private ICurl customCurl;
+    private static final transient Logger log = LoggerFactory.getLogger(Transaction.class);
+
+    private transient ICurl customCurl;
 
     private String hash;
     private String signatureFragments;
@@ -391,8 +392,7 @@ public class Transaction {
         int[] transactionTrits = Converter.trits(trytes);
         int[] hash = new int[243];
 
-        final ICurl curl = customCurl == null ? new JCurl() : customCurl; // we need a fluent JCurl.
-
+        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.CURL);
         // generate the correct transaction hash
         curl.reset();
         curl.absorb(transactionTrits, 0, transactionTrits.length);

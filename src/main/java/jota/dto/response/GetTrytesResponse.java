@@ -1,7 +1,7 @@
 package jota.dto.response;
 
 /**
- * Response of {@link jota.dto.request.IotaGetTrytesRequest}
+ * Response of {@link jota.dto.request.IotaGetTrytesRequest}.
  **/
 public class GetTrytesResponse extends AbstractResponse {
 

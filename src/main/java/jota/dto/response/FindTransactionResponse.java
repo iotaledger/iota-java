@@ -1,7 +1,7 @@
 package jota.dto.response;
 
 /**
- * Response of {@link jota.dto.request.IotaFindTransactionsRequest}
+ * Response of {@link jota.dto.request.IotaFindTransactionsRequest}.
  **/
 public class FindTransactionResponse extends AbstractResponse {
 

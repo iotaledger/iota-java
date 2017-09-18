@@ -11,15 +11,21 @@ public class Neighbor {
     private Integer numberOfAllTransactions;
     private Integer numberOfInvalidTransactions;
     private Integer numberOfNewTransactions;
+    private Integer numberOfRandomTransactionRequests;
+    private Integer numberOfSentTransactions;
+    private String connectionType;
 
     /**
      * Initializes a new instance of the Neighbor class.
      */
-    public Neighbor(String address, Integer numberOfAllTransactions, Integer numberOfInvalidTransactions, Integer numberOfNewTransactions) {
+    public Neighbor(String address, Integer numberOfAllTransactions, Integer numberOfInvalidTransactions, Integer numberOfNewTransactions, Integer numberOfRandomTransactionRequests, Integer numberOfSentTransactions, String connectionType) {
         this.address = address;
         this.numberOfAllTransactions = numberOfAllTransactions;
         this.numberOfInvalidTransactions = numberOfInvalidTransactions;
         this.numberOfNewTransactions = numberOfNewTransactions;
+        this.numberOfRandomTransactionRequests = numberOfRandomTransactionRequests;
+        this.numberOfSentTransactions = numberOfSentTransactions;
+        this.connectionType = connectionType;
     }
 
     /**
@@ -50,7 +56,7 @@ public class Neighbor {
     }
 
     /**
-     * Get the number of nwe transactions.
+     * Get the number of new transactions.
      *
      * @return The number of new transactions.
      */
@@ -58,4 +64,30 @@ public class Neighbor {
         return numberOfNewTransactions;
     }
 
+    /**
+     * Get the number of random transaction requests.
+     *
+     * @return The number of random transaction requests.
+     */
+    public Integer getNumberOfRandomTransactionRequests() {
+        return numberOfRandomTransactionRequests;
+    }
+
+    /**
+     * Get the number of sent transactions.
+     *
+     * @return The number of sent transactions.
+     */
+    public Integer getNumberOfSentTransactions() {
+        return numberOfSentTransactions;
+    }
+
+    /**
+     * Get the connection type.
+     *
+     * @return The connection type.
+     */
+    public String getConnectionType() {
+        return connectionType;
+    }
 }

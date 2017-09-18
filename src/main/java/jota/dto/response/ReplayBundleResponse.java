@@ -1,7 +1,7 @@
 package jota.dto.response;
 
 /**
- * Response of api request 'replayBundle'
+ * Response of api request 'replayBundle'.
  **/
 public class ReplayBundleResponse extends AbstractResponse {
 

@@ -64,7 +64,7 @@ public class IotaMultisigTest {
 
         System.out.println("Is a valid multisig address " + isValidMultisigAddress);
 
-        assertTrue("Address is not a valid multisigaddress", isValidMultisigAddress);
+        assertTrue("Address is not a valid multisigAddress", isValidMultisigAddress);
         Transfer transfer = new Transfer(RECEIVE_ADDRESS, 999, "", "");
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(transfer);

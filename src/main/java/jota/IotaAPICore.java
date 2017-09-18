@@ -13,6 +13,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
@@ -206,65 +207,77 @@ public class IotaAPICore {
         return wrapCheckedException(res).body();
     }
 
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
     @SuppressWarnings("unchecked")
     public static class Builder<T extends Builder<T>> {
+        private FileReader fileReader = null;
+        private BufferedReader bufferedReader = null;
+        private Properties nodeConfig = null;
 
         String protocol, host, port;
 
         public IotaAPICore build() {
+            // resolution order: builder value, configuration file, default value
 
-            if (protocol == null || host == null || port == null) {
+            if (null == protocol) {
+                protocol = getFromConfigurationOrEnvironment("iota.node.protocol", "IOTA_NODE_PROTOCOL", "http");
+            }
 
-                // check properties files.
-                if (!checkPropertiesFiles()) {
+            if (null == host) {
+                host = getFromConfigurationOrEnvironment("iota.node.host", "IOTA_NODE_HOST", "localhost");
+            }
 
-                    // last resort: best effort on enviroment variable,
-                    // before assigning default values.
-                    checkEnviromentVariables();
-                }
+            if (null == port) {
+                port = getFromConfigurationOrEnvironment("iota.node.port", "IOTA_NODE_PORT", "14265");
             }
 
             return new IotaAPICore(this);
         }
 
-        /**
-         * @return
-         */
-        private boolean checkPropertiesFiles() {
-
-            try {
-
-                FileReader fileReader = new FileReader("node_config.properties");
-                BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-                final Properties nodeConfig = new Properties();
-                nodeConfig.load(bufferedReader);
-
-                if (nodeConfig.getProperty("iota.node.protocol") != null) {
-                    protocol = nodeConfig.getProperty("iota.node.protocol");
-                }
-
-                if (nodeConfig.getProperty("iota.node.host") != null) {
-                    host = nodeConfig.getProperty("iota.node.host");
-                }
-
-                if (nodeConfig.getProperty("iota.node.port") != null) {
-                    port = nodeConfig.getProperty("iota.node.port");
-                }
-
-            } catch (IOException e1) {
-                log.debug("node_config.properties not found. Rolling back for another solution...");
+        private String getFromConfigurationOrEnvironment(String propertyKey, String envName, String defaultValue) {
+            if (getNodeConfig().getProperty(propertyKey) != null) {
+                return nodeConfig.getProperty(propertyKey);
+            } else {
+                return env(envName, defaultValue);
             }
-            return (port != null && protocol != null && host != null);
         }
 
-        /**
-         *
-         */
-        private void checkEnviromentVariables() {
-            protocol = env("IOTA_NODE_PROTOCOL", "http");
-            host = env("IOTA_NODE_HOST", "localhost");
-            port = env("IOTA_NODE_PORT", "14265");
+        private Properties getNodeConfig() {
+            if (null != nodeConfig) {
+                return nodeConfig;
+            }
+
+            nodeConfig = new Properties();
+            if (null == fileReader) {
+                try {
+                    fileReader = new FileReader("node_config.properties");
+
+                    if (null == bufferedReader) {
+                        bufferedReader = new BufferedReader(fileReader);
+                    }
+                    nodeConfig.load(bufferedReader);
+                } catch (IOException e) {
+                    log.debug("node_config.properties not found. Rolling back for another solution...");
+                }
+            }
+
+            return nodeConfig;
+        }
+
+        public T config(Properties properties) {
+            nodeConfig = properties;
+            return (T) this;
         }
 
         /**

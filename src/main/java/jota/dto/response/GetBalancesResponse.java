@@ -1,7 +1,7 @@
 package jota.dto.response;
 
 /**
- * Response of {@link jota.dto.request.IotaGetBalancesRequest}
+ * Response of {@link jota.dto.request.IotaGetBalancesRequest}.
  **/
 public class GetBalancesResponse extends AbstractResponse {
 
