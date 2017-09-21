@@ -14,6 +14,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
@@ -38,7 +39,7 @@ public class IotaAPICore {
      *
      * @param builder The builder.
      */
-    public IotaAPICore(final Builder builder) {
+    protected IotaAPICore(final Builder builder) {
         protocol = builder.protocol;
         host = builder.host;
         port = builder.port;
@@ -202,7 +203,7 @@ public class IotaAPICore {
                 Transaction txn = new Transaction(trytes[i]);
                 txn.setTrunkTransaction(previousTransaction == null ? trunkTransaction : previousTransaction);
                 txn.setBranchTransaction(previousTransaction == null ? branchTransaction : trunkTransaction);
-                resultTrytes[i] = localPoW.performPoW(txn, minWeightMagnitude);
+                resultTrytes[i] = localPoW.performPoW(txn.toTrytes(), minWeightMagnitude);
                 previousTransaction = new Transaction(resultTrytes[i]).getHash();
             }
             return new GetAttachToTangleResponse(resultTrytes);
@@ -324,7 +325,7 @@ public class IotaAPICore {
         }
 
         /**
-         * @param
+         * @param protocol
          * @return
          */
         public T localPoW(IotaLocalPoW localPoW) {

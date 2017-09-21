@@ -1,7 +1,9 @@
 package cfb.pearldiver;
 
 /**
- * (c) 2016 Come-from-Beyond
+ * (c) 2016 Come-from-Beyond.
+ *
+ * See <https://github.com/iotaledger/PearlDiver>.
  */
 public class PearlDiver {
 
@@ -100,7 +102,7 @@ public class PearlDiver {
         while (numberOfThreads-- > 0) {
 
             final int threadIndex = numberOfThreads;
-            (new Thread(() -> {
+            (new Thread(new Runnable() { public void run() {
 
                 final long[] midCurlStateCopyLow = new long[CURL_STATE_LENGTH], midCurlStateCopyHigh = new long[CURL_STATE_LENGTH];
                 System.arraycopy(midCurlStateLow, 0, midCurlStateCopyLow, 0, CURL_STATE_LENGTH);
@@ -119,7 +121,7 @@ public class PearlDiver {
                     System.arraycopy(midCurlStateCopyHigh, 0, curlStateHigh, 0, CURL_STATE_LENGTH);
                     transform(curlStateLow, curlStateHigh, curlScratchpadLow, curlScratchpadHigh);
 
-                    NEXT_BIT_INDEX:
+                NEXT_BIT_INDEX:
                     for (int bitIndex = 64; bitIndex-- > 0; ) {
 
                         for (int i = minWeightMagnitude; i-- > 0; ) {
@@ -130,7 +132,7 @@ public class PearlDiver {
                             }
                         }
 
-                        synchronized (this) {
+                        synchronized (PearlDiver.this) {
 
                             if (state == RUNNING) {
 
@@ -141,7 +143,7 @@ public class PearlDiver {
                                     transactionTrits[TRANSACTION_LENGTH - CURL_HASH_LENGTH + i] = ((((int) (midCurlStateCopyLow[i] >> bitIndex)) & 1) == 0) ? 1 : (((((int) (midCurlStateCopyHigh[i] >> bitIndex)) & 1) == 0) ? -1 : 0);
                                 }
 
-                                notifyAll();
+                                PearlDiver.this.notifyAll();
                             }
                         }
 
@@ -149,7 +151,7 @@ public class PearlDiver {
                     }
                 }
 
-            })).start();
+            }})).start();
         }
 
         try {
