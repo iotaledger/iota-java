@@ -3,6 +3,7 @@ package jota;
 import jota.dto.request.*;
 import jota.dto.response.*;
 import jota.error.InvalidTrytesException;
+import jota.model.Transaction;
 import jota.utils.InputValidator;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ public class IotaAPICore {
 
     private IotaAPIService service;
     private String protocol, host, port;
+    private IotaLocalPoW localPoW;
 
     /**
      * Build the API core.
@@ -41,6 +43,7 @@ public class IotaAPICore {
         protocol = builder.protocol;
         host = builder.host;
         port = builder.port;
+        localPoW = builder.localPoW;
         postConstruct();
     }
 
@@ -193,6 +196,19 @@ public class IotaAPICore {
             throw new InvalidTrytesException();
         }
 
+        if (localPoW != null) {
+            final String[] resultTrytes = new String[trytes.length];
+            String previousTransaction = null;
+            for (int i = 0; i < trytes.length; i++) {
+                Transaction txn = new Transaction(trytes[i]);
+                txn.setTrunkTransaction(previousTransaction == null ? trunkTransaction : previousTransaction);
+                txn.setBranchTransaction(previousTransaction == null ? branchTransaction : trunkTransaction);
+                resultTrytes[i] = localPoW.performPoW(txn.toTrytes(), minWeightMagnitude);
+                previousTransaction = new Transaction(resultTrytes[i]).getHash();
+            }
+            return new GetAttachToTangleResponse(resultTrytes);
+        }
+
         final Call<GetAttachToTangleResponse> res = service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
         return wrapCheckedException(res).body();
     }
@@ -226,6 +242,7 @@ public class IotaAPICore {
         private Properties nodeConfig = null;
 
         String protocol, host, port;
+        IotaLocalPoW localPoW;
 
         public IotaAPICore build() {
             // resolution order: builder value, configuration file, default value
@@ -307,5 +324,13 @@ public class IotaAPICore {
             return (T) this;
         }
 
+        /**
+         * @param protocol
+         * @return
+         */
+        public T localPoW(IotaLocalPoW localPoW) {
+            this.localPoW = localPoW;
+            return (T) this;
+        }
     }
 }
