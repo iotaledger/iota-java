@@ -348,6 +348,28 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Prepares transfer by generating bundle, finding and signing inputs.
      *
+     * @param seed      81-tryte encoded address of recipient.
+     * @param security  The security level of private key / seed.
+     * @param transfer  Transfer object.
+     * @param remainder If defined, this address will be used for sending the remainder value (of the inputs) to.
+     * @param inputs    The inputs.
+     * @return Returns trytes.
+     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
+     * @throws NotEnoughBalanceException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
+     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws InvalidTransferException      is thrown when an invalid transfer is provided.
+     */
+    public String prepareTransfers(String seed, int security, final Transfer transfer, String remainder, List<Input> inputs)
+    throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException, InvalidTransferException {
+        return prepareTransfers(
+                seed, security, Collections.singletonList(transfer),
+                remainder, inputs, true
+        ).get(0);
+    }
+
+    /**
+     * Prepares transfer by generating bundle, finding and signing inputs.
+     *
      * @param seed           81-tryte encoded address of recipient.
      * @param security       The security level of private key / seed.
      * @param transfers      Array of transfer objects.
