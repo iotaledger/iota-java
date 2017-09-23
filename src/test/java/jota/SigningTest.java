@@ -2,20 +2,13 @@ package jota;
 
 import jota.error.InvalidAddressException;
 import jota.model.Bundle;
-import jota.utils.Checksum;
-import jota.utils.Constants;
-import jota.utils.Converter;
-import jota.utils.InputValidator;
-import jota.utils.IotaAPIUtils;
-import jota.utils.SeedRandomGenerator;
-import jota.utils.Signing;
-
+import jota.utils.*;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
 
 /**
  * @author schierlm@gmx.de

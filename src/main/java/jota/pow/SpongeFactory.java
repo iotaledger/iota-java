@@ -6,20 +6,21 @@ package jota.pow;
 public abstract class SpongeFactory {
     public static ICurl create(Mode mode) {
         switch (mode) {
-            case CURL:
-                return new JCurl();
+            case CURLP81:
+                return new JCurl(mode);
+            case CURLP27:
+                return new JCurl(mode);
             case KERL:
                 return new Kerl();
-            case BCURLT:
-                return new JCurl(true);
             default:
                 return null;
         }
     }
 
     public enum Mode {
-        CURL,
+        CURLP81,
+        CURLP27,
         KERL,
-        BCURLT
+        //BCURLT
     }
 }

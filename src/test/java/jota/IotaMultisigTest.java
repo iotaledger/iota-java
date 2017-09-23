@@ -8,7 +8,7 @@ import jota.error.InvalidTransferException;
 import jota.model.Bundle;
 import jota.model.Transaction;
 import jota.model.Transfer;
-import jota.pow.JCurl;
+import jota.pow.SpongeFactory;
 import jota.utils.Converter;
 import jota.utils.Multisig;
 import jota.utils.Signing;
@@ -78,7 +78,7 @@ public class IotaMultisigTest {
         bundle = ms.addSignature(bundle, multiSigAddress, ms.getKey(TEST_SEED2, 0, 3));
 
 
-        Signing sgn = new Signing(new JCurl());
+        Signing sgn = new Signing(SpongeFactory.create(SpongeFactory.Mode.KERL));
 
         boolean isValidSignature = sgn.validateSignatures(bundle, multiSigAddress);
         assertTrue("MultiSignature not valid", isValidSignature);

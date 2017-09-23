@@ -26,7 +26,7 @@ public class Transaction {
     private String signatureFragments;
     private String address;
     private long value;
-    private String tag;
+    private String obsoleteTag;
     private long timestamp;
     private long currentIndex;
     private long lastIndex;
@@ -35,6 +35,51 @@ public class Transaction {
     private String branchTransaction;
     private String nonce;
     private Boolean persistence;
+    private long attachmentTimestamp;
+    private String tag;
+    private long attachmentTimestampLowerBound;
+    private long attachmentTimestampUpperBound;
+
+    /**
+     * Initializes a new instance of the Signature class.
+     */
+    public Transaction(String signatureFragments, long currentIndex, long lastIndex, String nonce, String hash, String obsoleteTag, long timestamp, String trunkTransaction, String branchTransaction, String address, long value, String bundle, String tag, long attachmentTimestamp, long attachmentTimestampLowerBound, long attachmentTimestampUpperBound) {
+
+        this.hash = hash;
+        this.obsoleteTag = obsoleteTag;
+        this.signatureFragments = signatureFragments;
+        this.address = address;
+        this.value = value;
+        this.timestamp = timestamp;
+        this.currentIndex = currentIndex;
+        this.lastIndex = lastIndex;
+        this.bundle = bundle;
+        this.trunkTransaction = trunkTransaction;
+        this.branchTransaction = branchTransaction;
+        this.tag = tag;
+        this.attachmentTimestamp = attachmentTimestamp;
+        this.attachmentTimestampLowerBound = attachmentTimestampLowerBound;
+        this.attachmentTimestampUpperBound = attachmentTimestampUpperBound;
+        this.nonce = nonce;
+    }
+
+    /**
+     * Initializes a new instance of the Signature class.
+     */
+    public Transaction(String address, long value, String tag, long timestamp) {
+        this.address = address;
+        this.value = value;
+        this.obsoleteTag = tag;
+        this.timestamp = timestamp;
+    }
+
+    public long getAttachmentTimestampLowerBound() {
+        return attachmentTimestampLowerBound;
+    }
+
+    public void setAttachmentTimestampLowerBound(long attachmentTimestampLowerBound) {
+        this.attachmentTimestampLowerBound = attachmentTimestampLowerBound;
+    }
 
     /**
      * Initializes a new instance of the Signature class.
@@ -65,33 +110,12 @@ public class Transaction {
         this.customCurl = customCurl;
     }
 
-    /**
-     * Initializes a new instance of the Signature class.
-     */
-    public Transaction(String signatureFragments, long currentIndex, long lastIndex, String nonce, String hash, String tag, long timestamp, String trunkTransaction, String branchTransaction, String address, long value, String bundle) {
-
-        this.hash = hash;
-        this.tag = tag;
-        this.signatureFragments = signatureFragments;
-        this.address = address;
-        this.value = value;
-        this.timestamp = timestamp;
-        this.currentIndex = currentIndex;
-        this.lastIndex = lastIndex;
-        this.bundle = bundle;
-        this.trunkTransaction = trunkTransaction;
-        this.branchTransaction = branchTransaction;
-        this.nonce = nonce;
+    public long getAttachmentTimestampUpperBound() {
+        return attachmentTimestampUpperBound;
     }
 
-    /**
-     * Initializes a new instance of the Signature class.
-     */
-    public Transaction(String address, long value, String tag, long timestamp) {
-        this.address = address;
-        this.value = value;
-        this.tag = tag;
-        this.timestamp = timestamp;
+    public void setAttachmentTimestampUpperBound(long attachmentTimestampUpperBound) {
+        this.attachmentTimestampUpperBound = attachmentTimestampUpperBound;
     }
 
     /**
@@ -338,6 +362,42 @@ public class Transaction {
         this.persistence = persistence;
     }
 
+    /**
+     * Get the obsoleteTag.
+     *
+     * @return The obsoleteTag.
+     */
+    public String getObsoleteTag() {
+        return obsoleteTag;
+    }
+
+    /**
+     * Set the obsoleteTag.
+     *
+     * @param obsoleteTag The persistence.
+     */
+    public void setObsoleteTag(String obsoleteTag) {
+        this.obsoleteTag = obsoleteTag;
+    }
+
+    /**
+     * Get the attachmentTimestamp.
+     *
+     * @return The attachmentTimestamp.
+     */
+    public long getAttachmentTimestamp() {
+        return attachmentTimestamp;
+    }
+
+    /**
+     * Set the attachmentTimestamp.
+     *
+     * @param attachmentTimestamp The persistence.
+     */
+    public void setAttachmentTimestamp(long attachmentTimestamp) {
+        this.attachmentTimestamp = attachmentTimestamp;
+    }
+
     public boolean equals(Object obj) {
         return obj != null && ((Transaction) obj).getHash().equals(this.getHash());
     }
@@ -351,24 +411,34 @@ public class Transaction {
 
         int[] timestampTrits = Converter.trits(this.getTimestamp(), 27);
 
-
         int[] currentIndexTrits = Converter.trits(this.getCurrentIndex(), 27);
-
 
         int[] lastIndexTrits = Converter.trits(this.getLastIndex(), 27);
 
+        int[] attachmentTimestampTrits = Converter.trits(this.getAttachmentTimestamp(), 27);
 
-        return this.getSignatureFragments()
+        int[] attachmentTimestampLowerBoundTrits = Converter.trits(this.getAttachmentTimestampLowerBound(), 27);
+
+        int[] attachmentTimestampUpperBoundTrits = Converter.trits(this.getAttachmentTimestampUpperBound(), 27);
+
+        this.tag = this.tag != null && !this.tag.isEmpty() ? this.tag : this.obsoleteTag;
+
+        String trx = this.getSignatureFragments()
                 + this.getAddress()
                 + Converter.trytes(valueTrits)
-                + this.getTag()
+                + this.getObsoleteTag()
                 + Converter.trytes(timestampTrits)
                 + Converter.trytes(currentIndexTrits)
                 + Converter.trytes(lastIndexTrits)
                 + this.getBundle()
                 + this.getTrunkTransaction()
                 + this.getBranchTransaction()
+                + this.getTag()
+                + Converter.trytes(attachmentTimestampTrits)
+                + Converter.trytes(attachmentTimestampLowerBoundTrits)
+                + Converter.trytes(attachmentTimestampUpperBoundTrits)
                 + this.getNonce();
+        return trx;
     }
 
     /**
@@ -392,7 +462,7 @@ public class Transaction {
         int[] transactionTrits = Converter.trits(trytes);
         int[] hash = new int[243];
 
-        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.CURL);
+        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.CURLP81);
         // generate the correct transaction hash
         curl.reset();
         curl.absorb(transactionTrits, 0, transactionTrits.length);
@@ -402,13 +472,17 @@ public class Transaction {
         this.setSignatureFragments(trytes.substring(0, 2187));
         this.setAddress(trytes.substring(2187, 2268));
         this.setValue(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6804, 6837)));
-        this.setTag(trytes.substring(2295, 2322));
+        this.setObsoleteTag(trytes.substring(2295, 2322));
         this.setTimestamp(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6966, 6993)));
         this.setCurrentIndex(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6993, 7020)));
         this.setLastIndex(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7020, 7047)));
         this.setBundle(trytes.substring(2349, 2430));
         this.setTrunkTransaction(trytes.substring(2430, 2511));
         this.setBranchTransaction(trytes.substring(2511, 2592));
-        this.setNonce(trytes.substring(2592, 2673));
+        this.setTag(trytes.substring(2592, 2619));
+        this.setAttachmentTimestamp(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7857, 7884)) / 1000);
+        this.setAttachmentTimestampLowerBound(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7884, 7911)));
+        this.setAttachmentTimestampUpperBound(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7911, 7938)));
+        this.setNonce(trytes.substring(2646, 2673));
     }
 }

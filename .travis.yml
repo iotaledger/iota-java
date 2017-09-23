@@ -13,6 +13,7 @@ deploy:
     file_glob: true
     file:
     - "/home/travis/build/iotaledger/iota.lib.java/target/jota*.jar"
+    - "/home/travis/build/iotaledger/iota.lib.java/target/jota*.jar-with-dependencies"
     - "/home/travis/build/iotaledger/iota.lib.java/target/jota*.jar.asc"
     - "/home/travis/build/iotaledger/iota.lib.java/target/jota*-sources.jar"
     - "/home/travis/build/iotaledger/iota.lib.java/target/jota*-sources.jar.asc"

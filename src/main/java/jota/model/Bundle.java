@@ -107,7 +107,8 @@ public class Bundle implements Comparable<Bundle> {
 
             int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).getLastIndex(), 27);
 
-            int[] t = Converter.trits(this.getTransactions().get(i).getAddress() + Converter.trytes(valueTrits) + this.getTransactions().get(i).getTag() + Converter.trytes(timestampTrits) + Converter.trytes(currentIndexTrits) + Converter.trytes(lastIndexTrits));
+            int[] t = Converter.trits(this.getTransactions().get(i).getAddress() + Converter.trytes(valueTrits) + this.getTransactions().get(i).getObsoleteTag() + Converter.trytes(timestampTrits) + Converter.trytes(currentIndexTrits) + Converter.trytes(lastIndexTrits));
+
             curl.absorb(t, 0, t.length);
         }
 
@@ -128,6 +129,7 @@ public class Bundle implements Comparable<Bundle> {
     public void addTrytes(List<String> signatureFragments) {
         String emptySignatureFragment = "";
         String emptyHash = EMPTY_HASH;
+        long emptyTimestamp = 999999999l;
 
         emptySignatureFragment = StringUtils.rightPad(emptySignatureFragment, 2187, '9');
 
@@ -141,8 +143,14 @@ public class Bundle implements Comparable<Bundle> {
             // Fill empty branchTransaction
             this.getTransactions().get(i).setBranchTransaction(emptyHash);
 
+
+            this.getTransactions().get(i).setAttachmentTimestamp(emptyTimestamp);
+            this.getTransactions().get(i).setAttachmentTimestampLowerBound(emptyTimestamp);
+            this.getTransactions().get(i).setAttachmentTimestampUpperBound(emptyTimestamp);
+
             // Fill empty nonce
-            this.getTransactions().get(i).setNonce(emptyHash);
+            this.getTransactions().get(i).setNonce(StringUtils.rightPad("", 27, "9"));
+
         }
     }
 
@@ -200,6 +208,6 @@ public class Bundle implements Comparable<Bundle> {
      */
     @Override
     public int compareTo(Bundle o) {
-        return Long.compare(this.getTransactions().get(0).getTimestamp(), o.getTransactions().get(0).getTimestamp());
+        return Long.compare(this.getTransactions().get(0).getAttachmentTimestamp(), o.getTransactions().get(0).getAttachmentTimestamp());
     }
 }

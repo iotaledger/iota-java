@@ -24,7 +24,7 @@ public class Kerl extends JCurl {
     private static int INT_LENGTH = BYTE_LENGTH / 4;
 
     Kerl() {
-        super();
+        super(SpongeFactory.Mode.CURLP81);
         this.keccak = new Keccak.Digest384();
         this.byte_state = new byte[BYTE_HASH_LENGTH];
         this.trit_state = new int[HASH_LENGTH];
@@ -52,7 +52,7 @@ public class Kerl extends JCurl {
         }
         int[] base = new int[INT_LENGTH];
 
-        Set<Integer> setUniqueNumbers = new LinkedHashSet<Integer>();
+        Set<Integer> setUniqueNumbers = new LinkedHashSet<>();
         for (int x : trits) {
             setUniqueNumbers.add(x);
         }

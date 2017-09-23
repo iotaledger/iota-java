@@ -7,11 +7,11 @@ The JOTA library is a simple Java wrapper around [[IOTA]](http://www.iotatoken.c
 
 It allows to connect easily using java directly to a local or a remote [[IOTA node]](https://iota.readme.io/docs/syncing-to-the-network).
 
-* **Latest release:** 0.9.1
-* **Compatibility:** fully compatible with IOTA IRI v1.2.6
+* **Latest release:** 0.9.3
+* **Compatibility:** fully compatible with IOTA IRI v1.4.0
 * **API coverage:** 14 of 14 commands fully implemented
 * **License:** Apache License 2.0 
-* **Readme updated:** 2016-01-19 21:05:02 (UTC)
+* **Readme updated:** 2017-09-23 21:05:02 (UTC)
 
 A list of all *IOTA* JSON-REST API commands currently supported by jota wrapper can be found in the `Commands` enum (see [here](https://github.com/davassi/JOTA/blob/master/src/main/java/jota/IotaAPICommands.java) for more details).
 

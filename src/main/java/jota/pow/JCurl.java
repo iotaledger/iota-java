@@ -4,6 +4,7 @@ import jota.utils.Converter;
 import jota.utils.Pair;
 
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 
 /**
  * (c) 2016 Come-from-Beyond
@@ -18,20 +19,29 @@ public class JCurl implements ICurl {
     public static final int HASH_LENGTH = 243;
     private static final int STATE_LENGTH = 3 * HASH_LENGTH;
 
-    private static final int NUMBER_OF_ROUNDS = 27;
+    public static final int NUMBER_OF_ROUNDSP81 = 81;
+    public static final int NUMBER_OF_ROUNDSP27 = 27;
+    private final int numberOfRounds;
+
     private static final int[] TRUTH_TABLE = {1, 0, -1, 2, 1, -1, 0, 2, -1, 1, 0};
     private final long[] stateLow;
     private final long[] stateHigh;
     private final int[] scratchpad = new int[STATE_LENGTH];
     private int[] state;
-    private boolean pair;
 
-    public JCurl() {
-        this(false);
-    }
-
-    public JCurl(boolean pair) {
-        this.pair = pair;
+    public JCurl(boolean pair, SpongeFactory.Mode mode) {
+        switch (mode) {
+            case CURLP27: {
+                numberOfRounds = NUMBER_OF_ROUNDSP27;
+            }
+            break;
+            case CURLP81: {
+                numberOfRounds = NUMBER_OF_ROUNDSP81;
+            }
+            break;
+            default:
+                throw new NoSuchElementException("Only Curl-P-27 and Curl-P-81 are supported.");
+        }
         if (pair) {
             stateHigh = new long[STATE_LENGTH];
             stateLow = new long[STATE_LENGTH];
@@ -42,6 +52,24 @@ public class JCurl implements ICurl {
             stateHigh = null;
             stateLow = null;
         }
+    }
+
+    public JCurl(SpongeFactory.Mode mode) {
+        switch (mode) {
+            case CURLP27: {
+                numberOfRounds = NUMBER_OF_ROUNDSP27;
+            }
+            break;
+            case CURLP81: {
+                numberOfRounds = NUMBER_OF_ROUNDSP81;
+            }
+            break;
+            default:
+                throw new NoSuchElementException("Only Curl-P-27 and Curl-P-81 are supported.");
+        }
+        state = new int[STATE_LENGTH];
+        stateHigh = null;
+        stateLow = null;
     }
 
     /**
@@ -82,7 +110,7 @@ public class JCurl implements ICurl {
 
         int scratchpadIndex = 0;
         int prev_scratchpadIndex = 0;
-        for (int round = 0; round < NUMBER_OF_ROUNDS; round++) {
+        for (int round = 0; round < numberOfRounds; round++) {
             System.arraycopy(state, 0, scratchpad, 0, STATE_LENGTH);
             for (int stateIndex = 0; stateIndex < STATE_LENGTH; stateIndex++) {
                 prev_scratchpadIndex = scratchpadIndex;
@@ -104,8 +132,15 @@ public class JCurl implements ICurl {
      * @return The ICurl instance (used for method chaining).
      */
     public JCurl reset() {
-        for (int stateIndex = 0; stateIndex < STATE_LENGTH; stateIndex++) {
-            state[stateIndex] = 0;
+        Arrays.fill(state, 0);
+        return this;
+    }
+
+    public JCurl reset(boolean pair) {
+        if (pair) {
+            set();
+        } else {
+            reset();
         }
         return this;
     }
@@ -166,7 +201,7 @@ public class JCurl implements ICurl {
         final long[] curlScratchpadLow = new long[STATE_LENGTH];
         final long[] curlScratchpadHigh = new long[STATE_LENGTH];
         int curlScratchpadIndex = 0;
-        for (int round = 27; round-- > 0; ) {
+        for (int round = numberOfRounds; round-- > 0; ) {
             System.arraycopy(stateLow, 0, curlScratchpadLow, 0, STATE_LENGTH);
             System.arraycopy(stateHigh, 0, curlScratchpadHigh, 0, STATE_LENGTH);
             for (int curlStateIndex = 0; curlStateIndex < STATE_LENGTH; curlStateIndex++) {
@@ -179,6 +214,7 @@ public class JCurl implements ICurl {
             }
         }
     }
+
 
     public void absorb(final Pair<long[], long[]> pair, int offset, int length) {
         int o = offset, l = length, i = 0;
@@ -210,6 +246,6 @@ public class JCurl implements ICurl {
      */
     @Override
     public ICurl clone() {
-        return new JCurl(pair);
+        return new JCurl(SpongeFactory.Mode.CURLP81);
     }
 }
