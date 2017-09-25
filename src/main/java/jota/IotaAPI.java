@@ -765,6 +765,7 @@ public class IotaAPI extends IotaAPICore {
             bundleTrytes.add(trx.toTrytes());
         }
 
+        Collections.reverse(bundleTrytes);
         List<Transaction> trxs = sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), depth, minWeightMagnitude);
 
         Boolean[] successful = new Boolean[trxs.size()];

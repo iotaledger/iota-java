@@ -1,7 +1,0 @@
-iota.node.protocol=http
-iota.node.host=node.iotawallet.info
-#iota.node.host=138.68.90.186
-#iota.node.host=192.168.11.2
-#iota.node.host=138.68.90.186
-iota.node.port=14265
-

@@ -198,7 +198,7 @@ public class IotaAPITest {
     @Ignore
     @Test
     public void shouldReplayBundle() throws InvalidTrytesException, InvalidBundleException, InvalidSignatureException, ArgumentException {
-        ReplayBundleResponse rbr = iotaClient.replayBundle(TEST_TRYTES, 9, MWM);
+        ReplayBundleResponse rbr = iotaClient.replayBundle(TEST_HASH, 9, MWM);
         assertThat(rbr, IsNull.notNullValue());
     }
 
