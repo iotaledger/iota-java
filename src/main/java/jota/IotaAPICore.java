@@ -204,7 +204,7 @@ public class IotaAPICore {
                 txn.setBranchTransaction(previousTransaction == null ? branchTransaction : trunkTransaction);
                 if (txn.getTag().isEmpty() || txn.getTag().matches("9*"))
                     txn.setTag(txn.getObsoleteTag());
-                txn.setAttachmentTimestamp(System.currentTimeMillis() / 1000L);
+                txn.setAttachmentTimestamp(System.currentTimeMillis());
                 txn.setAttachmentTimestampLowerBound(0);
                 txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
                 resultTrytes[i] = localPoW.performPoW(txn.toTrytes(), minWeightMagnitude);
@@ -329,7 +329,7 @@ public class IotaAPICore {
         }
 
         /**
-         * @param protocol
+         * @param localPoW
          * @return
          */
         public T localPoW(IotaLocalPoW localPoW) {

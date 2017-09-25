@@ -480,7 +480,7 @@ public class Transaction {
         this.setTrunkTransaction(trytes.substring(2430, 2511));
         this.setBranchTransaction(trytes.substring(2511, 2592));
         this.setTag(trytes.substring(2592, 2619));
-        this.setAttachmentTimestamp(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7857, 7884)) / 1000);
+        this.setAttachmentTimestamp(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7857, 7884)));
         this.setAttachmentTimestampLowerBound(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7884, 7911)));
         this.setAttachmentTimestampUpperBound(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7911, 7938)));
         this.setNonce(trytes.substring(2646, 2673));
