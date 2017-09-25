@@ -80,14 +80,42 @@ public class PearlDiver {
                 transform(midCurlStateLow, midCurlStateHigh, curlScratchpadLow, curlScratchpadHigh);
             }
 
-            midCurlStateLow[0] = 0b1101101101101101101101101101101101101101101101101101101101101101L;
-            midCurlStateHigh[0] = 0b1011011011011011011011011011011011011011011011011011011011011011L;
-            midCurlStateLow[1] = 0b1111000111111000111111000111111000111111000111111000111111000111L;
-            midCurlStateHigh[1] = 0b1000111111000111111000111111000111111000111111000111111000111111L;
-            midCurlStateLow[2] = 0b0111111111111111111000000000111111111111111111000000000111111111L;
-            midCurlStateHigh[2] = 0b1111111111000000000111111111111111111000000000111111111111111111L;
-            midCurlStateLow[3] = 0b1111111111000000000000000000000000000111111111111111111111111111L;
-            midCurlStateHigh[3] = 0b0000000000111111111111111111111111111111111111111111111111111111L;
+            for (int i = 0; i < 162; i++) {
+
+                switch (transactionTrits[offset++]) {
+
+                    case 0: {
+
+                        midCurlStateLow[i] = 0b1111111111111111111111111111111111111111111111111111111111111111L;
+                        midCurlStateHigh[i] = 0b1111111111111111111111111111111111111111111111111111111111111111L;
+
+                    }
+                    break;
+
+                    case 1: {
+
+                        midCurlStateLow[i] = 0b0000000000000000000000000000000000000000000000000000000000000000L;
+                        midCurlStateHigh[i] = 0b1111111111111111111111111111111111111111111111111111111111111111L;
+
+                    }
+                    break;
+
+                    default: {
+
+                        midCurlStateLow[i] = 0b1111111111111111111111111111111111111111111111111111111111111111L;
+                        midCurlStateHigh[i] = 0b0000000000000000000000000000000000000000000000000000000000000000L;
+                    }
+                }
+            }
+
+            midCurlStateLow[162 + 0] = 0b1101101101101101101101101101101101101101101101101101101101101101L;
+            midCurlStateHigh[162 + 0] = 0b1011011011011011011011011011011011011011011011011011011011011011L;
+            midCurlStateLow[162 + 1] = 0b1111000111111000111111000111111000111111000111111000111111000111L;
+            midCurlStateHigh[162 + 1] = 0b1000111111000111111000111111000111111000111111000111111000111111L;
+            midCurlStateLow[162 + 2] = 0b0111111111111111111000000000111111111111111111000000000111111111L;
+            midCurlStateHigh[162 + 2] = 0b1111111111000000000111111111111111111000000000111111111111111111L;
+            midCurlStateLow[162 + 3] = 0b1111111111000000000000000000000000000111111111111111111111111111L;
+            midCurlStateHigh[162 + 3] = 0b0000000000111111111111111111111111111111111111111111111111111111L;
         }
 
         if (numberOfThreads <= 0) {
@@ -109,14 +137,14 @@ public class PearlDiver {
                 System.arraycopy(midCurlStateHigh, 0, midCurlStateCopyHigh, 0, CURL_STATE_LENGTH);
                 for (int i = threadIndex; i-- > 0; ) {
 
-                    increment(midCurlStateCopyLow, midCurlStateCopyHigh, CURL_HASH_LENGTH / 3, (CURL_HASH_LENGTH / 3) * 2);
+                    increment(midCurlStateCopyLow, midCurlStateCopyHigh, 162 + CURL_HASH_LENGTH / 9, 162 + (CURL_HASH_LENGTH / 9) * 2);
                 }
 
                 final long[] curlStateLow = new long[CURL_STATE_LENGTH], curlStateHigh = new long[CURL_STATE_LENGTH];
                 final long[] curlScratchpadLow = new long[CURL_STATE_LENGTH], curlScratchpadHigh = new long[CURL_STATE_LENGTH];
                 while (state == RUNNING) {
 
-                    increment(midCurlStateCopyLow, midCurlStateCopyHigh, (CURL_HASH_LENGTH / 3) * 2, CURL_HASH_LENGTH);
+                    increment(midCurlStateCopyLow, midCurlStateCopyHigh, 162 + CURL_HASH_LENGTH / 9, 162 + (CURL_HASH_LENGTH / 9) * 2);
                     System.arraycopy(midCurlStateCopyLow, 0, curlStateLow, 0, CURL_STATE_LENGTH);
                     System.arraycopy(midCurlStateCopyHigh, 0, curlStateHigh, 0, CURL_STATE_LENGTH);
                     transform(curlStateLow, curlStateHigh, curlScratchpadLow, curlScratchpadHigh);
@@ -172,7 +200,7 @@ public class PearlDiver {
     private static void transform(final long[] curlStateLow, final long[] curlStateHigh, final long[] curlScratchpadLow, final long[] curlScratchpadHigh) {
 
         int curlScratchpadIndex = 0;
-        for (int round = 27; round-- > 0; ) {
+        for (int round = 81; round-- > 0; ) {
 
             System.arraycopy(curlStateLow, 0, curlScratchpadLow, 0, CURL_STATE_LENGTH);
             System.arraycopy(curlStateHigh, 0, curlScratchpadHigh, 0, CURL_STATE_LENGTH);
