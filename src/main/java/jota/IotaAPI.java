@@ -460,7 +460,7 @@ public class IotaAPI extends IotaAPICore {
                 int totalBalance = 0;
                 int i = 0;
                 for (String balance : balances) {
-                    long thisBalance = Integer.parseInt(balance);
+                    long thisBalance = Long.parseLong(balance);
 
                     // If input has balance, add it to confirmedInputs
                     if (thisBalance > 0) {
@@ -1006,7 +1006,7 @@ public class IotaAPI extends IotaAPICore {
             long totalBalance = 0;
 
             for (String balance : balances) {
-                long thisBalance = Integer.parseInt(balance);
+                long thisBalance = Long.parseLong(balance);
 
                 totalBalance += thisBalance;
             }
