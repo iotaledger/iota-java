@@ -457,10 +457,10 @@ public class IotaAPI extends IotaAPICore {
                 String[] balances = balancesResponse.getBalances();
 
                 List<Input> confirmedInputs = new ArrayList<>();
-                int totalBalance = 0;
+                long totalBalance = 0;
                 int i = 0;
                 for (String balance : balances) {
-                    long thisBalance = Integer.parseInt(balance);
+                    long thisBalance = Long.parseLong(balance);
 
                     // If input has balance, add it to confirmedInputs
                     if (thisBalance > 0) {
@@ -904,8 +904,6 @@ public class IotaAPI extends IotaAPICore {
      */
     public List<Transaction> initiateTransfer(int securitySum, final String inputAddress, String remainderAddress,
                                               final List<Transfer> transfers, boolean testMode) throws InvalidAddressException, InvalidBundleException, InvalidTransferException {
-        StopWatch sw = new StopWatch();
-
 
         // If message or tag is not supplied, provide it
         // Also remove the checksum of the address if it's there
@@ -1006,7 +1004,7 @@ public class IotaAPI extends IotaAPICore {
             long totalBalance = 0;
 
             for (String balance : balances) {
-                long thisBalance = Integer.parseInt(balance);
+                long thisBalance = Long.parseLong(balance);
 
                 totalBalance += thisBalance;
             }
