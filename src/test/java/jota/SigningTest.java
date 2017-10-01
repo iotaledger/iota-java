@@ -44,7 +44,7 @@ public class SigningTest {
 
     @Test
     public void testVerifying() throws InvalidAddressException {
-        assertTrue(new Signing(null).validateSignatures(removeChecksum(SIXTH_ADDR), new String[] { SIGNATURE1, SIGNATURE2 }, removeChecksum(FIRST_ADDR)));
+        assertTrue(new Signing(null).validateSignatures(removeChecksum(SIXTH_ADDR), new String[]{SIGNATURE1, SIGNATURE2}, removeChecksum(FIRST_ADDR)));
     }
 
     private String removeChecksum(String address) throws InvalidAddressException {
