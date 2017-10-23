@@ -72,6 +72,10 @@ public class TrytesConverter {
      */
     public static String toString(String inputTrytes) {
 
+        // If input length is odd, return null
+        if (inputTrytes.length() % 2 != 0)
+            return null;
+
         StringBuilder string = new StringBuilder();
 
         for (int i = 0; i < inputTrytes.length(); i += 2) {
