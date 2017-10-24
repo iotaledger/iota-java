@@ -29,6 +29,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class IotaAPICore {
 
+    // version header
+    private static final String X_IOTA_API_VERSION_HEADER_NAME = "X-IOTA-API-Version";
+    private static final String X_IOTA_API_VERSION_HEADER_VALUE = "1";
+
     private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
 
     private IotaAPIService service;
@@ -106,7 +110,7 @@ public class IotaAPICore {
                         Request newRequest;
 
                         newRequest = request.newBuilder()
-                                .addHeader("X-IOTA-API-VERSION", "1.4.1")
+                                .addHeader(X_IOTA_API_VERSION_HEADER_NAME, X_IOTA_API_VERSION_HEADER_VALUE)
                                 .build();
 
                         return chain.proceed(newRequest);
