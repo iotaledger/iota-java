@@ -86,7 +86,7 @@ public class IotaAPICore {
     }
 
     /**
-     * added in postConstruct the header for IRI 1.4.1
+     * added header for IRI 1.4.1
      */
     private void postConstruct() {
 
