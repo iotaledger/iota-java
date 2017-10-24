@@ -96,21 +96,19 @@ public class IotaAPIUtils {
 
                     //  Because the signature is > 2187 trytes, we need to
                     //  find the second transaction to add the remainder of the signature
-                    for (int k = 0; k < bundle.getTransactions().size(); k++) {
-                        //  Same address as well as value = 0 (as we already spent the input)
-                        if (bundle.getTransactions().get(k).getAddress().equals(thisAddress) && bundle.getTransactions().get(k).getValue() == 0) {
-                            // Use the second 6562 trits
-                            int[] secondFragment = Arrays.copyOfRange(key, 6561, 6561 * 2);
+                    //  Same address as well as value = 0 (as we already spent the input)
+                    if (bundle.getTransactions().get(i + j).getAddress().equals(thisAddress) && bundle.getTransactions().get(i + j).getValue() == 0) {
+                        // Use the second 6562 trits
+                        int[] secondFragment = Arrays.copyOfRange(key, 6561 * j, 6561 * (j + 1));
 
-                            // The second 27 to 54 trytes of the bundle hash
-                            int[] secondBundleFragment = Arrays.copyOfRange(normalizedBundleHash, 27, 27 * 2);
+                        // The second 27 to 54 trytes of the bundle hash
+                        int[] secondBundleFragment = Arrays.copyOfRange(normalizedBundleHash, 27 * j, 27 * (j + 1));
 
-                            //  Calculate the new signature
-                            int[] secondSignedFragment = new Signing(curl).signatureFragment(secondBundleFragment, secondFragment);
+                        //  Calculate the new signature
+                        int[] secondSignedFragment = new Signing(curl).signatureFragment(secondBundleFragment, secondFragment);
 
-                            //  Convert signature to trytes and assign it again to this bundle entry
-                            bundle.getTransactions().get(k).setSignatureFragments(Converter.trytes(secondSignedFragment));
-                        }
+                        //  Convert signature to trytes and assign it again to this bundle entry
+                        bundle.getTransactions().get(i+j).setSignatureFragments(Converter.trytes(secondSignedFragment));
                     }
                 }
             }
