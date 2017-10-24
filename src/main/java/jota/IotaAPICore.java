@@ -5,7 +5,9 @@ import jota.dto.response.*;
 import jota.error.InvalidTrytesException;
 import jota.model.Transaction;
 import jota.utils.InputValidator;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import retrofit2.Call;
@@ -26,6 +28,10 @@ import java.util.concurrent.TimeUnit;
  * @author Adrian
  */
 public class IotaAPICore {
+
+    // version header
+    private static final String X_IOTA_API_VERSION_HEADER_NAME = "X-IOTA-API-Version";
+    private static final String X_IOTA_API_VERSION_HEADER_VALUE = "1";
 
     private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
 
@@ -84,17 +90,37 @@ public class IotaAPICore {
     }
 
     /**
-     *
+     * added header for IRI 1.4.1
      */
     private void postConstruct() {
 
         final String nodeUrl = protocol + "://" + host + ":" + port;
 
-        final OkHttpClient client = new OkHttpClient.Builder()
+        // Create OkHttpBuilder
+        final OkHttpClient.Builder okhttpBuilder = new OkHttpClient.Builder()
                 .readTimeout(5000, TimeUnit.SECONDS)
-                .connectTimeout(5000, TimeUnit.SECONDS)
-                .build();
+                .connectTimeout(5000, TimeUnit.SECONDS);
 
+        // add an Interceptor in order to add the requested header
+        okhttpBuilder.addNetworkInterceptor(
+                new Interceptor() {
+                    @Override
+                    public okhttp3.Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+                        Request newRequest;
+
+                        newRequest = request.newBuilder()
+                                .addHeader(X_IOTA_API_VERSION_HEADER_NAME, X_IOTA_API_VERSION_HEADER_VALUE)
+                                .build();
+
+                        return chain.proceed(newRequest);
+                    }
+                });
+
+        // create client
+        final OkHttpClient client = okhttpBuilder.build();
+
+        // use client to create Retrofit service
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(nodeUrl)
                 .addConverterFactory(GsonConverterFactory.create())
