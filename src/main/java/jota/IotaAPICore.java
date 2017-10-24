@@ -2,6 +2,7 @@ package jota;
 
 import jota.dto.request.*;
 import jota.dto.response.*;
+import jota.error.InvalidApiVersionException;
 import jota.error.InvalidTrytesException;
 import jota.model.Transaction;
 import jota.utils.InputValidator;
@@ -60,8 +61,17 @@ public class IotaAPICore {
     protected static <T> Response<T> wrapCheckedException(final Call<T> call) {
         try {
             final Response<T> res = call.execute();
+
             if (res.code() == 400) {
-                throw new IllegalAccessError("400 " + res.errorBody().string());
+                if (res.errorBody().string().contains("Invalid API Version")) {
+                    try {
+                        throw new InvalidApiVersionException();
+                    } catch (InvalidApiVersionException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    throw new IllegalAccessError("400 " + res.errorBody().string());
+                }
             } else if (res.code() == 401) {
                 throw new IllegalAccessError("401 " + res.errorBody().string());
             } else if (res.code() == 500) {
@@ -72,6 +82,7 @@ public class IotaAPICore {
             log.error("Execution of the API call raised exception. IOTA Node not reachable?", e);
             throw new IllegalStateException(e.getMessage());
         }
+
     }
 
     /**
@@ -97,13 +108,9 @@ public class IotaAPICore {
         final String nodeUrl = protocol + "://" + host + ":" + port;
 
         // Create OkHttpBuilder
-        final OkHttpClient.Builder okhttpBuilder = new OkHttpClient.Builder()
+        final OkHttpClient client = new OkHttpClient.Builder()
                 .readTimeout(5000, TimeUnit.SECONDS)
-                .connectTimeout(5000, TimeUnit.SECONDS);
-
-        // add an Interceptor in order to add the requested header
-        okhttpBuilder.addNetworkInterceptor(
-                new Interceptor() {
+                .addInterceptor(new Interceptor() {
                     @Override
                     public okhttp3.Response intercept(Chain chain) throws IOException {
                         Request request = chain.request();
@@ -115,10 +122,9 @@ public class IotaAPICore {
 
                         return chain.proceed(newRequest);
                     }
-                });
-
-        // create client
-        final OkHttpClient client = okhttpBuilder.build();
+                })
+                .connectTimeout(5000, TimeUnit.SECONDS)
+                .build();
 
         // use client to create Retrofit service
         final Retrofit retrofit = new Retrofit.Builder()
@@ -267,12 +273,11 @@ public class IotaAPICore {
 
     @SuppressWarnings("unchecked")
     public static class Builder<T extends Builder<T>> {
+        String protocol, host, port;
+        IotaLocalPoW localPoW;
         private FileReader fileReader = null;
         private BufferedReader bufferedReader = null;
         private Properties nodeConfig = null;
-
-        String protocol, host, port;
-        IotaLocalPoW localPoW;
 
         public IotaAPICore build() {
             // resolution order: builder value, configuration file, default value
