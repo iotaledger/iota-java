@@ -1,33 +1,42 @@
+sudo: required
+dist: trusty
+
 language: java
 jdk:
 - oraclejdk8
+
+cache:
+  directories:
+  - $HOME/.m2/repository
+
 before_install:
-- openssl aes-256-cbc -K $encrypted_404912dc11ca_key -iv $encrypted_404912dc11ca_iv
-  -in codesigning.asc.enc -out codesigning.asc -d
-before_script: gpg --fast-import codesigning.asc
-script: mvn package -P build-extras
-deploy:
-  - provider: releases
-    api_key:
-      secure: YR8aDGTciBNQgI8GU5DSSm6dzKyZhgmixewIMkbjwrGkdLs/UnD2cfMh2ziNuivpmnIDj2rCMmf6gr1PhQno5nsPPrrFcJs0tIv2LAvAAJst/k32zMK3wv1x54eaTS3SK9VxUdAcnB0N3RvMKLiaqkwTcxa4PY9pWlHnZdc8h9oCqr7JAq8NH/94Ri4AiUc7hDgu6xnZNDqll6gJwdM8kUPQuUsAkkAl2dBVfqB7OeQFkmTvl6Hi5WCn9zbpBpKxE4t/SbgZvH5ccVBKOZveFG38/Mm1ur6VHQ8WvZFnEHps+aq8Sjz8irzcdGHC/hSGvMfsB2LRZHKd8KaRcSCypzuBjNt+ayEaaCd4AcNIsR/cEtC9aOzttNhS6eX4YpdaDjmvlqChjKvR+reKVXK7rb6Z08vHkJC1HOofovfjBP0RXT/O1CsUTpPS0lpNfrNZ0n0GfaHqtqxYrGDsXMFIHX5v39fqwAF2pmpJQaB3CeSLpEM7YbNcPlPRQ/w4XZ5SEN1ENS6a8oenOL+IZNMyspTywG3vQgdc82W5MhjFpUawrReeWd6y5xrHiWBLVPJGsgJQPIY0MkuAGiIGqiT8hSW8x8frYhX9IZ7/x4My6PYL8pCv+zn2V8LBr5KCtjVf3sGrxftlt1eLvQHkw290yRUgcfTAd2Dj8lk8H+jYgXA=
-    file_glob: true
-    file:
-    - "/home/travis/build/iotaledger/iota.lib.java/target/jota*.jar"
-    - "/home/travis/build/iotaledger/iota.lib.java/target/jota*.jar-with-dependencies"
-    - "/home/travis/build/iotaledger/iota.lib.java/target/jota*.jar.asc"
-    - "/home/travis/build/iotaledger/iota.lib.java/target/jota*-sources.jar"
-    - "/home/travis/build/iotaledger/iota.lib.java/target/jota*-sources.jar.asc"
-    - "/home/travis/build/iotaledger/iota.lib.java/target/jota*-javadoc.jar"
-    - "/home/travis/build/iotaledger/iota.lib.java/target/jota*-javadoc.jar.asc"
-    skip_cleanup: true
-    on:
-      tags: true
-      repo: iotaledger/iota.lib.java
-      all_branches: true
-  - provider: script
-    script: chmod u+x .travis/push-jdoc-gh-pages.sh && .travis/push-jdoc-gh-pages.sh
-    skip_cleanup: true
-    on:
-      tags: true
-      repo: iotaledger/iota.lib.java
-      all_branches: true
+  # setup https authentication credentials, used by ./mvnw release:prepare
+  - git config credential.helper "store --file=.git/credentials"
+  - echo "https://$GH_TOKEN:@github.com" > .git/credentials
+
+install:
+  # Override default travis to use the maven wrapper
+  - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
+script:
+  - .travis/publish.sh
+
+branches:
+  except:
+    - /^[0-9]/
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then ./travis/push-jdoc-gh-pages.sh ; fi
+
+env:
+  global:
+  # Ex. travis encrypt -r org/repo GH_TOKEN=XXX-https://github.com/settings/tokens-XXX
+  - secure: "GE8IH99UVYXOhMYEN9Urdq5OVRM2V2ZZLpPZESh7DwzHMtVSHYaC3D26fuXfQAM2pzG9YQXVdUVKHpd5/DjhJrWYOWHDyDudd/v79FTN7XRi90IGsPc/ebKViZp1FllImNl7e37C3h11qac6NfXVMemHorwzzDnURRduDq7B1y9Ud0W6tdCRaBCRFVZbcvtLh2H5XfCjKbqK7mf834/cUWJo40uQqIdD9hsMIPnwiE5KdHNTrVFOLaehsljMTWQabfH3VXqWHoBlnrQxMVVti9rjiDKDDM78oAbpymce+DQoe9MWwDKtENmshDJgXMGOPWXFN6v+6Y2hGgakD0hzrmnkAZGgn394lf5Y2+ahcYPBp6SUKf0TTyKgym0haiSInBjytNWPk+v1+OWd5mP4ApNL8CYJb2f1Wwl1HkXkGsFT8xWLIfWzYKKzVpBkjU+Z/oQpCZAekC1JcXnDBs/zwJvvaHO0zGZ0QKYgI21DhJ3xKYA1JQmnBZLnJAYl2880YVqXNH7ocvF+/j13N3FTAsNNzUALXjUZ0OB/gjmQGAKL8AtLNEePuqPC/mq/dIIIruJBiwY2cue+cvjSsV/+allkMK0VnCOfDaJvHtkTXiGEh8KTWcIUAahhNn9Nqm5WBK3mqhyklRvRNFeBOteezIwwqPj54ZfgLGU2i24i6C0="
+  # Ex. travis encrypt -r org/repo SONATYPE_USER=your_sonatype_account
+  - secure: "2S6vJXckX/UhrglVDfeNcN0PstZyfxMrHXv14z776S+po8C9OW1Coit+CgWL7WY4hPtnXnVApIIR5mgszQ5kmC5EEC2s/xQuLS0euSK6ULI9Tn2WVP5IpD0xHF9BQhIhhskBbhAf9miv3kfKwnwGfG71LRfV886Fvqu2e6rzyzUp5Q7eojChOG1WLa91bLJp3VBW3VcCIgHHxR/Tf6R5eZyczz3yVwCIPMHQFD4yjIk6ZhBlyMN6cg75QgbvDxW3lgLBgWjs7jxO44gOYu1ejGe20WohQtHsTQnDxwKZNhF6p9krWCz2LB4PRizgS9lSg9xYRSJ7/KLrzuf/nwfwtYzpt7kNADDf9Mv3BuRJ101wp+TjgyBYOvIsGU3aV4iJudkNfR53vDSS9/RniIONSETgoD8ja6krl3sj7+DUUYCHIRJMHUlQq4pFUn86cC2XDSuFxFE4od9Utyh9P7KbrKjPeviy/WrZMxRY+VGQofHN/w7tBmN4CstN47dpcGtJ4GTLPkrlmIYiErGupnjV6hXjpZ6vKw6A+8Q+WFwpmXXM5RFeOMyiQ+GAhQScQa0dsnunSTyw4IWwi8BlmDLav2p9SdUYgnrFvLgqdExqXcH3YxsPUaeBlh3K7ZeILdGWpX9qZj5H8auEpaC4i6cFizuXb0MIWsKUa1FzrMEwP5Y="
+  # Ex. travis encrypt -r org/repo SONATYPE_PASSWORD=your_sonatype_password
+  - secure: "B1k5jjqMB2EZARpCqfk1WoLGNipMF5hBbz1RoNMiIOjrv5kh7QDqpCgDOahAPpo9LnciM1Znpq8OTrni53qGAhYhOUOOyxUgqiSx3nknoyvxMRC20zjSDUAFaqwcbTGwMFnguihsAEGAXmLT4OxJVEwUE4okELmkqls7xaMuCsEDeAk2mEdmP951DBr7P1hlkC6nkv+JwWgOmtoeCylUH1Uulv1nVbtxlZQ1CccOsFEh9DLGZvtra01oLj2V7sS899sHlbGS48R4e+SoWz4Ui3Xg3n5zTiWj3iL1GLGOZzy4DWRuxggl1HgOmZWhNnx9TLBi4r0MRUQIu7iMinfV3SqJfQQgjZ6hsvT2Xuzg2UuEDF126oxzAxrkpwDvd1VtE6NRORrIAISU0Blmfg9HFII/p5ZBKUtDwxgskKul049p1Du5dHc9taiuGR+EvzLzuWH4FKfhnwmUBLEPF/3V0g+EN1F7vV/SxlDipbvdLEZIVktnk5RCkey4u0+sSiJK1bD4Dx1aAbRdgEbDhcJf2zJY05+CGZEE0ikQ0MEkLx860g/YOiSee4EcZ3W4Wvo1RXaPOrzbug9zLlNfbRtqkJFYS8lGValfz8Iw0o4a5zIQtO/Y0corK8s8PZLRU+1JxBtT27Dg72OGjYaLoVOltEJDqHGWICTj4kNrLpO/waA="
+  # Ex. travis encrypt -r org/repo BINTRAY_USER=your_github_account
+  - secure: "ZQOLJ2LiTrwsffTdbawu3DXVDKSr5uXDgBF7eM8sEFXzKxbDaZCkyblFf5p2TRJMfNA/ntLfVRuD5dvYl36QxhfCRntRCXB2l9eVWlwLx2bg98cJtO9uux6HG0WY1AozDd2tff6t9H/Xegzi0Ib6wupJsMlWyD8aLZG7Rp5hvDCUBtxI/xKt/mt8hiPFc80QivET0nMTatEW8rdMocLPmXxPmqRZtjaoh5DHskr6yqH9Wuhu00qJezK2VupHPK+j4kgdwr0N/Xoa8bvyK25NRuXKt52uEl6O+unf9aFGIOOzJFlpcKuYN6m7esXXlkxpvKCt/HN6GyYZMXiso6pYm+vdt/7vcGACUtIph0CCuuaHSgcTxL8m3UGP7YOomdGV4xwGbaRAtSgGQ4Sv/l7Hwo7aASk3AWDKkh6I1hTqUxGz3U19tOcOflyfovQ1PH+WE9fT5s6kNSNkxl+ngu+yNRkpo//9xfY0bx3APRtQEjqhITJKPSYI4Ix46OVW4BAgU2vRM9xNGBXix5DVrWSKJz1RPuEh0XO7kguPYaT170tTvBneFtJCG4ds8Xm5swkgsLsOJTMpbi6qEKOV9WhiMWi2QVIw8gX4XyazHXR1YOzMArDaTzjISLpVjJAf6nYkhtdO5L92y3V/NyK+7sjQtjMpfz4VDHqQ47JJMYATtbA="
+  # Ex. travis encrypt -r org/repo BINTRAY_KEY=xxx-https://bintray.com/profile/edit-xxx
+  - secure: "GHlAM0hm47AGSjZCx4pqB678/bPolESRWrzglXTIqmlhTY9HN53L92rPGR8/KqGOXYl65cLpEuDxqxnfnBgU9qIVeD628ah2u1pgkRnSLDYdyNzQhEaT5ePoAO9PMfj7kcJWOj4wDxCpGa59XLyrAoe13/9PKAOEuK95jSX7YDfybz33OrrPDPkkV/HdSzHNkxK2Agw00SdNbgeT2XYOsLDjQIgtrQA/XKcx4z3e9Jvw7LuO6KZw0rS+fy1UmnboQgVBMFTE8Gn0J+ewZTkbNIoJzTK5qGVUuFVtinKZWXuKpqnfq9ENwYdbsGkVbJfK+fb8YExwrxnRCfELUeZP8UjXvGVH/WdwR7uYwbUequ5hPw5deK0ZriHmEkUsrSjhh8zZkBvkwoHXMHlRoMwd1WS6tu2ml8HeZ1YvHpdxQ9i9ZtE2bB/9jasSotcp4LL/3jA3zW1Gwdev78LNst8IwTsjMMuNwfjiwwhxvF26MGXI9nylT3rc5lFYMI2/vkm9U0R7QIgBFm5o5s5RC5GFNhhm7XksCDz04m1XJVar9GiqN8/HUkQofXfXTyytlmYPEIuEPB3Xoz3/PFCvVs74Q/yQS38laehdGrZf0ENDqpYmdh9ueY/O7WAG55uwWsERrGLstyoDNxxr04kwsn9I4GnX3n4v2YHouESB/+9Nl0E="
