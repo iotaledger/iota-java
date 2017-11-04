@@ -1,6 +1,7 @@
 package jota.utils;
 
 import jota.error.InvalidAddressException;
+import jota.error.InvalidSecurityLevelException;
 import jota.model.Bundle;
 import jota.model.Input;
 import jota.model.Transaction;
@@ -28,8 +29,9 @@ public class IotaAPIUtils {
      * @param curl     The curl instance.
      * @return An String with address.
      * @throws InvalidAddressException is thrown when the specified address is not an valid address.
+     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      */
-    public static String newAddress(String seed, int security, int index, boolean checksum, ICurl curl) throws InvalidAddressException {
+    public static String newAddress(String seed, int security, int index, boolean checksum, ICurl curl) throws InvalidAddressException, InvalidSecurityLevelException {
         Signing signing = new Signing(curl);
         final int[] key = signing.key(Converter.trits(seed), index, security);
         final int[] digests = signing.digests(key);
@@ -46,7 +48,7 @@ public class IotaAPIUtils {
     public static List<String> signInputsAndReturn(final String seed,
                                                    final List<Input> inputs,
                                                    final Bundle bundle,
-                                                   final List<String> signatureFragments, ICurl curl) {
+                                                   final List<String> signatureFragments, ICurl curl) throws InvalidSecurityLevelException {
 
         bundle.finalize(curl);
         bundle.addTrytes(signatureFragments);

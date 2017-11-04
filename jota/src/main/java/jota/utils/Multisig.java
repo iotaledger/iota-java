@@ -1,5 +1,6 @@
 package jota.utils;
 
+import jota.error.InvalidSecurityLevelException;
 import jota.model.Bundle;
 import jota.pow.ICurl;
 import jota.pow.SpongeFactory;
@@ -36,7 +37,7 @@ public class Multisig {
      * @param index    Key index to start search from. If the index is provided, the generation of the address is not deterministic.
      * @return trytes
      **/
-    public String getDigest(String seed, int security, int index) {
+    public String getDigest(String seed, int security, int index) throws InvalidSecurityLevelException {
         int[] key = signingInstance.key(Converter.trits(seed, 243), index, security);
         return Converter.trytes(signingInstance.digests(key));
     }
@@ -75,7 +76,7 @@ public class Multisig {
      * @return trytes.
      **/
 
-    public String getKey(String seed, int index, int security) {
+    public String getKey(String seed, int index, int security) throws InvalidSecurityLevelException {
 
         return Converter.trytes(signingInstance.key(Converter.trits(seed, 81 * security), index, security));
     }

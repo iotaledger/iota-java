@@ -1,5 +1,6 @@
 package jota.utils;
 
+import jota.error.InvalidSecurityLevelException;
 import jota.model.Bundle;
 import jota.model.Transaction;
 import jota.pow.ICurl;
@@ -9,12 +10,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static jota.pow.JCurl.HASH_LENGTH;
+
 
 public class Signing {
+    public final static int KEY_LENGTH = 6561;
 
-    /**
-     * Ask @come-from-beyond
-     */
     private ICurl curl;
 
     /**
@@ -31,15 +32,21 @@ public class Signing {
     }
 
     /**
-     * @param seed
+     * @param inSeed
      * @param index
-     * @param length
+     * @param security
      * @return
      */
-    public int[] key(int[] seed, int index, int length) {
+    public int[] key(final int[] inSeed, final int index, int security) throws InvalidSecurityLevelException {
+        if (security < 1 || security > 3) {
+            throw new InvalidSecurityLevelException();
+        }
 
+        int[] seed = inSeed.clone();
+
+        // Derive subseed.
         for (int i = 0; i < index; i++) {
-            for (int j = 0; j < 243; j++) {
+            for (int j = 0; j < HASH_LENGTH; j++) {
                 if (++seed[j] > 1) {
                     seed[j] = -1;
                 } else {
@@ -50,16 +57,18 @@ public class Signing {
 
         curl.reset();
         curl.absorb(seed, 0, seed.length);
-        curl.squeeze(seed, 0, seed.length);
+        // seed[0..HASH_LENGTH] contains subseed
+        curl.squeeze(seed, 0, HASH_LENGTH);
         curl.reset();
-        curl.absorb(seed, 0, seed.length);
+        // absorb subseed
+        curl.absorb(seed, 0, HASH_LENGTH);
 
-        final int[] key = new int[length * seed.length * 27];
+        final int[] key = new int[security * HASH_LENGTH * 27];
         int offset = 0;
 
-        while (length-- > 0) {
+        while (security-- > 0) {
             for (int i = 0; i < 27; i++) {
-                curl.squeeze(key, offset, seed.length);
+                curl.squeeze(key, offset, HASH_LENGTH);
                 offset += seed.length;
             }
         }
@@ -67,20 +76,22 @@ public class Signing {
     }
 
     public int[] signatureFragment(int[] normalizedBundleFragment, int[] keyFragment) {
+        int[] signatureFragment = keyFragment.clone();
 
         for (int i = 0; i < 27; i++) {
+
             for (int j = 0; j < 13 - normalizedBundleFragment[i]; j++) {
                 curl.reset()
-                        .absorb(keyFragment, i * 243, 243)
-                        .squeeze(keyFragment, i * 243, 243);
+                        .absorb(signatureFragment, i * HASH_LENGTH, HASH_LENGTH)
+                        .squeeze(signatureFragment, i * HASH_LENGTH, HASH_LENGTH);
             }
         }
 
-        return keyFragment;
+        return signatureFragment;
     }
 
     public int[] address(int[] digests) {
-        int[] address = new int[243];
+        int[] address = new int[HASH_LENGTH];
         curl.reset()
                 .absorb(digests)
                 .squeeze(address);
@@ -88,23 +99,25 @@ public class Signing {
     }
 
     public int[] digests(int[] key) {
+        int security = (int) Math.floor(key.length / KEY_LENGTH);
 
-        int[] digests = new int[(int) Math.floor(key.length / 6561) * 243];
+        int[] digests = new int[security * HASH_LENGTH];
+        int[] keyFragment = new int[KEY_LENGTH];
 
-        for (int i = 0; i < Math.floor(key.length / 6561); i++) {
-            int[] keyFragment = Arrays.copyOfRange(key, i * 6561, (i + 1) * 6561);
+        for (int i = 0; i < Math.floor(key.length / KEY_LENGTH); i++) {
+            System.arraycopy(key, i * KEY_LENGTH, keyFragment, 0, KEY_LENGTH);
 
             for (int j = 0; j < 27; j++) {
                 for (int k = 0; k < 26; k++) {
                     curl.reset()
-                            .absorb(keyFragment, j * 243, 243)
-                            .squeeze(keyFragment, j * 243, 243);
+                            .absorb(keyFragment, j * HASH_LENGTH, HASH_LENGTH)
+                            .squeeze(keyFragment, j * HASH_LENGTH, HASH_LENGTH);
                 }
             }
 
             curl.reset();
             curl.absorb(keyFragment, 0, keyFragment.length);
-            curl.squeeze(digests, i * 243, 243);
+            curl.squeeze(digests, i * HASH_LENGTH, HASH_LENGTH);
         }
         return digests;
     }
@@ -112,10 +125,10 @@ public class Signing {
     public int[] digest(int[] normalizedBundleFragment, int[] signatureFragment) {
         curl.reset();
         ICurl jCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
-        int[] buffer = new int[243];
+        int[] buffer = new int[HASH_LENGTH];
 
         for (int i = 0; i < 27; i++) {
-            buffer = Arrays.copyOfRange(signatureFragment, i * 243, (i + 1) * 243);
+            buffer = Arrays.copyOfRange(signatureFragment, i * HASH_LENGTH, (i + 1) * HASH_LENGTH);
 
             for (int j = normalizedBundleFragment[i] + 13; j-- > 0; ) {
                 jCurl.reset();
@@ -133,8 +146,8 @@ public class Signing {
         String bundleHash = "";
         Transaction trx;
         List<String> signatureFragments = new ArrayList<>();
-        for (int i = 0; i < signedBundle.getTransactions().size(); i++) {
 
+        for (int i = 0; i < signedBundle.getTransactions().size(); i++) {
             trx = signedBundle.getTransactions().get(i);
 
             if (trx.getAddress().equals(inputAddress)) {
@@ -148,7 +161,6 @@ public class Signing {
                 signatureFragments.add(signatureFragment);
             }
         }
-
 
         return validateSignatures(inputAddress, signatureFragments.toArray(new String[signatureFragments.size()]), bundleHash);
     }
@@ -167,13 +179,13 @@ public class Signing {
         }
 
         // Get digests
-        int[] digests = new int[signatureFragments.length * 243];
+        int[] digests = new int[signatureFragments.length * HASH_LENGTH];
 
         for (int i = 0; i < signatureFragments.length; i++) {
 
             int[] digestBuffer = digest(normalizedBundleFragments[i % 3], Converter.trits(signatureFragments[i]));
 
-            System.arraycopy(digestBuffer, 0, digests, i * 243, 243);
+            System.arraycopy(digestBuffer, 0, digests, i * HASH_LENGTH, HASH_LENGTH);
         }
         String address = Converter.trytes(address(digests));
 

@@ -313,7 +313,7 @@ public class IotaAPICore {
             nodeConfig = new Properties();
             if (null == fileReader) {
                 try {
-                    fileReader = new FileReader("node_config.properties");
+                    fileReader = new FileReader("../node_config.properties");
 
                     if (null == bufferedReader) {
                         bufferedReader = new BufferedReader(fileReader);
