@@ -1,5 +1,6 @@
 package jota.utils;
 
+import jota.error.InvalidSecurityLevelException;
 import jota.model.Bundle;
 import jota.pow.ICurl;
 import jota.pow.SpongeFactory;
@@ -35,8 +36,9 @@ public class Multisig {
      * @param security Secuirty level of private key / seed.
      * @param index    Key index to start search from. If the index is provided, the generation of the address is not deterministic.
      * @return trytes
+     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      **/
-    public String getDigest(String seed, int security, int index) {
+    public String getDigest(String seed, int security, int index) throws InvalidSecurityLevelException {
         int[] key = signingInstance.key(Converter.trits(seed, 243), index, security);
         return Converter.trytes(signingInstance.digests(key));
     }
@@ -73,9 +75,10 @@ public class Multisig {
      * @param seed  Tryte-encoded seed. It should be noted that this seed is not transferred
      * @param index Key index to start search from. If the index is provided, the generation of the address is not deterministic.
      * @return trytes.
+     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      **/
 
-    public String getKey(String seed, int index, int security) {
+    public String getKey(String seed, int index, int security) throws InvalidSecurityLevelException {
 
         return Converter.trytes(signingInstance.key(Converter.trits(seed, 81 * security), index, security));
     }

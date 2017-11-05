@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jota.error.InvalidAddressException;
 import jota.error.InvalidBundleException;
+import jota.error.InvalidSecurityLevelException;
 import jota.error.InvalidTransferException;
 import jota.model.Bundle;
 import jota.model.Transaction;
@@ -39,7 +40,7 @@ public class IotaMultisigTest {
     }
 
     @Test
-    public void basicMultiSigTest() throws InvalidBundleException, InvalidTransferException, InvalidAddressException {
+    public void basicMultiSigTest() throws InvalidBundleException, InvalidTransferException, InvalidAddressException, InvalidSecurityLevelException {
 
         Multisig ms = new Multisig();
 
