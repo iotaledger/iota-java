@@ -36,6 +36,7 @@ public class Signing {
      * @param index
      * @param security
      * @return
+     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      */
     public int[] key(final int[] inSeed, final int index, int security) throws InvalidSecurityLevelException {
         if (security < 1 || security > 3) {
