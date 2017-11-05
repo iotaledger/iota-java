@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Client Side computation service.
  *
@@ -43,7 +45,7 @@ public class IotaAPIUtils {
         return address;
     }
 
-    public static List<String> signInputsAndReturn(final String seed,
+    public static List<String> signInputsAndReturn(final String oseed,
                                                    final List<Input> inputs,
                                                    final Bundle bundle,
                                                    final List<String> signatureFragments, ICurl curl) {
@@ -63,52 +65,41 @@ public class IotaAPIUtils {
                 // Get the corresponding keyIndex of the address
                 int keyIndex = 0;
                 int keySecurity = 0;
+                String signatureSeed = oseed;
                 for (Input input : inputs) {
                     if (input.getAddress().equals(thisAddress)) {
                         keyIndex = input.getKeyIndex();
                         keySecurity = input.getSecurity();
+                        if (StringUtils.isNotBlank(input.getSeed()))
+                        	signatureSeed=input.getSeed();
                     }
                 }
 
                 String bundleHash = bundle.getTransactions().get(i).getBundle();
 
-                // Get corresponding private key of address
-                int[] key = new Signing(curl).key(Converter.trits(seed), keyIndex, keySecurity);
-
-                //  First 6561 trits for the firstFragment
-                int[] firstFragment = Arrays.copyOfRange(key, 0, 6561);
-
+                 // Get corresponding private key of address
+                int[] key = new Signing(curl).key(Converter.trits(signatureSeed), keyIndex, keySecurity);
+ 
                 //  Get the normalized bundle hash
                 int[] normalizedBundleHash = bundle.normalizedBundle(bundleHash);
 
-                //  First bundle fragment uses 27 trytes
-                int[] firstBundleFragment = Arrays.copyOfRange(normalizedBundleHash, 0, 27);
+                // for each security level, add a signature
+                for (int j = 0; j < keySecurity; j++) {
+                	
+                	int hi = j % 3;
 
-                //  Calculate the new signatureFragment with the first bundle fragment
-                int[] firstSignedFragment = new Signing(curl).signatureFragment(firstBundleFragment, firstFragment);
+                    if (bundle.getTransactions().get(i + j).getAddress().equals(thisAddress)) {
+                        // Use current 6562 trits
+                        int[] keyFragment = Arrays.copyOfRange(key, 6561 * j, 6561 * (j + 1));
 
-                //  Convert signature to trytes and assign the new signatureFragment
-                bundle.getTransactions().get(i).setSignatureFragments(Converter.trytes(firstSignedFragment));
-
-                // if user chooses higher than 27-tryte security
-                // for each security level, add an additional signature
-                for (int j = 1; j < keySecurity; j++) {
-
-                    //  Because the signature is > 2187 trytes, we need to
-                    //  find the second transaction to add the remainder of the signature
-                    //  Same address as well as value = 0 (as we already spent the input)
-                    if (bundle.getTransactions().get(i + j).getAddress().equals(thisAddress) && bundle.getTransactions().get(i + j).getValue() == 0) {
-                        // Use the second 6562 trits
-                        int[] secondFragment = Arrays.copyOfRange(key, 6561 * j, 6561 * (j + 1));
-
-                        // The second 27 to 54 trytes of the bundle hash
-                        int[] secondBundleFragment = Arrays.copyOfRange(normalizedBundleHash, 27 * j, 27 * (j + 1));
+                        // The current trytes of the bundle hash
+                        int[] bundleFragment = Arrays.copyOfRange(normalizedBundleHash, 27 * hi, 27 * (hi + 1));
 
                         //  Calculate the new signature
-                        int[] secondSignedFragment = new Signing(curl).signatureFragment(secondBundleFragment, secondFragment);
+                        int[] signedFragment = new Signing(curl).signatureFragment(bundleFragment, keyFragment);
 
                         //  Convert signature to trytes and assign it again to this bundle entry
-                        bundle.getTransactions().get(i+j).setSignatureFragments(Converter.trytes(secondSignedFragment));
+                        bundle.getTransactions().get(i+j).setSignatureFragments(Converter.trytes(signedFragment));
                     }
                 }
             }

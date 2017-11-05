@@ -9,7 +9,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author Adrian
  **/
 public class Input {
-
+	
+	private String seed;
     private String address;
     private long balance;
     private int keyIndex;
@@ -17,14 +18,16 @@ public class Input {
 
     /**
      * Initializes a new instance of the Input class.
+     * @param seed TODO
      */
-    public Input(String address, long balance, int keyIndex, int security) {
-        this.address = address;
-        this.balance = balance;
-        this.keyIndex = keyIndex;
-        this.security = security;
+	public Input(String seed, String address, long balance, int keyIndex, int security) {
+		this.seed = seed;
+		this.address = address;
+		this.balance = balance;
+		this.keyIndex = keyIndex;
+		this.security = security;
 
-    }
+	}
 
     /**
      * Returns a String that represents this object.
@@ -107,4 +110,22 @@ public class Input {
     public void setSecurity(int security) {
         this.security = security;
     }
+
+    /**
+     * Get the seed for this input
+     * 
+     * @return
+     */
+	public String getSeed() {
+		return seed;
+	}
+
+	/**
+	 * Set the seed for this input
+	 * 
+	 * @param seed
+	 */
+	public void setSeed(String seed) {
+		this.seed = seed;
+	}
 }

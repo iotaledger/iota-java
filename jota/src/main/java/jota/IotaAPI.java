@@ -436,7 +436,7 @@ public class IotaAPI extends IotaAPICore {
             // Sum up total value
             totalValue += transfer.getValue();
         }
-
+ 
         // Get inputs if we are sending tokens
         if (totalValue != 0) {
             if (!validateInputs)
@@ -455,7 +455,7 @@ public class IotaAPI extends IotaAPICore {
 
                 GetBalancesResponse balancesResponse = getBalances(100, inputsAddresses);
                 String[] balances = balancesResponse.getBalances();
-
+                System.out.println(StringUtils.join(balancesResponse.getBalances()," - "));
                 List<Input> confirmedInputs = new ArrayList<>();
                 long totalBalance = 0;
                 int i = 0;
@@ -491,7 +491,7 @@ public class IotaAPI extends IotaAPICore {
             //  confirm that the inputs exceed the threshold
             else {
 
-                @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newinputs = getInputs(seed, security, 0, 0, totalValue);
+                GetBalancesAndFormatResponse newinputs = getInputs(seed, security, 0, 0, totalValue);
                 // If inputs with enough balance
                 return addRemainder(seed, security, newinputs.getInput(), bundle, tag, totalValue, remainder, signatureFragments);
             }
@@ -555,7 +555,7 @@ public class IotaAPI extends IotaAPICore {
                 allAddresses.add(address);
             }
 
-            return getBalanceAndFormat(allAddresses, threshold, start, end, stopWatch, security);
+            return getBalanceAndFormat(seed, allAddresses, threshold, start, end, stopWatch, security);
         }
         //  Case 2: iterate till threshold || end
         //
@@ -564,23 +564,24 @@ public class IotaAPI extends IotaAPICore {
         //  We then do getBalance, format the output and return it
         else {
             final GetNewAddressResponse res = getNewAddress(seed, security, start, false, 0, true);
-            return getBalanceAndFormat(res.getAddresses(), threshold, start, end, stopWatch, security);
+            return getBalanceAndFormat(seed, res.getAddresses(), threshold, start, end, stopWatch, security);
         }
     }
 
     /**
      * Gets the balances and formats the output.
-     *
+     * @param seed 		The current seed
      * @param addresses The addresses.
      * @param threshold Min balance required.
      * @param start     Starting key index.
      * @param end       Ending key index.
      * @param stopWatch the stopwatch.
      * @param security  The security level of private key / seed.
+     *
      * @return Inputs object.
      * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      **/
-    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, long threshold, int start, int end, StopWatch stopWatch, int security) throws InvalidSecurityLevelException {
+    public GetBalancesAndFormatResponse getBalanceAndFormat(String seed, final List<String> addresses, long threshold, int start, int end, StopWatch stopWatch, int security) throws InvalidSecurityLevelException {
 
         if (security < 1 || security > 3) {
             throw new InvalidSecurityLevelException();
@@ -602,7 +603,7 @@ public class IotaAPI extends IotaAPICore {
             long balance = Long.parseLong(balances.get(++i));
 
             if (balance > 0) {
-                final Input newEntry = new Input(address, balance, start + i, security);
+                final Input newEntry = new Input(seed, address, balance, start + i, security);
 
                 inputs.add(newEntry);
                 // Increase totalBalance of all aggregated inputs
