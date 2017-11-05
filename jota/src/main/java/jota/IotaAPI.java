@@ -52,7 +52,7 @@ public class IotaAPI extends IotaAPICore {
      */
     public GetNewAddressResponse getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws InvalidSecurityLevelException, InvalidAddressException {
 
-        if (security < 1 || security > 3) {
+        if (security < 1) {
             throw new InvalidSecurityLevelException();
         }
 
@@ -114,7 +114,7 @@ public class IotaAPI extends IotaAPICore {
             throw new IllegalStateException("Invalid Seed");
         }
 
-        if (security < 1 || security > 3) {
+        if (security < 1) {
             throw new InvalidSecurityLevelException();
         }
 
@@ -372,7 +372,7 @@ public class IotaAPI extends IotaAPICore {
             throw new IllegalStateException("Invalid Seed");
         }
 
-        if (security < 1 || security > 3) {
+        if (security < 1) {
             throw new InvalidSecurityLevelException();
         }
 
@@ -531,7 +531,7 @@ public class IotaAPI extends IotaAPICore {
             throw new IllegalStateException("Invalid Seed");
         }
 
-        if (security < 1 || security > 3) {
+        if (security < 1) {
             throw new InvalidSecurityLevelException();
         }
 
@@ -583,7 +583,7 @@ public class IotaAPI extends IotaAPICore {
      **/
     public GetBalancesAndFormatResponse getBalanceAndFormat(String seed, final List<String> addresses, long threshold, int start, int end, StopWatch stopWatch, int security) throws InvalidSecurityLevelException {
 
-        if (security < 1 || security > 3) {
+        if (security < 1) {
             throw new InvalidSecurityLevelException();
         }
 
@@ -818,7 +818,7 @@ public class IotaAPI extends IotaAPICore {
      */
     public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String remainderAddress) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
 
-        if (security < 1 || security > 3) {
+        if (security < 1) {
             throw new InvalidSecurityLevelException();
         }
 
