@@ -39,7 +39,7 @@ public class Signing {
      * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      */
     public int[] key(final int[] inSeed, final int index, int security) throws InvalidSecurityLevelException {
-        if (security < 1 || security > 3) {
+        if (security < 1) {
             throw new InvalidSecurityLevelException();
         }
 
@@ -70,7 +70,7 @@ public class Signing {
         while (security-- > 0) {
             for (int i = 0; i < 27; i++) {
                 curl.squeeze(key, offset, HASH_LENGTH);
-                offset += seed.length;
+                offset += HASH_LENGTH;
             }
         }
         return key;
