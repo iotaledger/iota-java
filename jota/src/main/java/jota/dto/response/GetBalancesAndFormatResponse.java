@@ -9,16 +9,16 @@ import java.util.List;
  **/
 public class GetBalancesAndFormatResponse extends AbstractResponse {
 
-    private List<Input> input;
+    private List<Input> inputs;
     private long totalBalance;
 
     /**
      * Initializes a new instance of the GetBalancesAndFormatResponse class.
      */
-    public static GetBalancesAndFormatResponse create(List<Input> inputs, long totalBalance2, long duration) {
+    public static GetBalancesAndFormatResponse create(List<Input> inputs, long totalBalance, long duration) {
         GetBalancesAndFormatResponse res = new GetBalancesAndFormatResponse();
-        res.setInput(inputs);
-        res.setTotalBalance(totalBalance2);
+        res.inputs = inputs;
+        res.totalBalance = totalBalance;
         res.setDuration(duration);
         return res;
     }
@@ -28,8 +28,8 @@ public class GetBalancesAndFormatResponse extends AbstractResponse {
      *
      * @return The transactions.
      */
-    public List<Input> getInput() {
-        return input;
+    public List<Input> getInputs() {
+        return inputs;
     }
 
     /**
@@ -37,8 +37,8 @@ public class GetBalancesAndFormatResponse extends AbstractResponse {
      *
      * @param input The input.
      */
-    public void setInput(List<Input> input) {
-        this.input = input;
+    public void setInputs(List<Input> input) {
+        this.inputs = inputs;
     }
 
     /**

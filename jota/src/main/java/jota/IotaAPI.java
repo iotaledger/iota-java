@@ -479,7 +479,7 @@ public class IotaAPI extends IotaAPICore {
 
                 @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newinputs = getInputs(seed, security, 0, 0, totalValue);
                 // If inputs with enough balance
-                return addRemainder(seed, security, newinputs.getInput(), bundle, tag, totalValue, remainder, signatureFragments);
+                return addRemainder(seed, security, newinputs.getInputs(), bundle, tag, totalValue, remainder, signatureFragments);
             }
         } else {
 
@@ -724,7 +724,7 @@ public class IotaAPI extends IotaAPICore {
         GetTransferResponse gtr = getTransfers(seed, security, start, end, inclusionStates);
         GetBalancesAndFormatResponse gbr = getInputs(seed, security, start, end, threshold);
 
-        return GetAccountDataResponse.create(gna.getAddresses(), gtr.getTransfers(), gbr.getTotalBalance(), stopWatch.getElapsedTimeMili());
+        return GetAccountDataResponse.create(gna.getAddresses(), gtr.getTransfers(), gbr.getInputs(), gbr.getTotalBalance(), stopWatch.getElapsedTimeMili());
     }
 
     /**

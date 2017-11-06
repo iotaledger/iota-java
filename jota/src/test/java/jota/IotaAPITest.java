@@ -117,8 +117,7 @@ public class IotaAPITest {
         System.out.println(res);
         assertThat(res, IsNull.notNullValue());
         assertThat(res.getTotalBalance(), IsNull.notNullValue());
-        assertThat(res.getInput(), IsNull.notNullValue());
-
+        assertThat(res.getInputs(), IsNull.notNullValue());
     }
 
     @Test
@@ -146,7 +145,7 @@ public class IotaAPITest {
 
         GetBalancesAndFormatResponse rsp = iotaClient.getInputs(TEST_SEED1, 2, 0, 0, 100);
 
-        for (Input input : rsp.getInput()) {
+        for (Input input : rsp.getInputs()) {
             inputlist.add(input);
         }
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 0, TEST_MESSAGE, TEST_TAG));
@@ -256,7 +255,7 @@ public class IotaAPITest {
 
         GetBalancesAndFormatResponse rsp = iotaClient.getInputs(TEST_SEED1, 2, 0, 0, 100);
 
-        for (Input input : rsp.getInput()) {
+        for (Input input : rsp.getInputs()) {
             inputlist.add(input);
         }
 
