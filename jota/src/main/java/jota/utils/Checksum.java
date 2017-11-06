@@ -90,7 +90,6 @@ public class Checksum {
         int[] checksumTrits = new int[JCurl.HASH_LENGTH];
         curl.squeeze(checksumTrits);
         String checksum = Converter.trytes(checksumTrits);
-        String checksumPrt = checksum.substring(72, 81);
-        return checksumPrt;
+        return checksum.substring(72, 81);
     }
 }

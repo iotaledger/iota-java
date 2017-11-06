@@ -108,7 +108,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      */
     public GetTransferResponse getTransfers(String seed, int security, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoNodeInfoException, NoInclusionStatesException, InvalidSecurityLevelException, InvalidAddressException {
-        StopWatch stopWatch = new StopWatch();
+
         // validate seed
         if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException("Invalid Seed");
@@ -118,12 +118,12 @@ public class IotaAPI extends IotaAPICore {
             throw new InvalidSecurityLevelException();
         }
 
-        start = start == null ? 0 : start;
 
         if (start > end || end > (start + 500)) {
-            throw new ArgumentException();
+            throw new ArgumentException("Invalid inputs provided");
         }
-        StopWatch sw = new StopWatch();
+
+        StopWatch stopWatch = new StopWatch();
 
         GetNewAddressResponse gnr = getNewAddress(seed, security, start, false, end, true);
         if (gnr != null && gnr.getAddresses() != null) {
@@ -510,7 +510,6 @@ public class IotaAPI extends IotaAPICore {
      * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      **/
     public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold) throws InvalidSecurityLevelException, InvalidAddressException {
-        StopWatch stopWatch = new StopWatch();
 
         // validate the seed
         if ((!InputValidator.isValidSeed(seed))) {
@@ -527,6 +526,8 @@ public class IotaAPI extends IotaAPICore {
             throw new IllegalStateException("Invalid inputs provided");
         }
 
+        StopWatch stopWatch = new StopWatch();
+
         //  Case 1: start and end
         //
         //  If start and end is defined by the user, simply iterate through the keys
@@ -541,7 +542,7 @@ public class IotaAPI extends IotaAPICore {
                 allAddresses.add(address);
             }
 
-            return getBalanceAndFormat(allAddresses, threshold, start, end, stopWatch, security);
+            return getBalanceAndFormat(allAddresses, threshold, start, stopWatch, security);
         }
         //  Case 2: iterate till threshold || end
         //
@@ -550,7 +551,7 @@ public class IotaAPI extends IotaAPICore {
         //  We then do getBalance, format the output and return it
         else {
             final GetNewAddressResponse res = getNewAddress(seed, security, start, false, 0, true);
-            return getBalanceAndFormat(res.getAddresses(), threshold, start, end, stopWatch, security);
+            return getBalanceAndFormat(res.getAddresses(), threshold, start, stopWatch, security);
         }
     }
 
@@ -560,13 +561,12 @@ public class IotaAPI extends IotaAPICore {
      * @param addresses The addresses.
      * @param threshold Min balance required.
      * @param start     Starting key index.
-     * @param end       Ending key index.
      * @param stopWatch the stopwatch.
      * @param security  The security level of private key / seed.
      * @return Inputs object.
      * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      **/
-    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, long threshold, int start, int end, StopWatch stopWatch, int security) throws InvalidSecurityLevelException {
+    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, long threshold, int start, StopWatch stopWatch, int security) throws InvalidSecurityLevelException {
 
         if (security < 1) {
             throw new InvalidSecurityLevelException();
@@ -618,12 +618,13 @@ public class IotaAPI extends IotaAPICore {
      * @throws InvalidSignatureException is thrown when an invalid signature is encountered.
      */
     public GetBundleResponse getBundle(String transaction) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
-        StopWatch stopWatch = new StopWatch();
 
         Bundle bundle = traverseBundle(transaction, null, new Bundle());
         if (bundle == null) {
             throw new ArgumentException("Unknown Bundle");
         }
+
+        StopWatch stopWatch = new StopWatch();
 
         long totalSum = 0;
         String bundleHash = bundle.getTransactions().get(0).getBundle();
@@ -717,6 +718,10 @@ public class IotaAPI extends IotaAPICore {
     public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, boolean returnAll, int start, int end, boolean inclusionStates, long threshold)
             throws InvalidBundleException, ArgumentException, InvalidSignatureException,
             InvalidTrytesException, InvalidSecurityLevelException, InvalidAddressException, NoInclusionStatesException, NoNodeInfoException {
+
+        if (start > end || end > (start + 1000)) {
+            throw new ArgumentException("Invalid inputs provided");
+        }
 
         StopWatch stopWatch = new StopWatch();
 
@@ -1044,29 +1049,7 @@ public class IotaAPI extends IotaAPICore {
         }
 
     }
-
-    /**
-     * @param hash The hash.
-     * @return A bundle.
-     * @throws ArgumentException is thrown when an invalid argument is provided.
-     */
-    public String findTailTransactionHash(String hash) throws ArgumentException {
-        GetTrytesResponse gtr = getTrytes(hash);
-
-        if (gtr == null) throw new ArgumentException("Invalid hash");
-
-        if (gtr.getTrytes().length == 0) {
-            throw new ArgumentException("Bundle transactions not visible");
-        }
-
-        Transaction trx = new Transaction(gtr.getTrytes()[0], customCurl.clone());
-        if (trx.getBundle() == null) {
-            throw new ArgumentException("Invalid trytes, could not create object");
-        }
-        if (trx.getCurrentIndex() == 0) return trx.getHash();
-        else return findTailTransactionHash(trx.getBundle());
-    }
-
+    
     /**
      * @param seed               Tryte-encoded seed.
      * @param security           The security level of private key / seed.

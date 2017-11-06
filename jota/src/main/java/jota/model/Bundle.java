@@ -123,14 +123,14 @@ public class Bundle implements Comparable<Bundle> {
           normalizedBundleValue = normalizedBundle(hashInTrytes);
 
           boolean foundValue = false;
-          for (int i = 0; i < normalizedBundleValue.length; i++) {
-            if (normalizedBundleValue[i] == 13) {
-              foundValue = true;
-              obsoleteTagTrits = Converter.trits(this.getTransactions().get(0).getObsoleteTag());
-              Converter.increment(obsoleteTagTrits, 81);
-              this.getTransactions().get(0).setObsoleteTag(Converter.trytes(obsoleteTagTrits));
+            for (int aNormalizedBundleValue : normalizedBundleValue) {
+                if (aNormalizedBundleValue == 13) {
+                    foundValue = true;
+                    obsoleteTagTrits = Converter.trits(this.getTransactions().get(0).getObsoleteTag());
+                    Converter.increment(obsoleteTagTrits, 81);
+                    this.getTransactions().get(0).setObsoleteTag(Converter.trytes(obsoleteTagTrits));
+                }
             }
-          }
           valid = !foundValue;
 
         } while (!valid);
@@ -148,7 +148,7 @@ public class Bundle implements Comparable<Bundle> {
     public void addTrytes(List<String> signatureFragments) {
         String emptySignatureFragment = "";
         String emptyHash = EMPTY_HASH;
-        long emptyTimestamp = 999999999l;
+        long emptyTimestamp = 999999999L;
 
         emptySignatureFragment = StringUtils.rightPad(emptySignatureFragment, 2187, '9');
 
