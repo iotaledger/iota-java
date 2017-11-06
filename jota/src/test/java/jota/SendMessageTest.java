@@ -34,7 +34,7 @@ public class SendMessageTest {
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2_2, 0, TEST_MESSAGE, TEST_TAG));
 
         // for each 2187 trytes in a message a new transfer is necessary
-        List<String> trytes = iotaClient.prepareTransfers(TEST_SEED1, 2, transfers, null, null);
+        List<String> trytes = iotaClient.prepareTransfers(TEST_SEED1, 2, transfers, null, null, false);
         assertEquals(trytes.size(), 2);
 
         iotaClient.sendTrytes(trytes.toArray(new String[trytes.size()]), DEPTH, MIN_WEIGHT_MAGNITUDE);

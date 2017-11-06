@@ -38,7 +38,7 @@ public class IotaLocalPoWTest {
     public void shouldSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2_2, 0, TEST_MESSAGE, TEST_TAG));
-        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null);
+        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false);
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 }
