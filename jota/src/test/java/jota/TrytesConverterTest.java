@@ -27,9 +27,7 @@ public class TrytesConverterTest {
     @Test
     public void shouldConvertBackAndForth() {
         String str = RandomStringUtils.randomAlphabetic(1000).toUpperCase();
-        System.err.println(str);
         String back = TrytesConverter.toString(TrytesConverter.toTrytes(str));
-
         assertTrue(str.equals(back));
     }
 }

@@ -59,25 +59,23 @@ public class Checksum {
         return addressWithRecalculateChecksum.equals(addressWithChecksum);
     }
 
-
     /**
      * Check if specified address is a address with checksum.
      *
      * @param address The address to check.
      * @return <code>true</code> if the specified address is with checksum ; otherwise, <code>false</code>.
-     * @throws InvalidAddressException is thrown when the specified address is not an valid address
+     * @throws InvalidAddressException is thrown when the specified address is not an valid address.
      **/
     public static boolean isAddressWithChecksum(String address) throws InvalidAddressException {
         return InputValidator.checkAddress(address) && address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM;
     }
 
-
     /**
-     * check if specified address is a address
+     * Check if specified address is a address without checksum.
      *
-     * @param address address
-     * @return boolean
-     * @throws InvalidAddressException is thrown when the specified address is not an valid address
+     * @param address The address to check.
+     * @return <code>true</code> if the specified address is without checksum ; otherwise, <code>false</code>.
+     * @throws InvalidAddressException is thrown when the specified address is not an valid address.
      **/
     public static boolean isAddressWithoutChecksum(String address) throws InvalidAddressException {
         return InputValidator.checkAddress(address) && address.length() == Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM;

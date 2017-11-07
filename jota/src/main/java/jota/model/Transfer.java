@@ -29,7 +29,16 @@ public class Transfer {
         this.value = value;
         this.message = message;
         this.tag = tag;
+    }
 
+    /**
+     * Initializes a new instance of the Transfer class.
+     */
+    public Transfer(String address, long value) {
+        this.address = address;
+        this.value = value;
+        this.message = "";
+        this.tag = "";
     }
 
     /**
@@ -118,7 +127,7 @@ public class Transfer {
     /**
      * Set the timestamp.
      *
-     * @param timestamp The timestamp.
+     * @param timestamp The timestamp in seconds.
      */
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
@@ -154,7 +163,7 @@ public class Transfer {
     /**
      * Set the message.
      *
-     * @param message The message.
+     * @param message The message trytes encoded.
      */
     public void setMessage(String message) {
         this.message = message;
@@ -172,7 +181,7 @@ public class Transfer {
     /**
      * Set the tag.
      *
-     * @param tag The tag.
+     * @param tag The tag max 27 trytes encoded.
      */
     public void setTag(String tag) {
         this.tag = tag;

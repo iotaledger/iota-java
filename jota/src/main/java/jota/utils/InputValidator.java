@@ -25,6 +25,21 @@ public class InputValidator {
     }
 
     /**
+     * Determines whether the specified addresses are valid.
+     *
+     * @param addresses The address list to validate.
+     * @return <code>true</code> if the specified addresses are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isAddressesCollectionValid(final List<String> addresses) throws InvalidAddressException {
+        for (final String address : addresses) {
+            if (!checkAddress(address)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Checks whether the specified address is an address and throws and exception if the address is invalid.
      *
      * @param address The address to validate.
@@ -119,6 +134,11 @@ public class InputValidator {
      **/
     public static boolean isTransfersCollectionValid(final List<Transfer> transfers) {
 
+        // Input validation of transfers object
+        if (transfers == null || transfers.isEmpty()) {
+            throw new IllegalArgumentException("No transfer provided");
+        }
+
         for (final Transfer transfer : transfers) {
             if (!isValidTransfer(transfer)) {
                 return false;
@@ -126,6 +146,7 @@ public class InputValidator {
         }
         return true;
     }
+
 
     /**
      * Determines whether the specified transfer is valid.
@@ -135,21 +156,25 @@ public class InputValidator {
      **/
     public static boolean isValidTransfer(final Transfer transfer) {
 
+        if (transfer == null) {
+            return false;
+        }
+
         if (!isAddress(transfer.getAddress())) {
             return false;
         }
 
-        // Check if message is correct trytes of any length
-        if (!isTrytes(transfer.getMessage(), 0)) {
+        // Check if message is correct trytes encoded of any length
+        if (transfer.getMessage() == null || !isTrytes(transfer.getMessage(), transfer.getMessage().length())) {
             return false;
         }
 
-        if (null == transfer.getTag() || transfer.getTag().isEmpty()) {
-            return true;
-        } else {
-            // Check if tag is correct trytes of {0,27} trytes
-            return isTrytes(transfer.getTag(), 27);
+        // Check if tag is correct trytes encoded and not longer than 27 trytes
+        if (transfer.getTag() == null || !isTrytes(transfer.getTag(), transfer.getTag().length()) || transfer.getTag().length() > Constants.TAG_LENGTH) {
+            return false;
         }
+
+        return true;
     }
 
     /**

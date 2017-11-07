@@ -1,6 +1,5 @@
 package jota;
 
-import com.google.gson.Gson;
 import jota.dto.response.*;
 import jota.error.*;
 import jota.model.*;
@@ -51,10 +50,6 @@ public class IotaAPI extends IotaAPICore {
      * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      */
     public GetNewAddressResponse getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws InvalidSecurityLevelException, InvalidAddressException {
-
-        if (security < 1) {
-            throw new InvalidSecurityLevelException();
-        }
 
         StopWatch stopWatch = new StopWatch();
 
@@ -113,11 +108,6 @@ public class IotaAPI extends IotaAPICore {
         if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException("Invalid Seed");
         }
-
-        if (security < 1) {
-            throw new InvalidSecurityLevelException();
-        }
-
 
         if (start > end || end > (start + 500)) {
             throw new ArgumentException("Invalid inputs provided");
@@ -255,7 +245,6 @@ public class IotaAPI extends IotaAPICore {
         final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth);
 
         // attach to tangle - do pow
-        System.out.println(new Gson().toJson(txs));
         final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
 
         try {
@@ -330,7 +319,7 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Prepares transfer by generating bundle, finding and signing inputs.
      *
-     * @param seed           81-tryte encoded address of recipient.
+     * @param seed           Tryte-encoded private key / seed.
      * @param security       The security level of private key / seed.
      * @param transfers      Array of transfer objects.
      * @param remainder      If defined, this address will be used for sending the remainder value (of the inputs) to.
@@ -344,15 +333,6 @@ public class IotaAPI extends IotaAPICore {
      */
     public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs, boolean validateInputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException, InvalidTransferException {
 
-        // Input validation of transfers object
-        if (!InputValidator.isTransfersCollectionValid(transfers)) {
-            throw new InvalidTransferException();
-        }
-        // Input validation of transfers object
-        if (transfers.isEmpty()) {
-            throw new IllegalArgumentException("No transfer provided");
-        }
-
         // validate seed
         if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException("Invalid Seed");
@@ -362,60 +342,68 @@ public class IotaAPI extends IotaAPICore {
             throw new InvalidSecurityLevelException();
         }
 
+        // Input validation of transfers object
+        if (!InputValidator.isTransfersCollectionValid(transfers)) {
+            throw new InvalidTransferException();
+        }
+
         // Create a new bundle
         final Bundle bundle = new Bundle();
         final List<String> signatureFragments = new ArrayList<>();
 
         long totalValue = 0;
         String tag = "";
-
         //  Iterate over all transfers, get totalValue
         //  and prepare the signatureFragments, message and tag
         for (final Transfer transfer : transfers) {
 
-            // If address with checksum then remove checksum
-            if (Checksum.isAddressWithChecksum(transfer.getAddress()))
+            // remove the checksum of the address if provided
+            if (Checksum.isValidChecksum(transfer.getAddress())) {
                 transfer.setAddress(Checksum.removeChecksum(transfer.getAddress()));
+            }
 
             int signatureMessageLength = 1;
 
             // If message longer than 2187 trytes, increase signatureMessageLength (add 2nd transaction)
-            if (transfer.getMessage().length() > 2187) {
+            if (transfer.getMessage().length() > Constants.MESSAGE_LENGTH) {
 
                 // Get total length, message / maxLength (2187 trytes)
-                signatureMessageLength += Math.floor(transfer.getMessage().length() / 2187);
+                signatureMessageLength += Math.floor(transfer.getMessage().length() / Constants.MESSAGE_LENGTH);
 
                 String msgCopy = transfer.getMessage();
 
                 // While there is still a message, copy it
                 while (!msgCopy.isEmpty()) {
 
-                    String fragment = StringUtils.substring(msgCopy, 0, 2187);
-                    msgCopy = StringUtils.substring(msgCopy, 2187, msgCopy.length());
+                    String fragment = StringUtils.substring(msgCopy, 0, Constants.MESSAGE_LENGTH);
+                    msgCopy = StringUtils.substring(msgCopy, Constants.MESSAGE_LENGTH, msgCopy.length());
 
                     // Pad remainder of fragment
 
-                    fragment = StringUtils.rightPad(fragment, 2187, '9');
+                    fragment = StringUtils.rightPad(fragment, Constants.MESSAGE_LENGTH, '9');
 
                     signatureFragments.add(fragment);
                 }
             } else {
                 // Else, get single fragment with 2187 of 9's trytes
-                String fragment = StringUtils.substring(transfer.getMessage(), 0, 2187);
+                String fragment = transfer.getMessage();
 
-                fragment = StringUtils.rightPad(fragment, 2187, '9');
-
+                if (transfer.getMessage().length() < Constants.MESSAGE_LENGTH) {
+                    fragment = StringUtils.rightPad(fragment, Constants.MESSAGE_LENGTH, '9');
+                }
                 signatureFragments.add(fragment);
             }
 
+            tag = transfer.getTag();
+
+            // pad for required 27 tryte length
+            if (transfer.getTag().length() < Constants.TAG_LENGTH) {
+                tag = StringUtils.rightPad(tag, Constants.TAG_LENGTH, '9');
+            }
+
+
             // get current timestamp in seconds
             long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
-
-            // If no tag defined, get 27 tryte tag.
-            tag = transfer.getTag().isEmpty() ? "999999999999999999999999999" : transfer.getTag();
-
-            // Pad for required 27 tryte length
-            tag = StringUtils.rightPad(tag, 27, '9');
 
             // Add first entry to the bundle
             bundle.addEntry(signatureMessageLength, transfer.getAddress(), transfer.getValue(), tag, timestamp);
@@ -430,9 +418,9 @@ public class IotaAPI extends IotaAPICore {
             //  Validate the inputs by calling getBalances
             if (inputs != null && !inputs.isEmpty()) {
 
-                if (!validateInputs)
+                if (!validateInputs) {
                     return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
-
+                }
                 // Get list if addresses of the provided inputs
                 List<String> inputsAddresses = new ArrayList<>();
                 for (final Input i : inputs) {
@@ -799,7 +787,7 @@ public class IotaAPI extends IotaAPICore {
      * @param inputs             List of inputs used for funding the transfer.
      * @param remainderAddress   If defined, this remainderAddress will be used for sending the remainder value (of the inputs) to.
      * @param validateInputs     Whether or not to validate the balances of the provided inputs
-     * @return Array of Transaction objects.
+     * @return Array of valid Transaction objects.
      * @throws InvalidAddressException       is thrown when the specified remainderAddress is not an valid remainderAddress.
      * @throws NotEnoughBalanceException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
      * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
@@ -809,10 +797,6 @@ public class IotaAPI extends IotaAPICore {
      */
     public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, List<Input> inputs, String remainderAddress, boolean validateInputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
 
-        if (security < 1) {
-            throw new InvalidSecurityLevelException();
-        }
-
         StopWatch stopWatch = new StopWatch();
 
         List<String> trytes = prepareTransfers(seed, security, transfers, remainderAddress, inputs, validateInputs);
@@ -821,13 +805,11 @@ public class IotaAPI extends IotaAPICore {
         Boolean[] successful = new Boolean[trxs.size()];
 
         for (int i = 0; i < trxs.size(); i++) {
-
             final FindTransactionResponse response = findTransactionsByBundles(trxs.get(i).getBundle());
-
             successful[i] = response.getHashes().length != 0;
         }
 
-        return SendTransferResponse.create(successful, stopWatch.getElapsedTimeMili());
+        return SendTransferResponse.create(trxs, successful, stopWatch.getElapsedTimeMili());
     }
 
     /**
@@ -897,17 +879,7 @@ public class IotaAPI extends IotaAPICore {
     public List<Transaction> initiateTransfer(int securitySum, final String inputAddress, String remainderAddress,
                                               final List<Transfer> transfers, boolean testMode) throws InvalidAddressException, InvalidBundleException, InvalidTransferException {
 
-        if (transfers.isEmpty()) {
-            throw new IllegalArgumentException("No transfer provided");
-        }
-
-        // Input validation of transfers object
-        if (!InputValidator.isTransfersCollectionValid(transfers)) {
-            throw new InvalidTransferException();
-        }
-
         // validate input address
-
         if (!InputValidator.isAddress(inputAddress))
             throw new InvalidAddressException();
 
@@ -916,18 +888,9 @@ public class IotaAPI extends IotaAPICore {
             throw new InvalidBundleException();
         }
 
-
-        // If message or tag is not supplied, provide it
-        // Also remove the checksum of the address if it's there
-
-        for (Transfer transfer : transfers) {
-
-            transfer.setMessage(transfer.getMessage().isEmpty() ? StringUtils.rightPad(transfer.getMessage(), 2187, '9') : transfer.getMessage());
-            transfer.setTag(transfer.getTag().isEmpty() ? StringUtils.rightPad(transfer.getTag(), 27, '9') : transfer.getTag());
-
-            if (Checksum.isValidChecksum(transfer.getAddress())) {
-                transfer.setAddress(Checksum.removeChecksum(transfer.getAddress()));
-            }
+        // Input validation of transfers object
+        if (!InputValidator.isTransfersCollectionValid(transfers)) {
+            throw new InvalidTransferException();
         }
 
         // Create a new bundle
@@ -942,49 +905,56 @@ public class IotaAPI extends IotaAPICore {
         //  and prepare the signatureFragments, message and tag
         for (final Transfer transfer : transfers) {
 
+            // remove the checksum of the address if provided
+            if (Checksum.isValidChecksum(transfer.getAddress())) {
+                transfer.setAddress(Checksum.removeChecksum(transfer.getAddress()));
+            }
+
             int signatureMessageLength = 1;
 
-            // If message longer than 2187 trytes, increase signatureMessageLength (add 2nd transaction)
-            if (transfer.getMessage().length() > 2187) {
+            // If message longer than 2187 trytes, increase signatureMessageLength (add next transaction)
+            if (transfer.getMessage().length() > Constants.MESSAGE_LENGTH) {
 
                 // Get total length, message / maxLength (2187 trytes)
-                signatureMessageLength += Math.floor(transfer.getMessage().length() / 2187);
+                signatureMessageLength += Math.floor(transfer.getMessage().length() / Constants.MESSAGE_LENGTH);
 
                 String msgCopy = transfer.getMessage();
 
                 // While there is still a message, copy it
                 while (!msgCopy.isEmpty()) {
 
-                    String fragment = StringUtils.substring(msgCopy, 0, 2187);
-                    msgCopy = StringUtils.substring(msgCopy, 2187, msgCopy.length());
+                    String fragment = StringUtils.substring(msgCopy, 0, Constants.MESSAGE_LENGTH);
+                    msgCopy = StringUtils.substring(msgCopy, Constants.MESSAGE_LENGTH, msgCopy.length());
 
                     // Pad remainder of fragment
 
-                    fragment = StringUtils.rightPad(fragment, 2187, '9');
+                    fragment = StringUtils.rightPad(fragment, Constants.MESSAGE_LENGTH, '9');
 
                     signatureFragments.add(fragment);
                 }
 
             } else {
 
-
                 // Else, get single fragment with 2187 of 9's trytes
-                String fragment = StringUtils.substring(transfer.getMessage(), 0, 2187);
+                String fragment = transfer.getMessage();
 
-                fragment = StringUtils.rightPad(fragment, 2187, '9');
+                if (transfer.getMessage().length() < Constants.MESSAGE_LENGTH) {
+                    fragment = StringUtils.rightPad(fragment, Constants.MESSAGE_LENGTH, '9');
+                }
 
                 signatureFragments.add(fragment);
 
             }
 
+            tag = transfer.getTag();
+
+            // pad for required 27 tryte length
+            if (transfer.getTag().length() < Constants.TAG_LENGTH) {
+                tag = StringUtils.rightPad(tag, Constants.TAG_LENGTH, '9');
+            }
+
             // get current timestamp in seconds
             long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
-
-            // If no tag defined, get 27 tryte tag.
-            tag = transfer.getTag().isEmpty() ? StringUtils.rightPad(transfer.getTag(), 27, '9') : transfer.getTag();
-
-            // Pad for required 27 tryte length
-            tag = StringUtils.rightPad(tag, 27, '9');
 
             // Add first entry to the bundle
             bundle.addEntry(signatureMessageLength, transfer.getAddress(), transfer.getValue(), tag, timestamp);
@@ -1049,7 +1019,7 @@ public class IotaAPI extends IotaAPICore {
         }
 
     }
-    
+
     /**
      * @param seed               Tryte-encoded seed.
      * @param security           The security level of private key / seed.

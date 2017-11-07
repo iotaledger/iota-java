@@ -26,4 +26,14 @@ public class Constants {
      * The length of an address with checksum
      */
     public static int ADDRESS_LENGTH_WITH_CHECKSUM = 90;
+
+    /**
+     * The length of an message
+     */
+    public static int MESSAGE_LENGTH = 2187;
+
+    /**
+     * The length of an tag
+     */
+    public static int TAG_LENGTH = 27;
 }

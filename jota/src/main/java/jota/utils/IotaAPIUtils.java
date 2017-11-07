@@ -32,6 +32,11 @@ public class IotaAPIUtils {
      * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
      */
     public static String newAddress(String seed, int security, int index, boolean checksum, ICurl curl) throws InvalidAddressException, InvalidSecurityLevelException {
+
+        if (security < 1) {
+            throw new InvalidSecurityLevelException();
+        }
+
         Signing signing = new Signing(curl);
         final int[] key = signing.key(Converter.trits(seed), index, security);
         final int[] digests = signing.digests(key);

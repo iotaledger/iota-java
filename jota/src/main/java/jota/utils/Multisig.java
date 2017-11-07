@@ -140,7 +140,7 @@ public class Multisig {
 
         // Get the security used for the private key
         // 1 security level = 2187 trytes
-        int security = (keyTrytes.length() / 2187);
+        int security = (keyTrytes.length() / Constants.MESSAGE_LENGTH);
 
         // convert private key trytes into trits
         int[] key = Converter.trits(keyTrytes);

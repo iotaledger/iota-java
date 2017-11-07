@@ -28,14 +28,14 @@ import static org.junit.Assert.assertThat;
  */
 public class IotaAPITest {
 
-
     private static final String TEST_SEED1 = "IHDEENZYITYVYSPKAURUZAQKGVJEREFDJMYTANNXXGPZ9GJWTEOJJ9IPMXOGZNQLSNMFDSQOTZAEETUEA";
-    private static final String TEST_SEED2 = "IHDEENZYITYVYSPKAURUZAQKGVJEREFDJMYTANNXXGPZ9GJWTEOJJ9IPMXOGZNQLSNMFDSQOTZAEETUEA";
+    private static final String TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1 = "MALAZGDVZIAQQRTNYJDSZMY9VE9LAHQKTVCUOAGZUCX9IBUMODFFTMGUIUAXGLWZQ9CYRSLYBM9QBIBYAEIAOPKXEA";
+    private static final String TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2 = "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZCCOZVXMTXC";
+    private static final String TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_3 = "ASCZZOBQDMNHLELQKWJBMRETMHBTF9V9TNKYDIFW9PDXPUHPVVGHMSWPVMNJHSJF99QFCMNTPCPGS9DT9XAFKJVO9X";
     private static final String TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_1 = "MALAZGDVZIAQQRTNYJDSZMY9VE9LAHQKTVCUOAGZUCX9IBUMODFFTMGUIUAXGLWZQ9CYRSLYBM9QBIBYA";
     private static final String TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2 = "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZC";
-    private static final String TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2_2 = "RXTLHYQWBSJUZQXUS9LMLBE9RLAQFNDWBMZUGYJRJRHYRQQKVXBXJKEZOJDCVKFXM9GXYNMKTESEEILAYFCTLW9DQD";
     private static final String TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_3 = "ASCZZOBQDMNHLELQKWJBMRETMHBTF9V9TNKYDIFW9PDXPUHPVVGHMSWPVMNJHSJF99QFCMNTPCPGS9DT9";
-    private static final String TEST_HASH = "EVCNKLXUTEKHSQKYKBSBACP9SCPTCBLLYLB9IDBMNQ9HAYANSUBZOCAAIPSGIMDAYLICTGWJAFFAA9999";
+    private static final String TEST_HASH = "BKBALUPMEECOGEYQU9OHXTFTHV9OKEVUGHAUNNQCNETAQWIRJIKDGWSWXY9RSIMZJBPIPEIQEFEIA9999";
     private static final String TEST_INVALID_TRYTES = "BYSWEAUTWXHXZ9YBZISEK9LUHWGMHXCGEVNZHRLUWQFCUSDXZHOFHWHL9MQPVJXXZLIXPXPXF9KYEREFSKCPKYIIKPZVLHUTDFQKKVVBBN9ATTLPCNPJDWDEVIYYLGPZGCWXOBDXMLJC9VO9QXTTBLAXTTBFUAROYEGQIVB9MJWJKXJMCUPTWAUGFZBTZCSJVRBGMYXTVBDDS9MYUJCPZ9YDWWQNIPUAIJXXSNLKUBSCOIJPCLEFPOXFJREXQCUVUMKSDOVQGGHRNILCO9GNCLWFM9APMNMWYASHXQAYBEXF9QRIHIBHYEJOYHRQJAOKAQ9AJJFQ9WEIWIJOTZATIBOXQLBMIJU9PCGBLVDDVFP9CFFSXTDUXMEGOOFXWRTLFGV9XXMYWEMGQEEEDBTIJ9OJOXFAPFQXCDAXOUDMLVYRMRLUDBETOLRJQAEDDLNVIRQJUBZBO9CCFDHIX9MSQCWYAXJVWHCUPTRSXJDESISQPRKZAFKFRULCGVRSBLVFOPEYLEE99JD9SEBALQINPDAZHFAB9RNBH9AZWIJOTLBZVIEJIAYGMC9AZGNFWGRSWAXTYSXVROVNKCOQQIWGPNQZKHUNODGYADPYLZZZUQRTJRTODOUKAOITNOMWNGHJBBA99QUMBHRENGBHTH9KHUAOXBVIVDVYYZMSEYSJWIOGGXZVRGN999EEGQMCOYVJQRIRROMPCQBLDYIGQO9AMORPYFSSUGACOJXGAQSPDY9YWRRPESNXXBDQ9OZOXVIOMLGTSWAMKMTDRSPGJKGBXQIVNRJRFRYEZ9VJDLHIKPSKMYC9YEGHFDS9SGVDHRIXBEMLFIINOHVPXIFAZCJKBHVMQZEVWCOSNWQRDYWVAIBLSCBGESJUIBWZECPUCAYAWMTQKRMCHONIPKJYYTEGZCJYCT9ABRWTJLRQXKMWY9GWZMHYZNWPXULNZAPVQLPMYQZCYNEPOCGOHBJUZLZDPIXVHLDMQYJUUBEDXXPXFLNRGIPWBRNQQZJSGSJTTYHIGGFAWJVXWL9THTPWOOHTNQWCNYOYZXALHAZXVMIZE9WMQUDCHDJMIBWKTYH9AC9AFOT9DPCADCV9ZWUTE9QNOMSZPTZDJLJZCJGHXUNBJFUBJWQUEZDMHXGBPTNSPZBR9TGSKVOHMOQSWPGFLSWNESFKSAZY9HHERAXALZCABFYPOVLAHMIHVDBGKUMDXC9WHHTIRYHZVWNXSVQUWCR9M9RAGMFEZZKZ9XEOQGOSLFQCHHOKLDSA9QCMDGCGMRYJZLBVIFOLBIJPROKMHOYTBTJIWUZWJMCTKCJKKTR9LCVYPVJI9AHGI9JOWMIWZAGMLDFJA9WU9QAMEFGABIBEZNNAL9OXSBFLOEHKDGHWFQSHMPLYFCNXAAZYJLMQDEYRGL9QKCEUEJ9LLVUOINVSZZQHCIKPAGMT9CAYIIMTTBCPKWTYHOJIIY9GYNPAJNUJ9BKYYXSV9JSPEXYMCFAIKTGNRSQGUNIYZCRT9FOWENSZQPD9ALUPYYAVICHVYELYFPUYDTWUSWNIYFXPX9MICCCOOZIWRNJIDALWGWRATGLJXNAYTNIZWQ9YTVDBOFZRKO9CFWRPAQQRXTPACOWCPRLYRYSJARRKSQPR9TCFXDVIXLP9XVL99ERRDSOHBFJDJQQGGGCZNDQ9NYCTQJWVZIAELCRBJJFDMCNZU9FIZRPGNURTXOCDSQGXTQHKHUECGWFUUYS9J9NYQ9U9P9UUP9YMZHWWWCIASCFLCMSKTELZWUGCDE9YOKVOVKTAYPHDF9ZCCQAYPJIJNGSHUIHHCOSSOOBUDOKE9CJZGYSSGNCQJVBEFTZFJ9SQUHOASKRRGBSHWKBCBWBTJHOGQ9WOMQFHWJVEG9NYX9KWBTCAIXNXHEBDIOFO9ALYMFGRICLCKKLG9FOBOX9PDWNQRGHBKHGKKRLWTBEQMCWQRLHAVYYZDIIPKVQTHYTWQMTOACXZOQCDTJTBAAUWXSGJF9PNQIJ9AJRUMUVCPWYVYVARKR9RKGOUHHNKNVGGPDDLGKPQNOYHNKAVVKCXWXOQPZNSLATUJT9AUWRMPPSWHSTTYDFAQDXOCYTZHOYYGAIM9CELMZ9AZPWB9MJXGHOKDNNSZVUDAGXTJJSSZCPZVPZBYNNTUQABSXQWZCHDQSLGK9UOHCFKBIBNETK999999999999999999999999999999999999999999999999999999999999999999999999999999999NOXDXXKUDWLOFJLIPQIBRBMGDYCPGDNLQOLQS99EQYKBIU9VHCJVIPFUYCQDNY9APGEVYLCENJIOBLWNB999999999XKBRHUD99C99999999NKZKEKWLDKMJCI9N9XQOLWEPAYWSH9999999999999999999999999KDDTGZLIPBNZKMLTOLOXQVNGLASESDQVPTXALEKRMIOHQLUHD9ELQDBQETS9QFGTYOYWLNTSKKMVJAUXSIROUICDOXKSYZTDPEDKOQENTJOWJONDEWROCEJIEWFWLUAACVSJFTMCHHXJBJRKAAPUDXXVXFWP9X9999IROUICDOXKSYZTDPEDKOQENTJOWJONDEWROCEJIEWFWLUAACVSJFTMCHHXJBJRKAAPUDXXVXFWP9X9999";
     private static final String TEST_TRYTES = "9RYSLXACOTYQZAQIAMCULCVKMBIPMKINPFJCZFIZOOZMTCTKIXQHQTUTVGZMVHGKLRZGWOT9UGYQFNCGNRJWDETRKWUFIAFA9M9ZPZKVJWKOJENHFWMFBDVOLEVCGQTKCTOPNGRYQURVQPFJAZFUKCXAOORIYCVDKDINDXRFAFRSFVRXCTPETGIJULBYGXUHQMBGHAKGJLMNZUQE9EVOGTFVJ9EVSDNUYPGQLZBAJNWG9XXXDHETVT9XBBCQZEWJXFLVHEXHEQARCOSRKQQVEQKK9APNBRBJHHUWRGAWUIMLY9AFCULX9ITRJBYU9BNQPZBJKJDNHDAKIGDMNUOFCWAEDSBDRUTORPZQCHCSQRVIERZNGPYBPEOQXGFAKANGXPE9MA9ZZCLKDQANOKIAV9QDDUZILVMEIHXDSHDISEJMLQGVEUJWMCKCMIQTRRGJKJFSVMZWYNQJCFCPOEGOTJULGPFTM9GQGEONOXSYXYPQZHVFYHKYREHQMYWHYUTZE999HRWIQTOENSRFPB9NXDVFSUA9NLAKOELYAAHTFDDAYBHPKNAXXTJIPYOKXTEMYUIOKXORYUFEIIAZCFGCCINBPTXFNTGPKFOQNGEODMSCVOZKRJYLECZB9VDZJCLPMTY9UPLTLH9GVDBALFNBLQXI9ADJJXCSPQJXHNNZUOJCMFJKZZ9ZTJRQMNLDSTZYTFNXQPZKMQJLZBHF9URFHNX9MQVMTIHEMROFCCPDLUOTRCAURYL9IJ9IGTRFVIJXSFLYBJOQOASBNVRFQGVIGKA9UJUDHWUSBFFKDHDVRGLOZQYADXGS9IOGCPCVCFPNUDFTUKXCOEEUMNDZCZGUXIECIYCKL9XCPEIQMYV9VCP9JJMSREJFQB9IVXUAXWCURUADEPBIVIGERXIMFZAGQPRC9KSYYLHBZVZGQJVTZVBGMRBWYJCYRHMJWPIKJYAYTALAAZROZYCMQKWBSFUGHFSOGGTCQDHWJU9VJGCAHJLHSORFKVJKV9RSZHLJZTDJJGOXTRLKNJORWYPW9UKRZROJONZQWJNUEPBZZJYBJJNCAQOEYTHFWVUBACCFTREABOZKQEKSMDAFECVGMGELNZUFZJHWHNXLBOSHLNBPGSQDVLZLBUXWINABWYBDMZNIYNVPYLRKUULTMNNKZUFNQOQKROJSXWYTBRDSJQKTOUXLMXVCVIXEYPZWBSMEXMBGUIVACRTGKDEIYZKP9KQCQXPWRXNLGQOATRHCXJFQINXFYQIDTPUJVXKUYVRYHWDHWSNLWUFPNNJZVNMRFWPZBJCRRSHMHUG9NKKH9SOXTUJUAXBF9MHYWHJ9ZTJRUQFKRLHMNVPWX9XFXLMVJAGASMWMIFYUZFAUCEIOOYMEYWOIZTNEWFVZKOQFECWEPSMOYFSJJKEJQMPSXGE9WTYRQJVMHUQZFD9MJUFFCNSGAZCTXYPIJFNSXAUCYPGZMNWMQWSWCKAQYKXJTWINSGPPZG9HLDLEAWUWEVCTVRCBDFOXKUROXH9HXXAXVPEJFRSLOGRVGYZASTEBAQNXJJROCYRTDPYFUIQJVDHAKEG9YACV9HCPJUEUKOYFNWDXCCJBIFQKYOXGRDHVTHEQUMHO999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999DNVEZXD99A99999999A99999999BULMKQXROXEBHPBYGKQINYJTHPTL9OGKUFBFAVRHPZSNXBUDMNRJFYIIGWOFVCXSVFQRZMPGCZMZUNKCDDRWDLKTKCZXZFMIZ9CZBWNOJGSXHBKEXCFQPBNFAE9QAVRX9SWGEZQRSYAYNW9TPWVWCJXAUPQHYZ9999NBDPASDXMXDCHLMZJIBHAZREUBOTZZAYGKCWTBSBKKETULAPABDTY9AMPBSXO9KJOLCWJMJSZFKU999999999999999999999999999999999999999999999999999999999999CWJQRPBIJGTWQTCMDUVOCBUAMH";
     private static final String TEST_MESSAGE = "JUSTANOTHERJOTATEST";
@@ -65,55 +65,56 @@ public class IotaAPITest {
             , "XCCPS9GMTSUB9DXPVKLTBDHOFX9PJMBYZQYQEXMRQDPGQPLWRGZGXODYJKGVFOHHYUJRCSXAIDGYSAWRB"
             , "KVEBCGMEOPDPRCQBPIEMZTTXYBURGZVNH9PLHKPMM9D9FUKWIGLKZROGNSYIFHULLWQWXCNAW9HKKVIDC"};
 
-    private IotaAPI iotaClient;
+    private IotaAPI iotaAPI;
 
     @Before
     public void createApiClientInstance() {
-        iotaClient = new IotaAPI.Builder().build();
+        iotaAPI = new IotaAPI.Builder().build();
     }
 
     @Test
     public void shouldCreateIotaApiProxyInstanceWithDefaultValues() {
-        IotaAPI proxy = new IotaAPI.Builder().build();
-        assertThat(proxy, IsNull.notNullValue());
-        assertThat(proxy.getHost(), Is.is("localhost"));
-        assertThat(proxy.getPort(), Is.is("14265"));
-        assertThat(proxy.getProtocol(), Is.is("http"));
+        iotaAPI = new IotaAPI.Builder().build();
+        assertThat(iotaAPI, IsNull.notNullValue());
+        assertThat(iotaAPI.getHost(), Is.is("node.iotawallet.info"));
+        assertThat(iotaAPI.getPort(), Is.is("14265"));
+        assertThat(iotaAPI.getProtocol(), Is.is("http"));
     }
 
     @Test
     public void shouldRetainValuesFromBuilder() {
-        IotaAPI proxy = new IotaAPI.Builder().host("somewhere_over_the_rainbow").build();
-        assertThat(proxy.getHost(), Is.is("somewhere_over_the_rainbow"));
+        iotaAPI = new IotaAPI.Builder().host("somewhere_over_the_rainbow").build();
+        assertThat(iotaAPI.getHost(), Is.is("somewhere_over_the_rainbow"));
 
-        proxy = new IotaAPI.Builder().port("15515").build();
-        assertThat(proxy.getPort(), Is.is("15515"));
+        iotaAPI = new IotaAPI.Builder().port("15515").build();
+        assertThat(iotaAPI.getPort(), Is.is("15515"));
 
-        proxy = new IotaAPI.Builder().protocol("https").build();
-        assertThat(proxy.getProtocol(), Is.is("https"));
+        iotaAPI = new IotaAPI.Builder().protocol("https").build();
+        assertThat(iotaAPI.getProtocol(), Is.is("https"));
     }
 
     @Test
     public void shouldGetValuesFromProperties() {
         Properties properties = new Properties();
+
         properties.put("iota.node.host", "somewhere_over_the_rainbow");
-        IotaAPI proxy = new IotaAPI.Builder().config(properties).build();
-        assertThat(proxy.getHost(), Is.is("somewhere_over_the_rainbow"));
+        iotaAPI = new IotaAPI.Builder().config(properties).build();
+        assertThat(iotaAPI.getHost(), Is.is("somewhere_over_the_rainbow"));
 
         properties = new Properties();
         properties.put("iota.node.port", "15515");
-        proxy = new IotaAPI.Builder().config(properties).build();
-        assertThat(proxy.getPort(), Is.is("15515"));
+        iotaAPI = new IotaAPI.Builder().config(properties).build();
+        assertThat(iotaAPI.getPort(), Is.is("15515"));
 
         properties = new Properties();
         properties.put("iota.node.protocol", "https");
-        proxy = new IotaAPI.Builder().config(properties).build();
-        assertThat(proxy.getProtocol(), Is.is("https"));
+        iotaAPI = new IotaAPI.Builder().config(properties).build();
+        assertThat(iotaAPI.getProtocol(), Is.is("https"));
     }
 
     @Test
     public void shouldGetInputs() throws InvalidSecurityLevelException, InvalidAddressException {
-        GetBalancesAndFormatResponse res = iotaClient.getInputs(TEST_SEED1, 2, 0, 0, 0);
+        GetBalancesAndFormatResponse res = iotaAPI.getInputs(TEST_SEED1, 2, 0, 0, 0);
         System.out.println(res);
         assertThat(res, IsNull.notNullValue());
         assertThat(res.getTotalBalance(), IsNull.notNullValue());
@@ -121,20 +122,32 @@ public class IotaAPITest {
     }
 
     @Test
+    public void shouldCreateANewAddressWithChecksum() throws InvalidSecurityLevelException, InvalidAddressException {
+        final GetNewAddressResponse res1 = iotaAPI.getNewAddress(TEST_SEED1, 1, 0, true, 5, false);
+        assertThat(res1.getAddresses().get(0), Is.is(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1));
+
+        final GetNewAddressResponse res2 = iotaAPI.getNewAddress(TEST_SEED1, 2, 0, true, 5, false);
+        assertThat(res2.getAddresses().get(0), Is.is(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2));
+
+        final GetNewAddressResponse res3 = iotaAPI.getNewAddress(TEST_SEED1, 3, 0, true, 5, false);
+        assertThat(res3.getAddresses().get(0), Is.is(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_3));
+    }
+
+    @Test
     public void shouldCreateANewAddressWithoutChecksum() throws InvalidSecurityLevelException, InvalidAddressException {
-        final GetNewAddressResponse res1 = iotaClient.getNewAddress(TEST_SEED1, 1, 0, false, 5, false);
+        final GetNewAddressResponse res1 = iotaAPI.getNewAddress(TEST_SEED1, 1, 0, false, 5, false);
         assertThat(res1.getAddresses().get(0), Is.is(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_1));
 
-        final GetNewAddressResponse res2 = iotaClient.getNewAddress(TEST_SEED1, 2, 0, false, 5, false);
+        final GetNewAddressResponse res2 = iotaAPI.getNewAddress(TEST_SEED1, 2, 0, false, 5, false);
         assertThat(res2.getAddresses().get(0), Is.is(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2));
 
-        final GetNewAddressResponse res3 = iotaClient.getNewAddress(TEST_SEED1, 3, 0, false, 5, false);
+        final GetNewAddressResponse res3 = iotaAPI.getNewAddress(TEST_SEED1, 3, 0, false, 5, false);
         assertThat(res3.getAddresses().get(0), Is.is(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_3));
     }
 
     @Test
     public void shouldCreate100Addresses() throws InvalidSecurityLevelException, InvalidAddressException {
-        GetNewAddressResponse res = iotaClient.getNewAddress(TEST_SEED1, 2, 0, false, 100, false);
+        GetNewAddressResponse res = iotaAPI.getNewAddress(TEST_SEED1, 2, 0, false, 100, false);
         assertEquals(res.getAddresses().size(), 100);
     }
 
@@ -143,15 +156,15 @@ public class IotaAPITest {
         List<Input> inputlist = new ArrayList<>();
         List<Transfer> transfers = new ArrayList<>();
 
-        GetBalancesAndFormatResponse rsp = iotaClient.getInputs(TEST_SEED1, 2, 0, 0, 100);
+        GetBalancesAndFormatResponse rsp = iotaAPI.getInputs(TEST_SEED1, 2, 0, 0, 100);
 
         for (Input input : rsp.getInputs()) {
             inputlist.add(input);
         }
-        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 0, TEST_MESSAGE, TEST_TAG));
-        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 0, TEST_MESSAGE, TEST_TAG));
-        List<String> trytes1 = iotaClient.prepareTransfers(TEST_SEED1, 2, transfers, null, null, false);
-        List<String> trytes2 = iotaClient.prepareTransfers(TEST_SEED1, 2, transfers, null, inputlist, true);
+        transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 0, TEST_MESSAGE, TEST_TAG));
+        transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 0));
+        List<String> trytes1 = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, null, false);
+        List<String> trytes2 = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, inputlist, true);
 
         Assert.assertNotNull(trytes1);
         assertThat(trytes1.isEmpty(), Is.is(false));
@@ -161,39 +174,39 @@ public class IotaAPITest {
 
     @Test
     public void shouldGetLastInclusionState() throws NoNodeInfoException {
-        GetInclusionStateResponse res = iotaClient.getLatestInclusion(new String[]{TEST_HASH});
+        GetInclusionStateResponse res = iotaAPI.getLatestInclusion(new String[]{TEST_HASH});
         assertThat(res.getStates(), IsNull.notNullValue());
     }
 
     @Test
     public void shouldFindTransactionObjects() {
-        List<Transaction> ftr = iotaClient.findTransactionObjects(TEST_ADDRESSES);
+        List<Transaction> ftr = iotaAPI.findTransactionObjects(TEST_ADDRESSES);
         System.out.println(ftr);
         assertThat(ftr, IsNull.notNullValue());
     }
 
     @Test
     public void shouldGetAccountData() throws NoInclusionStatesException, InvalidTrytesException, NoNodeInfoException, ArgumentException, InvalidBundleException, InvalidSecurityLevelException, InvalidAddressException, InvalidSignatureException {
-        GetAccountDataResponse gad = iotaClient.getAccountData(TEST_SEED1, 2, 0, true, 0, true, 0, 0, true, 0);
+        GetAccountDataResponse gad = iotaAPI.getAccountData(TEST_SEED1, 2, 0, true, 0, true, 0, 0, true, 0);
         assertThat(gad, IsNull.notNullValue());
     }
 
     @Test(expected = IllegalAccessError.class)
     public void shouldNotGetBundle() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
-        GetBundleResponse gbr = iotaClient.getBundle("SADASD");
+        GetBundleResponse gbr = iotaAPI.getBundle("SADASD");
         assertThat(gbr, IsNull.notNullValue());
     }
 
     @Test
     public void shouldGetBundle() throws InvalidBundleException, ArgumentException, InvalidSignatureException {
-        GetBundleResponse gbr = iotaClient.getBundle(TEST_HASH);
+        GetBundleResponse gbr = iotaAPI.getBundle(TEST_HASH);
         System.out.println(gbr);
         assertThat(gbr, IsNull.notNullValue());
     }
 
     @Test
     public void shouldGetTransfers() throws InvalidBundleException, ArgumentException, InvalidSignatureException, NoInclusionStatesException, NoNodeInfoException, InvalidSecurityLevelException, InvalidAddressException {
-        GetTransferResponse gtr = iotaClient.getTransfers(TEST_SEED1, 2, 0, 0, false);
+        GetTransferResponse gtr = iotaAPI.getTransfers(TEST_SEED1, 2, 0, 0, false);
         assertThat(gtr.getTransfers(), IsNull.notNullValue());
         System.out.println(gtr);
 
@@ -207,34 +220,35 @@ public class IotaAPITest {
     @Ignore
     @Test
     public void shouldReplayBundle() throws InvalidTrytesException, InvalidBundleException, InvalidSignatureException, ArgumentException {
-        ReplayBundleResponse rbr = iotaClient.replayBundle(TEST_HASH, DEPTH, MIN_WEIGHT_MAGNITUDE);
+        ReplayBundleResponse rbr = iotaAPI.replayBundle(TEST_HASH, DEPTH, MIN_WEIGHT_MAGNITUDE);
         assertThat(rbr, IsNull.notNullValue());
     }
 
     @Ignore
     @Test(expected = InvalidTrytesException.class)
     public void shouldNotSendTrytes() throws InvalidTrytesException {
-        iotaClient.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE);
+        iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE);
     }
 
     @Test()
     public void shouldGetTrytes() throws InvalidTrytesException {
-        System.out.println(iotaClient.getTrytes(TEST_HASH));
+        System.out.println(iotaAPI.getTrytes(TEST_HASH));
     }
 
 
     @Ignore
     @Test
     public void shouldSendTrytes() throws InvalidTrytesException {
-        iotaClient.sendTrytes(new String[]{TEST_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE);
+        iotaAPI.sendTrytes(new String[]{TEST_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE);
     }
 
     @Ignore
     @Test(expected = IllegalStateException.class)
     public void shouldNotSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
         List<Transfer> transfers = new ArrayList<>();
-        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 2, TEST_MESSAGE, TEST_TAG));
-        SendTransferResponse str = iotaClient.sendTransfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false);
+        transfers.add(new Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 2, TEST_MESSAGE, TEST_TAG));
+        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false);
+        assertThat(str.getTransactions(), IsNull.notNullValue());
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 
@@ -242,8 +256,9 @@ public class IotaAPITest {
     @Test
     public void shouldSendTransferWithoutInputs() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
         List<Transfer> transfers = new ArrayList<>();
-        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2_2, 100, TEST_MESSAGE, TEST_TAG));
-        SendTransferResponse str = iotaClient.sendTransfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false);
+        transfers.add(new Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
+        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false);
+        assertThat(str.getTransactions(), IsNull.notNullValue());
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 
@@ -253,15 +268,16 @@ public class IotaAPITest {
         List<Input> inputlist = new ArrayList<>();
         List<Transfer> transfers = new ArrayList<>();
 
-        GetBalancesAndFormatResponse rsp = iotaClient.getInputs(TEST_SEED1, 2, 0, 0, 100);
+        GetBalancesAndFormatResponse rsp = iotaAPI.getInputs(TEST_SEED1, 2, 0, 0, 1);
 
         for (Input input : rsp.getInputs()) {
             inputlist.add(input);
         }
 
-        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2_2, 100, TEST_MESSAGE, TEST_TAG));
+        transfers.add(new Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
 
-        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, inputlist, null, true);
+        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, inputlist, null, true);
+        assertThat(str.getTransactions(), IsNull.notNullValue());
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 }
