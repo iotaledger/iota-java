@@ -3,6 +3,8 @@ package jota;
 import jota.error.InvalidAddressException;
 import jota.error.InvalidSecurityLevelException;
 import jota.model.Bundle;
+import jota.pow.ICurl;
+import jota.pow.SpongeFactory;
 import jota.utils.*;
 import org.junit.Test;
 
@@ -27,6 +29,22 @@ public class SigningTest {
     public void testAddressGeneration() throws InvalidAddressException, InvalidSecurityLevelException {
         assertEquals(FIRST_ADDR, IotaAPIUtils.newAddress(TEST_SEED, 2, 0, true, null));
         assertEquals(SIXTH_ADDR, IotaAPIUtils.newAddress(TEST_SEED, 2, 5, true, null));
+    }
+
+    @Test
+    public void testLongSeedKeyGeneration() throws InvalidSecurityLevelException {
+        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
+        Signing signing = new Signing(curl);
+        String seed = "EV9QRJFJZVFNLYUFXWKXMCRRPNAZYQVEYB9VEPUHQNXJCWKZFVUCTQJFCUAMXAHMMIUQUJDG9UGGQBPIY";
+
+        for(int i = 1; i < 5; i++) {
+            int[] key1 = signing.key(Converter.trits(seed), 0, i);
+            assertEquals(Signing.KEY_LENGTH * i, key1.length);
+            int[] key2 = signing.key(Converter.trits(seed + seed), 0, i);
+            assertEquals(Signing.KEY_LENGTH * i, key2.length );
+            int[] key3 = signing.key(Converter.trits(seed + seed + seed), 0, i);
+            assertEquals(Signing.KEY_LENGTH * i, key3.length );
+        }
     }
 
     @Test
