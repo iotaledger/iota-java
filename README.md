@@ -268,7 +268,7 @@ limitations under the License.
 [iota-iri]: https://github.com/iotaledger/iri/tree/v1.4.0
 [iota-iri-badge]: https://img.shields.io/badge/IOTA%20IRI%20compatibility-v1.4.0-blue.svg
 [iota-api]: https://iota.readme.io/reference
-[iota-api-badge]: https://img.shields.io/badge/IOTA%20API%20coverage-14/14%20commands-blue.svg
+[iota-api-badge]: https://img.shields.io/badge/IOTA%20API%20coverage-14/15%20commands-red.svg
 [javadoc]: https://iotaledger.github.io/iota.lib.java/javadoc/
 [issues]: https://github.com/iotaledger/iota.lib.java/issues
 [new-issue]: https://github.com/iotaledger/iota.lib.java/issues/new
