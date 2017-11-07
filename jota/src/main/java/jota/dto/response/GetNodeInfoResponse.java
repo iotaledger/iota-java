@@ -23,7 +23,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
     private int transactionsToRequest;
 
     /**
-     * Name of the IOTA software you're currently using (IRI stands for Initial Reference Implementation).
+     * The name of the IOTA software the node currently running (IRI stands for Initial Reference Implementation).
      *
      * @return appName
      */
@@ -32,9 +32,9 @@ public class GetNodeInfoResponse extends AbstractResponse {
     }
 
     /**
-     * The version of the IOTA software you're currently running.
+     * The version of the IOTA software the node currently running.
      *
-     * @return The version of the IOTA software you're currently running.
+     * @return The version of the IOTA software the node currently running.
      */
     public String getAppVersion() {
         return appVersion;
@@ -50,9 +50,9 @@ public class GetNodeInfoResponse extends AbstractResponse {
     }
 
     /**
-     * Available cores on your machine for JRE.
+     * Available cores on the node currently running.
      *
-     * @return Available cores on your machine for JRE.
+     * @return Available cores on the machine for JRE.
      */
     public Integer getJreAvailableProcessors() {
         return jreAvailableProcessors;
@@ -105,7 +105,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
 
     /**
      * The latest milestone which is solid and is used for sending transactions.
-     * For a milestone to become solid your local node must basically approve the subtangle of coordinator-approved transactions,
+     * For a milestone to become solid the local node must basically approve the subtangle of coordinator-approved transactions,
      * and have a consistent view of all referenced transactions.
      *
      * @return The latest milestone which is solid and is used for sending transactions.
@@ -124,9 +124,9 @@ public class GetNodeInfoResponse extends AbstractResponse {
     }
 
     /**
-     * Number of neighbors you are directly connected with.
+     * Number of neighbors the node connected with.
      *
-     * @return Number of neighbors you are directly connected with.
+     * @return Number of neighbors the node connected with.
      */
     public int getNeighbors() {
         return neighbors;

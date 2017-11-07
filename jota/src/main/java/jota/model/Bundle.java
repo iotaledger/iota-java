@@ -2,7 +2,6 @@ package jota.model;
 
 import jota.pow.ICurl;
 import jota.pow.SpongeFactory;
-import jota.utils.Constants;
 import jota.utils.Converter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -151,7 +150,7 @@ public class Bundle implements Comparable<Bundle> {
         String emptyHash = EMPTY_HASH;
         long emptyTimestamp = 999999999L;
 
-        emptySignatureFragment = StringUtils.rightPad(emptySignatureFragment, Constants.MESSAGE_LENGTH, '9');
+        emptySignatureFragment = StringUtils.rightPad(emptySignatureFragment, 2187, '9');
 
         for (int i = 0; i < this.getTransactions().size(); i++) {
 

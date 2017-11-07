@@ -131,7 +131,7 @@ public class IotaAPICore {
     /**
      * Get the node information.
      *
-     * @return The information about your node.
+     * @return The information about the node.
      */
     public GetNodeInfoResponse getNodeInfo() {
         final Call<GetNodeInfoResponse> res = service.getNodeInfo(IotaCommandRequest.createNodeInfoRequest());
@@ -139,9 +139,9 @@ public class IotaAPICore {
     }
 
     /**
-     * Get the list of neighbors from your node.
+     * Get the list of neighbors from the node.
      *
-     * @return The set of neighbors you are connected with.
+     * @return The set of neighbors the node is connected with.
      */
     public GetNeighborsResponse getNeighbors() {
         final Call<GetNeighborsResponse> res = service.getNeighbors(IotaCommandRequest.createGetNeighborsRequest());
@@ -149,7 +149,7 @@ public class IotaAPICore {
     }
 
     /**
-     * Add a list of neighbors to your node.
+     * Add a list of neighbors to the node.
      *
      * @param uris The list of URI elements.
      */
@@ -159,7 +159,7 @@ public class IotaAPICore {
     }
 
     /**
-     * Removes a list of neighbors from your node.
+     * Removes a list of neighbors from the node.
      *
      * @param uris The list of URI elements.
      */
@@ -182,7 +182,7 @@ public class IotaAPICore {
     /**
      * Find the transactions which match the specified input
      *
-     * @return The transaction hashes which are returned depend on your input.
+     * @return The transaction hashes which are returned depend on the input.
      */
     public FindTransactionResponse findTransactions(String[] addresses, String[] tags, String[] approvees, String[] bundles) {
 
@@ -201,7 +201,7 @@ public class IotaAPICore {
      * Find the transactions by addresses
      *
      * @param addresses A List of addresses.
-     * @return The transaction hashes which are returned depend on your input.
+     * @return The transaction hashes which are returned depend on the input.
      */
     public FindTransactionResponse findTransactionsByAddresses(final String... addresses) {
         return findTransactions(addresses, null, null, null);
@@ -211,7 +211,7 @@ public class IotaAPICore {
      * Find the transactions by bundles
      *
      * @param bundles A List of bundles.
-     * @return The transaction hashes which are returned depend on your input.
+     * @return The transaction hashes which are returned depend on the input.
      */
     public FindTransactionResponse findTransactionsByBundles(final String... bundles) {
         return findTransactions(null, null, null, bundles);
@@ -221,7 +221,7 @@ public class IotaAPICore {
      * Find the transactions by approvees
      *
      * @param approvees A List of approvess.
-     * @return The transaction hashes which are returned depend on your input.
+     * @return The transaction hashes which are returned depend on the input.
      */
     public FindTransactionResponse findTransactionsByApprovees(final String... approvees) {
         return findTransactions(null, null, approvees, null);
@@ -232,7 +232,7 @@ public class IotaAPICore {
      * Find the transactions by digests
      *
      * @param digests A List of digests.
-     * @return The transaction hashes which are returned depend on your input.
+     * @return The transaction hashes which are returned depend on the input.
      */
     public FindTransactionResponse findTransactionsByDigests(final String... digests) {
         return findTransactions(null, digests, null, null);
@@ -240,7 +240,8 @@ public class IotaAPICore {
 
 
     /**
-     * Get the inclusion states of a set of transactions. This is for determining if a transaction was accepted and confirmed by the network or not. You can search for multiple tips (and thus, milestones) to get past inclusion states of transactions.
+     * Get the inclusion states of a set of transactions. This is for determining if a transaction was accepted and confirmed by the network or not.
+     * Search for multiple tips (and thus, milestones) to get past inclusion states of transactions.
      *
      * @param transactions The ist of transactions you want to get the inclusion state for.
      * @param tips         ThelList of tips (including milestones) you want to search for the inclusion state.
@@ -276,7 +277,7 @@ public class IotaAPICore {
     }
 
     /**
-     * It returns the confirmed balance which a list of addresses have at the latest confirmed milestone.
+     * Similar to getInclusionStates.
      *
      * @param threshold The confirmation threshold, should be set to 100.
      * @param addresses The array list of addresses you want to get the confirmed balance from.
@@ -288,7 +289,7 @@ public class IotaAPICore {
     }
 
     /**
-     * It returns the confirmed balance which a list of addresses have at the latest confirmed milestone.
+     * Similar to getInclusionStates.
      *
      * @param threshold The confirmation threshold, should be set to 100.
      * @param addresses The list of addresses you want to get the confirmed balance from.

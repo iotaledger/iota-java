@@ -14,14 +14,14 @@ import java.util.*;
 
 /**
  * IotaAPI Builder. Usage:
+ * <p>
+ * {@code IotaApiProxy api = IotaApiProxy.Builder}
+ * {@code .protocol("http")}
+ * {@code .nodeAddress("localhost")}
+ * {@code .port(12345)}
+ * {@code .build();}
  *
- * IotaApiProxy api = IotaApiProxy.Builder
- * .protocol("http")
- * .nodeAddress("localhost")
- * .port(12345)
- * .build();
- *
- * GetNodeInfoResponse response = api.getNodeInfo();
+ * {@code GetNodeInfoResponse response = api.getNodeInfo();}
  *
  * @author davassi
  */

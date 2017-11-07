@@ -60,7 +60,7 @@ public class Checksum {
     }
 
     /**
-     * Check if specified address is a address with checksum.
+     * Check if specified address is an address with checksum.
      *
      * @param address The address to check.
      * @return <code>true</code> if the specified address is with checksum ; otherwise, <code>false</code>.
@@ -71,7 +71,7 @@ public class Checksum {
     }
 
     /**
-     * Check if specified address is a address without checksum.
+     * Check if specified address is an address without checksum.
      *
      * @param address The address to check.
      * @return <code>true</code> if the specified address is without checksum ; otherwise, <code>false</code>.
