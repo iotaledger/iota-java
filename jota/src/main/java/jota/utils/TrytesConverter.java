@@ -10,20 +10,20 @@ public class TrytesConverter {
     /**
      * Conversion of ascii encoded bytes to trytes.
      * Input is a string (can be stringified JSON object), return value is Trytes
-     * <p>
+     *
      * How the conversion works:
      * 2 Trytes === 1 Byte
      * There are a total of 27 different tryte values: 9ABCDEFGHIJKLMNOPQRSTUVWXYZ
-     * <p>
+     *
      * 1. We get the decimal value of an individual ASCII character
      * 2. From the decimal value, we then derive the two tryte values by basically calculating the tryte equivalent (e.g. 100 === 19 + 3 * 27)
      * a. The first tryte value is the decimal value modulo 27 (27 trytes)
      * b. The second value is the remainder (decimal value - first value), divided by 27
      * 3. The two values returned from Step 2. are then input as indices into the available values list ('9ABCDEFGHIJKLMNOPQRSTUVWXYZ') to get the correct tryte value
-     * <p>
-     * <p>
+     *
+     *
      * EXAMPLE
-     * <p>
+     *
      * Lets say we want to convert the ASCII character "Z".
      * 1. 'Z' has a decimal value of 90.
      * 2. 90 can be represented as 9 + 3 * 27. To make it simpler:

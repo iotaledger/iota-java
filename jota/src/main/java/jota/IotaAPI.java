@@ -14,13 +14,13 @@ import java.util.*;
 
 /**
  * IotaAPI Builder. Usage:
- * <p>
+ *
  * IotaApiProxy api = IotaApiProxy.Builder
  * .protocol("http")
  * .nodeAddress("localhost")
  * .port(12345)
  * .build();
- * <p>
+ *
  * GetNodeInfoResponse response = api.getNodeInfo();
  *
  * @author davassi
@@ -730,7 +730,6 @@ public class IotaAPI extends IotaAPICore {
      * @throws InvalidBundleException    is thrown if an invalid bundle was found or provided.
      * @throws ArgumentException         is thrown when an invalid argument is provided.
      * @throws InvalidSignatureException is thrown when an invalid signature is encountered.
-     * @throws InvalidTransferException  is thrown when an invalid transfer is provided.
      */
     public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude) throws InvalidBundleException, ArgumentException, InvalidSignatureException, InvalidTrytesException {
         StopWatch stopWatch = new StopWatch();

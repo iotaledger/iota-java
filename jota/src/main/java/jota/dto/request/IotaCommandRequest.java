@@ -10,7 +10,7 @@ public class IotaCommandRequest {
     final String command;
 
     /**
-     * @param command
+     * Initializes a new instance of the IotaCommandRequest class.
      */
     protected IotaCommandRequest(IotaAPICommands command) {
         this.command = command.command();
