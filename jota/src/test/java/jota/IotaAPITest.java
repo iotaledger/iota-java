@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import jota.dto.response.*;
 import jota.error.*;
 import jota.model.Bundle;
+import jota.model.Input;
 import jota.model.Transaction;
 import jota.model.Transfer;
 import org.hamcrest.core.Is;
@@ -140,12 +141,23 @@ public class IotaAPITest {
 
     @Test
     public void shouldPrepareTransfer() throws InvalidSecurityLevelException, NotEnoughBalanceException, InvalidAddressException, InvalidTransferException {
+        List<Input> inputlist = new ArrayList<>();
         List<Transfer> transfers = new ArrayList<>();
+
+        GetBalancesAndFormatResponse rsp = iotaClient.getInputs(TEST_SEED1, 2, 0, 0, 100);
+
+        for (Input input : rsp.getInput()) {
+            inputlist.add(input);
+        }
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 0, TEST_MESSAGE, TEST_TAG));
         transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 0, TEST_MESSAGE, TEST_TAG));
-        List<String> trytes = iotaClient.prepareTransfers(TEST_SEED1, 2, transfers, null, null);
-        Assert.assertNotNull(trytes);
-        assertThat(trytes.isEmpty(), Is.is(false));
+        List<String> trytes1 = iotaClient.prepareTransfers(TEST_SEED1, 2, transfers, null, null, false);
+        List<String> trytes2 = iotaClient.prepareTransfers(TEST_SEED1, 2, transfers, null, inputlist, true);
+
+        Assert.assertNotNull(trytes1);
+        assertThat(trytes1.isEmpty(), Is.is(false));
+        Assert.assertNotNull(trytes2);
+        assertThat(trytes2.isEmpty(), Is.is(false));
     }
 
     @Test
@@ -222,17 +234,35 @@ public class IotaAPITest {
     @Test(expected = IllegalStateException.class)
     public void shouldNotSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
         List<Transfer> transfers = new ArrayList<>();
-        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 0, TEST_MESSAGE, TEST_TAG));
-        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED2, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null);
+        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 2, TEST_MESSAGE, TEST_TAG));
+        SendTransferResponse str = iotaClient.sendTransfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false);
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 
     @Ignore
     @Test
-    public void shouldSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
+    public void shouldSendTransferWithoutInputs() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
         List<Transfer> transfers = new ArrayList<>();
-        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2_2, 0, TEST_MESSAGE, TEST_TAG));
-        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null);
+        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2_2, 100, TEST_MESSAGE, TEST_TAG));
+        SendTransferResponse str = iotaClient.sendTransfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false);
+        assertThat(str.getSuccessfully(), IsNull.notNullValue());
+    }
+
+    @Ignore
+    @Test
+    public void shouldSendTransferWithInputs() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
+        List<Input> inputlist = new ArrayList<>();
+        List<Transfer> transfers = new ArrayList<>();
+
+        GetBalancesAndFormatResponse rsp = iotaClient.getInputs(TEST_SEED1, 2, 0, 0, 100);
+
+        for (Input input : rsp.getInput()) {
+            inputlist.add(input);
+        }
+
+        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2_2, 100, TEST_MESSAGE, TEST_TAG));
+
+        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, inputlist, null, true);
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 }

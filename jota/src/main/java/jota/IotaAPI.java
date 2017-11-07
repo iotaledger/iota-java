@@ -330,24 +330,6 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Prepares transfer by generating bundle, finding and signing inputs.
      *
-     * @param seed      81-tryte encoded address of recipient.
-     * @param security  The security level of private key / seed.
-     * @param transfers Array of transfer objects.
-     * @param remainder If defined, this address will be used for sending the remainder value (of the inputs) to.
-     * @param inputs    The inputs.
-     * @return Returns bundle trytes.
-     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
-     * @throws NotEnoughBalanceException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
-     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
-     * @throws InvalidTransferException      is thrown when an invalid transfer is provided.
-     */
-    public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException, InvalidTransferException {
-        return prepareTransfers(seed, security, transfers, remainder, inputs, true);
-    }
-
-    /**
-     * Prepares transfer by generating bundle, finding and signing inputs.
-     *
      * @param seed           81-tryte encoded address of recipient.
      * @param security       The security level of private key / seed.
      * @param transfers      Array of transfer objects.
@@ -365,6 +347,10 @@ public class IotaAPI extends IotaAPICore {
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionValid(transfers)) {
             throw new InvalidTransferException();
+        }
+        // Input validation of transfers object
+        if (transfers.isEmpty()) {
+            throw new IllegalArgumentException("No transfer provided");
         }
 
         // validate seed
@@ -439,13 +425,13 @@ public class IotaAPI extends IotaAPICore {
 
         // Get inputs if we are sending tokens
         if (totalValue != 0) {
-            if (!validateInputs)
-                return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
+
             //  Case 1: user provided inputs
             //  Validate the inputs by calling getBalances
-            if (!validateInputs)
-                return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
             if (inputs != null && !inputs.isEmpty()) {
+
+                if (!validateInputs)
+                    return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
 
                 // Get list if addresses of the provided inputs
                 List<String> inputsAddresses = new ArrayList<>();
@@ -806,7 +792,8 @@ public class IotaAPI extends IotaAPICore {
      * @param minWeightMagnitude The minimum weight magnitude.
      * @param transfers          Array of transfer objects.
      * @param inputs             List of inputs used for funding the transfer.
-     * @param remainderAddress            If defined, this remainderAddress will be used for sending the remainder value (of the inputs) to.
+     * @param remainderAddress   If defined, this remainderAddress will be used for sending the remainder value (of the inputs) to.
+     * @param validateInputs     Whether or not to validate the balances of the provided inputs
      * @return Array of Transaction objects.
      * @throws InvalidAddressException       is thrown when the specified remainderAddress is not an valid remainderAddress.
      * @throws NotEnoughBalanceException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
@@ -815,7 +802,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws InvalidAddressException       is thrown when the specified remainderAddress is not an valid remainderAddress.
      * @throws InvalidTransferException      is thrown when an invalid transfer is provided.
      */
-    public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, Input[] inputs, String remainderAddress) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
+    public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, List<Input> inputs, String remainderAddress, boolean validateInputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
 
         if (security < 1) {
             throw new InvalidSecurityLevelException();
@@ -823,7 +810,7 @@ public class IotaAPI extends IotaAPICore {
 
         StopWatch stopWatch = new StopWatch();
 
-        List<String> trytes = prepareTransfers(seed, security, transfers, remainderAddress, inputs == null ? null : Arrays.asList(inputs));
+        List<String> trytes = prepareTransfers(seed, security, transfers, remainderAddress, inputs, validateInputs);
         List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude);
 
         Boolean[] successful = new Boolean[trxs.size()];
@@ -905,17 +892,8 @@ public class IotaAPI extends IotaAPICore {
     public List<Transaction> initiateTransfer(int securitySum, final String inputAddress, String remainderAddress,
                                               final List<Transfer> transfers, boolean testMode) throws InvalidAddressException, InvalidBundleException, InvalidTransferException {
 
-        // If message or tag is not supplied, provide it
-        // Also remove the checksum of the address if it's there
-
-        for (Transfer transfer : transfers) {
-
-            transfer.setMessage(transfer.getMessage().isEmpty() ? StringUtils.rightPad(transfer.getMessage(), 2187, '9') : transfer.getMessage());
-            transfer.setTag(transfer.getTag().isEmpty() ? StringUtils.rightPad(transfer.getTag(), 27, '9') : transfer.getTag());
-
-            if (Checksum.isValidChecksum(transfer.getAddress())) {
-                transfer.setAddress(Checksum.removeChecksum(transfer.getAddress()));
-            }
+        if (transfers.isEmpty()) {
+            throw new IllegalArgumentException("No transfer provided");
         }
 
         // Input validation of transfers object
@@ -931,6 +909,20 @@ public class IotaAPI extends IotaAPICore {
         // validate remainder address
         if (remainderAddress != null && !InputValidator.isAddress(remainderAddress)) {
             throw new InvalidBundleException();
+        }
+
+
+        // If message or tag is not supplied, provide it
+        // Also remove the checksum of the address if it's there
+
+        for (Transfer transfer : transfers) {
+
+            transfer.setMessage(transfer.getMessage().isEmpty() ? StringUtils.rightPad(transfer.getMessage(), 2187, '9') : transfer.getMessage());
+            transfer.setTag(transfer.getTag().isEmpty() ? StringUtils.rightPad(transfer.getTag(), 27, '9') : transfer.getTag());
+
+            if (Checksum.isValidChecksum(transfer.getAddress())) {
+                transfer.setAddress(Checksum.removeChecksum(transfer.getAddress()));
+            }
         }
 
         // Create a new bundle
