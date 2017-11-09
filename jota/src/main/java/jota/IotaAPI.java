@@ -1,7 +1,7 @@
 package jota;
 
 import jota.dto.response.*;
-import jota.error.*;
+import jota.error.ArgumentException;
 import jota.model.*;
 import jota.pow.ICurl;
 import jota.pow.SpongeFactory;
@@ -46,10 +46,9 @@ public class IotaAPI extends IotaAPICore {
      * @param total     Total number of addresses to generate.
      * @param returnAll If <code>true</code>, it returns all addresses which were deterministically generated (until findTransactions returns null).
      * @return An array of strings with the specifed number of addresses.
-     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
-     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public GetNewAddressResponse getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws InvalidSecurityLevelException, InvalidAddressException {
+    public GetNewAddressResponse getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws ArgumentException, ArgumentException {
 
         StopWatch stopWatch = new StopWatch();
 
@@ -94,15 +93,9 @@ public class IotaAPI extends IotaAPICore {
      * @param end             Ending key index.
      * @param inclusionStates If <code>true</code>, it gets the inclusion states of the transfers.
      * @return Bundle of transfers.
-     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
-     * @throws ArgumentException             is thrown when an invalid argument is provided.
-     * @throws InvalidBundleException        is thrown if an invalid bundle was found or provided.
-     * @throws InvalidSignatureException     is thrown when an invalid signature is encountered.
-     * @throws NoNodeInfoException           is thrown when its not possible to get node info.
-     * @throws NoInclusionStatesException    when it not possible to get a inclusion state.
-     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public GetTransferResponse getTransfers(String seed, int security, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoNodeInfoException, NoInclusionStatesException, InvalidSecurityLevelException, InvalidAddressException {
+    public GetTransferResponse getTransfers(String seed, int security, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException {
 
         // validate seed
         if ((!InputValidator.isValidSeed(seed))) {
@@ -129,15 +122,11 @@ public class IotaAPI extends IotaAPICore {
      * @param addresses       List of addresses.
      * @param inclusionStates If <code>true</code>, it gets the inclusion states of the transfers.
      * @return A Transaction objects.
-     * @throws ArgumentException          is thrown when an invalid argument is provided.
-     * @throws InvalidBundleException     is thrown if an invalid bundle was found or provided.
-     * @throws InvalidSignatureException  is thrown when an invalid signature is encountered.
-     * @throws NoNodeInfoException        is thrown when its not possible to get node info.
-     * @throws NoInclusionStatesException when it not possible to get a inclusion state.
+     * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public Bundle[] bundlesFromAddresses(String[] addresses, final Boolean inclusionStates) throws ArgumentException, InvalidBundleException, InvalidSignatureException, NoNodeInfoException, NoInclusionStatesException {
+    public Bundle[] bundlesFromAddresses(String[] addresses, final Boolean inclusionStates) throws ArgumentException {
 
-        List<Transaction> trxs = findTransactionObjects(addresses);
+        List<Transaction> trxs = findTransactionObjectsByAddresses(addresses);
         // set of tail transactions
         List<String> tailTransactions = new ArrayList<>();
         List<String> nonTailBundleHashes = new ArrayList<>();
@@ -170,13 +159,9 @@ public class IotaAPI extends IotaAPICore {
         // of the tail transactions, and thus the bundles
         GetInclusionStateResponse gisr = null;
         if (tailTxArray.length != 0 && inclusionStates) {
-            try {
                 gisr = getLatestInclusion(tailTxArray);
-            } catch (IllegalAccessError ignored) {
-                throw new NoInclusionStatesException();
-            }
             if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0) {
-                throw new NoInclusionStatesException();
+                throw new IllegalStateException("No inclusion states for transaction");
             }
         }
         final GetInclusionStateResponse finalInclusionStates = gisr;
@@ -200,7 +185,7 @@ public class IotaAPI extends IotaAPICore {
                                 finalBundles.add(gbr);
                             }
                             // If error returned from getBundle, simply ignore it because the bundle was most likely incorrect
-                        } catch (InvalidBundleException | ArgumentException | InvalidSignatureException e) {
+                        } catch (ArgumentException e) {
                             log.warn("GetBundleError: ", e);
                         }
                     }
@@ -219,15 +204,18 @@ public class IotaAPI extends IotaAPICore {
      *
      * @param trytes The trytes.
      * @return A StoreTransactionsResponse.
-     * @throws BroadcastAndStoreException is thrown if its not possible to broadcast and store.
+     * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public StoreTransactionsResponse broadcastAndStore(final String... trytes) throws BroadcastAndStoreException {
+    public StoreTransactionsResponse broadcastAndStore(final String... trytes) throws ArgumentException {
+
+        if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
+            throw new ArgumentException("Invalid trytes provided");
+        }
 
         try {
             broadcastTransactions(trytes);
         } catch (Exception e) {
-            log.error("Impossible to broadcastAndStore, aborting.", e);
-            throw new BroadcastAndStoreException();
+            throw new ArgumentException(e.toString());
         }
         return storeTransactions(trytes);
     }
@@ -239,9 +227,9 @@ public class IotaAPI extends IotaAPICore {
      * @param depth              The depth.
      * @param minWeightMagnitude The minimum weight magnitude.
      * @return Transactions objects.
-     * @throws InvalidTrytesException is thrown when invalid trytes is provided.
+     * @throws ArgumentException is thrown when invalid trytes is provided.
      */
-    public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude) throws InvalidTrytesException {
+    public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude) throws ArgumentException {
         final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth);
 
         // attach to tangle - do pow
@@ -249,7 +237,7 @@ public class IotaAPI extends IotaAPICore {
 
         try {
             broadcastAndStore(res.getTrytes());
-        } catch (BroadcastAndStoreException e) {
+        } catch (ArgumentException e) {
             return new ArrayList<>();
         }
 
@@ -268,7 +256,7 @@ public class IotaAPI extends IotaAPICore {
      * @param hashes The hashes
      * @return Transaction objects.
      **/
-    public List<Transaction> getTransactionsObjects(String[] hashes) {
+    public List<Transaction> findTransactionsObjectsByHashes(String[] hashes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfHashes(hashes)) {
             throw new IllegalStateException("Not an Array of Hashes: " + Arrays.toString(hashes));
@@ -286,34 +274,71 @@ public class IotaAPI extends IotaAPICore {
 
     /**
      * Wrapper function for findTransactions, getTrytes and transactionObjects.
-     * Returns the transactionObject of a transaction hash. The input can be a valid findTransactions input.
+     * Returns the transactionObject of a transaction hash. The input can be a list of valid addresses.
      *
-     * @param input The inputs.
+     * @param addresses The addresses.
      * @return Transactions.
      **/
-    public List<Transaction> findTransactionObjects(String[] input) {
-        FindTransactionResponse ftr = findTransactions(input, null, null, null);
+    public List<Transaction> findTransactionObjectsByAddresses(String[] addresses) throws ArgumentException {
+        List<String> addressesWithoutChecksum = new ArrayList<>();
+
+        for (String address : addresses) {
+            String addressO = Checksum.removeChecksum(address);
+            addressesWithoutChecksum.add(addressO);
+        }
+
+        FindTransactionResponse ftr = findTransactions(addressesWithoutChecksum.toArray(new String[]{}), null, null, null);
         if (ftr == null || ftr.getHashes() == null)
             return new ArrayList<>();
         // get the transaction objects of the transactions
-        return getTransactionsObjects(ftr.getHashes());
+        return findTransactionsObjectsByHashes(ftr.getHashes());
     }
 
     /**
      * Wrapper function for findTransactions, getTrytes and transactionObjects.
-     * Returns the transactionObject of a transaction hash. The input can be a valid.
-     * findTransactions input
+     * Returns the transactionObject of a transaction hash. The input can be a list of valid tags.
      *
-     * @param input The inputs.
+     * @param tags The tags.
      * @return Transactions.
      **/
-    public List<Transaction> findTransactionObjectsByBundle(String[] input) {
-        FindTransactionResponse ftr = findTransactions(null, null, null, input);
+    public List<Transaction> findTransactionObjectsByTag(String[] tags) throws ArgumentException {
+        FindTransactionResponse ftr = findTransactions(null, tags, null, null);
+        if (ftr == null || ftr.getHashes() == null)
+            return new ArrayList<>();
+        // get the transaction objects of the transactions
+        return findTransactionsObjectsByHashes(ftr.getHashes());
+    }
+
+    /**
+     * Wrapper function for findTransactions, getTrytes and transactionObjects.
+     * Returns the transactionObject of a transaction hash. The input can be a list of valid approvees.
+     *
+     * @param approvees The approvees.
+     * @return Transactions.
+     **/
+    public List<Transaction> findTransactionObjectsByApprovees(String[] approvees) throws ArgumentException {
+        FindTransactionResponse ftr = findTransactions(null, null, approvees, null);
+        if (ftr == null || ftr.getHashes() == null)
+            return new ArrayList<>();
+        // get the transaction objects of the transactions
+        return findTransactionsObjectsByHashes(ftr.getHashes());
+    }
+
+    /**
+     * Wrapper function for findTransactions, getTrytes and transactionObjects.
+     * Returns the transactionObject of a transaction hash. The input can be a list of valid bundles.
+     * findTransactions input
+     *
+     * @param bundles The bundles.
+     * @return Transactions.
+     **/
+    public List<Transaction> findTransactionObjectsByBundle(String[] bundles) throws ArgumentException {
+        FindTransactionResponse ftr = findTransactions(null, null, null, bundles);
         if (ftr == null || ftr.getHashes() == null)
             return new ArrayList<>();
 
         // get the transaction objects of the transactions
-        return getTransactionsObjects(ftr.getHashes());
+        return findTransactionsObjectsByHashes(ftr.getHashes());
     }
 
     /**
@@ -326,12 +351,9 @@ public class IotaAPI extends IotaAPICore {
      * @param inputs         The inputs.
      * @param validateInputs whether or not to validate the balances of the provided inputs
      * @return Returns bundle trytes.
-     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
-     * @throws NotEnoughBalanceException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
-     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
-     * @throws InvalidTransferException      is thrown when an invalid transfer is provided.
+     * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs, boolean validateInputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException, InvalidTransferException {
+    public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs, boolean validateInputs) throws ArgumentException {
 
         // validate seed
         if ((!InputValidator.isValidSeed(seed))) {
@@ -339,12 +361,12 @@ public class IotaAPI extends IotaAPICore {
         }
 
         if (security < 1) {
-            throw new InvalidSecurityLevelException();
+            throw new ArgumentException("Invalid security level provided");
         }
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionValid(transfers)) {
-            throw new InvalidTransferException();
+            throw new ArgumentException("Invalid transfers provided");
         }
 
         // Create a new bundle
@@ -494,10 +516,9 @@ public class IotaAPI extends IotaAPICore {
      * @param start     Starting key index.
      * @param end       Ending key index.
      * @param threshold Min balance required.
-     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
-     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws ArgumentException is thrown when the specified input is not valid.
      **/
-    public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold) throws InvalidSecurityLevelException, InvalidAddressException {
+    public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold) throws ArgumentException, ArgumentException {
 
         // validate the seed
         if ((!InputValidator.isValidSeed(seed))) {
@@ -505,7 +526,7 @@ public class IotaAPI extends IotaAPICore {
         }
 
         if (security < 1) {
-            throw new InvalidSecurityLevelException();
+            throw new ArgumentException("Invalid security level provided");
         }
 
         // If start value bigger than end, return error
@@ -552,12 +573,12 @@ public class IotaAPI extends IotaAPICore {
      * @param stopWatch the stopwatch.
      * @param security  The security level of private key / seed.
      * @return Inputs object.
-     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws ArgumentException is thrown when the specified security level is not valid.
      **/
-    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, long threshold, int start, StopWatch stopWatch, int security) throws InvalidSecurityLevelException {
+    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, long threshold, int start, StopWatch stopWatch, int security) throws ArgumentException, IllegalStateException {
 
         if (security < 1) {
-            throw new InvalidSecurityLevelException();
+            throw new ArgumentException("Invalid security level provided");
         }
 
         GetBalancesResponse getBalancesResponse = getBalances(100, addresses);
@@ -601,11 +622,13 @@ public class IotaAPI extends IotaAPICore {
      *
      * @param transaction The transaction encoded in trytes.
      * @return an array of bundle, if there are multiple arrays it means that there are conflicting bundles.
-     * @throws ArgumentException         is thrown when an invalid argument is provided.
-     * @throws InvalidBundleException    is thrown if an invalid bundle was found or provided.
-     * @throws InvalidSignatureException is thrown when an invalid signature is encountered.
+     * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public GetBundleResponse getBundle(String transaction) throws ArgumentException, InvalidBundleException, InvalidSignatureException {
+    public GetBundleResponse getBundle(String transaction) throws ArgumentException {
+
+        if (!InputValidator.isHash(transaction)) {
+            throw new ArgumentException("Invalid hash provided");
+        }
 
         Bundle bundle = traverseBundle(transaction, null, new Bundle());
         if (bundle == null) {
@@ -657,17 +680,18 @@ public class IotaAPI extends IotaAPICore {
         }
 
         // Check for total sum, if not equal 0 return error
-        if (totalSum != 0) throw new InvalidBundleException("Invalid Bundle Sum");
+        if (totalSum != 0) throw new ArgumentException("Invalid Bundle Sum");
         int[] bundleFromTrxs = new int[243];
         curl.squeeze(bundleFromTrxs);
         String bundleFromTxString = Converter.trytes(bundleFromTrxs);
 
         // Check if bundle hash is the same as returned by tx object
-        if (!bundleFromTxString.equals(bundleHash)) throw new InvalidBundleException("Invalid Bundle Hash");
+        if (!bundleFromTxString.equals(bundleHash))
+            throw new ArgumentException("Invalid Bundle Hash");
         // Last tx in the bundle should have currentIndex === lastIndex
         bundle.setLength(bundle.getTransactions().size());
         if (!(bundle.getTransactions().get(bundle.getLength() - 1).getCurrentIndex() == (bundle.getTransactions().get(bundle.getLength() - 1).getLastIndex())))
-            throw new InvalidBundleException("Invalid Bundle");
+            throw new ArgumentException("Invalid Bundle");
 
         // Validate the signatures
         for (Signature aSignaturesToValidate : signaturesToValidate) {
@@ -675,7 +699,7 @@ public class IotaAPI extends IotaAPICore {
             String address = aSignaturesToValidate.getAddress();
             boolean isValidSignature = new Signing(customCurl.clone()).validateSignatures(address, signatureFragments, bundleHash);
 
-            if (!isValidSignature) throw new InvalidSignatureException();
+            if (!isValidSignature) throw new ArgumentException("Invalid Signatures!");
         }
 
         return GetBundleResponse.create(bundle.getTransactions(), stopWatch.getElapsedTimeMili());
@@ -694,18 +718,9 @@ public class IotaAPI extends IotaAPICore {
      * @param end             Ending key index.
      * @param inclusionStates If <code>true</code>, it gets the inclusion states of the transfers.
      * @param threshold       Min balance required.
-     * @throws InvalidBundleException        is thrown if an invalid bundle was found or provided.
-     * @throws ArgumentException             is thrown when an invalid argument is provided.
-     * @throws InvalidSignatureException     is thrown when an invalid signature is encountered.
-     * @throws InvalidTrytesException        is thrown when invalid trytes is provided.
-     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
-     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
-     * @throws NoInclusionStatesException    is thrown when it not possible to get a inclusion state.
-     * @throws NoNodeInfoException           is thrown when its not possible to get node info.
+     * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, boolean returnAll, int start, int end, boolean inclusionStates, long threshold)
-            throws InvalidBundleException, ArgumentException, InvalidSignatureException,
-            InvalidTrytesException, InvalidSecurityLevelException, InvalidAddressException, NoInclusionStatesException, NoNodeInfoException {
+    public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, boolean returnAll, int start, int end, boolean inclusionStates, long threshold) throws ArgumentException {
 
         if (start > end || end > (start + 1000)) {
             throw new ArgumentException("Invalid inputs provided");
@@ -727,11 +742,14 @@ public class IotaAPI extends IotaAPICore {
      * @param depth              The depth.
      * @param minWeightMagnitude The minimum weight magnitude.
      * @return Analyzed Transaction objects.
-     * @throws InvalidBundleException    is thrown if an invalid bundle was found or provided.
-     * @throws ArgumentException         is thrown when an invalid argument is provided.
-     * @throws InvalidSignatureException is thrown when an invalid signature is encountered.
+     * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude) throws InvalidBundleException, ArgumentException, InvalidSignatureException, InvalidTrytesException {
+    public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude) throws ArgumentException {
+
+        if (!InputValidator.isHash(transaction)) {
+            throw new ArgumentException("Invalid tail hash provided");
+        }
+
         StopWatch stopWatch = new StopWatch();
 
         List<String> bundleTrytes = new ArrayList<>();
@@ -764,11 +782,9 @@ public class IotaAPI extends IotaAPICore {
      *
      * @param hashes The hashes.
      * @return Inclusion state.
-     * @throws NoNodeInfoException is thrown when its not possible to get node info.
      */
-    public GetInclusionStateResponse getLatestInclusion(String[] hashes) throws NoNodeInfoException {
+    public GetInclusionStateResponse getLatestInclusion(String[] hashes) throws ArgumentException {
         GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
-        if (getNodeInfoResponse == null) throw new NoNodeInfoException();
 
         String[] latestMilestone = {getNodeInfoResponse.getLatestSolidSubtangleMilestone()};
 
@@ -787,14 +803,9 @@ public class IotaAPI extends IotaAPICore {
      * @param remainderAddress   If defined, this remainderAddress will be used for sending the remainder value (of the inputs) to.
      * @param validateInputs     Whether or not to validate the balances of the provided inputs
      * @return Array of valid Transaction objects.
-     * @throws InvalidAddressException       is thrown when the specified remainderAddress is not an valid remainderAddress.
-     * @throws NotEnoughBalanceException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
-     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
-     * @throws InvalidTrytesException        is thrown when invalid trytes is provided.
-     * @throws InvalidAddressException       is thrown when the specified remainderAddress is not an valid remainderAddress.
-     * @throws InvalidTransferException      is thrown when an invalid transfer is provided.
+     * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, List<Input> inputs, String remainderAddress, boolean validateInputs) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
+    public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, List<Input> inputs, String remainderAddress, boolean validateInputs) throws ArgumentException {
 
         StopWatch stopWatch = new StopWatch();
 
@@ -820,7 +831,7 @@ public class IotaAPI extends IotaAPICore {
      * @param bundleHash The bundle hashes.
      * @param bundle     List of bundles to be populated.
      * @return Transaction objects.
-     * @throws ArgumentException is thrown when an invalid argument is provided.
+     * @throws ArgumentException is thrown when an invalid input is provided.
      */
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
         GetTrytesResponse gtr = getTrytes(trunkTx);
@@ -872,24 +883,24 @@ public class IotaAPI extends IotaAPICore {
      * @param inputAddress     Array of input addresses as well as the securitySum.
      * @param remainderAddress Has to be generated by the cosigners before initiating the transfer, can be null if fully spent.
      * @return Bundle of transaction objects.
-     * @throws InvalidBundleException  is thrown if an invalid bundle was found or provided.
-     * @throws InvalidAddressException is thrown when the specified address is not an valid address.
+     * @throws ArgumentException is thrown when an invalid argument is provided.
+     * @throws IllegalStateException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
      */
     public List<Transaction> initiateTransfer(int securitySum, final String inputAddress, String remainderAddress,
-                                              final List<Transfer> transfers, boolean testMode) throws InvalidAddressException, InvalidBundleException, InvalidTransferException {
+                                              final List<Transfer> transfers, boolean testMode) throws ArgumentException {
 
         // validate input address
         if (!InputValidator.isAddress(inputAddress))
-            throw new InvalidAddressException();
+            throw new ArgumentException("Invalid addresses provided");
 
         // validate remainder address
         if (remainderAddress != null && !InputValidator.isAddress(remainderAddress)) {
-            throw new InvalidBundleException();
+            throw new ArgumentException("Invalid remainder addresses provided");
         }
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionValid(transfers)) {
-            throw new InvalidTransferException();
+            throw new ArgumentException("Invalid transfers provided");
         }
 
         // Create a new bundle
@@ -964,7 +975,7 @@ public class IotaAPI extends IotaAPICore {
         // Get inputs if we are sending tokens
         if (totalValue != 0) {
 
-            GetBalancesResponse balancesResponse = getBalances(100, new String[]{inputAddress});
+            GetBalancesResponse balancesResponse = getBalances(100, Collections.singletonList(inputAddress));
             String[] balances = balancesResponse.getBalances();
 
             long totalBalance = 0;
@@ -1028,9 +1039,8 @@ public class IotaAPI extends IotaAPICore {
      * @param totalValue         The total value.
      * @param remainderAddress   If defined, this address will be used for sending the remainder value (of the inputs) to.
      * @param signatureFragments The signature fragments.
-     * @throws NotEnoughBalanceException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
-     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
-     * @throws InvalidAddressException       is thrown when the specified address is not an valid address.
+     * @throws ArgumentException is thrown when an invalid argument is provided.
+     * @throws IllegalStateException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
      */
     public List<String> addRemainder(final String seed,
                                      final int security,
@@ -1039,7 +1049,7 @@ public class IotaAPI extends IotaAPICore {
                                      final String tag,
                                      final long totalValue,
                                      final String remainderAddress,
-                                     final List<String> signatureFragments) throws NotEnoughBalanceException, InvalidSecurityLevelException, InvalidAddressException {
+                                     final List<String> signatureFragments) throws ArgumentException {
 
         long totalTransferValue = totalValue;
         for (int i = 0; i < inputs.size(); i++) {
@@ -1083,7 +1093,7 @@ public class IotaAPI extends IotaAPICore {
                 totalTransferValue -= thisBalance;
             }
         }
-        throw new NotEnoughBalanceException();
+        throw new IllegalStateException("Not enough balance");
     }
 
     public static class Builder extends IotaAPICore.Builder<Builder> {

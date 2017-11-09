@@ -2,9 +2,9 @@ package jota;
 
 import jota.dto.request.*;
 import jota.dto.response.*;
-import jota.error.InvalidApiVersionException;
-import jota.error.InvalidTrytesException;
+import jota.error.ArgumentException;
 import jota.model.Transaction;
+import jota.utils.Checksum;
 import jota.utils.InputValidator;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -19,6 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -57,20 +58,23 @@ public class IotaAPICore {
         try {
             final Response<T> res = call.execute();
 
+            String error = "";
+
+            if (res.errorBody() != null) {
+                error = res.errorBody().string();
+            }
+
             if (res.code() == 400) {
-                if (res.errorBody().string().contains("Invalid API Version")) {
-                    try {
-                        throw new InvalidApiVersionException();
-                    } catch (InvalidApiVersionException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    throw new IllegalAccessError("400 " + res.errorBody().string());
+                try {
+                    throw new ArgumentException(error);
+                } catch (ArgumentException e) {
+                    e.printStackTrace();
                 }
+
             } else if (res.code() == 401) {
-                throw new IllegalAccessError("401 " + res.errorBody().string());
+                throw new IllegalAccessError("401 " + error);
             } else if (res.code() == 500) {
-                throw new IllegalAccessError("500 " + res.errorBody().string());
+                throw new IllegalAccessError("500 " + error);
             }
             return res;
         } catch (IOException e) {
@@ -203,8 +207,15 @@ public class IotaAPICore {
      * @param addresses A List of addresses.
      * @return The transaction hashes which are returned depend on the input.
      */
-    public FindTransactionResponse findTransactionsByAddresses(final String... addresses) {
-        return findTransactions(addresses, null, null, null);
+    public FindTransactionResponse findTransactionsByAddresses(final String... addresses) throws ArgumentException {
+        List<String> addressesWithoutChecksum = new ArrayList<>();
+
+        for (String address : addresses) {
+            String addressO = Checksum.removeChecksum(address);
+            addressesWithoutChecksum.add(addressO);
+        }
+
+        return findTransactions(addressesWithoutChecksum.toArray(new String[addressesWithoutChecksum.size()]), null, null, null);
     }
 
     /**
@@ -247,7 +258,17 @@ public class IotaAPICore {
      * @param tips         ThelList of tips (including milestones) you want to search for the inclusion state.
      * @return The inclusion states of a set of transactions.
      */
-    public GetInclusionStateResponse getInclusionStates(String[] transactions, String[] tips) {
+    public GetInclusionStateResponse getInclusionStates(String[] transactions, String[] tips) throws ArgumentException {
+
+        if (!InputValidator.isArrayOfHashes(transactions)) {
+            throw new ArgumentException("Invalid hash provided");
+        }
+
+        if (!InputValidator.isArrayOfHashes(tips)) {
+            throw new ArgumentException("Invalid hash provided");
+        }
+
+
         final Call<GetInclusionStateResponse> res = service.getInclusionStates(IotaGetInclusionStateRequest
                 .createGetInclusionStateRequest(transactions, tips));
         return wrapCheckedException(res).body();
@@ -259,11 +280,15 @@ public class IotaAPICore {
      * @param hashes The of transaction hashes of which you want to get trytes from.
      * @return The the raw transaction data (trytes) of a specific transaction.
      */
-    public GetTrytesResponse getTrytes(String... hashes) {
+    public GetTrytesResponse getTrytes(String... hashes) throws ArgumentException {
+
+        if (!InputValidator.isArrayOfHashes(hashes)) {
+            throw new ArgumentException("Invalid hash provided");
+        }
+
         final Call<GetTrytesResponse> res = service.getTrytes(IotaGetTrytesRequest.createGetTrytesRequest(hashes));
         return wrapCheckedException(res).body();
     }
-
 
     /**
      * Tip selection which returns trunkTransaction and branchTransaction. The input value is the latest coordinator milestone, as provided through the getNodeInfo API call.
@@ -283,7 +308,7 @@ public class IotaAPICore {
      * @param addresses The array list of addresses you want to get the confirmed balance from.
      * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
      */
-    public GetBalancesResponse getBalances(Integer threshold, String[] addresses) {
+    private GetBalancesResponse getBalances(Integer threshold, String[] addresses) {
         final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses));
         return wrapCheckedException(res).body();
     }
@@ -295,8 +320,15 @@ public class IotaAPICore {
      * @param addresses The list of addresses you want to get the confirmed balance from.
      * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
      */
-    public GetBalancesResponse getBalances(Integer threshold, List<String> addresses) {
-        return getBalances(threshold, addresses.toArray(new String[]{}));
+    public GetBalancesResponse getBalances(Integer threshold, List<String> addresses) throws ArgumentException {
+
+        List<String> addressesWithoutChecksum = new ArrayList<>();
+
+        for (String address : addresses) {
+            String addressO = Checksum.removeChecksum(address);
+            addressesWithoutChecksum.add(addressO);
+        }
+        return getBalances(threshold, addressesWithoutChecksum.toArray(new String[]{}));
     }
 
     /**
@@ -307,9 +339,18 @@ public class IotaAPICore {
      * @param minWeightMagnitude The Proof of Work intensity.
      * @param trytes A List of trytes (raw transaction data) to attach to the tangle.
      */
-    public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws InvalidTrytesException {
+    public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws ArgumentException {
+
+        if (!InputValidator.isHash(trunkTransaction)) {
+            throw new ArgumentException("Invalid hash provided");
+        }
+
+        if (!InputValidator.isHash(branchTransaction)) {
+            throw new ArgumentException("Invalid hash provided");
+        }
+
         if (!InputValidator.isArrayOfTrytes(trytes)) {
-            throw new InvalidTrytesException();
+            throw new ArgumentException("Invalid trytes provided");
         }
 
         if (localPoW != null) {
@@ -347,7 +388,12 @@ public class IotaAPICore {
      *
      * @param trytes The list of raw data of transactions to be rebroadcast.
      */
-    public BroadcastTransactionsResponse broadcastTransactions(String... trytes) {
+    public BroadcastTransactionsResponse broadcastTransactions(String... trytes) throws ArgumentException {
+
+        if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
+            throw new ArgumentException("Invalid trytes provided");
+        }
+
         final Call<BroadcastTransactionsResponse> res = service.broadcastTransactions(IotaBroadcastTransactionRequest.createBroadcastTransactionsRequest(trytes));
         return wrapCheckedException(res).body();
     }

@@ -1,6 +1,6 @@
 package jota.utils;
 
-import jota.error.InvalidAddressException;
+import jota.error.ArgumentException;
 import jota.model.Transfer;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -30,7 +30,7 @@ public class InputValidator {
      * @param addresses The address list to validate.
      * @return <code>true</code> if the specified addresses are valid; otherwise, <code>false</code>.
      **/
-    public static boolean isAddressesCollectionValid(final List<String> addresses) throws InvalidAddressException {
+    public static boolean isAddressesCollectionValid(final List<String> addresses) throws ArgumentException {
         for (final String address : addresses) {
             if (!checkAddress(address)) {
                 return false;
@@ -44,11 +44,11 @@ public class InputValidator {
      *
      * @param address The address to validate.
      * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
-     * @throws InvalidAddressException is thrown when the specified address is not an valid address.
+     * @throws ArgumentException is thrown when the specified input is not valid.
      **/
-    public static boolean checkAddress(String address) throws InvalidAddressException {
+    public static boolean checkAddress(String address) throws ArgumentException {
         if (!isAddress(address)) {
-            throw new InvalidAddressException();
+            throw new ArgumentException("Invalid addresses provided");
         }
         return true;
     }
@@ -82,7 +82,7 @@ public class InputValidator {
      * @return <code>true</code> the specified string represents an integer value; otherwise, <code>false</code>.
      **/
     public static boolean isValue(final String value) {
-        return NumberUtils.isNumber(value);
+        return NumberUtils.isCreatable(value);
     }
 
     /**
@@ -132,11 +132,11 @@ public class InputValidator {
      * @param transfers The transfers list to validate.
      * @return <code>true</code> if the specified transfers are valid; otherwise, <code>false</code>.
      **/
-    public static boolean isTransfersCollectionValid(final List<Transfer> transfers) {
+    public static boolean isTransfersCollectionValid(final List<Transfer> transfers) throws ArgumentException {
 
         // Input validation of transfers object
         if (transfers == null || transfers.isEmpty()) {
-            throw new IllegalArgumentException("No transfer provided");
+            throw new ArgumentException("No transfer provided");
         }
 
         for (final Transfer transfer : transfers) {
@@ -185,5 +185,58 @@ public class InputValidator {
      **/
     public static boolean isValidSeed(String seed) {
         return isTrytes(seed, seed.length());
+    }
+
+    /**
+     * Checks if input is correct hashes.
+     *
+     * @param hashes The hashes list to validate.
+     * @return <code>true</code> if the specified hashes are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isHashes(List<String> hashes) {
+        for (String hash : hashes) {
+            if (!isTrytes(hash, 81)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if input is correct hash.
+     *
+     * @param hash The hash to validate.
+     * @return <code>true</code> if the specified hash are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isHash(String hash) {
+        if (!isTrytes(hash, 81)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks if attached trytes if last 241 trytes are non-zero
+     *
+     * @param trytes The trytes.
+     * @return <code>true</code> if the specified trytes are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isArrayOfAttachedTrytes(String[] trytes) {
+
+        for (String tryteValue : trytes) {
+
+            // Check if correct 2673 trytes
+            if (!isTrytes(tryteValue, 2673)) {
+                return false;
+            }
+
+            String lastTrytes = tryteValue.substring(2673 - (3 * 81));
+
+            if (lastTrytes.matches("[9]+")) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

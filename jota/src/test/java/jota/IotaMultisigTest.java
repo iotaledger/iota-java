@@ -1,9 +1,6 @@
 package jota;
 
-import jota.error.InvalidAddressException;
-import jota.error.InvalidBundleException;
-import jota.error.InvalidSecurityLevelException;
-import jota.error.InvalidTransferException;
+import jota.error.ArgumentException;
 import jota.model.Bundle;
 import jota.model.Transaction;
 import jota.model.Transfer;
@@ -38,8 +35,7 @@ public class IotaMultisigTest {
     }
 
     @Test
-    public void basicMultiSigTest() throws InvalidBundleException, InvalidTransferException, InvalidAddressException, InvalidSecurityLevelException {
-
+    public void basicMultiSigTest() throws ArgumentException {
         Multisig ms = new Multisig();
 
         // First co-signer uses security level 3 and index 0 for the private key

@@ -1,6 +1,6 @@
 package jota.utils;
 
-import jota.error.InvalidSecurityLevelException;
+import jota.error.ArgumentException;
 import jota.model.Bundle;
 import jota.model.Transaction;
 import jota.pow.ICurl;
@@ -36,11 +36,11 @@ public class Signing {
      * @param index
      * @param security
      * @return
-     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws ArgumentException is thrown when the specified security level is not valid.
      */
-    public int[] key(final int[] inSeed, final int index, int security) throws InvalidSecurityLevelException {
+    public int[] key(final int[] inSeed, final int index, int security) throws ArgumentException {
         if (security < 1) {
-            throw new InvalidSecurityLevelException();
+            throw new ArgumentException("Invalid security level provided");
         }
 
         int[] seed = inSeed.clone();

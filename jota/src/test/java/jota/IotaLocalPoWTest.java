@@ -2,7 +2,7 @@ package jota;
 
 import cfb.pearldiver.PearlDiverLocalPoW;
 import jota.dto.response.SendTransferResponse;
-import jota.error.*;
+import jota.error.ArgumentException;
 import jota.model.Transfer;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
@@ -35,7 +35,7 @@ public class IotaLocalPoWTest {
 
     @Ignore
     @Test
-    public void shouldSendTransfer() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
+    public void shouldSendTransfer() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 0, TEST_MESSAGE, TEST_TAG));
         SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false);

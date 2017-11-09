@@ -1,7 +1,7 @@
 package jota;
 
 import jota.dto.response.SendTransferResponse;
-import jota.error.*;
+import jota.error.ArgumentException;
 import jota.model.Transfer;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.core.IsNull;
@@ -33,7 +33,7 @@ public class SendMessageTest {
 
     @Ignore
     @Test
-    public void shouldSendMessage() throws ArgumentException, InvalidSignatureException, InvalidBundleException, NotEnoughBalanceException, InvalidSecurityLevelException, InvalidTrytesException, InvalidAddressException, InvalidTransferException {
+    public void shouldSendMessage() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
 
         // for each 2187 trytes in a message one transfer is necessary
