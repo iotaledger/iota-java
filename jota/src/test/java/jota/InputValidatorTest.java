@@ -48,7 +48,24 @@ public class InputValidatorTest {
     }
 
     @Test
-    public void shouldIsTransfersCollectionCorrect() throws ArgumentException {
+    public void shouldIsArrayOfTrytes() {
+        assertEquals(InputValidator.isArrayOfTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}), true);
+    }
+
+    @Test
+    public void shouldIsNinesTrytes() {
+        assertEquals(InputValidator.isNinesTrytes("999999999", 9), true);
+    }
+
+    @Test
+    public void shouldIsValidTransfer() throws ArgumentException {
+        List<Transfer> transfers = new ArrayList<>();
+        transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
+        assertEquals(InputValidator.isValidTransfer(transfers.get(0)), true);
+    }
+
+    @Test
+    public void shouldIsTransfersCollectionValid() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, "", ""));
