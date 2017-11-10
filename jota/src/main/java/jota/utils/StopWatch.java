@@ -10,7 +10,7 @@ public class StopWatch {
     private long currentTime = 0;
 
     /**
-     *
+     * Initializes a new instance of the StopWatch class.
      */
     public StopWatch() {
         this.startTime = System.currentTimeMillis();
@@ -26,7 +26,7 @@ public class StopWatch {
     }
 
     /**
-     * @return
+     *
      */
     public StopWatch stop() {
         this.running = false;
@@ -52,7 +52,7 @@ public class StopWatch {
     /**
      * Elapsed time in milliseconds.
      *
-     * @return
+     * @return The elapsed time in milliseconds.
      */
     public long getElapsedTimeMili() {
         long elapsed = 0;
@@ -65,7 +65,7 @@ public class StopWatch {
     /**
      * Elapsed time in seconds.
      *
-     * @return
+     * @return The elapsed time in seconds.
      */
     public long getElapsedTimeSecs() {
         long elapsed = 0;
@@ -78,7 +78,7 @@ public class StopWatch {
     /**
      * Elapsed time in minutes.
      *
-     * @return
+     * @return The elapsed time in minutes.
      */
     public long getElapsedTimeMin() {
         long elapsed = 0;
@@ -91,7 +91,7 @@ public class StopWatch {
     /**
      * Elapsed time in hours.
      *
-     * @return
+     * @return The elapsed time in hours.
      */
     public long getElapsedTimeHour() {
         long elapsed = 0;

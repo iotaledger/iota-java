@@ -1,6 +1,6 @@
 package jota.utils;
 
-import jota.error.InvalidSecurityLevelException;
+import jota.error.ArgumentException;
 import jota.model.Bundle;
 import jota.pow.ICurl;
 import jota.pow.SpongeFactory;
@@ -36,9 +36,9 @@ public class Multisig {
      * @param security Secuirty level of private key / seed.
      * @param index    Key index to start search from. If the index is provided, the generation of the address is not deterministic.
      * @return trytes
-     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws ArgumentException is thrown when the specified security level is not valid.
      **/
-    public String getDigest(String seed, int security, int index) throws InvalidSecurityLevelException {
+    public String getDigest(String seed, int security, int index) throws ArgumentException {
         int[] key = signingInstance.key(Converter.trits(seed, 243), index, security);
         return Converter.trytes(signingInstance.digests(key));
     }
@@ -75,10 +75,10 @@ public class Multisig {
      * @param seed  Tryte-encoded seed. It should be noted that this seed is not transferred
      * @param index Key index to start search from. If the index is provided, the generation of the address is not deterministic.
      * @return trytes.
-     * @throws InvalidSecurityLevelException is thrown when the specified security level is not valid.
+     * @throws ArgumentException is thrown when the specified security level is not valid.
      **/
 
-    public String getKey(String seed, int index, int security) throws InvalidSecurityLevelException {
+    public String getKey(String seed, int index, int security) throws ArgumentException {
 
         return Converter.trytes(signingInstance.key(Converter.trits(seed, 81 * security), index, security));
     }
@@ -140,7 +140,7 @@ public class Multisig {
 
         // Get the security used for the private key
         // 1 security level = 2187 trytes
-        int security = (keyTrytes.length() / 2187);
+        int security = (keyTrytes.length() / Constants.MESSAGE_LENGTH);
 
         // convert private key trytes into trits
         int[] key = Converter.trits(keyTrytes);

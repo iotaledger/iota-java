@@ -2,9 +2,12 @@ package jota;
 
 import com.google.gson.Gson;
 import jota.dto.response.*;
+import jota.error.ArgumentException;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertThat;
 
@@ -70,7 +73,7 @@ public class IotaCoreApiTest {
     }
 
     @Test
-    public void shouldFindTransactionsByAddresses() {
+    public void shouldFindTransactionsByAddresses() throws ArgumentException {
         FindTransactionResponse trans = proxy.findTransactionsByAddresses(TEST_ADDRESS_WITH_CHECKSUM);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
@@ -94,21 +97,20 @@ public class IotaCoreApiTest {
     }
 
     @Test
-    public void shouldGetTrytes() {
+    public void shouldGetTrytes() throws ArgumentException {
         GetTrytesResponse res = proxy.getTrytes(TEST_HASH);
         assertThat(res.getTrytes(), IsNull.notNullValue());
 
     }
 
-    @Test(expected = IllegalAccessError.class)
-    public void shouldNotGetInclusionStates() {
-        GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{"DBPECSH9YLSSTQDGERUHJBBJTKVUDBMTJLG9WPHBINGHIFOSJMDJLARTVOXXWEFQJLLBINOHCZGYFSMUEXWPPMTOFW"}, new String[]{"EJDQOQHMLJGBMFWB9WJSPRCYIGNPO9WRHDCEQXIMPVPIJ9JV9RJGVHNX9EPGXFOOKBABCVMMAAX999999"});
-        assertThat(res.getStates(), IsNull.notNullValue());
+    @Test(expected = ArgumentException.class)
+    public void shouldNotGetInclusionStates() throws ArgumentException {
+        proxy.getInclusionStates(new String[]{TEST_HASH}, new String[]{"ZIJGAJ9AADLRPWNCYNNHUHRRAC9QOUDATEDQUMTNOTABUVRPTSTFQDGZKFYUUIE9ZEBIVCCXXXLKX9999"});
     }
 
     @Test
-    public void shouldGetInclusionStates() {
-        GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{TEST_ADDRESS_WITH_CHECKSUM}, new String[]{proxy.getNodeInfo().getLatestSolidSubtangleMilestone()});
+    public void shouldGetInclusionStates() throws ArgumentException {
+        GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{TEST_HASH}, new String[]{proxy.getNodeInfo().getLatestSolidSubtangleMilestone()});
         assertThat(res.getStates(), IsNull.notNullValue());
     }
 
@@ -127,8 +129,8 @@ public class IotaCoreApiTest {
     }
 
     @Test
-    public void shouldGetBalances() {
-        GetBalancesResponse res = proxy.getBalances(100, new String[]{TEST_ADDRESS_WITH_CHECKSUM});
+    public void shouldGetBalances() throws ArgumentException {
+        GetBalancesResponse res = proxy.getBalances(100, Collections.singletonList(TEST_ADDRESS_WITH_CHECKSUM));
         assertThat(res.getBalances(), IsNull.notNullValue());
         assertThat(res.getMilestone(), IsNull.notNullValue());
         assertThat(res.getMilestoneIndex(), IsNull.notNullValue());

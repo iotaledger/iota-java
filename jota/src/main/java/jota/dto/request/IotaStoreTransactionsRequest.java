@@ -4,7 +4,7 @@ import jota.IotaAPICommands;
 
 /**
  * This class represents the core API request 'getTransactionsToApprove'.
- * <p>
+ *
  * It stores transactions into the local storage. The trytes to be used for this call are returned by attachToTangle.
  **/
 public class IotaStoreTransactionsRequest extends IotaCommandRequest {

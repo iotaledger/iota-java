@@ -40,8 +40,8 @@ public class Kerl extends JCurl {
 
     private static int sum(int[] toSum) {
         int sum = 0;
-        for (int i = 0; i < toSum.length; i++) {
-            sum += toSum[i];
+        for (int aToSum : toSum) {
+            sum += aToSum;
         }
         return sum;
     }

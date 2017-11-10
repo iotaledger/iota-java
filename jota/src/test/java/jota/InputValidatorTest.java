@@ -1,6 +1,6 @@
 package jota;
 
-import jota.error.InvalidAddressException;
+import jota.error.ArgumentException;
 import jota.model.Transfer;
 import jota.utils.InputValidator;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class InputValidatorTest {
     }
 
     @Test
-    public void shouldCheckAddress() throws InvalidAddressException {
+    public void shouldCheckAddress() throws ArgumentException {
         assertEquals(InputValidator.checkAddress(TEST_ADDRESS_WITHOUT_CHECKSUM), true);
     }
 
@@ -48,12 +48,11 @@ public class InputValidatorTest {
     }
 
     @Test
-    public void shouldIsTransfersCollectionCorrect() {
+    public void shouldIsTransfersCollectionCorrect() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
-        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
-        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
-        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, null));
-        transfers.add(new jota.model.Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, ""));
+        transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, TEST_MESSAGE, TEST_TAG));
+        transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0, "", ""));
+        transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM, 0));
         assertEquals(InputValidator.isTransfersCollectionValid(transfers), true);
     }
 }

@@ -1,11 +1,6 @@
 package jota;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import jota.error.InvalidAddressException;
-import jota.error.InvalidBundleException;
-import jota.error.InvalidSecurityLevelException;
-import jota.error.InvalidTransferException;
+import jota.error.ArgumentException;
 import jota.model.Bundle;
 import jota.model.Transaction;
 import jota.model.Transfer;
@@ -30,8 +25,8 @@ public class IotaMultisigTest {
     private static final String TEST_SEED2 = "FDSAG";
     private static final String REMAINDER_ADDRESS = "NZRALDYNVGJWUVLKDWFKJVNYLWQGCWYCURJIIZRLJIKSAIVZSGEYKTZRDBGJLOA9AWYJQB9IPWRAKUC9FBDRZJZXZG";
     private static final String RECEIVE_ADDRESS = "ZGHXPZYDKXPEOSQTAQOIXEEI9K9YKFKCWKYYTYAUWXK9QZAVMJXWAIZABOXHHNNBJIEBEUQRTBWGLYMTX";
+    private static final String TEST_TAG = "JOTASPAM9999999999999999999";
 
-    private static Gson gson = new GsonBuilder().create();
     private IotaAPI iotaClient;
 
     @Before
@@ -40,8 +35,7 @@ public class IotaMultisigTest {
     }
 
     @Test
-    public void basicMultiSigTest() throws InvalidBundleException, InvalidTransferException, InvalidAddressException, InvalidSecurityLevelException {
-
+    public void basicMultiSigTest() throws ArgumentException {
         Multisig ms = new Multisig();
 
         // First co-signer uses security level 3 and index 0 for the private key
@@ -66,9 +60,8 @@ public class IotaMultisigTest {
         System.out.println("Is a valid multisig address " + isValidMultisigAddress);
 
         assertTrue("Address is not a valid multisigAddress", isValidMultisigAddress);
-        Transfer transfer = new Transfer(RECEIVE_ADDRESS, 999, "", "");
         List<Transfer> transfers = new ArrayList<>();
-        transfers.add(transfer);
+        transfers.add(new Transfer(RECEIVE_ADDRESS, 999, "", TEST_TAG));
 
         List<Transaction> trxs = iotaClient.initiateTransfer(6, multiSigAddress, REMAINDER_ADDRESS, transfers, true);
 

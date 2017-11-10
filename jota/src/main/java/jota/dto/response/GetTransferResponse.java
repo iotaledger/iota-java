@@ -15,6 +15,7 @@ public class GetTransferResponse extends AbstractResponse {
     public static GetTransferResponse create(Bundle[] transferBundle, long duration) {
         GetTransferResponse res = new GetTransferResponse();
         res.transferBundle = transferBundle;
+        res.setDuration(duration);
         return res;
     }
 

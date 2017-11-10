@@ -1,6 +1,6 @@
 package jota;
 
-import jota.error.InvalidAddressException;
+import jota.error.ArgumentException;
 import jota.utils.Checksum;
 import org.junit.Test;
 
@@ -11,23 +11,21 @@ import static org.junit.Assert.assertEquals;
  */
 public class ChecksumTest {
 
-    private static final String TEST_ADDRESS_WITHOUT_CHECKSUM = "EUHMAFIYBYZOXAVQQYRQ9RCNMTYX9KNEZFWXYMQIYPSRZRVDOLXDPUEARYPTWSZCAXJLXRYUUQKSHIJYZ";
-    private static final String TEST_ADDRESS_WITHOUT_CHECKSUM2 = "P9UDUZMN9DEXCRQEKLJYSBSBZFCHOBPJSDKMLCCVJDOVOFDWMNBZRIRRZJGINOUMPJBMYYZEGRTIDUABD";
-    private static final String TEST_ADDRESS_WITH_CHECKSUM = "EUHMAFIYBYZOXAVQQYRQ9RCNMTYX9KNEZFWXYMQIYPSRZRVDOLXDPUEARYPTWSZCAXJLXRYUUQKSHIJYZICCXCXUHX";
-    private static final String TEST_ADDRESS_WITH_CHECKSUM2 = "P9UDUZMN9DEXCRQEKLJYSBSBZFCHOBPJSDKMLCCVJDOVOFDWMNBZRIRRZJGINOUMPJBMYYZEGRTIDUABDODCNSCYJD";
+    private static final String TEST_ADDRESS_WITHOUT_CHECKSUM = "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZC";
+    private static final String TEST_ADDRESS_WITH_CHECKSUM = "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZCCOZVXMTXC";
 
     @Test
-    public void shouldAddChecksum() throws InvalidAddressException {
-        assertEquals(Checksum.addChecksum(TEST_ADDRESS_WITHOUT_CHECKSUM2), TEST_ADDRESS_WITH_CHECKSUM2);
+    public void shouldAddChecksum() throws ArgumentException {
+        assertEquals(Checksum.addChecksum(TEST_ADDRESS_WITHOUT_CHECKSUM), TEST_ADDRESS_WITH_CHECKSUM);
     }
 
     @Test
-    public void shouldRemoveChecksum() throws InvalidAddressException {
-        assertEquals(Checksum.removeChecksum(TEST_ADDRESS_WITH_CHECKSUM2), TEST_ADDRESS_WITHOUT_CHECKSUM2);
+    public void shouldRemoveChecksum() throws ArgumentException {
+        assertEquals(Checksum.removeChecksum(TEST_ADDRESS_WITH_CHECKSUM), TEST_ADDRESS_WITHOUT_CHECKSUM);
     }
 
     @Test
-    public void shouldIsValidChecksum() throws InvalidAddressException {
-        assertEquals(Checksum.isValidChecksum(TEST_ADDRESS_WITH_CHECKSUM2), true);
+    public void shouldIsValidChecksum() throws ArgumentException {
+        assertEquals(Checksum.isValidChecksum(TEST_ADDRESS_WITH_CHECKSUM), true);
     }
 }

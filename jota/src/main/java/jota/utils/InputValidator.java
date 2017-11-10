@@ -1,10 +1,13 @@
 package jota.utils;
 
-import jota.error.InvalidAddressException;
+import jota.error.ArgumentException;
 import jota.model.Transfer;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.List;
+
+import static jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
+import static jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
 
 /**
  * This class provides methods to validate the parameters of different iota API methods.
@@ -25,15 +28,30 @@ public class InputValidator {
     }
 
     /**
+     * Determines whether the specified addresses are valid.
+     *
+     * @param addresses The address list to validate.
+     * @return <code>true</code> if the specified addresses are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isAddressesCollectionValid(final List<String> addresses) throws ArgumentException {
+        for (final String address : addresses) {
+            if (!checkAddress(address)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Checks whether the specified address is an address and throws and exception if the address is invalid.
      *
      * @param address The address to validate.
      * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
-     * @throws InvalidAddressException is thrown when the specified address is not an valid address.
+     * @throws ArgumentException is thrown when the specified input is not valid.
      **/
-    public static boolean checkAddress(String address) throws InvalidAddressException {
+    public static boolean checkAddress(String address) throws ArgumentException {
         if (!isAddress(address)) {
-            throw new InvalidAddressException();
+            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
         }
         return true;
     }
@@ -67,7 +85,7 @@ public class InputValidator {
      * @return <code>true</code> the specified string represents an integer value; otherwise, <code>false</code>.
      **/
     public static boolean isValue(final String value) {
-        return NumberUtils.isNumber(value);
+        return NumberUtils.isCreatable(value);
     }
 
     /**
@@ -117,7 +135,12 @@ public class InputValidator {
      * @param transfers The transfers list to validate.
      * @return <code>true</code> if the specified transfers are valid; otherwise, <code>false</code>.
      **/
-    public static boolean isTransfersCollectionValid(final List<Transfer> transfers) {
+    public static boolean isTransfersCollectionValid(final List<Transfer> transfers) throws ArgumentException {
+
+        // Input validation of transfers object
+        if (transfers == null || transfers.isEmpty()) {
+            throw new ArgumentException(INVALID_TRANSFERS_INPUT_ERROR);
+        }
 
         for (final Transfer transfer : transfers) {
             if (!isValidTransfer(transfer)) {
@@ -127,6 +150,7 @@ public class InputValidator {
         return true;
     }
 
+
     /**
      * Determines whether the specified transfer is valid.
      *
@@ -135,21 +159,25 @@ public class InputValidator {
      **/
     public static boolean isValidTransfer(final Transfer transfer) {
 
+        if (transfer == null) {
+            return false;
+        }
+
         if (!isAddress(transfer.getAddress())) {
             return false;
         }
 
-        // Check if message is correct trytes of any length
-        if (!isTrytes(transfer.getMessage(), 0)) {
+        // Check if message is correct trytes encoded of any length
+        if (transfer.getMessage() == null || !isTrytes(transfer.getMessage(), transfer.getMessage().length())) {
             return false;
         }
 
-        if (null == transfer.getTag() || transfer.getTag().isEmpty()) {
-            return true;
-        } else {
-            // Check if tag is correct trytes of {0,27} trytes
-            return isTrytes(transfer.getTag(), 27);
+        // Check if tag is correct trytes encoded and not longer than 27 trytes
+        if (transfer.getTag() == null || !isTrytes(transfer.getTag(), transfer.getTag().length()) || transfer.getTag().length() > Constants.TAG_LENGTH) {
+            return false;
         }
+
+        return true;
     }
 
     /**
@@ -160,5 +188,58 @@ public class InputValidator {
      **/
     public static boolean isValidSeed(String seed) {
         return isTrytes(seed, seed.length());
+    }
+
+    /**
+     * Checks if input is correct hashes.
+     *
+     * @param hashes The hashes list to validate.
+     * @return <code>true</code> if the specified hashes are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isHashes(List<String> hashes) {
+        for (String hash : hashes) {
+            if (!isTrytes(hash, 81)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if input is correct hash.
+     *
+     * @param hash The hash to validate.
+     * @return <code>true</code> if the specified hash are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isHash(String hash) {
+        if (!isTrytes(hash, 81)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks if attached trytes if last 241 trytes are non-zero
+     *
+     * @param trytes The trytes.
+     * @return <code>true</code> if the specified trytes are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isArrayOfAttachedTrytes(String[] trytes) {
+
+        for (String tryteValue : trytes) {
+
+            // Check if correct 2673 trytes
+            if (!isTrytes(tryteValue, 2673)) {
+                return false;
+            }
+
+            String lastTrytes = tryteValue.substring(2673 - (3 * 81));
+
+            if (lastTrytes.matches("[9]+")) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

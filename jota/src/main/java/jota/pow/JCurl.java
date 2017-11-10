@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 
 /**
  * (c) 2016 Come-from-Beyond
- * <p>
+ *
  * JCurl belongs to the sponge function family.
  */
 public class JCurl implements ICurl {
