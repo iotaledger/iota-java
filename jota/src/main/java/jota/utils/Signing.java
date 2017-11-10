@@ -48,7 +48,7 @@ public class Signing {
 
         // Derive subseed.
         for (int i = 0; i < index; i++) {
-            for (int j = 0; j < HASH_LENGTH; j++) {
+            for (int j = 0; j < seed.length; j++) {
                 if (++seed[j] > 1) {
                     seed[j] = -1;
                 } else {
@@ -60,17 +60,20 @@ public class Signing {
         curl.reset();
         curl.absorb(seed, 0, seed.length);
         // seed[0..HASH_LENGTH] contains subseed
-        curl.squeeze(seed, 0, HASH_LENGTH);
+        curl.squeeze(seed, 0, seed.length);
         curl.reset();
         // absorb subseed
-        curl.absorb(seed, 0, HASH_LENGTH);
+        curl.absorb(seed, 0, seed.length);
 
         final int[] key = new int[security * HASH_LENGTH * 27];
+        final int[] buffer = new int[seed.length];
         int offset = 0;
 
         while (security-- > 0) {
             for (int i = 0; i < 27; i++) {
-                curl.squeeze(key, offset, HASH_LENGTH);
+                curl.squeeze(buffer, 0, seed.length);
+                System.arraycopy(buffer, 0, key, offset, HASH_LENGTH);
+
                 offset += HASH_LENGTH;
             }
         }
