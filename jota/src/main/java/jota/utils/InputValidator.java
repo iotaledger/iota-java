@@ -235,7 +235,7 @@ public class InputValidator {
 
             String lastTrytes = tryteValue.substring(2673 - (3 * 81));
 
-            if (lastTrytes.matches("[9]+")) {
+            if (isNinesTrytes(lastTrytes, lastTrytes.length())) {
                 return false;
             }
         }
