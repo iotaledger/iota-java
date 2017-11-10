@@ -55,7 +55,7 @@ allprojects {
 Add this in your module `build.gradle` file:
 ```gradle
 dependencies {
-    compile 'com.github.iotaledger:iota.lib.java:v0.9.6'
+    compile 'com.github.iotaledger:iota.lib.java:v0.9.7'
 }
 ```
 
@@ -76,7 +76,7 @@ Add this in your module `pom.xml` file:
 <dependency>
     <groupId>com.github.iotaledger</groupId>
     <artifactId>iota.lib.java</artifactId>
-    <version>v0.9.6</version>
+    <version>v0.9.7</version>
 </dependency>
 ```
 
@@ -113,20 +113,6 @@ iota.node.protocol=http
 iota.node.host=127.0.0.1
 iota.node.port=14265
 ```
-
-The node configuration is optional and can have the following values:
-
-1. **`protocol()`/`iota.node.protocol`:** `String`  
-    Protocol to use when connecting to the remote node.  
-    _Default:_ `http`
-2. **`host()`/`iota.node.host`:** `String`  
-    Host you want to connect to. Can be DNS, IPv4 or IPv6.  
-    _Default_ `localhost`
-3. **`port()`/`iota.node.port`:** `Int`  
-    Port of the host you want to connect to.  
-    _Default:_ `14265`
-
-> **TODO:** Copy this section to the generated Javadoc.
 
 ### Threading
 
@@ -173,6 +159,18 @@ Here are some of the most commonly used API functions. Each list item below link
 - [`removeChecksum()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Checksum.html#removeChecksum-java.lang.String-)
 - [`isValidChecksum()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Checksum.html#isValidChecksum-java.lang.String-)
 
+#### [**`InputValidator`**](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html)
+- [`checkAddress()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#checkAddress-java.lang.String-)
+- [`isAddress()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isAddress-java.lang.String-)
+- [`isArrayOfHashes()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isArrayOfHashes-java.lang.String:A-)
+- [`isArrayOfTrytes()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isArrayOfTrytes-java.lang.String:A-)
+- [`inNinesTrytes()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isNinesTrytes-java.lang.String-int-)
+- [`isTransfersCollectionValid()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isTransfersCollectionValid-java.util.List-)
+- [`isTrytes()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isTrytes-java.lang.String-int-)
+- [`isValidSeed()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isValidSeed-java.lang.String-)
+- [`isValidTransfer()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isValidTransfer-jota.model.Transfer-)
+- [`isValue()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isValue-java.lang.String-)
+
 #### [**`Transaction`**](https://iotaledger.github.io/iota.lib.java/javadoc/jota/model/Transaction.html)
 
 - [`toTrytes()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/model/Transaction.html#toTrytes--)
@@ -215,6 +213,8 @@ The following third party library dependencies and versions are used by the IOTA
 
 ## Changes:
 
+- Changes in [**v0.9.7**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.6...release-0.9.7)
+- Changes in [**v0.9.6**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.5...v0.9.6)
 - Changes in [**v0.9.5**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.4...v0.9.5)
 - Changes in [**v0.9.4**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.3...v0.9.4)
 - Changes in [**v0.9.3**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.2...v0.9.3)
