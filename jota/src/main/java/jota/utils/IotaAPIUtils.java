@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
+
 /**
  * Client Side computation service.
  *
@@ -32,7 +34,7 @@ public class IotaAPIUtils {
     public static String newAddress(String seed, int security, int index, boolean checksum, ICurl curl) throws ArgumentException {
 
         if (security < 1) {
-            throw new ArgumentException("Invalid security level provided");
+            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 
         Signing signing = new Signing(curl);

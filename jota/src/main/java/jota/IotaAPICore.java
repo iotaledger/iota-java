@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import static jota.utils.Constants.*;
+
 /**
  * This class provides access to the Iota core API
  *
@@ -261,11 +263,11 @@ public class IotaAPICore {
     public GetInclusionStateResponse getInclusionStates(String[] transactions, String[] tips) throws ArgumentException {
 
         if (!InputValidator.isArrayOfHashes(transactions)) {
-            throw new ArgumentException("Invalid hash provided");
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
         if (!InputValidator.isArrayOfHashes(tips)) {
-            throw new ArgumentException("Invalid hash provided");
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
 
@@ -283,7 +285,7 @@ public class IotaAPICore {
     public GetTrytesResponse getTrytes(String... hashes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfHashes(hashes)) {
-            throw new ArgumentException("Invalid hash provided");
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
         final Call<GetTrytesResponse> res = service.getTrytes(IotaGetTrytesRequest.createGetTrytesRequest(hashes));
@@ -342,15 +344,15 @@ public class IotaAPICore {
     public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws ArgumentException {
 
         if (!InputValidator.isHash(trunkTransaction)) {
-            throw new ArgumentException("Invalid hash provided");
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
         if (!InputValidator.isHash(branchTransaction)) {
-            throw new ArgumentException("Invalid hash provided");
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
         if (!InputValidator.isArrayOfTrytes(trytes)) {
-            throw new ArgumentException("Invalid trytes provided");
+            throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
         }
 
         if (localPoW != null) {
@@ -391,7 +393,7 @@ public class IotaAPICore {
     public BroadcastTransactionsResponse broadcastTransactions(String... trytes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
-            throw new ArgumentException("Invalid trytes provided");
+            throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR);
         }
 
         final Call<BroadcastTransactionsResponse> res = service.broadcastTransactions(IotaBroadcastTransactionRequest.createBroadcastTransactionsRequest(trytes));

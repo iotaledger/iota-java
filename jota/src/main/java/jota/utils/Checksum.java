@@ -5,6 +5,8 @@ import jota.pow.ICurl;
 import jota.pow.JCurl;
 import jota.pow.SpongeFactory;
 
+import static jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
+
 /**
  * This class defines utility methods to add/remove the checksum to/from an address.
  *
@@ -39,7 +41,7 @@ public class Checksum {
         } else if (isAddressWithoutChecksum(address)) {
             return address;
         }
-        throw new ArgumentException("Invalid addresses provided");
+        throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
     }
 
     private static String removeChecksumFromAddress(String addressWithChecksum) {

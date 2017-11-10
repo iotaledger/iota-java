@@ -113,7 +113,7 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldGetInputs() throws ArgumentException, ArgumentException {
+    public void shouldGetInputs() throws ArgumentException {
         GetBalancesAndFormatResponse res = iotaAPI.getInputs(TEST_SEED1, 2, 0, 0, 0);
         System.out.println(res);
         assertThat(res, IsNull.notNullValue());
@@ -122,7 +122,7 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldCreateANewAddressWithChecksum() throws ArgumentException, ArgumentException {
+    public void shouldCreateANewAddressWithChecksum() throws ArgumentException {
         final GetNewAddressResponse res1 = iotaAPI.getNewAddress(TEST_SEED1, 1, 0, true, 5, false);
         assertThat(res1.getAddresses().get(0), Is.is(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1));
 
@@ -134,7 +134,7 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldCreateANewAddressWithoutChecksum() throws ArgumentException, ArgumentException {
+    public void shouldCreateANewAddressWithoutChecksum() throws ArgumentException {
         final GetNewAddressResponse res1 = iotaAPI.getNewAddress(TEST_SEED1, 1, 0, false, 5, false);
         assertThat(res1.getAddresses().get(0), Is.is(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_1));
 

@@ -6,6 +6,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.List;
 
+import static jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
+import static jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
+
 /**
  * This class provides methods to validate the parameters of different iota API methods.
  *
@@ -48,7 +51,7 @@ public class InputValidator {
      **/
     public static boolean checkAddress(String address) throws ArgumentException {
         if (!isAddress(address)) {
-            throw new ArgumentException("Invalid addresses provided");
+            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
         }
         return true;
     }
@@ -136,7 +139,7 @@ public class InputValidator {
 
         // Input validation of transfers object
         if (transfers == null || transfers.isEmpty()) {
-            throw new ArgumentException("No transfer provided");
+            throw new ArgumentException(INVALID_TRANSFERS_INPUT_ERROR);
         }
 
         for (final Transfer transfer : transfers) {

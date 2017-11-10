@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static jota.utils.Constants.*;
+
+
 /**
  * IotaAPI Builder. Usage:
  * <p>
@@ -48,7 +51,7 @@ public class IotaAPI extends IotaAPICore {
      * @return An array of strings with the specifed number of addresses.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public GetNewAddressResponse getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws ArgumentException, ArgumentException {
+    public GetNewAddressResponse getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws ArgumentException {
 
         StopWatch stopWatch = new StopWatch();
 
@@ -99,11 +102,11 @@ public class IotaAPI extends IotaAPICore {
 
         // validate seed
         if ((!InputValidator.isValidSeed(seed))) {
-            throw new IllegalStateException("Invalid Seed");
+            throw new IllegalStateException(INVALID_SEED_INPUT_ERROR);
         }
 
         if (start > end || end > (start + 500)) {
-            throw new ArgumentException("Invalid inputs provided");
+            throw new ArgumentException(INVALID_INPUT_ERROR);
         }
 
         StopWatch stopWatch = new StopWatch();
@@ -161,7 +164,7 @@ public class IotaAPI extends IotaAPICore {
         if (tailTxArray.length != 0 && inclusionStates) {
                 gisr = getLatestInclusion(tailTxArray);
             if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0) {
-                throw new IllegalStateException("No inclusion states for transaction");
+                throw new IllegalStateException(GET_INCLUSION_STATE_RESPONSE_ERROR);
             }
         }
         final GetInclusionStateResponse finalInclusionStates = gisr;
@@ -186,7 +189,7 @@ public class IotaAPI extends IotaAPICore {
                             }
                             // If error returned from getBundle, simply ignore it because the bundle was most likely incorrect
                         } catch (ArgumentException e) {
-                            log.warn("GetBundleError: ", e);
+                            log.warn(GET_BUNDLE_RESPONSE_ERROR);
                         }
                     }
                 });
@@ -209,7 +212,7 @@ public class IotaAPI extends IotaAPICore {
     public StoreTransactionsResponse broadcastAndStore(final String... trytes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
-            throw new ArgumentException("Invalid trytes provided");
+            throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
         }
 
         try {
@@ -259,7 +262,7 @@ public class IotaAPI extends IotaAPICore {
     public List<Transaction> findTransactionsObjectsByHashes(String[] hashes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfHashes(hashes)) {
-            throw new IllegalStateException("Not an Array of Hashes: " + Arrays.toString(hashes));
+            throw new IllegalStateException(INVALID_HASHES_INPUT_ERROR);
         }
 
         final GetTrytesResponse trytesResponse = getTrytes(hashes);
@@ -357,16 +360,16 @@ public class IotaAPI extends IotaAPICore {
 
         // validate seed
         if ((!InputValidator.isValidSeed(seed))) {
-            throw new IllegalStateException("Invalid Seed");
+            throw new IllegalStateException(INVALID_SEED_INPUT_ERROR);
         }
 
         if (security < 1) {
-            throw new ArgumentException("Invalid security level provided");
+            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionValid(transfers)) {
-            throw new ArgumentException("Invalid transfers provided");
+            throw new ArgumentException(INVALID_TRANSFERS_INPUT_ERROR);
         }
 
         // Create a new bundle
@@ -475,7 +478,7 @@ public class IotaAPI extends IotaAPICore {
 
                 // Return not enough balance error
                 if (totalValue > totalBalance) {
-                    throw new IllegalStateException("Not enough balance");
+                    throw new IllegalStateException(NOT_ENOUGH_BALANCE_ERROR);
                 }
 
                 return addRemainder(seed, security, confirmedInputs, bundle, tag, totalValue, remainder, signatureFragments);
@@ -518,21 +521,21 @@ public class IotaAPI extends IotaAPICore {
      * @param threshold Min balance required.
      * @throws ArgumentException is thrown when the specified input is not valid.
      **/
-    public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold) throws ArgumentException, ArgumentException {
+    public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold) throws ArgumentException {
 
         // validate the seed
         if ((!InputValidator.isValidSeed(seed))) {
-            throw new IllegalStateException("Invalid Seed");
+            throw new IllegalStateException(INVALID_SEED_INPUT_ERROR);
         }
 
         if (security < 1) {
-            throw new ArgumentException("Invalid security level provided");
+            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 
         // If start value bigger than end, return error
         // or if difference between end and start is bigger than 500 keys
         if (start > end || end > (start + 500)) {
-            throw new IllegalStateException("Invalid inputs provided");
+            throw new IllegalStateException(INVALID_INPUT_ERROR);
         }
 
         StopWatch stopWatch = new StopWatch();
@@ -578,7 +581,7 @@ public class IotaAPI extends IotaAPICore {
     public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, long threshold, int start, StopWatch stopWatch, int security) throws ArgumentException, IllegalStateException {
 
         if (security < 1) {
-            throw new ArgumentException("Invalid security level provided");
+            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 
         GetBalancesResponse getBalancesResponse = getBalances(100, addresses);
@@ -613,7 +616,7 @@ public class IotaAPI extends IotaAPICore {
         if (thresholdReached) {
             return GetBalancesAndFormatResponse.create(inputs, totalBalance, stopWatch.getElapsedTimeMili());
         }
-        throw new IllegalStateException("Not enough balance");
+        throw new IllegalStateException(NOT_ENOUGH_BALANCE_ERROR);
     }
 
     /**
@@ -627,12 +630,12 @@ public class IotaAPI extends IotaAPICore {
     public GetBundleResponse getBundle(String transaction) throws ArgumentException {
 
         if (!InputValidator.isHash(transaction)) {
-            throw new ArgumentException("Invalid hash provided");
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
         Bundle bundle = traverseBundle(transaction, null, new Bundle());
         if (bundle == null) {
-            throw new ArgumentException("Unknown Bundle");
+            throw new ArgumentException(INVALID_BUNDLE_ERROR);
         }
 
         StopWatch stopWatch = new StopWatch();
@@ -651,11 +654,10 @@ public class IotaAPI extends IotaAPICore {
             totalSum += bundleValue;
 
             if (i != bundle.getTransactions().get(i).getCurrentIndex()) {
-                throw new ArgumentException("Invalid Bundle");
+                throw new ArgumentException(INVALID_BUNDLE_ERROR);
             }
 
             String trxTrytes = trx.toTrytes().substring(2187, 2187 + 162);
-            //System.out.println("Bundlesize "+bundle.getTransactions().size()+" "+trxTrytes);
             // Absorb bundle hash + value + timestamp + lastIndex + currentIndex trytes.
             curl.absorb(Converter.trits(trxTrytes));
             // Check if input transaction
@@ -680,18 +682,19 @@ public class IotaAPI extends IotaAPICore {
         }
 
         // Check for total sum, if not equal 0 return error
-        if (totalSum != 0) throw new ArgumentException("Invalid Bundle Sum");
+        if (totalSum != 0)
+            throw new ArgumentException(INVALID_BUNDLE_SUM_ERROR);
         int[] bundleFromTrxs = new int[243];
         curl.squeeze(bundleFromTrxs);
         String bundleFromTxString = Converter.trytes(bundleFromTrxs);
 
         // Check if bundle hash is the same as returned by tx object
         if (!bundleFromTxString.equals(bundleHash))
-            throw new ArgumentException("Invalid Bundle Hash");
+            throw new ArgumentException(INVALID_BUNDLE_HASH_ERROR);
         // Last tx in the bundle should have currentIndex === lastIndex
         bundle.setLength(bundle.getTransactions().size());
         if (!(bundle.getTransactions().get(bundle.getLength() - 1).getCurrentIndex() == (bundle.getTransactions().get(bundle.getLength() - 1).getLastIndex())))
-            throw new ArgumentException("Invalid Bundle");
+            throw new ArgumentException(INVALID_BUNDLE_ERROR);
 
         // Validate the signatures
         for (Signature aSignaturesToValidate : signaturesToValidate) {
@@ -699,7 +702,8 @@ public class IotaAPI extends IotaAPICore {
             String address = aSignaturesToValidate.getAddress();
             boolean isValidSignature = new Signing(customCurl.clone()).validateSignatures(address, signatureFragments, bundleHash);
 
-            if (!isValidSignature) throw new ArgumentException("Invalid Signatures!");
+            if (!isValidSignature)
+                throw new ArgumentException(INVALID_SIGNATURES_ERROR);
         }
 
         return GetBundleResponse.create(bundle.getTransactions(), stopWatch.getElapsedTimeMili());
@@ -723,7 +727,7 @@ public class IotaAPI extends IotaAPICore {
     public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, boolean returnAll, int start, int end, boolean inclusionStates, long threshold) throws ArgumentException {
 
         if (start > end || end > (start + 1000)) {
-            throw new ArgumentException("Invalid inputs provided");
+            throw new ArgumentException(INVALID_INPUT_ERROR);
         }
 
         StopWatch stopWatch = new StopWatch();
@@ -747,7 +751,7 @@ public class IotaAPI extends IotaAPICore {
     public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude) throws ArgumentException {
 
         if (!InputValidator.isHash(transaction)) {
-            throw new ArgumentException("Invalid tail hash provided");
+            throw new ArgumentException(INVALID_TAIL_HASH_INPUT_ERROR);
         }
 
         StopWatch stopWatch = new StopWatch();
@@ -839,16 +843,16 @@ public class IotaAPI extends IotaAPICore {
         if (gtr != null) {
 
             if (gtr.getTrytes().length == 0) {
-                throw new ArgumentException("Bundle transactions not visible");
+                throw new ArgumentException(INVALID_BUNDLE_ERROR);
             }
 
             Transaction trx = new Transaction(gtr.getTrytes()[0], customCurl.clone());
             if (trx.getBundle() == null) {
-                throw new ArgumentException("Invalid trytes, could not create object");
+                throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
             }
             // If first transaction to search is not a tail, return error
             if (bundleHash == null && trx.getCurrentIndex() != 0) {
-                throw new ArgumentException("Invalid tail transaction supplied.");
+                throw new ArgumentException(INVALID_TAIL_HASH_INPUT_ERROR);
             }
             // If no bundle hash, define it
             if (bundleHash == null) {
@@ -870,7 +874,7 @@ public class IotaAPI extends IotaAPICore {
             // Continue traversing with new trunkTx
             return traverseBundle(trunkTx, bundleHash, bundle);
         } else {
-            throw new ArgumentException("Get Trytes Response was null");
+            throw new ArgumentException(GET_TRYTES_RESPONSE_ERROR);
         }
     }
 
@@ -891,16 +895,16 @@ public class IotaAPI extends IotaAPICore {
 
         // validate input address
         if (!InputValidator.isAddress(inputAddress))
-            throw new ArgumentException("Invalid addresses provided");
+            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
 
         // validate remainder address
         if (remainderAddress != null && !InputValidator.isAddress(remainderAddress)) {
-            throw new ArgumentException("Invalid remainder addresses provided");
+            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
         }
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionValid(transfers)) {
-            throw new ArgumentException("Invalid transfers provided");
+            throw new ArgumentException(INVALID_TRANSFERS_INPUT_ERROR);
         }
 
         // Create a new bundle
@@ -1003,7 +1007,7 @@ public class IotaAPI extends IotaAPICore {
             }
             // Return not enough balance error
             if (totalValue > totalBalance) {
-                throw new IllegalStateException("Not enough balance");
+                throw new IllegalStateException(NOT_ENOUGH_BALANCE_ERROR);
             }
 
             // If there is a remainder value
@@ -1014,7 +1018,7 @@ public class IotaAPI extends IotaAPICore {
 
                 // Remainder bundle entry if necessary
                 if (remainderAddress == null) {
-                    throw new IllegalStateException("No remainder address defined");
+                    throw new IllegalStateException(NO_REMAINDER_ADDRESS_ERROR);
                 }
 
                 bundle.addEntry(1, remainderAddress, remainder, tag, timestamp);
@@ -1025,7 +1029,7 @@ public class IotaAPI extends IotaAPICore {
 
             return bundle.getTransactions();
         } else {
-            throw new RuntimeException("Invalid value transfer: the transfer does not require a signature.");
+            throw new RuntimeException(INVALID_VALUE_TRANSFER_ERROR);
         }
 
     }
@@ -1093,7 +1097,7 @@ public class IotaAPI extends IotaAPICore {
                 totalTransferValue -= thisBalance;
             }
         }
-        throw new IllegalStateException("Not enough balance");
+        throw new IllegalStateException(NOT_ENOUGH_BALANCE_ERROR);
     }
 
     public static class Builder extends IotaAPICore.Builder<Builder> {

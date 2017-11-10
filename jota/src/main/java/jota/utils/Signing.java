@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static jota.pow.JCurl.HASH_LENGTH;
+import static jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
 
 
 public class Signing {
@@ -40,7 +41,7 @@ public class Signing {
      */
     public int[] key(final int[] inSeed, final int index, int security) throws ArgumentException {
         if (security < 1) {
-            throw new ArgumentException("Invalid security level provided");
+            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 
         int[] seed = inSeed.clone();
