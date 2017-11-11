@@ -55,7 +55,7 @@ allprojects {
 Add this in your module `build.gradle` file:
 ```gradle
 dependencies {
-    compile 'com.github.iotaledger:iota.lib.java:v0.9.7'
+    compile 'com.github.iotaledger:iota.lib.java:v0.9.9'
 }
 ```
 
@@ -76,7 +76,7 @@ Add this in your module `pom.xml` file:
 <dependency>
     <groupId>com.github.iotaledger</groupId>
     <artifactId>iota.lib.java</artifactId>
-    <version>v0.9.7</version>
+    <version>v0.9.9</version>
 </dependency>
 ```
 
@@ -213,7 +213,7 @@ The following third party library dependencies and versions are used by the IOTA
 
 ## Changes:
 
-- Changes in [**v0.9.7**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.6...release-0.9.7)
+- Changes in [**v0.9.9**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.6...0.9.9)
 - Changes in [**v0.9.6**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.5...v0.9.6)
 - Changes in [**v0.9.5**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.4...v0.9.5)
 - Changes in [**v0.9.4**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.3...v0.9.4)
