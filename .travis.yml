@@ -20,6 +20,7 @@ install:
 
 script:
   - .travis/publish.sh
+  - chmod u+x .travis/push-jdoc-gh-pages.sh && .travis/push-jdoc-gh-pages.sh
 
 branches:
   except:
