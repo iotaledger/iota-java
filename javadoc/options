@@ -15,10 +15,10 @@
 -docencoding
 'UTF-8'
 -doctitle
-'JOTA : Library 0.9.10-SNAPSHOT API'
+'JOTA : Library 0.9.10 API'
 -linkoffline
 'http://docs.oracle.com/javase/8/docs/api' '/home/travis/build/iotaledger/iota.lib.java/jota/target/javadoc-bundle-options'
 -use
 -version
 -windowtitle
-'JOTA : Library 0.9.10-SNAPSHOT API'
+'JOTA : Library 0.9.10 API'
