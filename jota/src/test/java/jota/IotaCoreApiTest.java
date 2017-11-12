@@ -100,10 +100,9 @@ public class IotaCoreApiTest {
     public void shouldGetTrytes() throws ArgumentException {
         GetTrytesResponse res = proxy.getTrytes(TEST_HASH);
         assertThat(res.getTrytes(), IsNull.notNullValue());
-
     }
 
-    @Test(expected = ArgumentException.class)
+    @Test
     public void shouldNotGetInclusionStates() throws ArgumentException {
         proxy.getInclusionStates(new String[]{TEST_HASH}, new String[]{"ZIJGAJ9AADLRPWNCYNNHUHRRAC9QOUDATEDQUMTNOTABUVRPTSTFQDGZKFYUUIE9ZEBIVCCXXXLKX9999"});
     }

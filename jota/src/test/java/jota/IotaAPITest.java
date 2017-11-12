@@ -151,25 +151,33 @@ public class IotaAPITest {
         assertEquals(res.getAddresses().size(), 100);
     }
 
-    @Test
+    //seed contains 0 balance
+    @Test(expected = IllegalStateException.class)
     public void shouldPrepareTransfer() throws ArgumentException {
+        List<Transfer> transfers = new ArrayList<>();
+
+        transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 100, TEST_MESSAGE, TEST_TAG));
+        List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, null, false);
+
+        Assert.assertNotNull(trytes);
+        assertThat(trytes.isEmpty(), Is.is(false));
+    }
+
+    //seed contains 0 balance
+    @Test(expected = IllegalStateException.class)
+    public void shouldPrepareTransferWithInputs() throws ArgumentException {
         List<Input> inputlist = new ArrayList<>();
         List<Transfer> transfers = new ArrayList<>();
 
-        GetBalancesAndFormatResponse rsp = iotaAPI.getInputs(TEST_SEED1, 2, 0, 0, 100);
+        GetBalancesAndFormatResponse rsp = iotaAPI.getInputs(TEST_SEED1, 2, 0, 0, 0);
 
-        for (Input input : rsp.getInputs()) {
-            inputlist.add(input);
-        }
-        transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 0, TEST_MESSAGE, TEST_TAG));
-        transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 0));
-        List<String> trytes1 = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, null, false);
-        List<String> trytes2 = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, inputlist, true);
+        inputlist.addAll(rsp.getInputs());
 
-        Assert.assertNotNull(trytes1);
-        assertThat(trytes1.isEmpty(), Is.is(false));
-        Assert.assertNotNull(trytes2);
-        assertThat(trytes2.isEmpty(), Is.is(false));
+        transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 100, TEST_MESSAGE, TEST_TAG));
+        List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, inputlist, true);
+
+        Assert.assertNotNull(trytes);
+        assertThat(trytes.isEmpty(), Is.is(false));
     }
 
     @Test
@@ -274,9 +282,7 @@ public class IotaAPITest {
 
         GetBalancesAndFormatResponse rsp = iotaAPI.getInputs(TEST_SEED1, 2, 0, 0, 1);
 
-        for (Input input : rsp.getInputs()) {
-            inputlist.add(input);
-        }
+        inputlist.addAll(rsp.getInputs());
 
         transfers.add(new Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
 
