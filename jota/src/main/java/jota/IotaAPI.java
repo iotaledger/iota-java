@@ -452,19 +452,20 @@ public class IotaAPI extends IotaAPICore {
                     inputsAddresses.add(i.getAddress());
                 }
 
+
                 GetBalancesResponse balancesResponse = getBalances(100, inputsAddresses);
                 String[] balances = balancesResponse.getBalances();
 
                 List<Input> confirmedInputs = new ArrayList<>();
                 long totalBalance = 0;
-                int i = 0;
-                for (String balance : balances) {
-                    long thisBalance = Long.parseLong(balance);
+
+                for (int i = 0; i < balances.length; i++) {
+                    long thisBalance = Long.parseLong(balances[i]);
 
                     // If input has balance, add it to confirmedInputs
                     if (thisBalance > 0) {
                         totalBalance += thisBalance;
-                        Input inputEl = inputs.get(i++);
+                        Input inputEl = inputs.get(i);
                         inputEl.setBalance(thisBalance);
                         confirmedInputs.add(inputEl);
 
@@ -474,6 +475,7 @@ public class IotaAPI extends IotaAPICore {
                             break;
                         }
                     }
+
                 }
 
                 // Return not enough balance error
@@ -589,18 +591,18 @@ public class IotaAPI extends IotaAPICore {
 
         // If threshold defined, keep track of whether reached or not
         // else set default to true
+
         boolean thresholdReached = threshold == 0;
-        int i = -1;
 
         List<Input> inputs = new ArrayList<>();
         long totalBalance = 0;
 
-        for (String address : addresses) {
+        for (int i = 0; i < addresses.size(); i++) {
 
-            long balance = Long.parseLong(balances.get(++i));
+            long balance = Long.parseLong(balances.get(i));
 
             if (balance > 0) {
-                final Input newEntry = new Input(address, balance, start + i, security);
+                final Input newEntry = new Input(addresses.get(i), balance, start + i, security);
 
                 inputs.add(newEntry);
                 // Increase totalBalance of all aggregated inputs
