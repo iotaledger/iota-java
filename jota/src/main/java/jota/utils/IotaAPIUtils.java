@@ -94,18 +94,19 @@ public class IotaAPIUtils {
                     //  Add parts of signature for bundles with same address
                     if (bundle.getTransactions().get(i + j).getAddress().equals(thisAddress)) {
                         // Use 6562 trits starting from j*6561
-                        int[] secondFragment = Arrays.copyOfRange(key, 6561 * j, 6561 * (j + 1));
+                        int[] keyFragment = Arrays.copyOfRange(key, 6561 * j, 6561 * (j + 1));
 
                         // The current part of the bundle hash
-                        int[] secondBundleFragment = Arrays.copyOfRange(normalizedBundleHash, 27 * hashPart, 27 * (hashPart + 1));
+                        int[] bundleFragment = Arrays.copyOfRange(normalizedBundleHash, 27 * hashPart, 27 * (hashPart + 1));
 
                         //  Calculate the new signature
-                        int[] secondSignedFragment = new Signing(curl).signatureFragment(secondBundleFragment, secondFragment);
+                        int[] signedFragment = new Signing(curl).signatureFragment(bundleFragment, keyFragment);
 
                         //  Convert signature to trytes and assign it again to this bundle entry
-                        bundle.getTransactions().get(i+j).setSignatureFragments(Converter.trytes(secondSignedFragment));
+                        bundle.getTransactions().get(i+j).setSignatureFragments(Converter.trytes(signedFragment));
                     }
-                    else throw new ArgumentException("Inconsistent security-level and transactions");
+					else
+						throw new ArgumentException("Inconsistent security-level and transactions");
                 }
             }
         }
