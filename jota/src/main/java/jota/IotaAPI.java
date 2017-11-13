@@ -670,8 +670,8 @@ public class IotaAPI extends IotaAPICore {
                 sig.getSignatureFragments().add(trx.getSignatureFragments());
 
                 // Find the subsequent txs with the remaining signature fragment
-                for (int y = i; y < bundle.getTransactions().size() - 1; y++) {
-                    Transaction newBundleTx = bundle.getTransactions().get(i + 1);
+                for (int y = i + 1; y < bundle.getTransactions().size(); y++) {
+                    Transaction newBundleTx = bundle.getTransactions().get(y);
 
                     // Check if new tx is part of the signature fragment
                     if (newBundleTx.getAddress().equals(address) && newBundleTx.getValue() == 0) {
