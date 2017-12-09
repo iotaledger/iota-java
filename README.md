@@ -55,7 +55,7 @@ allprojects {
 Add this in your module `build.gradle` file:
 ```gradle
 dependencies {
-    compile 'com.github.iotaledger:iota.lib.java:0.9.10'
+    compile 'com.github.iotaledger:iota~lib~java:0.9.10'
 }
 ```
 
@@ -75,7 +75,7 @@ Add this in your module `pom.xml` file:
 ```xml
 <dependency>
     <groupId>com.github.iotaledger</groupId>
-    <artifactId>iota.lib.java</artifactId>
+    <artifactId>iota~lib~java</artifactId>
     <version>v0.9.10</version>
 </dependency>
 ```
