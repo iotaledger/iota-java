@@ -1,6 +1,7 @@
 package jota;
 
 import com.google.gson.Gson;
+import jota.category.IntegrationTest;
 import jota.dto.response.*;
 import jota.error.ArgumentException;
 import jota.model.Bundle;
@@ -13,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,6 +115,7 @@ public class IotaAPITest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldGetInputs() throws ArgumentException {
         GetBalancesAndFormatResponse res = iotaAPI.getInputs(TEST_SEED1, 2, 0, 0, 0);
         System.out.println(res);
@@ -153,6 +156,7 @@ public class IotaAPITest {
 
     //seed contains 0 balance
     @Test(expected = IllegalStateException.class)
+    @Category(IntegrationTest.class)
     public void shouldPrepareTransfer() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
 
@@ -165,6 +169,7 @@ public class IotaAPITest {
 
     //seed contains 0 balance
     @Test(expected = IllegalStateException.class)
+    @Category(IntegrationTest.class)
     public void shouldPrepareTransferWithInputs() throws ArgumentException {
         List<Input> inputlist = new ArrayList<>();
         List<Transfer> transfers = new ArrayList<>();
@@ -181,12 +186,14 @@ public class IotaAPITest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldGetLastInclusionState() throws ArgumentException {
         GetInclusionStateResponse res = iotaAPI.getLatestInclusion(new String[]{TEST_HASH});
         assertThat(res.getStates(), IsNull.notNullValue());
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldFindTransactionObjects() throws ArgumentException {
         List<Transaction> ftr = iotaAPI.findTransactionObjectsByAddresses(TEST_ADDRESSES);
         System.out.println(ftr);
@@ -194,6 +201,7 @@ public class IotaAPITest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldGetAccountData() throws ArgumentException {
         GetAccountDataResponse gad = iotaAPI.getAccountData(TEST_SEED1, 2, 0, true, 0, true, 0, 0, true, 0);
         assertThat(gad, IsNull.notNullValue());
@@ -206,6 +214,7 @@ public class IotaAPITest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldGetBundle() throws ArgumentException {
         GetBundleResponse gbr = iotaAPI.getBundle(TEST_HASH);
         System.out.println(gbr);
@@ -213,6 +222,7 @@ public class IotaAPITest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldGetTransfers() throws ArgumentException {
         GetTransferResponse gtr = iotaAPI.getTransfers(TEST_SEED1, 2, 0, 0, false);
         assertThat(gtr.getTransfers(), IsNull.notNullValue());
@@ -239,11 +249,13 @@ public class IotaAPITest {
     }
 
     @Test()
+    @Category(IntegrationTest.class)
     public void shouldGetTrytes() throws ArgumentException {
         System.out.println(iotaAPI.getTrytes(TEST_HASH));
     }
 
     @Test()
+    @Category(IntegrationTest.class)
     public void shouldBroadcastAndStore() throws ArgumentException {
         System.out.println(iotaAPI.broadcastAndStore(TEST_TRYTES));
     }

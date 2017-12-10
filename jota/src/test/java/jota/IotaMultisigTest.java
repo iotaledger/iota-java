@@ -1,5 +1,6 @@
 package jota;
 
+import jota.category.IntegrationTest;
 import jota.error.ArgumentException;
 import jota.model.Bundle;
 import jota.model.Transaction;
@@ -10,6 +11,7 @@ import jota.utils.Multisig;
 import jota.utils.Signing;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,7 @@ public class IotaMultisigTest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void basicMultiSigTest() throws ArgumentException {
         Multisig ms = new Multisig();
 

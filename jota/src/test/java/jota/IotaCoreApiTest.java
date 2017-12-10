@@ -1,11 +1,13 @@
 package jota;
 
 import com.google.gson.Gson;
+import jota.category.IntegrationTest;
 import jota.dto.response.*;
 import jota.error.ArgumentException;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.Collections;
 
@@ -27,6 +29,7 @@ public class IotaCoreApiTest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldGetNodeInfo() {
         GetNodeInfoResponse nodeInfo = proxy.getNodeInfo();
         System.out.println(new Gson().toJson(nodeInfo));
@@ -49,71 +52,83 @@ public class IotaCoreApiTest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldGetNeighbors() {
         GetNeighborsResponse neighbors = proxy.getNeighbors();
         assertThat(neighbors.getNeighbors(), IsNull.notNullValue());
     }
 
     @Test(expected = IllegalAccessError.class)
+    @Category(IntegrationTest.class)
     public void shouldAddNeighbors() {
         AddNeighborsResponse res = proxy.addNeighbors("udp://8.8.8.8:14265");
         assertThat(res, IsNull.notNullValue());
     }
 
     @Test(expected = IllegalAccessError.class)
+    @Category(IntegrationTest.class)
     public void shouldRemoveNeighbors() {
         RemoveNeighborsResponse res = proxy.removeNeighbors("udp://8.8.8.8:14265");
         assertThat(res, IsNull.notNullValue());
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldGetTips() {
         GetTipsResponse tips = proxy.getTips();
         assertThat(tips, IsNull.notNullValue());
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldFindTransactionsByAddresses() throws ArgumentException {
         FindTransactionResponse trans = proxy.findTransactionsByAddresses(TEST_ADDRESS_WITH_CHECKSUM);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldFindTransactionsByApprovees() {
         FindTransactionResponse trans = proxy.findTransactionsByApprovees(TEST_HASH);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldFindTransactionsByBundles() {
         FindTransactionResponse trans = proxy.findTransactionsByBundles(TEST_HASH);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldFindTransactionsByDigests() {
         FindTransactionResponse trans = proxy.findTransactionsByDigests(TEST_HASH);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldGetTrytes() throws ArgumentException {
         GetTrytesResponse res = proxy.getTrytes(TEST_HASH);
         assertThat(res.getTrytes(), IsNull.notNullValue());
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldNotGetInclusionStates() throws ArgumentException {
         proxy.getInclusionStates(new String[]{TEST_HASH}, new String[]{"ZIJGAJ9AADLRPWNCYNNHUHRRAC9QOUDATEDQUMTNOTABUVRPTSTFQDGZKFYUUIE9ZEBIVCCXXXLKX9999"});
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldGetInclusionStates() throws ArgumentException {
         GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{TEST_HASH}, new String[]{proxy.getNodeInfo().getLatestSolidSubtangleMilestone()});
         assertThat(res.getStates(), IsNull.notNullValue());
     }
 
     @Test // very long execution
+    @Category(IntegrationTest.class)
     public void shouldGetTransactionsToApprove() {
         GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(27);
         assertThat(res.getTrunkTransaction(), IsNull.notNullValue());
@@ -121,6 +136,7 @@ public class IotaCoreApiTest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldFindTransactions() {
         String test = TEST_BUNDLE;
         FindTransactionResponse resp = proxy.findTransactions(new String[]{test}, new String[]{test}, new String[]{test}, new String[]{test});
@@ -128,6 +144,7 @@ public class IotaCoreApiTest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void shouldGetBalances() throws ArgumentException {
         GetBalancesResponse res = proxy.getBalances(100, Collections.singletonList(TEST_ADDRESS_WITH_CHECKSUM));
         assertThat(res.getBalances(), IsNull.notNullValue());
