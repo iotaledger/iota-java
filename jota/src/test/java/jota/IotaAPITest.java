@@ -259,7 +259,7 @@ public class IotaAPITest {
     public void shouldNotSendTransfer() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 2, TEST_MESSAGE, TEST_TAG));
-        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false);
+        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false, true);
         assertThat(str.getTransactions(), IsNull.notNullValue());
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
@@ -269,7 +269,7 @@ public class IotaAPITest {
     public void shouldSendTransferWithoutInputs() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
-        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false);
+        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false, true);
         assertThat(str.getTransactions(), IsNull.notNullValue());
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
@@ -286,7 +286,7 @@ public class IotaAPITest {
 
         transfers.add(new Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
 
-        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, inputlist, null, true);
+        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, inputlist, null, true, true);
         assertThat(str.getTransactions(), IsNull.notNullValue());
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }

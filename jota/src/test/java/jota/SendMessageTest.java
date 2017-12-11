@@ -39,7 +39,7 @@ public class SendMessageTest {
         // for each 2187 trytes in a message one transfer is necessary
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 0, StringUtils.rightPad(TEST_MESSAGE, 2188, '9'), TEST_TAG));
 
-        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false);
+        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false, false);
         assertEquals(str.getTransactions().size(), 2);
         assertThat(str.getTransactions(), IsNull.notNullValue());
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
