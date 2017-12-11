@@ -57,6 +57,7 @@ public class Signing {
             }
         }
 
+        ICurl curl = this.getICurlObject(SpongeFactory.Mode.KERL);
         curl.reset();
         curl.absorb(seed, 0, seed.length);
         // seed[0..HASH_LENGTH] contains subseed
@@ -97,6 +98,7 @@ public class Signing {
 
     public int[] address(int[] digests) {
         int[] address = new int[HASH_LENGTH];
+        ICurl curl = this.getICurlObject(SpongeFactory.Mode.KERL);
         curl.reset()
                 .absorb(digests)
                 .squeeze(address);
@@ -109,6 +111,7 @@ public class Signing {
         int[] digests = new int[security * HASH_LENGTH];
         int[] keyFragment = new int[KEY_LENGTH];
 
+        ICurl curl = this.getICurlObject(SpongeFactory.Mode.KERL);
         for (int i = 0; i < Math.floor(key.length / KEY_LENGTH); i++) {
             System.arraycopy(key, i * KEY_LENGTH, keyFragment, 0, KEY_LENGTH);
 
@@ -129,7 +132,7 @@ public class Signing {
 
     public int[] digest(int[] normalizedBundleFragment, int[] signatureFragment) {
         curl.reset();
-        ICurl jCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
+        ICurl jCurl = this.getICurlObject(SpongeFactory.Mode.KERL);
         int[] buffer = new int[HASH_LENGTH];
 
         for (int i = 0; i < 27; i++) {
@@ -195,6 +198,10 @@ public class Signing {
         String address = Converter.trytes(address(digests));
 
         return (expectedAddress.equals(address));
+    }
+    
+    private ICurl getICurlObject(SpongeFactory.Mode mode) {
+    	return SpongeFactory.create(mode);
     }
 }
 
