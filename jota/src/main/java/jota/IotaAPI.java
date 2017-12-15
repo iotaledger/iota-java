@@ -808,37 +808,18 @@ public class IotaAPI extends IotaAPICore {
      * @param inputs             List of inputs used for funding the transfer.
      * @param remainderAddress   If defined, this remainderAddress will be used for sending the remainder value (of the inputs) to.
      * @param validateInputs     Whether or not to validate the balances of the provided inputs.
-     * @param validateAddresses  Whether or not to validate if the destination address is already used and if a key reuse is detect.
+     * @param validateInputAddresses  Whether or not to validate if the destination address is already used, if a key reuse is detect ot it's send to inputs.
      * @return Array of valid Transaction objects.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, List<Input> inputs, String remainderAddress, boolean validateInputs, boolean validateAddresses) throws ArgumentException {
+    public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, List<Input> inputs, String remainderAddress, boolean validateInputs, boolean validateInputAddresses) throws ArgumentException {
 
         StopWatch stopWatch = new StopWatch();
 
         List<String> trytes = prepareTransfers(seed, security, transfers, remainderAddress, inputs, validateInputs);
 
-        if (validateAddresses) {
-
-            HashSet<String> addresses = new HashSet<>();
-
-            for (String trx : trytes) {
-                addresses.add(new Transaction(trx, customCurl.clone()).getAddress());
-            }
-
-            String[] hashes = findTransactionsByAddresses(addresses.toArray(new String[addresses.size()])).getHashes();
-            List<Transaction> transactions = findTransactionsObjectsByHashes(hashes);
-            List<String> gna = getNewAddress(seed, security, 0, false, 0, true).getAddresses();
-
-            for (Transaction trx : transactions) {
-                if (trx.getValue() < 0 && gna.contains(trx.getAddress())) {
-                    throw new ArgumentException(Constants.PRIVATE_KEY_REUSE_ERROR);
-                }
-
-                if (trx.getValue() < 0) {
-                    throw new ArgumentException(Constants.SENDING_TO_USED_ADDRESS_ERROR);
-                }
-            }
+        if (validateInputAddresses) {
+            validateTransfersAddresses(seed, security, trytes);
         }
 
         List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude);
@@ -1059,6 +1040,53 @@ public class IotaAPI extends IotaAPICore {
             throw new RuntimeException(INVALID_VALUE_TRANSFER_ERROR);
         }
 
+    }
+
+    /**
+     * @param seed     Tryte-encoded seed
+     * @param security The security level of private key / seed.
+     * @param trytes   The trytes.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public void validateTransfersAddresses(String seed, int security, List<String> trytes) throws ArgumentException {
+
+        HashSet<String> addresses = new HashSet<>();
+        List<Transaction> inputTransactions = new ArrayList<>();
+        List<String> inputAddresses = new ArrayList<>();
+
+        for (String trx : trytes) {
+            addresses.add(new Transaction(trx, customCurl.clone()).getAddress());
+            inputTransactions.add(new Transaction(trx, customCurl.clone()));
+        }
+
+        String[] hashes = findTransactionsByAddresses(addresses.toArray(new String[addresses.size()])).getHashes();
+        List<Transaction> transactions = findTransactionsObjectsByHashes(hashes);
+        GetNewAddressResponse gna = getNewAddress(seed, security, 0, false, 0, true);
+        GetBalancesAndFormatResponse gbr = getInputs(seed, security, 0, 0, 0);
+
+        for (Input input : gbr.getInputs()) {
+            inputAddresses.add(input.getAddress());
+        }
+
+        //check if send to input
+        for (Transaction trx : inputTransactions) {
+            if (trx.getValue() > 0 && inputAddresses.contains(trx.getAddress()))
+                throw new ArgumentException(Constants.SEND_TO_INPUTS_ERROR);
+        }
+
+        for (Transaction trx : transactions) {
+
+            //check if destination address is already in use
+            if (trx.getValue() < 0 && !inputAddresses.contains(trx.getAddress())) {
+                throw new ArgumentException(Constants.SENDING_TO_USED_ADDRESS_ERROR);
+            }
+
+            //check if key reuse
+            if (trx.getValue() < 0 && gna.getAddresses().contains(trx.getAddress())) {
+                throw new ArgumentException(Constants.PRIVATE_KEY_REUSE_ERROR);
+            }
+
+        }
     }
 
     /**

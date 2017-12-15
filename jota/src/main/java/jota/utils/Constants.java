@@ -62,4 +62,6 @@ public class Constants {
 
     public static final String SENDING_TO_USED_ADDRESS_ERROR = "Sending to a used address.";
     public static final String PRIVATE_KEY_REUSE_ERROR = "Private key reuse detect!";
+    public static final String SEND_TO_INPUTS_ERROR = "Send to inputs!";
 }
+
