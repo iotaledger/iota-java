@@ -132,7 +132,8 @@ public class Signing {
 
     public int[] digest(int[] normalizedBundleFragment, int[] signatureFragment) {
     	ICurl iCurl = this.evaluateDigestCurlObject();
-        ICurl jCurl = this.getICurlObject(SpongeFactory.Mode.KERL);
+    	iCurl.reset();
+    	ICurl jCurl = iCurl.clone();
         int[] buffer = new int[HASH_LENGTH];
 
         for (int i = 0; i < 27; i++) {
