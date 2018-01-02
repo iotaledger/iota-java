@@ -238,14 +238,14 @@ public class IotaAPITest {
     @Ignore
     @Test
     public void shouldReplayBundle() throws ArgumentException {
-        ReplayBundleResponse rbr = iotaAPI.replayBundle(TEST_HASH, DEPTH, MIN_WEIGHT_MAGNITUDE);
+        ReplayBundleResponse rbr = iotaAPI.replayBundle(TEST_HASH, DEPTH, MIN_WEIGHT_MAGNITUDE, null);
         assertThat(rbr, IsNull.notNullValue());
     }
 
     @Ignore
     @Test(expected = ArgumentException.class)
     public void shouldNotSendTrytes() throws ArgumentException {
-        iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE);
+        iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE, null);
     }
 
     @Test()
@@ -263,7 +263,7 @@ public class IotaAPITest {
     @Ignore
     @Test
     public void shouldSendTrytes() throws ArgumentException {
-        iotaAPI.sendTrytes(new String[]{TEST_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE);
+        iotaAPI.sendTrytes(new String[]{TEST_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE, null);
     }
 
     @Ignore

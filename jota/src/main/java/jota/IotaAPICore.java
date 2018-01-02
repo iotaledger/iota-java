@@ -298,8 +298,8 @@ public class IotaAPICore {
      * @param depth The number of bundles to go back to determine the transactions for approval.
      * @return The Tip selection which returns trunkTransaction and branchTransaction
      */
-    public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth) {
-        final Call<GetTransactionsToApproveResponse> res = service.getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(depth));
+    public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth, String reference) {
+        final Call<GetTransactionsToApproveResponse> res = service.getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(depth, reference));
         return wrapCheckedException(res).body();
     }
 

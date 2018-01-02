@@ -232,8 +232,8 @@ public class IotaAPI extends IotaAPICore {
      * @return Transactions objects.
      * @throws ArgumentException is thrown when invalid trytes is provided.
      */
-    public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude) throws ArgumentException {
-        final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth);
+    public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude, final String reference) throws ArgumentException {
+        final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth, reference);
 
         // attach to tangle - do pow
         final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
@@ -754,7 +754,7 @@ public class IotaAPI extends IotaAPICore {
      * @return Analyzed Transaction objects.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude) throws ArgumentException {
+    public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude, String reference) throws ArgumentException {
 
         if (!InputValidator.isHash(transaction)) {
             throw new ArgumentException(INVALID_TAIL_HASH_INPUT_ERROR);
@@ -772,7 +772,7 @@ public class IotaAPI extends IotaAPICore {
         }
 
         Collections.reverse(bundleTrytes);
-        List<Transaction> trxs = sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), depth, minWeightMagnitude);
+        List<Transaction> trxs = sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), depth, minWeightMagnitude, reference);
 
         Boolean[] successful = new Boolean[trxs.size()];
 
@@ -826,7 +826,9 @@ public class IotaAPI extends IotaAPICore {
             validateTransfersAddresses(seed, security, trytes);
         }
 
-        List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude);
+        String reference = tips.size() > 0 ? tips.get(0).getHash(): null;
+
+        List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude, reference);
 
         Boolean[] successful = new Boolean[trxs.size()];
 
