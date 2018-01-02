@@ -66,7 +66,7 @@ public class IotaMultisigTest {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new Transfer(RECEIVE_ADDRESS, 999, "", TEST_TAG));
 
-        List<Transaction> trxs = iotaClient.initiateTransfer(6, multiSigAddress, REMAINDER_ADDRESS, transfers, true);
+        List<Transaction> trxs = iotaClient.initiateTransfer(6, multiSigAddress, REMAINDER_ADDRESS, transfers, null, true);
 
         Bundle bundle = new Bundle(trxs, trxs.size());
 

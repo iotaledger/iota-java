@@ -310,8 +310,8 @@ public class IotaAPICore {
      * @param addresses The array list of addresses you want to get the confirmed balance from.
      * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
      */
-    private GetBalancesResponse getBalances(Integer threshold, String[] addresses) {
-        final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses));
+    private GetBalancesResponse getBalances(Integer threshold, String[] addresses, String[] tips) {
+        final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses, tips));
         return wrapCheckedException(res).body();
     }
 
@@ -322,7 +322,7 @@ public class IotaAPICore {
      * @param addresses The list of addresses you want to get the confirmed balance from.
      * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
      */
-    public GetBalancesResponse getBalances(Integer threshold, List<String> addresses) throws ArgumentException {
+    public GetBalancesResponse getBalances(Integer threshold, List<String> addresses, List<String> tips) throws ArgumentException {
 
         List<String> addressesWithoutChecksum = new ArrayList<>();
 
@@ -330,7 +330,7 @@ public class IotaAPICore {
             String addressO = Checksum.removeChecksum(address);
             addressesWithoutChecksum.add(addressO);
         }
-        return getBalances(threshold, addressesWithoutChecksum.toArray(new String[]{}));
+        return getBalances(threshold, addressesWithoutChecksum.toArray(new String[]{}), tips.toArray(new String[]{}));
     }
 
     /**
