@@ -69,6 +69,7 @@ public class Transaction {
     public Transaction(String address, long value, String tag, long timestamp) {
         this.address = address;
         this.value = value;
+        this.tag = tag;
         this.obsoleteTag = tag;
         this.timestamp = timestamp;
     }
