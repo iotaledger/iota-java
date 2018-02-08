@@ -235,7 +235,7 @@ We have some [basic contribution guidelines][contribution-guidelines] to keep ou
 
 ### Join the Discussion
 
-If you want to get involved in the community, need help with getting setup, have any issues related with the library or just want to discuss Blockchain, Distributed Ledgers and IoT with other people, feel free to join our [**Slack**][iota-slack].  
+If you want to get involved in the community, need help with getting setup, have any issues related with the library or just want to discuss Blockchain, Distributed Ledgers and IoT with other people, feel free to join our [**Discord**][iota-discord].  
 You can also ask questions on our dedicated [**IOTA Forum**][iota-forum].
 
 ## License:
@@ -276,5 +276,5 @@ limitations under the License.
 [new-pull-request]: https://github.com/iotaledger/iota.lib.java/compare
 [contribution-guidelines]: https://github.com/iotaledger/iota.lib.java/blob/master/CONTRIBUTING.md
 [tests]: https://github.com/iotaledger/iota.lib.java/tree/master/jota/src/test/java/jota
-[iota-slack]: http://slack.iota.org/
+[iota-discord]: https://discord.gg/7Gu2mG5
 [iota-forum]: https://forum.iota.org/
