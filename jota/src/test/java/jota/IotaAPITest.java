@@ -161,7 +161,7 @@ public class IotaAPITest {
         List<Transfer> transfers = new ArrayList<>();
 
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 100, TEST_MESSAGE, TEST_TAG));
-        List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, null, false);
+        List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, null, null, false);
 
         Assert.assertNotNull(trytes);
         assertThat(trytes.isEmpty(), Is.is(false));
@@ -179,7 +179,7 @@ public class IotaAPITest {
         inputlist.addAll(rsp.getInputs());
 
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 100, TEST_MESSAGE, TEST_TAG));
-        List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, inputlist, true);
+        List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, inputlist, null,true);
 
         Assert.assertNotNull(trytes);
         assertThat(trytes.isEmpty(), Is.is(false));
@@ -238,14 +238,14 @@ public class IotaAPITest {
     @Ignore
     @Test
     public void shouldReplayBundle() throws ArgumentException {
-        ReplayBundleResponse rbr = iotaAPI.replayBundle(TEST_HASH, DEPTH, MIN_WEIGHT_MAGNITUDE);
+        ReplayBundleResponse rbr = iotaAPI.replayBundle(TEST_HASH, DEPTH, MIN_WEIGHT_MAGNITUDE, null);
         assertThat(rbr, IsNull.notNullValue());
     }
 
     @Ignore
     @Test(expected = ArgumentException.class)
     public void shouldNotSendTrytes() throws ArgumentException {
-        iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE);
+        iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE, null);
     }
 
     @Test()
@@ -263,7 +263,7 @@ public class IotaAPITest {
     @Ignore
     @Test
     public void shouldSendTrytes() throws ArgumentException {
-        iotaAPI.sendTrytes(new String[]{TEST_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE);
+        iotaAPI.sendTrytes(new String[]{TEST_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE, null);
     }
 
     @Ignore
@@ -271,7 +271,7 @@ public class IotaAPITest {
     public void shouldNotSendTransfer() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 2, TEST_MESSAGE, TEST_TAG));
-        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false, true);
+        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false, true, null);
         assertThat(str.getTransactions(), IsNull.notNullValue());
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
@@ -281,7 +281,7 @@ public class IotaAPITest {
     public void shouldSendTransferWithoutInputs() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
-        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false, true);
+        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false, true, null);
         assertThat(str.getTransactions(), IsNull.notNullValue());
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
@@ -298,7 +298,7 @@ public class IotaAPITest {
 
         transfers.add(new Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
 
-        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, inputlist, null, true, true);
+        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, inputlist, null, true, true, null);
         assertThat(str.getTransactions(), IsNull.notNullValue());
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }

@@ -130,7 +130,7 @@ public class IotaCoreApiTest {
     @Test // very long execution
     @Category(IntegrationTest.class)
     public void shouldGetTransactionsToApprove() {
-        GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(27);
+        GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(27, null);
         assertThat(res.getTrunkTransaction(), IsNull.notNullValue());
         assertThat(res.getBranchTransaction(), IsNull.notNullValue());
     }
@@ -146,7 +146,7 @@ public class IotaCoreApiTest {
     @Test
     @Category(IntegrationTest.class)
     public void shouldGetBalances() throws ArgumentException {
-        GetBalancesResponse res = proxy.getBalances(100, Collections.singletonList(TEST_ADDRESS_WITH_CHECKSUM));
+        GetBalancesResponse res = proxy.getBalances(100, Collections.singletonList(TEST_ADDRESS_WITH_CHECKSUM), null);
         assertThat(res.getBalances(), IsNull.notNullValue());
         assertThat(res.getMilestone(), IsNull.notNullValue());
         assertThat(res.getMilestoneIndex(), IsNull.notNullValue());

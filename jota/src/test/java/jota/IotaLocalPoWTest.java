@@ -38,7 +38,7 @@ public class IotaLocalPoWTest {
     public void shouldSendTransfer() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new Transfer(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, 0, TEST_MESSAGE, TEST_TAG));
-        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false, false);
+        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false, false, null);
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 }
