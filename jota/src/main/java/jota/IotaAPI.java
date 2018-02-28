@@ -744,15 +744,15 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Replays a transfer by doing Proof of Work again.
      *
-     * @param transaction        The transaction.
+     * @param transactionHash    The hash of transaction.
      * @param depth              The depth.
      * @param minWeightMagnitude The minimum weight magnitude.
      * @return Analyzed Transaction objects.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude) throws ArgumentException {
+    public ReplayBundleResponse replayBundle(String transactionHash, int depth, int minWeightMagnitude) throws ArgumentException {
 
-        if (!InputValidator.isHash(transaction)) {
+        if (!InputValidator.isHash(transactionHash)) {
             throw new ArgumentException(INVALID_TAIL_HASH_INPUT_ERROR);
         }
 
@@ -760,7 +760,7 @@ public class IotaAPI extends IotaAPICore {
 
         List<String> bundleTrytes = new ArrayList<>();
 
-        GetBundleResponse bundleResponse = getBundle(transaction);
+        GetBundleResponse bundleResponse = getBundle(transactionHash);
         Bundle bundle = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
         for (Transaction trx : bundle.getTransactions()) {
 
