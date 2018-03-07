@@ -148,7 +148,7 @@ public class IotaCoreApiTest {
     public void shouldGetBalances() throws ArgumentException {
         GetBalancesResponse res = proxy.getBalances(100, Collections.singletonList(TEST_ADDRESS_WITH_CHECKSUM));
         assertThat(res.getBalances(), IsNull.notNullValue());
-        assertThat(res.getMilestone(), IsNull.notNullValue());
+        assertThat(res.getReferences(), IsNull.notNullValue());
         assertThat(res.getMilestoneIndex(), IsNull.notNullValue());
         assertThat(res.getDuration(), IsNull.notNullValue());
     }
