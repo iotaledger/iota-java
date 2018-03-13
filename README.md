@@ -75,7 +75,7 @@ Add this in your module `pom.xml` file:
 ```xml
 <dependency>
     <groupId>com.github.iotaledger</groupId>
-    <artifactId>iota~lib~java</artifactId>
+    <artifactId>iota.lib.java</artifactId>
     <version>0.9.10</version>
 </dependency>
 ```
