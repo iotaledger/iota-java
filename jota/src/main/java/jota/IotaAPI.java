@@ -740,7 +740,8 @@ public class IotaAPI extends IotaAPICore {
 
         return GetAccountDataResponse.create(gna.getAddresses(), gtr.getTransfers(), gbr.getInputs(), gbr.getTotalBalance(), stopWatch.getElapsedTimeMili());
     }
- /**
+    
+    /**
      * Promotes a transaction by adding spam on top of it.
      *
      * @param tailHash      The transaction.
@@ -748,30 +749,24 @@ public class IotaAPI extends IotaAPICore {
      * @return true when finished.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public boolean promoteTransaction(String tailHash, int promoteCount) throws ArgumentException {
+       public boolean promoteTransaction(String tailHash, int promoteCount) throws ArgumentException {
         for (int i = 0; i < promoteCount; i++) {
-
-            List<Transfer> transfer = new ArrayList<>();
-            transfer.add(new Transfer("JOTAPROMOTER999999999999999999999999999999999999999999999999999999999999999999999", 0, "TBYBCCKBEAKBDDXCEAZBFDCDADCDHDTCFD", "JOTAPROMOTER999999999999999"));
-
-            List<String> trytes = prepareTransfers(transfer.get(0).getAddress(), 2, transfer, tailHash, null, false);
-            Transaction txn = new Transaction(trytes.get(0));
-
-            //GetTransactionsToApproveResponse getTransactionsToApproveResponse = getTransactionsToApprove(3);
-            //txn.setBranchTransaction(getTransactionsToApproveResponse.getBranchTransaction());
-
-            txn.setBranchTransaction(getNodeInfo().getLatestMilestone());
-            txn.setTrunkTransaction(tailHash);
-            txn.setTimestamp(System.currentTimeMillis());
-
-            String atrytes[] = new String[1];
-            atrytes[0] = txn.toTrytes();
-
-            GetAttachToTangleResponse res = attachToTangle(txn.getTrunkTransaction(), txn.getBranchTransaction(), 14, atrytes);
+            Transfer transfer = new Transfer("JOTAPROMOTER999999999999999999999999999999999999999999999999999999999999999999999",0, "TBYBCCKBEAKBDDXCEAZBFDCDADCDHDTCFD", "JOTAPROMOTER999999999999999");
+            List<Transfer> lstTransfers = new ArrayList<>();
+            lstTransfers.add(transfer);
+            List<String> trytes = prepareTransfers(transfer.getAddress(), 2, lstTransfers, tailHash, null, true);
+            GetTransactionsToApproveResponse txs = getTransactionsToApprove(3);
+            GetAttachToTangleResponse res = attachToTangle(tailHash, getNodeInfo().getLatestMilestone(), 14, trytes.toArray(new String[trytes.size()]));
             broadcastAndStore(res.getTrytes());
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return true;
     }
+    
     /**
      * Replays a transfer by doing Proof of Work again.
      *
