@@ -756,7 +756,7 @@ public class IotaAPI extends IotaAPICore {
             lstTransfers.add(transfer);
             List<String> trytes = prepareTransfers(transfer.getAddress(), 2, lstTransfers, tailHash, null, true);
             GetTransactionsToApproveResponse txs = getTransactionsToApprove(3);
-            GetAttachToTangleResponse res = attachToTangle(tailHash, getNodeInfo().getLatestMilestone(), 14, trytes.toArray(new String[trytes.size()]));
+            GetAttachToTangleResponse res = attachToTangle(tailHash, txs.getBranchTransaction(), 14, trytes.toArray(new String[trytes.size()]));
             broadcastAndStore(res.getTrytes());
             try {
                 Thread.sleep(1500);
