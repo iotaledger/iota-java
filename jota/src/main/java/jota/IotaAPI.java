@@ -758,11 +758,6 @@ public class IotaAPI extends IotaAPICore {
             GetTransactionsToApproveResponse txs = getTransactionsToApprove(3);
             GetAttachToTangleResponse res = attachToTangle(tailHash, txs.getBranchTransaction(), 14, trytes.toArray(new String[trytes.size()]));
             broadcastAndStore(res.getTrytes());
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
         return true;
     }
