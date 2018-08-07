@@ -78,7 +78,7 @@ public class IotaAPITest {
     public void shouldCreateIotaApiProxyInstanceWithDefaultValues() {
         iotaAPI = new IotaAPI.Builder().build();
         assertThat(iotaAPI, IsNull.notNullValue());
-        assertThat(iotaAPI.getHost(), Is.is("node.iotawallet.info"));
+        assertThat(iotaAPI.getHost(), Is.is("node.testnet.iota.org"));
         assertThat(iotaAPI.getPort(), Is.is("14265"));
         assertThat(iotaAPI.getProtocol(), Is.is("http"));
     }
@@ -219,6 +219,15 @@ public class IotaAPITest {
         GetBundleResponse gbr = iotaAPI.getBundle(TEST_HASH);
         System.out.println(gbr);
         assertThat(gbr, IsNull.notNullValue());
+    }
+
+    @Test
+    @Category(IntegrationTest.class)
+    public void shouldCheckConsistency() throws ArgumentException {
+        GetNodeInfoResponse gni = iotaAPI.getNodeInfo();
+        CheckConsistencyResponse ccr = iotaAPI.checkConsistency(gni.getLatestSolidSubtangleMilestone());
+        System.out.println(ccr);
+        assertThat(ccr, IsNull.notNullValue());
     }
 
     @Test

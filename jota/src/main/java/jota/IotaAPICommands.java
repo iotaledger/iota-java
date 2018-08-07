@@ -19,7 +19,8 @@ public enum IotaAPICommands {
     ATTACH_TO_TANGLE("attachToTangle"),
     INTERRUPT_ATTACHING_TO_TANGLE("interruptAttachingToTangle"),
     BROADCAST_TRANSACTIONS("broadcastTransactions"),
-    STORE_TRANSACTIONS("storeTransactions");
+    STORE_TRANSACTIONS("storeTransactions"),
+    CHECK_CONSISTENCY("checkConsistency");
 
     private String command;
 

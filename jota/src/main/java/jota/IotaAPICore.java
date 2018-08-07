@@ -293,14 +293,22 @@ public class IotaAPICore {
     }
 
     /**
-     * Tip selection which returns trunkTransaction and branchTransaction. The input value is the latest coordinator milestone, as provided through the getNodeInfo API call.
+     * Tip selection which returns trunkTransaction and branchTransaction.
      *
      * @param depth The number of bundles to go back to determine the transactions for approval.
+     * @param reference The reference transaction to start the random walk from.
      * @return The Tip selection which returns trunkTransaction and branchTransaction
      */
-    public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth) {
-        final Call<GetTransactionsToApproveResponse> res = service.getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(depth));
+    public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth, String reference) {
+        final Call<GetTransactionsToApproveResponse> res = service.getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(depth, reference));
         return wrapCheckedException(res).body();
+    }
+
+    /**
+     * {@link #getTransactionsToApprove(Integer, String)}
+     */
+    public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth) {
+        return getTransactionsToApprove(depth, null);
     }
 
     /**
@@ -332,6 +340,22 @@ public class IotaAPICore {
         }
         return getBalances(threshold, addressesWithoutChecksum.toArray(new String[]{}));
     }
+
+    /**
+     * Checks the consistency of the subtangle formed by the provided tails.
+     *
+     * @param tails The tails describing the subtangle.
+     * @return The The the raw transaction data (trytes) of a specific transaction.
+     */
+    public CheckConsistencyResponse checkConsistency(String... tails) throws ArgumentException {
+        if (!InputValidator.isArrayOfHashes(tails)) {
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
+        }
+
+        final Call<CheckConsistencyResponse> res = service.checkConsistency(IotaCheckConsistencyRequest.create(tails));
+        return wrapCheckedException(res).body();
+    }
+
 
     /**
      * Attaches the specified transactions (trytes) to the Tangle by doing Proof of Work.
