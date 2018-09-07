@@ -9,9 +9,13 @@ import java.io.IOException;
 import static java.nio.charset.Charset.defaultCharset;
 import static net.jadler.Jadler.*;
 
-abstract class AbstractMockServer {
+public abstract class AbstractMockServer {
 
     IotaAPI iotaAPI;
+    
+    public AbstractMockServer() {
+        
+    }
 
     @Before
     public void setUp() {
@@ -35,17 +39,17 @@ abstract class AbstractMockServer {
         private String requestFileName;
         private String responseFileName;
 
-        ApiMock command(IotaAPICommands command) {
+        public ApiMock command(IotaAPICommands command) {
             this.command = command;
             return this;
         }
 
-        ApiMock request(String requestFileName) {
+        public ApiMock request(String requestFileName) {
             this.requestFileName = requestFileName;
             return this;
         }
 
-        ApiMock response(String responseFileName) {
+        public ApiMock response(String responseFileName) {
             this.responseFileName = responseFileName;
             return this;
         }

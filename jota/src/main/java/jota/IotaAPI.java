@@ -2,6 +2,8 @@ package jota;
 
 import jota.dto.response.*;
 import jota.error.ArgumentException;
+import jota.error.BaseException;
+import jota.error.NotPromotableException;
 import jota.model.*;
 import jota.pow.ICurl;
 import jota.pow.SpongeFactory;
@@ -11,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static jota.utils.Constants.*;
 
@@ -644,6 +647,8 @@ public class IotaAPI extends IotaAPICore {
 
         long totalSum = 0;
         String bundleHash = bundle.getTransactions().get(0).getBundle();
+        System.out.println(bundle.getTransactions().get(0));
+        
 
         ICurl curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
         curl.reset();
@@ -691,8 +696,12 @@ public class IotaAPI extends IotaAPICore {
         String bundleFromTxString = Converter.trytes(bundleFromTrxs);
 
         // Check if bundle hash is the same as returned by tx object
-        if (!bundleFromTxString.equals(bundleHash))
+        if (!bundleFromTxString.equals(bundleHash)) {
+            System.out.println(bundleHash);
+            System.out.println(bundleFromTxString);
             throw new ArgumentException(INVALID_BUNDLE_HASH_ERROR);
+        }
+        
         // Last tx in the bundle should have currentIndex === lastIndex
         bundle.setLength(bundle.getTransactions().size());
         if (!(bundle.getTransactions().get(bundle.getLength() - 1).getCurrentIndex() == (bundle.getTransactions().get(bundle.getLength() - 1).getLastIndex())))
@@ -847,7 +856,7 @@ public class IotaAPI extends IotaAPICore {
      */
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
         GetTrytesResponse gtr = getTrytes(trunkTx);
-
+        
         if (gtr != null) {
 
             if (gtr.getTrytes().length == 0) {
@@ -1153,6 +1162,51 @@ public class IotaAPI extends IotaAPICore {
             }
         }
         throw new IllegalStateException(NOT_ENOUGH_BALANCE_ERROR);
+    }
+
+
+    /**
+     * Attempts to promote a transaction using a provided bundle and, if successful, returns the promoting Transactions.
+     *
+     * @param tail bundle tail to promote
+     * @param depth depth for getTransactionsToApprove
+     * @param minWeightMagnitude minWeightMagnitude to use for Proof-of-Work
+     * @param bundle the bundle to attach for promotion
+     * @return attached bundle trytes
+     * @throws ArgumentException invalid method arguments provided
+     * @throws NotPromotableException transaction is not promotable
+     */
+    public List<Transaction> promoteTransaction(final String tail, final int depth, final int minWeightMagnitude, final Bundle bundle) throws BaseException {
+        if (bundle == null || bundle.getTransactions().size() == 0) {
+            throw new ArgumentException("Need at least one transaction in the bundle");
+        }
+
+        if(depth < 0) {
+            throw new ArgumentException("Depth must be >= 0");
+        }
+
+        if(minWeightMagnitude <= 0) {
+            throw new ArgumentException("MinWeightMagnitude must be > 0");
+        }
+
+        CheckConsistencyResponse consistencyResponse = checkConsistency(tail);
+
+        if (!consistencyResponse.getState()) {
+            throw new NotPromotableException(consistencyResponse.getInfo());
+        }
+
+        GetTransactionsToApproveResponse transactionsToApprove = getTransactionsToApprove(depth, tail);
+
+        final GetAttachToTangleResponse res = attachToTangle(transactionsToApprove.getTrunkTransaction(), transactionsToApprove.getBranchTransaction(), minWeightMagnitude,
+                bundle.getTransactions().stream().map(tx -> tx.toTrytes()).toArray(String[]::new));
+
+        try {
+            broadcastAndStore(res.getTrytes());
+        } catch (ArgumentException e) {
+            return Collections.emptyList();
+        }
+
+        return Arrays.stream(res.getTrytes()).map(trytes -> new Transaction(trytes, customCurl.clone())).collect(Collectors.toList());
     }
 
     public static class Builder extends IotaAPICore.Builder<Builder> {

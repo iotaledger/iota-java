@@ -8,6 +8,8 @@ import jota.model.Bundle;
 import jota.model.Input;
 import jota.model.Transaction;
 import jota.model.Transfer;
+import jota.utils.IotaAPIUtils;
+
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.Assert;
@@ -22,6 +24,7 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Let's do some integration test coverage against a default local real node.
@@ -78,7 +81,7 @@ public class IotaAPITest {
     public void shouldCreateIotaApiProxyInstanceWithDefaultValues() {
         iotaAPI = new IotaAPI.Builder().build();
         assertThat(iotaAPI, IsNull.notNullValue());
-        assertThat(iotaAPI.getHost(), Is.is("node.iotawallet.info"));
+        assertThat(iotaAPI.getHost(), Is.is("nodes.testnet.iota.org"));
         assertThat(iotaAPI.getPort(), Is.is("14265"));
         assertThat(iotaAPI.getProtocol(), Is.is("http"));
     }
@@ -209,16 +212,27 @@ public class IotaAPITest {
 
     @Test(expected = ArgumentException.class)
     public void shouldNotGetBundle() throws ArgumentException {
-        GetBundleResponse gbr = iotaAPI.getBundle("SADASD");
-        assertThat(gbr, IsNull.notNullValue());
+        iotaAPI.getBundle("SADASD");
     }
 
     @Test
     @Category(IntegrationTest.class)
     public void shouldGetBundle() throws ArgumentException {
+        GetTrytesResponse ret = iotaAPI.getTrytes(TEST_HASH);
+        System.out.println(new Transaction(ret.getTrytes()[0]));
+        
         GetBundleResponse gbr = iotaAPI.getBundle(TEST_HASH);
         System.out.println(gbr);
         assertThat(gbr, IsNull.notNullValue());
+    }
+
+    @Test
+    @Category(IntegrationTest.class)
+    public void shouldCheckConsistency() throws ArgumentException {
+        GetNodeInfoResponse gni = iotaAPI.getNodeInfo();
+        CheckConsistencyResponse ccr = iotaAPI.checkConsistency(gni.getLatestSolidSubtangleMilestone());
+        System.out.println(ccr);
+        assertThat(ccr, IsNull.notNullValue());
     }
 
     @Test
@@ -257,7 +271,18 @@ public class IotaAPITest {
     @Test()
     @Category(IntegrationTest.class)
     public void shouldBroadcastAndStore() throws ArgumentException {
-        System.out.println(iotaAPI.broadcastAndStore(TEST_TRYTES));
+        //Manually generate a transaction?
+    }
+    
+    @Test()
+    @Category(IntegrationTest.class)
+    public void shouldFailBeforeSnapshotTimeStamp() throws ArgumentException {
+        try {
+            iotaAPI.broadcastAndStore(TEST_TRYTES);
+            fail("Transaction did not fail on old timestamp value");
+        } catch (IllegalAccessError e) {
+            //TODO Check for specific error
+        }
     }
 
     @Ignore

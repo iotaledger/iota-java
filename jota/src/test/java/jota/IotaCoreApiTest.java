@@ -9,9 +9,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.util.Arrays;
 import java.util.Collections;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
 
 /**
  * @author Adrian
@@ -30,7 +34,7 @@ public class IotaCoreApiTest {
 
     @Test
     @Category(IntegrationTest.class)
-    public void shouldGetNodeInfo() {
+    public void shouldGetNodeInfo() throws ArgumentException {
         GetNodeInfoResponse nodeInfo = proxy.getNodeInfo();
         System.out.println(new Gson().toJson(nodeInfo));
         assertThat(nodeInfo.getAppVersion(), IsNull.notNullValue());
@@ -53,28 +57,28 @@ public class IotaCoreApiTest {
 
     @Test
     @Category(IntegrationTest.class)
-    public void shouldGetNeighbors() {
+    public void shouldGetNeighbors() throws ArgumentException {
         GetNeighborsResponse neighbors = proxy.getNeighbors();
         assertThat(neighbors.getNeighbors(), IsNull.notNullValue());
     }
 
     @Test(expected = IllegalAccessError.class)
     @Category(IntegrationTest.class)
-    public void shouldAddNeighbors() {
+    public void shouldAddNeighbors() throws ArgumentException {
         AddNeighborsResponse res = proxy.addNeighbors("udp://8.8.8.8:14265");
         assertThat(res, IsNull.notNullValue());
     }
 
     @Test(expected = IllegalAccessError.class)
     @Category(IntegrationTest.class)
-    public void shouldRemoveNeighbors() {
+    public void shouldRemoveNeighbors() throws ArgumentException {
         RemoveNeighborsResponse res = proxy.removeNeighbors("udp://8.8.8.8:14265");
         assertThat(res, IsNull.notNullValue());
     }
 
     @Test
     @Category(IntegrationTest.class)
-    public void shouldGetTips() {
+    public void shouldGetTips() throws ArgumentException {
         GetTipsResponse tips = proxy.getTips();
         assertThat(tips, IsNull.notNullValue());
     }
@@ -88,21 +92,21 @@ public class IotaCoreApiTest {
 
     @Test
     @Category(IntegrationTest.class)
-    public void shouldFindTransactionsByApprovees() {
+    public void shouldFindTransactionsByApprovees() throws ArgumentException {
         FindTransactionResponse trans = proxy.findTransactionsByApprovees(TEST_HASH);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
     @Test
     @Category(IntegrationTest.class)
-    public void shouldFindTransactionsByBundles() {
+    public void shouldFindTransactionsByBundles() throws ArgumentException {
         FindTransactionResponse trans = proxy.findTransactionsByBundles(TEST_HASH);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
     @Test
     @Category(IntegrationTest.class)
-    public void shouldFindTransactionsByDigests() {
+    public void shouldFindTransactionsByDigests() throws ArgumentException {
         FindTransactionResponse trans = proxy.findTransactionsByDigests(TEST_HASH);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
@@ -116,8 +120,15 @@ public class IotaCoreApiTest {
 
     @Test
     @Category(IntegrationTest.class)
-    public void shouldNotGetInclusionStates() throws ArgumentException {
-        proxy.getInclusionStates(new String[]{TEST_HASH}, new String[]{"ZIJGAJ9AADLRPWNCYNNHUHRRAC9QOUDATEDQUMTNOTABUVRPTSTFQDGZKFYUUIE9ZEBIVCCXXXLKX9999"});
+    public void shouldNotGetInclusionStates(){
+        try {
+            proxy.getInclusionStates(new String[]{TEST_HASH}, new String[]{"ZIJGAJ9AADLRPWNCYNNHUHRRAC9QOUDATEDQUMTNOTABUVRPTSTFQDGZKFYUUIE9ZEBIVCCXXXLKX9999"});
+            fail("failed to throw error on wrong bundle hash");
+        } catch (ArgumentException e) {
+          //TODO verify correct error
+            //Successs
+        }
+
     }
 
     @Test
@@ -129,15 +140,27 @@ public class IotaCoreApiTest {
 
     @Test // very long execution
     @Category(IntegrationTest.class)
-    public void shouldGetTransactionsToApprove() {
-        GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(27);
+    public void shouldGetTransactionsToApprove() throws ArgumentException {
+        GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(15);
         assertThat(res.getTrunkTransaction(), IsNull.notNullValue());
         assertThat(res.getBranchTransaction(), IsNull.notNullValue());
+    }
+    
+    @Test // very long execution
+    @Category(IntegrationTest.class)
+    public void shouldInvalidDepth() throws ArgumentException {
+        try {
+            GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(27);
+            fail("Depth more then 15 is not supported by default");
+        } catch (ArgumentException e) {
+            //TODO verify correct error
+            //Good!
+        }
     }
 
     @Test
     @Category(IntegrationTest.class)
-    public void shouldFindTransactions() {
+    public void shouldFindTransactions() throws ArgumentException {
         String test = TEST_BUNDLE;
         FindTransactionResponse resp = proxy.findTransactions(new String[]{test}, new String[]{test}, new String[]{test}, new String[]{test});
         System.out.println(new Gson().toJson(resp));
@@ -147,6 +170,8 @@ public class IotaCoreApiTest {
     @Category(IntegrationTest.class)
     public void shouldGetBalances() throws ArgumentException {
         GetBalancesResponse res = proxy.getBalances(100, Collections.singletonList(TEST_ADDRESS_WITH_CHECKSUM));
+        System.out.println(res.getDuration());
+        
         assertThat(res.getBalances(), IsNull.notNullValue());
         assertThat(res.getMilestone(), IsNull.notNullValue());
         assertThat(res.getMilestoneIndex(), IsNull.notNullValue());
