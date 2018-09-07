@@ -173,7 +173,7 @@ public class IotaCoreApiTest {
         System.out.println(res.getDuration());
         
         assertThat(res.getBalances(), IsNull.notNullValue());
-        assertThat(res.getMilestone(), IsNull.notNullValue());
+        assertThat(res.getReferences(), IsNull.notNullValue());
         assertThat(res.getMilestoneIndex(), IsNull.notNullValue());
         assertThat(res.getDuration(), IsNull.notNullValue());
     }
