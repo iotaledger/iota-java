@@ -647,6 +647,8 @@ public class IotaAPI extends IotaAPICore {
 
         long totalSum = 0;
         String bundleHash = bundle.getTransactions().get(0).getBundle();
+        System.out.println(bundle.getTransactions().get(0));
+        
 
         ICurl curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
         curl.reset();
@@ -694,8 +696,12 @@ public class IotaAPI extends IotaAPICore {
         String bundleFromTxString = Converter.trytes(bundleFromTrxs);
 
         // Check if bundle hash is the same as returned by tx object
-        if (!bundleFromTxString.equals(bundleHash))
+        if (!bundleFromTxString.equals(bundleHash)) {
+            System.out.println(bundleHash);
+            System.out.println(bundleFromTxString);
             throw new ArgumentException(INVALID_BUNDLE_HASH_ERROR);
+        }
+        
         // Last tx in the bundle should have currentIndex === lastIndex
         bundle.setLength(bundle.getTransactions().size());
         if (!(bundle.getTransactions().get(bundle.getLength() - 1).getCurrentIndex() == (bundle.getTransactions().get(bundle.getLength() - 1).getLastIndex())))
@@ -850,7 +856,7 @@ public class IotaAPI extends IotaAPICore {
      */
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
         GetTrytesResponse gtr = getTrytes(trunkTx);
-
+        
         if (gtr != null) {
 
             if (gtr.getTrytes().length == 0) {
