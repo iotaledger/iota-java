@@ -6,7 +6,6 @@ package jota.dto.response;
 public class GetBalancesResponse extends AbstractResponse {
 
     private String[] balances;
-    private String milestone;
     private int milestoneIndex;
 
     /**
@@ -16,15 +15,6 @@ public class GetBalancesResponse extends AbstractResponse {
      */
     public int getMilestoneIndex() {
         return milestoneIndex;
-    }
-
-    /**
-     * Gets the milestone.
-     *
-     * @return The milestone.
-     */
-    public String getMilestone() {
-        return milestone;
     }
 
     /**

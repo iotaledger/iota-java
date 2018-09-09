@@ -480,7 +480,7 @@ public class IotaAPICore {
 
         public IotaAPICore build() {
             // resolution order: builder value, configuration file, default value
-
+            
             if (null == protocol) {
                 protocol = getFromConfigurationOrEnvironment("iota.node.protocol", "IOTA_NODE_PROTOCOL", "http");
             }
