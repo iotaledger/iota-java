@@ -745,6 +745,48 @@ public class IotaAPI extends IotaAPICore {
 
         return GetAccountDataResponse.create(gna.getAddresses(), gtr.getTransfers(), gbr.getInputs(), gbr.getTotalBalance(), stopWatch.getElapsedTimeMili());
     }
+    
+    /**
+     * Check if a list of addresses was ever spent from, in the current epoch, or in previous epochs.
+     * If the address has a checksum, it is removed
+     * 
+     * @param addresses the addresses to check
+     * @return list of address boolean checks
+     * @throws ArgumentException
+     */
+    public boolean[] checkWereAddressSpentFrom(String[] addresses) throws ArgumentException {
+        List<String> rawAddresses=new ArrayList<>();
+        for(String address: addresses) {
+            String rawAddress=null;
+            try {
+                if (Checksum.isAddressWithChecksum(address)) {
+                    rawAddress=Checksum.removeChecksum(address);
+                }
+            } catch (ArgumentException e) {}
+            if(rawAddress==null)
+                rawAddresses.add(address);
+            else
+                rawAddresses.add(rawAddress);
+        }
+        String[] spentAddresses = new String[rawAddresses.size()];
+        spentAddresses = rawAddresses.toArray(spentAddresses);
+        WereAddressesSpentFromResponse response = wereAddressesSpentFrom(spentAddresses);
+        return response.getStates();
+
+    }
+    
+    /**
+     * If the address has a checksum, it is removed
+     * 
+     * @param address the address to check
+     * @return list of address boolean checks
+     * @throws ArgumentException
+     */
+    public Boolean checkWereAddressSpentFrom(String address) throws ArgumentException {
+        String[] spentAddresses =new String[] {address};
+        boolean[] response = checkWereAddressSpentFrom(spentAddresses);
+        return response[0];
+    }
 
     /**
      * Replays a transfer by doing Proof of Work again.
