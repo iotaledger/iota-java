@@ -8,7 +8,6 @@ import jota.model.Bundle;
 import jota.model.Input;
 import jota.model.Transaction;
 import jota.model.Transfer;
-import jota.utils.IotaAPIUtils;
 
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;

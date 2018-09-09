@@ -350,6 +350,21 @@ public class IotaAPICore {
     }
 
     /**
+     * Check if a list of addresses was ever spent from, in the current epoch, or in previous epochs.
+     *
+     * @param addresses List of addresses to check if they were ever spent from.
+     * @return The state of each address (true/false)
+     */
+    public WereAddressesSpentFromResponse wereAddressesSpentFrom(String... addresses) throws ArgumentException {
+        if (!InputValidator.isAddressesArrayValid(addresses)) {
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
+        }
+
+        final Call<WereAddressesSpentFromResponse> res = service.wereAddressesSpentFrom(IotaWereAddressesSpentFromRequest.create(addresses));
+        return wrapCheckedException(res).body();
+    }
+    
+    /**
      * Checks the consistency of the subtangle formed by the provided tails.
      *
      * @param tails The tails describing the subtangle.

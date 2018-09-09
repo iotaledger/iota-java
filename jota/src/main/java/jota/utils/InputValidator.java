@@ -41,6 +41,21 @@ public class InputValidator {
         }
         return true;
     }
+    
+    /**
+     * Determines whether the specified addresses are valid.
+     *
+     * @param addresses The address array to validate.
+     * @return <code>true</code> if the specified addresses are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isAddressesArrayValid(String[] addresses) throws ArgumentException {
+        for (String address : addresses) {
+            if (!checkAddress(address)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Checks whether the specified address is an address and throws and exception if the address is invalid.

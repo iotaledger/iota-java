@@ -9,11 +9,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 
@@ -23,13 +23,15 @@ import static org.junit.Assert.fail;
 public class IotaCoreApiTest {
 
     private static final String TEST_BUNDLE = "XZKJUUMQOYUQFKMWQZNTFMSS9FKJLOEV9DXXXWPMQRTNCOUSUQNTBIJTVORLOQPLYZOTMLFRHYKMTGZZU";
+    private static final String TEST_ADDRESS_UNSPENT = "D9UZTBEAT9DMZKMCPEKSBEOWPAUFWKOXWPO9LOHZVTE9HAVTAKHWAIXCJKDJFGUOBOULUFTJZKWTEKCHD";
+    private static final String TEST_ADDRESS_SPENT = "9SEGQNQHFHCAI9QXTVGBGTIZQDV9RSCGCGPQSPLNCNN9DSENFMLTD9SETUSYZCYG9JYPIAMXFHNT9YRFZ";
     private static final String TEST_ADDRESS_WITH_CHECKSUM = "YJNQ9EQWSXUMLFCIUZDCAJZSAXUQNZSY9AKKVYKKFBAAHRSTKSHUOCCFTQVPPASPGGC9YGNLDQNOUWCAWGWIJNRJMX";
     private static final String TEST_HASH = "OOAARHCXXCPMNZPUEYOOUIUCTWZSQGKNIECIKRBNUUJEVMLJAWGCXREXEQGNJUJKUXXQAWWAZYKB99999";
     private static IotaAPICore proxy;
 
     @Before
     public void createProxyInstance() {
-        proxy = new IotaAPICore.Builder().build();
+        proxy = new IotaAPI.Builder().build();
     }
 
     @Test
@@ -151,7 +153,7 @@ public class IotaCoreApiTest {
     @Category(IntegrationTest.class)
     public void shouldInvalidDepth() throws ArgumentException {
         try {
-            GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(27);
+            proxy.getTransactionsToApprove(27);
             fail("Depth more then 15 is not supported by default");
         } catch (ArgumentException e) {
             //TODO verify correct error
@@ -176,5 +178,32 @@ public class IotaCoreApiTest {
         assertThat(res.getBalances(), IsNull.notNullValue());
         assertThat(res.getMilestoneIndex(), IsNull.notNullValue());
         assertThat(res.getDuration(), IsNull.notNullValue());
+    }
+    
+    @Test
+    @Category(IntegrationTest.class)
+    public void invalidAddressSpentFrom() throws ArgumentException {
+        try {
+            //Addresses with checksum aren't allowed, remove last 9 characters!
+            proxy.wereAddressesSpentFrom(TEST_ADDRESS_WITH_CHECKSUM);
+            fail("failed to throw error on wrong address hash");
+        } catch (ArgumentException e) {
+          //TODO verify correct error
+            //Success
+        }
+    }
+    
+    @Test
+    @Category(IntegrationTest.class)
+    public void addressIsSpentFrom() throws ArgumentException {
+        WereAddressesSpentFromResponse ret = proxy.wereAddressesSpentFrom(TEST_ADDRESS_SPENT);
+        assertTrue(ret.getStates()[0]);
+    }
+    
+    @Test
+    @Category(IntegrationTest.class)
+    public void addressIsNotSpentFrom() throws ArgumentException {
+        WereAddressesSpentFromResponse ret = proxy.wereAddressesSpentFrom(TEST_ADDRESS_UNSPENT);
+        assertFalse(ret.getStates()[0]);
     }
 }
