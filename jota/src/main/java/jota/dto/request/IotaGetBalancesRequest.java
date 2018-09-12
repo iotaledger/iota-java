@@ -67,10 +67,19 @@ public class IotaGetBalancesRequest extends IotaCommandRequest {
     /**
      * Sets the tips to serve as reference for the balance
      *
-     * @param tips
+     * @param tips The starting points we walk back from to find the balance of the addresses
      */
-    public void setTips(final String... tips) { this.tips = tips;}
+    public void setTips(final String... tips) { 
+        this.tips = tips;
+    }
 
-    public String[] getTips() { return tips; }
+    /**
+     * Gets the tips
+     * 
+     * @return the tips
+     */
+    public String[] getTips() { 
+        return tips; 
+    }
 }
 

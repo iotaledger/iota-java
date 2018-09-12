@@ -324,6 +324,7 @@ public class IotaAPICore {
      *
      * @param threshold The confirmation threshold, should be set to 100.
      * @param addresses The array list of addresses you want to get the confirmed balance from.
+     * @param tips The starting points we walk back from to find the balance of the addresses
      * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
      * @throws ArgumentException 
      */
@@ -337,6 +338,7 @@ public class IotaAPICore {
      *
      * @param threshold The confirmation threshold, should be set to 100.
      * @param addresses The list of addresses you want to get the confirmed balance from.
+     * @param tips The starting points we walk back from to find the balance of the addresses
      * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
      */
     public GetBalancesResponse getBalances(Integer threshold, List<String> addresses, List<String> tips) throws ArgumentException {
@@ -347,7 +349,19 @@ public class IotaAPICore {
             String addressO = Checksum.removeChecksum(address);
             addressesWithoutChecksum.add(addressO);
         }
-        return getBalances(threshold, addressesWithoutChecksum.toArray(new String[]{}), tips.toArray(new String[]{}));
+        String[] tipsArray = tips != null ? tips.toArray(new String[]{}) : null;
+        return getBalances(threshold, addressesWithoutChecksum.toArray(new String[]{}), tipsArray);
+    }
+    
+    /**
+     * Similar to getInclusionStates.
+     *
+     * @param threshold The confirmation threshold, should be set to 100.
+     * @param addresses The list of addresses you want to get the confirmed balance from.
+     * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
+     */
+    public GetBalancesResponse getBalances(Integer threshold, List<String> addresses) throws ArgumentException {
+        return getBalances(threshold, addresses, null);
     }
 
     /**
