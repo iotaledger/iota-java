@@ -651,9 +651,7 @@ public class IotaAPI extends IotaAPICore {
 
         long totalSum = 0;
         String bundleHash = bundle.getTransactions().get(0).getBundle();
-        System.out.println(bundle.getTransactions().get(0));
         
-
         ICurl curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
         curl.reset();
 
@@ -701,8 +699,6 @@ public class IotaAPI extends IotaAPICore {
 
         // Check if bundle hash is the same as returned by tx object
         if (!bundleFromTxString.equals(bundleHash)) {
-            System.out.println(bundleHash);
-            System.out.println(bundleFromTxString);
             throw new ArgumentException(INVALID_BUNDLE_HASH_ERROR);
         }
         
@@ -752,6 +748,48 @@ public class IotaAPI extends IotaAPICore {
         GetBalancesAndFormatResponse gbr = getInputs(seed, security, start, end, threshold);
 
         return GetAccountDataResponse.create(gna.getAddresses(), gtr.getTransfers(), gbr.getInputs(), gbr.getTotalBalance(), stopWatch.getElapsedTimeMili());
+    }
+    
+    /**
+     * Check if a list of addresses was ever spent from, in the current epoch, or in previous epochs.
+     * If the address has a checksum, it is removed
+     * 
+     * @param addresses the addresses to check
+     * @return list of address boolean checks
+     * @throws ArgumentException
+     */
+    public boolean[] checkWereAddressSpentFrom(String[] addresses) throws ArgumentException {
+        List<String> rawAddresses=new ArrayList<>();
+        for(String address: addresses) {
+            String rawAddress=null;
+            try {
+                if (Checksum.isAddressWithChecksum(address)) {
+                    rawAddress=Checksum.removeChecksum(address);
+                }
+            } catch (ArgumentException e) {}
+            if(rawAddress==null)
+                rawAddresses.add(address);
+            else
+                rawAddresses.add(rawAddress);
+        }
+        String[] spentAddresses = new String[rawAddresses.size()];
+        spentAddresses = rawAddresses.toArray(spentAddresses);
+        WereAddressesSpentFromResponse response = wereAddressesSpentFrom(spentAddresses);
+        return response.getStates();
+
+    }
+    
+    /**
+     * If the address has a checksum, it is removed
+     * 
+     * @param address the address to check
+     * @return list of address boolean checks
+     * @throws ArgumentException
+     */
+    public Boolean checkWereAddressSpentFrom(String address) throws ArgumentException {
+        String[] spentAddresses =new String[] {address};
+        boolean[] response = checkWereAddressSpentFrom(spentAddresses);
+        return response[0];
     }
 
     /**
