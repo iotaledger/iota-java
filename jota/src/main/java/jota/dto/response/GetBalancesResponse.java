@@ -6,7 +6,17 @@ package jota.dto.response;
 public class GetBalancesResponse extends AbstractResponse {
 
     private String[] balances;
+    private String[] references;
     private int milestoneIndex;
+    
+    /**
+     * Gets the references this balance was requested through
+     * 
+     * @return the references
+     */
+    public String[] getReferences() {
+        return references;
+    }
 
     /**
      * Gets the milestone index.
