@@ -6,7 +6,6 @@ package jota.error;
  * @author Adrian
  */
 public class ArgumentException extends BaseException {
-
     /**
      * Serial version UID
      */

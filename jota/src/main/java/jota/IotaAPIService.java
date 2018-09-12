@@ -159,4 +159,14 @@ public interface IotaAPIService {
     @Headers({CONTENT_TYPE_HEADER, USER_AGENT_HEADER})
     @POST("./")
     Call<StoreTransactionsResponse> storeTransactions(@Body IotaStoreTransactionsRequest request);
+
+    /**
+     * Checks the consistency of the subtangle descirbed by the provided tails.
+     * <p>
+     * {@code curl http://localhost:14265 -X POST -H 'X-IOTA-API-Version: 1.4.1' -H 'Content-Type: application/json'}
+     * {@code -d '{"command": "checkConsistency", "tails": ["AYHLOYXFXYNBX9L9TLS9LGKPGJCTHVPEVYNMZEEIPVBVLSIBZEJRKXYYOW9NXKTNQSVFBMGUKVYOZ9999"]}'}
+     */
+    @Headers({CONTENT_TYPE_HEADER, USER_AGENT_HEADER})
+    @POST("./")
+    Call<CheckConsistencyResponse> checkConsistency(@Body IotaCheckConsistencyRequest request);
 }
