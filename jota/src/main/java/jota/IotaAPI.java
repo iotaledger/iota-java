@@ -232,6 +232,7 @@ public class IotaAPI extends IotaAPICore {
      * @param trytes             The trytes.
      * @param depth              The depth.
      * @param minWeightMagnitude The minimum weight magnitude.
+     * @param reference          Hash of transaction to start random-walk from, used to make sure the tips returned reference a given transaction in their past.
      * @return Transactions objects.
      * @throws ArgumentException is thrown when invalid trytes is provided.
      */
@@ -802,15 +803,16 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Replays a transfer by doing Proof of Work again.
      *
-     * @param transaction        The transaction.
-     * @param depth              The depth.
-     * @param minWeightMagnitude The minimum weight magnitude.
+     * @param tailTransactionHash The hash of tail transaction.
+     * @param depth               The depth.
+     * @param minWeightMagnitude  The minimum weight magnitude.
+     * @param reference           Hash of transaction to start random-walk from, used to make sure the tips returned reference a given transaction in their past.
      * @return Analyzed Transaction objects.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public ReplayBundleResponse replayBundle(String transaction, int depth, int minWeightMagnitude, String reference) throws ArgumentException {
+    public ReplayBundleResponse replayBundle(String tailTransactionHash, int depth, int minWeightMagnitude, String reference) throws ArgumentException {
 
-        if (!InputValidator.isHash(transaction)) {
+        if (!InputValidator.isHash(tailTransactionHash)) {
             throw new ArgumentException(INVALID_TAIL_HASH_INPUT_ERROR);
         }
 
@@ -818,7 +820,7 @@ public class IotaAPI extends IotaAPICore {
 
         List<String> bundleTrytes = new ArrayList<>();
 
-        GetBundleResponse bundleResponse = getBundle(transaction);
+        GetBundleResponse bundleResponse = getBundle(tailTransactionHash);
         Bundle bundle = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
         for (Transaction trx : bundle.getTransactions()) {
 
@@ -843,7 +845,8 @@ public class IotaAPI extends IotaAPICore {
 
     /**
      * Wrapper function for getNodeInfo and getInclusionStates
-     *
+     * Uses the latest milestone as tip
+     * 
      * @param hashes The hashes.
      * @return Inclusion state.
      */

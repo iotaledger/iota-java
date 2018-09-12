@@ -261,8 +261,8 @@ public class IotaAPICore {
      * Get the inclusion states of a set of transactions. This is for determining if a transaction was accepted and confirmed by the network or not.
      * Search for multiple tips (and thus, milestones) to get past inclusion states of transactions.
      *
-     * @param transactions The ist of transactions you want to get the inclusion state for.
-     * @param tips         ThelList of tips (including milestones) you want to search for the inclusion state.
+     * @param transactions The list of transactions you want to get the inclusion state for.
+     * @param tips         List of tips (including milestones) you want to search for the inclusion state.
      * @return The inclusion states of a set of transactions.
      */
     public GetInclusionStateResponse getInclusionStates(String[] transactions, String[] tips) throws ArgumentException {
@@ -301,7 +301,7 @@ public class IotaAPICore {
      * Tip selection which returns trunkTransaction and branchTransaction.
      *
      * @param depth The number of bundles to go back to determine the transactions for approval.
-     * @param reference The reference transaction to start the random walk from.
+     * @param reference Hash of transaction to start random-walk from, used to make sure the tips returned reference a given transaction in their past.
      * @return The Tip selection which returns trunkTransaction and branchTransaction
      * @throws ArgumentException 
      */
