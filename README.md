@@ -23,6 +23,7 @@ All the boilerplate code for connecting to the node REST interface has been hidd
 1. [Installation](#installation)
     1. [Gradle Dependency](#gradle-dependency)
     1. [Maven Dependency](#maven-dependency)
+    1. [Manual](#manual)
 1. [Documentation](#documentation)
     1. [Getting Started](#getting-started)
     1. [Threading](#threading)
@@ -79,6 +80,21 @@ Add this in your module `pom.xml` file:
     <version>0.9.10</version>
 </dependency>
 ```
+
+### Manual
+
+To use the IOTA Java library by building the library yourself, the following steps can be used.
+
+##### Linking library
+Clone or download the project and import it into your favorite IDE. This will result in two projects; `jota` and `jota-parent`.
+Reference your new project to the "jota" project.
+
+##### Linking jar
+In order to build the jar; the following command should be run on the "jota" project:
+'mvn clean install -Prelease -DprofileIdEnabled=true'
+
+This will generate a jar with the following format: `jota-[VERSION]-jar-with-dependencies.jar`
+
 
 ## Documentation
 
