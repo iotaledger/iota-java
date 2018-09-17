@@ -77,9 +77,14 @@ Add this in your module `pom.xml` file:
 <dependency>
     <groupId>com.github.iotaledger.iota~lib~java</groupId>
     <artifactId>jota</artifactId>
-    <version>0.9.10</version>
+    <classifier>jar-with-dependencies</classifier>
+    <version>[VERSION_INFORMATION]</version>
 </dependency>
 ```
+For the [VERSION_INFORMATION], you can choose to set it to a release number, or the first 10 characters of a commit hash.
+`<version>17e0de8ed5</version>` or `<version>0.9.10</version>`
+
+Or check it out at [Jitpack](https://jitpack.io/#iotaledger/iota~lib~java) for more specific information
 
 ### Manual
 
