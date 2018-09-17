@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.assertFalse;
@@ -144,7 +145,7 @@ public class IotaCoreApiTest {
     @Test // very long execution
     @Category(IntegrationTest.class)
     public void shouldGetTransactionsToApprove() throws ArgumentException {
-        GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(15);
+        GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(15, null);
         assertThat(res.getTrunkTransaction(), IsNull.notNullValue());
         assertThat(res.getBranchTransaction(), IsNull.notNullValue());
     }
@@ -172,9 +173,8 @@ public class IotaCoreApiTest {
     @Test
     @Category(IntegrationTest.class)
     public void shouldGetBalances() throws ArgumentException {
-        GetBalancesResponse res = proxy.getBalances(100, Collections.singletonList(TEST_ADDRESS_WITH_CHECKSUM));
-        System.out.println(res.getDuration());
-        
+        GetBalancesResponse res = proxy.getBalances(100, Collections.singletonList(TEST_ADDRESS_WITH_CHECKSUM), null);
+        assertThat(res.getReferences(), IsNull.notNullValue());
         assertThat(res.getBalances(), IsNull.notNullValue());
         assertThat(res.getMilestoneIndex(), IsNull.notNullValue());
         assertThat(res.getDuration(), IsNull.notNullValue());

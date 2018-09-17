@@ -9,21 +9,23 @@ public class IotaGetBalancesRequest extends IotaCommandRequest {
 
     private String[] addresses;
     private Integer threshold;
+    private String[] tips;
 
     /**
      * Initializes a new instance of the IotaGetBalancesRequest class.
      */
-    private IotaGetBalancesRequest(final Integer threshold, final String... addresses) {
+    private IotaGetBalancesRequest(final Integer threshold, final String[] addresses, final String... tips) {
         super(IotaAPICommands.GET_BALANCES);
         this.addresses = addresses;
         this.threshold = threshold;
+        this.tips = tips;
     }
 
     /**
      * Create a new instance of the IotaGetBalancesRequest class.
      */
-    public static IotaGetBalancesRequest createIotaGetBalancesRequest(final Integer threshold, final String... addresses) {
-        return new IotaGetBalancesRequest(threshold, addresses);
+    public static IotaGetBalancesRequest createIotaGetBalancesRequest(final Integer threshold, final String[] addresses, final String... tips) {
+        return new IotaGetBalancesRequest(threshold, addresses, tips);
     }
 
     /**
@@ -60,6 +62,24 @@ public class IotaGetBalancesRequest extends IotaCommandRequest {
      */
     public void setThreshold(Integer threshold) {
         this.threshold = threshold;
+    }
+
+    /**
+     * Sets the tips to serve as reference for the balance
+     *
+     * @param tips The starting points we walk back from to find the balance of the addresses
+     */
+    public void setTips(final String... tips) { 
+        this.tips = tips;
+    }
+
+    /**
+     * Gets the tips
+     * 
+     * @return the tips
+     */
+    public String[] getTips() { 
+        return tips; 
     }
 }
 

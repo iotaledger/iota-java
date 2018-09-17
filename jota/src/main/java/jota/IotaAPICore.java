@@ -261,8 +261,8 @@ public class IotaAPICore {
      * Get the inclusion states of a set of transactions. This is for determining if a transaction was accepted and confirmed by the network or not.
      * Search for multiple tips (and thus, milestones) to get past inclusion states of transactions.
      *
-     * @param transactions The ist of transactions you want to get the inclusion state for.
-     * @param tips         ThelList of tips (including milestones) you want to search for the inclusion state.
+     * @param transactions The list of transactions you want to get the inclusion state for.
+     * @param tips         List of tips (including milestones) you want to search for the inclusion state.
      * @return The inclusion states of a set of transactions.
      */
     public GetInclusionStateResponse getInclusionStates(String[] transactions, String[] tips) throws ArgumentException {
@@ -301,11 +301,12 @@ public class IotaAPICore {
      * Tip selection which returns trunkTransaction and branchTransaction.
      *
      * @param depth The number of bundles to go back to determine the transactions for approval.
-     * @param reference The reference transaction to start the random walk from.
+     * @param reference Hash of transaction to start random-walk from, used to make sure the tips returned reference a given transaction in their past.
      * @return The Tip selection which returns trunkTransaction and branchTransaction
      * @throws ArgumentException 
      */
     public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth, String reference) throws ArgumentException {
+
         final Call<GetTransactionsToApproveResponse> res = service.getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(depth, reference));
         return wrapCheckedException(res).body();
     }
@@ -323,11 +324,12 @@ public class IotaAPICore {
      *
      * @param threshold The confirmation threshold, should be set to 100.
      * @param addresses The array list of addresses you want to get the confirmed balance from.
+     * @param tips The starting points we walk back from to find the balance of the addresses
      * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
      * @throws ArgumentException 
      */
-    private GetBalancesResponse getBalances(Integer threshold, String[] addresses) throws ArgumentException {
-        final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses));
+    private GetBalancesResponse getBalances(Integer threshold, String[] addresses, String[] tips) throws ArgumentException {
+        final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses, tips));
         return wrapCheckedException(res).body();
     }
 
@@ -336,9 +338,10 @@ public class IotaAPICore {
      *
      * @param threshold The confirmation threshold, should be set to 100.
      * @param addresses The list of addresses you want to get the confirmed balance from.
+     * @param tips The starting points we walk back from to find the balance of the addresses
      * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
      */
-    public GetBalancesResponse getBalances(Integer threshold, List<String> addresses) throws ArgumentException {
+    public GetBalancesResponse getBalances(Integer threshold, List<String> addresses, List<String> tips) throws ArgumentException {
 
         List<String> addressesWithoutChecksum = new ArrayList<>();
 
@@ -346,7 +349,19 @@ public class IotaAPICore {
             String addressO = Checksum.removeChecksum(address);
             addressesWithoutChecksum.add(addressO);
         }
-        return getBalances(threshold, addressesWithoutChecksum.toArray(new String[]{}));
+        String[] tipsArray = tips != null ? tips.toArray(new String[]{}) : null;
+        return getBalances(threshold, addressesWithoutChecksum.toArray(new String[]{}), tipsArray);
+    }
+    
+    /**
+     * Similar to getInclusionStates.
+     *
+     * @param threshold The confirmation threshold, should be set to 100.
+     * @param addresses The list of addresses you want to get the confirmed balance from.
+     * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
+     */
+    public GetBalancesResponse getBalances(Integer threshold, List<String> addresses) throws ArgumentException {
+        return getBalances(threshold, addresses, null);
     }
 
     /**

@@ -232,11 +232,12 @@ public class IotaAPI extends IotaAPICore {
      * @param trytes             The trytes.
      * @param depth              The depth.
      * @param minWeightMagnitude The minimum weight magnitude.
+     * @param reference          Hash of transaction to start random-walk from, used to make sure the tips returned reference a given transaction in their past.
      * @return Transactions objects.
      * @throws ArgumentException is thrown when invalid trytes is provided.
      */
-    public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude) throws ArgumentException {
-        final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth);
+    public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude, final String reference) throws ArgumentException {
+        final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth, reference);
 
         // attach to tangle - do pow
         final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
@@ -355,11 +356,12 @@ public class IotaAPI extends IotaAPICore {
      * @param transfers      Array of transfer objects.
      * @param remainder      If defined, this address will be used for sending the remainder value (of the inputs) to.
      * @param inputs         The inputs.
+     * @param tips           The starting points we walk back from to find the balance of the addresses
      * @param validateInputs whether or not to validate the balances of the provided inputs
      * @return Returns bundle trytes.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs, boolean validateInputs) throws ArgumentException {
+    public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs, List<Transaction> tips, boolean validateInputs) throws ArgumentException {
 
         // validate seed
         if ((!InputValidator.isValidSeed(seed))) {
@@ -455,8 +457,16 @@ public class IotaAPI extends IotaAPICore {
                     inputsAddresses.add(i.getAddress());
                 }
 
+                List<String> tipHashes = null;
+                if (tips != null) {
+                    tipHashes = new ArrayList<>();
+                
+                    for (final Transaction tx: tips) {
+                        tipHashes.add(tx.getHash());
+                    }
+                }
 
-                GetBalancesResponse balancesResponse = getBalances(100, inputsAddresses);
+                GetBalancesResponse balancesResponse = getBalances(100, inputsAddresses, tipHashes);
                 String[] balances = balancesResponse.getBalances();
 
                 List<Input> confirmedInputs = new ArrayList<>();
@@ -494,8 +504,8 @@ public class IotaAPI extends IotaAPICore {
             //  If no inputs provided, derive the addresses from the seed and
             //  confirm that the inputs exceed the threshold
             else {
-
-                @SuppressWarnings("unchecked") GetBalancesAndFormatResponse newinputs = getInputs(seed, security, 0, 0, totalValue);
+                GetBalancesAndFormatResponse newinputs = getInputs(seed, security, 0, 0, totalValue);
+                
                 // If inputs with enough balance
                 return addRemainder(seed, security, newinputs.getInputs(), bundle, tag, totalValue, remainder, signatureFragments);
             }
@@ -524,9 +534,10 @@ public class IotaAPI extends IotaAPICore {
      * @param start     Starting key index.
      * @param end       Ending key index.
      * @param threshold Min balance required.
+     * @param tips      The starting points we walk back from to find the balance of the addresses
      * @throws ArgumentException is thrown when the specified input is not valid.
      **/
-    public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold) throws ArgumentException {
+    public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold, final String... tips) throws ArgumentException {
 
         // validate the seed
         if ((!InputValidator.isValidSeed(seed))) {
@@ -559,7 +570,7 @@ public class IotaAPI extends IotaAPICore {
                 allAddresses.add(address);
             }
 
-            return getBalanceAndFormat(allAddresses, threshold, start, stopWatch, security);
+            return getBalanceAndFormat(allAddresses, Arrays.asList(tips), threshold, start, stopWatch, security);
         }
         //  Case 2: iterate till threshold || end
         //
@@ -568,7 +579,7 @@ public class IotaAPI extends IotaAPICore {
         //  We then do getBalance, format the output and return it
         else {
             final GetNewAddressResponse res = getNewAddress(seed, security, start, false, 0, true);
-            return getBalanceAndFormat(res.getAddresses(), threshold, start, stopWatch, security);
+            return getBalanceAndFormat(res.getAddresses(), Arrays.asList(tips), threshold, start, stopWatch, security);
         }
     }
 
@@ -576,6 +587,7 @@ public class IotaAPI extends IotaAPICore {
      * Gets the balances and formats the output.
      *
      * @param addresses The addresses.
+     * @param tips      The starting points we walk back from to find the balance of the addresses
      * @param threshold Min balance required.
      * @param start     Starting key index.
      * @param stopWatch the stopwatch.
@@ -583,13 +595,13 @@ public class IotaAPI extends IotaAPICore {
      * @return Inputs object.
      * @throws ArgumentException is thrown when the specified security level is not valid.
      **/
-    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, long threshold, int start, StopWatch stopWatch, int security) throws ArgumentException, IllegalStateException {
+    public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, final List<String> tips, long threshold, int start, StopWatch stopWatch, int security) throws ArgumentException, IllegalStateException {
 
         if (security < 1) {
             throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 
-        GetBalancesResponse getBalancesResponse = getBalances(100, addresses);
+        GetBalancesResponse getBalancesResponse = getBalances(100, addresses, tips);
         List<String> balances = Arrays.asList(getBalancesResponse.getBalances());
 
         // If threshold defined, keep track of whether reached or not
@@ -794,10 +806,11 @@ public class IotaAPI extends IotaAPICore {
      * @param tailTransactionHash The hash of tail transaction.
      * @param depth               The depth.
      * @param minWeightMagnitude  The minimum weight magnitude.
+     * @param reference           Hash of transaction to start random-walk from, used to make sure the tips returned reference a given transaction in their past.
      * @return Analyzed Transaction objects.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public ReplayBundleResponse replayBundle(String tailTransactionHash, int depth, int minWeightMagnitude) throws ArgumentException {
+    public ReplayBundleResponse replayBundle(String tailTransactionHash, int depth, int minWeightMagnitude, String reference) throws ArgumentException {
 
         if (!InputValidator.isHash(tailTransactionHash)) {
             throw new ArgumentException(INVALID_TAIL_HASH_INPUT_ERROR);
@@ -815,7 +828,7 @@ public class IotaAPI extends IotaAPICore {
         }
 
         Collections.reverse(bundleTrytes);
-        List<Transaction> trxs = sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), depth, minWeightMagnitude);
+        List<Transaction> trxs = sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), depth, minWeightMagnitude, reference);
 
         Boolean[] successful = new Boolean[trxs.size()];
 
@@ -832,7 +845,8 @@ public class IotaAPI extends IotaAPICore {
 
     /**
      * Wrapper function for getNodeInfo and getInclusionStates
-     *
+     * Uses the latest milestone as tip
+     * 
      * @param hashes The hashes.
      * @return Inclusion state.
      */
@@ -856,20 +870,23 @@ public class IotaAPI extends IotaAPICore {
      * @param remainderAddress   If defined, this remainderAddress will be used for sending the remainder value (of the inputs) to.
      * @param validateInputs     Whether or not to validate the balances of the provided inputs.
      * @param validateInputAddresses  Whether or not to validate if the destination address is already used, if a key reuse is detect ot it's send to inputs.
+     * @param tips               The starting points we walk back from to find the balance of the addresses
      * @return Array of valid Transaction objects.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, List<Input> inputs, String remainderAddress, boolean validateInputs, boolean validateInputAddresses) throws ArgumentException {
+    public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, List<Input> inputs, String remainderAddress, boolean validateInputs, boolean validateInputAddresses, final List<Transaction> tips) throws ArgumentException {
 
         StopWatch stopWatch = new StopWatch();
 
-        List<String> trytes = prepareTransfers(seed, security, transfers, remainderAddress, inputs, validateInputs);
+        List<String> trytes = prepareTransfers(seed, security, transfers, remainderAddress, inputs, tips, validateInputs);
 
         if (validateInputAddresses) {
             validateTransfersAddresses(seed, security, trytes);
         }
 
-        List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude);
+        String reference = tips.size() > 0 ? tips.get(0).getHash(): null;
+
+        List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude, reference);
 
         Boolean[] successful = new Boolean[trxs.size()];
 
@@ -932,7 +949,41 @@ public class IotaAPI extends IotaAPICore {
             throw new ArgumentException(GET_TRYTES_RESPONSE_ERROR);
         }
     }
-
+    
+    /**
+     * Prepares transfer by generating the bundle with the corresponding cosigner transactions.
+     * Does not contain signatures.
+     *
+     * @param securitySum      The sum of security levels used by all co-signers.
+     * @param inputAddress     Array of input addresses as well as the securitySum.
+     * @param remainderAddress Has to be generated by the cosigners before initiating the transfer, can be null if fully spent.
+     * @param transfers        List of {@link Transfer} we want to make using the unputAddresses
+     * @return Bundle of transaction objects.
+     * @throws ArgumentException is thrown when an invalid argument is provided.
+     * @throws IllegalStateException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
+     */
+    public List<Transaction> initiateTransfer(int securitySum, final String inputAddress, String remainderAddress,
+                                              final List<Transfer> transfers) throws ArgumentException {
+        return initiateTransfer(securitySum, inputAddress, remainderAddress, transfers, null, false);
+    }
+    
+    /**
+     * Prepares transfer by generating the bundle with the corresponding cosigner transactions.
+     * Does not contain signatures.
+     *
+     * @param securitySum      The sum of security levels used by all co-signers.
+     * @param inputAddress     Array of input addresses as well as the securitySum.
+     * @param remainderAddress Has to be generated by the cosigners before initiating the transfer, can be null if fully spent.
+     * @param transfers        List of {@link Transfer} we want to make using the unputAddresses
+     * @param tips             The starting points for checking if the balances of the input addresses contain enough to make this transfer
+     * @return Bundle of transaction objects.
+     * @throws ArgumentException is thrown when an invalid argument is provided.
+     * @throws IllegalStateException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
+     */
+    public List<Transaction> initiateTransfer(int securitySum, final String inputAddress, String remainderAddress,
+                                              final List<Transfer> transfers, List<Transaction> tips) throws ArgumentException {
+        return initiateTransfer(securitySum, inputAddress, remainderAddress, transfers, tips, false);
+    }
 
     /**
      * Prepares transfer by generating the bundle with the corresponding cosigner transactions.
@@ -941,12 +992,34 @@ public class IotaAPI extends IotaAPICore {
      * @param securitySum      The sum of security levels used by all co-signers.
      * @param inputAddress     Array of input addresses as well as the securitySum.
      * @param remainderAddress Has to be generated by the cosigners before initiating the transfer, can be null if fully spent.
+     * @param transfers        List of {@link Transfer} we want to make using the unputAddresses
+     * @param testMode         If were running unit tests, set to true to bypass total value check
      * @return Bundle of transaction objects.
      * @throws ArgumentException is thrown when an invalid argument is provided.
      * @throws IllegalStateException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
      */
-    public List<Transaction> initiateTransfer(int securitySum, final String inputAddress, String remainderAddress,
-                                              final List<Transfer> transfers, boolean testMode) throws ArgumentException {
+    public List<Transaction> initiateTransfer(int securitySum, String inputAddress, String remainderAddress,
+                                              List<Transfer> transfers, boolean testMode) throws ArgumentException {
+        return initiateTransfer(securitySum, inputAddress, remainderAddress, transfers, null, testMode);
+    }
+
+    /**
+     * Prepares transfer by generating the bundle with the corresponding cosigner transactions.
+     * Does not contain signatures.
+     *
+     * @param securitySum      The sum of security levels used by all co-signers.
+     * @param inputAddress     Array of input addresses as well as the securitySum.
+     * @param remainderAddress Has to be generated by the cosigners before initiating the transfer, can be null if fully spent.
+     * @param transfers        List of {@link Transfer} we want to make using the unputAddresses
+     * @param tips             The starting points for checking if the balances of the input addresses contain enough to make this transfer
+     * @param testMode         If were running unit tests, set to true to bypass total value check
+     * @return Bundle of transaction objects.
+     * @throws ArgumentException is thrown when an invalid argument is provided.
+     * @throws IllegalStateException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
+     */
+    public List<Transaction> initiateTransfer(int securitySum, String inputAddress, String remainderAddress,
+                                              List<Transfer> transfers, List<Transaction> tips,
+                                              boolean testMode) throws ArgumentException {
 
         // validate input address
         if (!InputValidator.isAddress(inputAddress))
@@ -1034,7 +1107,16 @@ public class IotaAPI extends IotaAPICore {
         // Get inputs if we are sending tokens
         if (totalValue != 0) {
 
-            GetBalancesResponse balancesResponse = getBalances(100, Collections.singletonList(inputAddress));
+            List<String> tipHashes = null;
+            if (tips != null) {
+                tipHashes = new ArrayList<>(tips.size());
+                for(final Transaction tx: tips) {
+                    tipHashes.add(tx.getHash());
+                }
+            }
+            
+
+            GetBalancesResponse balancesResponse = getBalances(100, Collections.singletonList(inputAddress), tipHashes);
             String[] balances = balancesResponse.getBalances();
 
             long totalBalance = 0;
@@ -1049,6 +1131,7 @@ public class IotaAPI extends IotaAPICore {
             long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
 
             // bypass the balance checks during unit testing
+            //TODO remove this uglyness
             if (testMode)
                 totalBalance += 1000;
 
