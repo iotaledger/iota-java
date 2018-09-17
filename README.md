@@ -56,7 +56,7 @@ allprojects {
 Add this in your module `build.gradle` file:
 ```gradle
 dependencies {
-    compile 'com.github.iotaledger:iota~lib~java:0.9.10'
+    compile 'com.github.iotaledger:iota~lib~java:0.9.11'
 }
 ```
 
@@ -78,11 +78,11 @@ Add this in your module `pom.xml` file:
     <groupId>com.github.iotaledger.iota~lib~java</groupId>
     <artifactId>jota</artifactId>
     <classifier>jar-with-dependencies</classifier>
-    <version>[VERSION_INFORMATION]</version>
+    <version>0.9.11</version>
 </dependency>
 ```
 For the [VERSION_INFORMATION], you can choose to set it to a release number, or the first 10 characters of a commit hash.
-`<version>17e0de8ed5</version>` or `<version>0.9.10</version>`
+`<version>17e0de8ed5</version>` or `<version>0.9.11</version>`
 
 Or check it out at [Jitpack](https://jitpack.io/#iotaledger/iota~lib~java) for more specific information
 
@@ -156,7 +156,7 @@ Here are some of the most commonly used API functions. Each list item below link
 #### [**`IotaAPI`**](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html)
 
 - [`getTransactionsObjects()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#getTransactionsObjects-java.lang.String:A-)
-- [`findTransactionObjects()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#findTransactionObjects-java.lang.String:A-)
+- [`findTransactionObjects()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#findTransactionObjects-java.lang.String:A-) - [`getTransactionsObjects()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#getTransactionsObjects-java.lang.String:A-)
 - [`getLatestInclusion()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#getLatestInclusion-java.lang.String:A-)
 - [`broadcastAndStore()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#broadcastAndStore-java.lang.String...-)
 - [`getNewAddress()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#getNewAddress-java.lang.String-int-int-boolean-int-boolean-)
@@ -233,7 +233,7 @@ The following third party library dependencies and versions are used by the IOTA
 - [Legion of the Bouncy Castle](https://www.bouncycastle.org/java.html) Java cryptography APIs: `1.58`
 
 ## Changes:
-
+- Changes in [**v0.9.11**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.6...0.9.11)
 - Changes in [**v0.9.10**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.6...0.9.10)
 - Changes in [**v0.9.6**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.5...v0.9.6)
 - Changes in [**v0.9.5**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.4...v0.9.5)
@@ -286,8 +286,8 @@ limitations under the License.
 [travis-badge]: https://travis-ci.org/iotaledger/iota.lib.java.svg?branch=master
 [license]: https://github.com/iotaledger/iota.lib.java/blob/master/LICENSE
 [license-badge]: https://img.shields.io/github/license/iotaledger/iota.lib.java.svg
-[iota-iri]: https://github.com/iotaledger/iri/tree/v1.4.0
-[iota-iri-badge]: https://img.shields.io/badge/IOTA%20IRI%20compatibility-v1.4.0-blue.svg
+[iota-iri]: https://github.com/iotaledger/iri/tree/v1.5.0
+[iota-iri-badge]: https://img.shields.io/badge/IOTA%20IRI%20compatibility-v1.5.0-blue.svg
 [iota-api]: https://iota.readme.io/reference
 [iota-api-badge]: https://img.shields.io/badge/IOTA%20API%20coverage-14/15%20commands-red.svg
 [javadoc]: https://iotaledger.github.io/iota.lib.java/javadoc/
