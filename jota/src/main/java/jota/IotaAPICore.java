@@ -418,6 +418,7 @@ public class IotaAPICore {
         }
 
         if (localPoW != null) {
+            System.out.println("Doing local PoW!");
             final String[] resultTrytes = new String[trytes.length];
             String previousTransaction = null;
             for (int i = 0; i < trytes.length; i++) {
