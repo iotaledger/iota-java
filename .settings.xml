@@ -10,7 +10,7 @@
       <password>${env.SONATYPE_PASSWORD}</password>
     </server>
     <server>
-      <id>bintray</id>
+      <id>bintray-iotaledger-maven</id>
       <username>${env.BINTRAY_USER}</username>
       <password>${env.BINTRAY_KEY}</password>
     </server>
