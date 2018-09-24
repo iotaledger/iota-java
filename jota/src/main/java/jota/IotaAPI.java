@@ -884,7 +884,7 @@ public class IotaAPI extends IotaAPICore {
             validateTransfersAddresses(seed, security, trytes);
         }
 
-        String reference = tips.size() > 0 ? tips.get(0).getHash(): null;
+        String reference = tips != null && tips.size() > 0 ? tips.get(0).getHash(): null;
 
         List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude, reference);
 
