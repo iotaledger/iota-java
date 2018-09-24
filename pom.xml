@@ -4,7 +4,7 @@
 
     <groupId>org.iota</groupId>
     <artifactId>jota-parent</artifactId>
-    <version>0.9.11</version>
+    <version>1.0.0-beta1</version>
     <packaging>pom</packaging>
     <name>JOTA</name>
     <description>JOTA library is a simple Java wrapper around IOTA Node's JSON-REST HTTP interface.</description>
@@ -113,7 +113,8 @@
 
     <distributionManagement>
         <repository>
-            <id>bintray</id>
+            <id>bintray-iotaledger-maven</id>
+            <name>iotaledger-maven</name>
             <url>https://api.bintray.com/maven/iotaledger/maven/jota/;publish=1</url>
         </repository>
         <snapshotRepository>
@@ -155,9 +156,6 @@
     <profiles>
         <profile>
             <id>release</id>
-            <activation>
-	            <activeByDefault>true</activeByDefault>
-	        </activation>
             <build>
                 <plugins>
                     <plugin>
