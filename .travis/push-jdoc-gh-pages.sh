@@ -1,17 +1,17 @@
 #!/bin/bash
 
-if [ "$TRAVIS_REPO_SLUG" == "iotaledger/iota.lib.java" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+if [ "$TRAVIS_REPO_SLUG" == "iotaledger/iota-java" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 
   echo -e "Publishing javadoc...\n"
 
-  if [ -d "/home/travis/build/iotaledger/iota.lib.java/jota/target/apidocs/" ]; then
+  if [ -d "/home/travis/build/iotaledger/iota-java/jota/target/apidocs/" ]; then
   
-      cp -R "/home/travis/build/iotaledger/iota.lib.java/jota/target/apidocs/" $HOME/javadoc-latest
+      cp -R "/home/travis/build/iotaledger/iota-java/jota/target/apidocs/" $HOME/javadoc-latest
 
       cd $HOME
       git config --global user.email "travis@travis-ci.org"
       git config --global user.name "travis-ci"
-      git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/iotaledger/iota.lib.java.git gh-pages > /dev/null
+      git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/iotaledger/iota-java.git gh-pages > /dev/null
 
       cd gh-pages
       git rm -rf ./javadoc
