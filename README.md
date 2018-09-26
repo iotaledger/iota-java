@@ -56,7 +56,7 @@ allprojects {
 Add this in your module `build.gradle` file:
 ```gradle
 dependencies {
-    compile 'com.github.iotaledger:iota-java:0.9.11'
+    compile 'com.github.iotaledger:iota-java:1.0.0-beta1'
 }
 ```
 
@@ -82,7 +82,7 @@ Add this in your module `pom.xml` file:
 </dependency>
 ```
 For the [VERSION_INFORMATION], you can choose to set it to a release number, or the first 10 characters of a commit hash.
-`<version>17e0de8ed5</version>` or `<version>0.9.11</version>`
+`<version>17e0de8ed5</version>` or `<version>1.0.0-beta1</version>`
 
 Or check it out at [Jitpack](https://jitpack.io/#iotaledger/iota-java) for more specific information
 
