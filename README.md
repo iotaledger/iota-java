@@ -56,7 +56,7 @@ allprojects {
 Add this in your module `build.gradle` file:
 ```gradle
 dependencies {
-    compile 'com.github.iotaledger:iota~lib~java:0.9.11'
+    compile 'com.github.iotaledger:iota-java:0.9.11'
 }
 ```
 
@@ -75,16 +75,16 @@ To use the IOTA Java library in your Maven build add this to your root `pom.xml`
 Add this in your module `pom.xml` file:
 ```xml
 <dependency>
-    <groupId>com.github.iotaledger.iota~lib~java</groupId>
+    <groupId>com.github.iotaledger.iota-java</groupId>
     <artifactId>jota</artifactId>
     <classifier>jar-with-dependencies</classifier>
-    <version>0.9.11</version>
+    <version>[VERSION_INFORMATION]</version>
 </dependency>
 ```
 For the [VERSION_INFORMATION], you can choose to set it to a release number, or the first 10 characters of a commit hash.
 `<version>17e0de8ed5</version>` or `<version>0.9.11</version>`
 
-Or check it out at [Jitpack](https://jitpack.io/#iotaledger/iota~lib~java) for more specific information
+Or check it out at [Jitpack](https://jitpack.io/#iotaledger/iota-java) for more specific information
 
 ### Manual
 
@@ -280,22 +280,22 @@ limitations under the License.
 ```
 
 [iota-logo]: https://raw.githubusercontent.com/iotaledger/documentation/master/source/images/iota-logo.png
-[jitpack]: https://jitpack.io/#iotaledger/iota.lib.java
-[jitpack-badge]: https://jitpack.io/v/iotaledger/iota.lib.java.svg
-[travis]: https://travis-ci.org/iotaledger/iota.lib.java
+[jitpack]: https://jitpack.io/#iotaledger/iota-java
+[jitpack-badge]: https://jitpack.io/v/iotaledger/iota-java.svg
+[travis]: https://travis-ci.org/iotaledger/iota-java
 [travis-badge]: https://travis-ci.org/iotaledger/iota.lib.java.svg?branch=master
 [license]: https://github.com/iotaledger/iota.lib.java/blob/master/LICENSE
-[license-badge]: https://img.shields.io/github/license/iotaledger/iota.lib.java.svg
+[license-badge]: https://img.shields.io/github/license/iotaledger/iota-java.svg
 [iota-iri]: https://github.com/iotaledger/iri/tree/v1.5.0
 [iota-iri-badge]: https://img.shields.io/badge/IOTA%20IRI%20compatibility-v1.5.0-blue.svg
 [iota-api]: https://iota.readme.io/reference
 [iota-api-badge]: https://img.shields.io/badge/IOTA%20API%20coverage-14/15%20commands-red.svg
-[javadoc]: https://iotaledger.github.io/iota.lib.java/javadoc/
-[issues]: https://github.com/iotaledger/iota.lib.java/issues
-[new-issue]: https://github.com/iotaledger/iota.lib.java/issues/new
-[pull-requests]: https://github.com/iotaledger/iota.lib.java/pulls
-[new-pull-request]: https://github.com/iotaledger/iota.lib.java/compare
-[contribution-guidelines]: https://github.com/iotaledger/iota.lib.java/blob/master/CONTRIBUTING.md
-[tests]: https://github.com/iotaledger/iota.lib.java/tree/master/jota/src/test/java/jota
+[javadoc]: https://iotaledger.github.io/iota-java/javadoc/
+[issues]: https://github.com/iotaledger/iota-java/issues
+[new-issue]: https://github.com/iotaledger/iota-java/issues/new
+[pull-requests]: https://github.com/iotaledger/iota-java/pulls
+[new-pull-request]: https://github.com/iotaledger/iota-java/compare
+[contribution-guidelines]: https://github.com/iotaledger/iota-java/blob/master/CONTRIBUTING.md
+[tests]: https://github.com/iotaledger/iota-java/tree/master/jota/src/test/java/jota
 [iota-discord]: https://discord.gg/7Gu2mG5
 [iota-forum]: https://forum.iota.org/

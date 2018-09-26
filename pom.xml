@@ -157,7 +157,7 @@
         <profile>
             <id>release</id>
             <activation>
-		      <activeByDefault>true</activeByDefault>
+		          <activeByDefault>true</activeByDefault>
 		    </activation>
             <build>
                 <plugins>
