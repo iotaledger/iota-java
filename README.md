@@ -149,74 +149,74 @@ If you think there's something missing in the Javadoc, submit an [issue][new-iss
 
 The IOTA Java library implements both the [**official API**][iota-api], as well as some newly proposed functionality (such as _signing_, _bundles_, _utilities_ and _conversion_).
 
-A full list of all IOTA JSON-REST API commands currently supported by the IOTA Java library can be found in the [commands enum](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPICommands.html#enum.constant.summary).
+A full list of all IOTA JSON-REST API commands currently supported by the IOTA Java library can be found in the [commands enum](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPICommands.html#enum.constant.summary).
 
 Here are some of the most commonly used API functions. Each list item below links to its corresponding [**Javadoc**][javadoc] where you can find _method signatures_, _preconditions_, _side-effects_ and _invariants_.
 
-#### [**`IotaAPI`**](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html)
+#### [**`IotaAPI`**](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html)
 
-- [`getTransactionsObjects()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#getTransactionsObjects-java.lang.String:A-)
-- [`findTransactionObjects()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#findTransactionObjects-java.lang.String:A-) - [`getTransactionsObjects()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#getTransactionsObjects-java.lang.String:A-)
-- [`getLatestInclusion()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#getLatestInclusion-java.lang.String:A-)
-- [`broadcastAndStore()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#broadcastAndStore-java.lang.String...-)
-- [`getNewAddress()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#getNewAddress-java.lang.String-int-int-boolean-int-boolean-)
-- [`getInputs()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#getInputs-java.lang.String-int-int-int-long-)
-- [`prepareTransfers()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#prepareTransfers-java.lang.String-int-java.util.List-java.lang.String-java.util.List-boolean-)
-- [`sendTrytes()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#sendTrytes-java.lang.String:A-int-int-)
-- [`sendTransfer()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#sendTransfer-java.lang.String-int-int-int-java.util.List-jota.model.Input:A-java.lang.String-)
-- [`replayBundle()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#replayBundle-java.lang.String-int-int-)
-- [`getBundle()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#getBundle-java.lang.String-)
-- [`getTransfers()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#getTransfers-java.lang.String-int-java.lang.Integer-java.lang.Integer-java.lang.Boolean-)
-- [`initiateTransfer()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#initiateTransfer-int-java.lang.String-java.lang.String-java.util.List-boolean-)
-- [`getAccountData()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/IotaAPI.html#getAccountData-java.lang.String-int-int-boolean-int-boolean-int-int-boolean-long-)
+- [`getTransactionsObjects()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getTransactionsObjects-java.lang.String:A-)
+- [`findTransactionObjects()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#findTransactionObjects-java.lang.String:A-) - [`getTransactionsObjects()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getTransactionsObjects-java.lang.String:A-)
+- [`getLatestInclusion()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getLatestInclusion-java.lang.String:A-)
+- [`broadcastAndStore()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#broadcastAndStore-java.lang.String...-)
+- [`getNewAddress()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getNewAddress-java.lang.String-int-int-boolean-int-boolean-)
+- [`getInputs()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getInputs-java.lang.String-int-int-int-long-)
+- [`prepareTransfers()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#prepareTransfers-java.lang.String-int-java.util.List-java.lang.String-java.util.List-boolean-)
+- [`sendTrytes()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#sendTrytes-java.lang.String:A-int-int-)
+- [`sendTransfer()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#sendTransfer-java.lang.String-int-int-int-java.util.List-jota.model.Input:A-java.lang.String-)
+- [`replayBundle()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#replayBundle-java.lang.String-int-int-)
+- [`getBundle()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getBundle-java.lang.String-)
+- [`getTransfers()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getTransfers-java.lang.String-int-java.lang.Integer-java.lang.Integer-java.lang.Boolean-)
+- [`initiateTransfer()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#initiateTransfer-int-java.lang.String-java.lang.String-java.util.List-boolean-)
+- [`getAccountData()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getAccountData-java.lang.String-int-int-boolean-int-boolean-int-int-boolean-long-)
 
-#### [**`IotaUnitConverter`**](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/IotaUnitConverter.html)
+#### [**`IotaUnitConverter`**](https://iotaledger.github.io/iota-java/javadoc/jota/utils/IotaUnitConverter.html)
 
-- [`convertUnits()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/IotaUnitConverter.html#convertUnits-long-jota.utils.IotaUnits-jota.utils.IotaUnits-)
+- [`convertUnits()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/IotaUnitConverter.html#convertUnits-long-jota.utils.IotaUnits-jota.utils.IotaUnits-)
 
-#### [**`Checksum`**](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Checksum.html)
+#### [**`Checksum`**](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Checksum.html)
 
-- [`addChecksum()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Checksum.html#addChecksum-java.lang.String-)
-- [`removeChecksum()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Checksum.html#removeChecksum-java.lang.String-)
-- [`isValidChecksum()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Checksum.html#isValidChecksum-java.lang.String-)
+- [`addChecksum()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Checksum.html#addChecksum-java.lang.String-)
+- [`removeChecksum()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Checksum.html#removeChecksum-java.lang.String-)
+- [`isValidChecksum()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Checksum.html#isValidChecksum-java.lang.String-)
 
-#### [**`InputValidator`**](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html)
-- [`checkAddress()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#checkAddress-java.lang.String-)
-- [`isAddress()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isAddress-java.lang.String-)
-- [`isArrayOfHashes()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isArrayOfHashes-java.lang.String:A-)
-- [`isArrayOfTrytes()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isArrayOfTrytes-java.lang.String:A-)
-- [`inNinesTrytes()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isNinesTrytes-java.lang.String-int-)
-- [`isTransfersCollectionValid()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isTransfersCollectionValid-java.util.List-)
-- [`isTrytes()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isTrytes-java.lang.String-int-)
-- [`isValidSeed()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isValidSeed-java.lang.String-)
-- [`isValidTransfer()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isValidTransfer-jota.model.Transfer-)
-- [`isValue()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/InputValidator.html#isValue-java.lang.String-)
+#### [**`InputValidator`**](https://iotaledger.github.io/iota-java/javadoc/jota/utils/InputValidator.html)
+- [`checkAddress()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/InputValidator.html#checkAddress-java.lang.String-)
+- [`isAddress()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/InputValidator.html#isAddress-java.lang.String-)
+- [`isArrayOfHashes()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/InputValidator.html#isArrayOfHashes-java.lang.String:A-)
+- [`isArrayOfTrytes()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/InputValidator.html#isArrayOfTrytes-java.lang.String:A-)
+- [`inNinesTrytes()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/InputValidator.html#isNinesTrytes-java.lang.String-int-)
+- [`isTransfersCollectionValid()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/InputValidator.html#isTransfersCollectionValid-java.util.List-)
+- [`isTrytes()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/InputValidator.html#isTrytes-java.lang.String-int-)
+- [`isValidSeed()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/InputValidator.html#isValidSeed-java.lang.String-)
+- [`isValidTransfer()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/InputValidator.html#isValidTransfer-jota.model.Transfer-)
+- [`isValue()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/InputValidator.html#isValue-java.lang.String-)
 
-#### [**`Transaction`**](https://iotaledger.github.io/iota.lib.java/javadoc/jota/model/Transaction.html)
+#### [**`Transaction`**](https://iotaledger.github.io/iota-java/javadoc/jota/model/Transaction.html)
 
-- [`toTrytes()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/model/Transaction.html#toTrytes--)
+- [`toTrytes()`](https://iotaledger.github.io/iota-java/javadoc/jota/model/Transaction.html#toTrytes--)
 
-#### [**`Converter`**](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Converter.html)
+#### [**`Converter`**](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Converter.html)
 
-- [`trytes()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Converter.html#trytes-int:A-int-int-)
-- [`trits()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Converter.html#trits-java.lang.String-int-)
+- [`trytes()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Converter.html#trytes-int:A-int-int-)
+- [`trits()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Converter.html#trits-java.lang.String-int-)
 
-#### [**`Signing`**](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Signing.html)
+#### [**`Signing`**](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Signing.html)
 
-- [`validateSignatures()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Signing.html#validateSignatures-jota.model.Bundle-java.lang.String-)
+- [`validateSignatures()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Signing.html#validateSignatures-jota.model.Bundle-java.lang.String-)
 
-#### [**`Multisig`**](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Multisig.html)
+#### [**`Multisig`**](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Multisig.html)
 
-- [`getKey()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Multisig.html#getKey-java.lang.String-int-int-)
-- [`getDigest()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Multisig.html#getDigest-java.lang.String-int-int-)
-- [`finalizeAddress()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Multisig.html#finalizeAddress-java.lang.String-)
-- [`validateAddress()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Multisig.html#validateAddress-java.lang.String-int:A:A-)
-- [`addSignature()`](https://iotaledger.github.io/iota.lib.java/javadoc/jota/utils/Multisig.html#addSignature-jota.model.Bundle-java.lang.String-java.lang.String-)
+- [`getKey()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Multisig.html#getKey-java.lang.String-int-int-)
+- [`getDigest()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Multisig.html#getDigest-java.lang.String-int-int-)
+- [`finalizeAddress()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Multisig.html#finalizeAddress-java.lang.String-)
+- [`validateAddress()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Multisig.html#validateAddress-java.lang.String-int:A:A-)
+- [`addSignature()`](https://iotaledger.github.io/iota-java/javadoc/jota/utils/Multisig.html#addSignature-jota.model.Bundle-java.lang.String-java.lang.String-)
 
 ### Examples
 
 There's an extensive list of **test cases** on the [`src/test/java` directory][tests] that can be used as reference when developing apps with IOTA.
-A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota.lib.java/blob/master/jota/src/test/java/jota/IotaAPITest.java).
+A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/jota/IotaAPITest.java).
 
 ## Technologies & dependencies
 
@@ -233,14 +233,14 @@ The following third party library dependencies and versions are used by the IOTA
 - [Legion of the Bouncy Castle](https://www.bouncycastle.org/java.html) Java cryptography APIs: `1.58`
 
 ## Changes:
-- Changes in [**v0.9.11**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.6...0.9.11)
-- Changes in [**v0.9.10**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.6...0.9.10)
-- Changes in [**v0.9.6**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.5...v0.9.6)
-- Changes in [**v0.9.5**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.4...v0.9.5)
-- Changes in [**v0.9.4**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.3...v0.9.4)
-- Changes in [**v0.9.3**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.2...v0.9.3)
-- Changes in [**v0.9.2**](https://github.com/iotaledger/iota.lib.java/compare/v0.9.1...v0.9.2)
-- Changes in [**v0.9.1**](https://github.com/iotaledger/iota.lib.java/commits/v0.9.1)
+- Changes in [**v0.9.11**](https://github.com/iotaledger/iota-java/compare/v0.9.6...0.9.11)
+- Changes in [**v0.9.10**](https://github.com/iotaledger/iota-java/compare/v0.9.6...0.9.10)
+- Changes in [**v0.9.6**](https://github.com/iotaledger/iota-java/compare/v0.9.5...v0.9.6)
+- Changes in [**v0.9.5**](https://github.com/iotaledger/iota-java/compare/v0.9.4...v0.9.5)
+- Changes in [**v0.9.4**](https://github.com/iotaledger/iota-java/compare/v0.9.3...v0.9.4)
+- Changes in [**v0.9.3**](https://github.com/iotaledger/iota-java/compare/v0.9.2...v0.9.3)
+- Changes in [**v0.9.2**](https://github.com/iotaledger/iota-java/compare/v0.9.1...v0.9.2)
+- Changes in [**v0.9.1**](https://github.com/iotaledger/iota-java/commits/v0.9.1)
 
 ## Warning / Disclaimer
 
@@ -283,8 +283,8 @@ limitations under the License.
 [jitpack]: https://jitpack.io/#iotaledger/iota-java
 [jitpack-badge]: https://jitpack.io/v/iotaledger/iota-java.svg
 [travis]: https://travis-ci.org/iotaledger/iota-java
-[travis-badge]: https://travis-ci.org/iotaledger/iota.lib.java.svg?branch=master
-[license]: https://github.com/iotaledger/iota.lib.java/blob/master/LICENSE
+[travis-badge]: https://travis-ci.org/iotaledger/iota-java.svg?branch=master
+[license]: https://github.com/iotaledger/iota-java/blob/master/LICENSE
 [license-badge]: https://img.shields.io/github/license/iotaledger/iota-java.svg
 [iota-iri]: https://github.com/iotaledger/iri/tree/v1.5.0
 [iota-iri-badge]: https://img.shields.io/badge/IOTA%20IRI%20compatibility-v1.5.0-blue.svg
