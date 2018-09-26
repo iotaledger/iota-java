@@ -75,7 +75,7 @@ To use the IOTA Java library in your Maven build add this to your root `pom.xml`
 Add this in your module `pom.xml` file:
 ```xml
 <dependency>
-    <groupId>com.github.iotaledger.iota~lib~java</groupId>
+    <groupId>com.github.iotaledger.iota-java</groupId>
     <artifactId>jota</artifactId>
     <classifier>jar-with-dependencies</classifier>
     <version>0.9.11</version>
