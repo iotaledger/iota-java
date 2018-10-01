@@ -44,50 +44,144 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Generates a new address from a seed and returns the remainderAddress.
      * This is either done deterministically, or by providing the index of the new remainderAddress.
-     *
+     * <br/><br/>
+     * Deprecated -> Use the new functions {@link #getNextAvailableAddress}, {@link #getAddressesUnchecked} and {@link #generateNewAddresses}
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param index     Key index to start search from. If the index is provided, the generation of the address is not deterministic.
      * @param checksum  Adds 9-tryte address checksum.
      * @param total     Total number of addresses to generate.
      * @param returnAll If <code>true</code>, it returns all addresses which were deterministically generated (until findTransactions returns null).
-     * @return An array of strings with the specifed number of addresses.
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Deprecated
     public GetNewAddressResponse getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws ArgumentException {
-
-        StopWatch stopWatch = new StopWatch();
-
-        List<String> allAddresses = new ArrayList<>();
 
         // If total number of addresses to generate is supplied, simply generate
         // and return the list of all addresses
         if (total != 0) {
-            for (int i = index; i < index + total; i++) {
-                allAddresses.add(IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl.clone()));
-            }
-            return GetNewAddressResponse.create(allAddresses, stopWatch.getElapsedTimeMili());
-        }
-
-
-        // No total provided: Continue calling findTransactions to see if address was
-        // already created if null, return list of addresses
-        for (int i = index; ; i++) {
-
-            final String newAddress = IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl.clone());
-            final FindTransactionResponse response = findTransactionsByAddresses(newAddress);
-
-            allAddresses.add(newAddress);
-            if (response.getHashes().length == 0) {
-                break;
-            }
+            return getAddressesUnchecked(seed, security, checksum, index, total);
         }
 
         // If !returnAll return only the last address that was generated
         if (!returnAll) {
+            return generateNewAddresses(seed, security, checksum, 0, 1, true);
+        } else {
+            return generateNewAddresses(seed, security, checksum, 0, 1, false);
+        }
+    }
+    
+    /**
+     * 
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @param checksum  Adds 9-tryte address checksum.
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public GetNewAddressResponse getNextAvailableAddress(String seed, int security, boolean checksum) throws ArgumentException {
+        return generateNewAddresses(seed, security, checksum, 0, 1, false);
+    }
+    
+    /**
+     * 
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @param checksum  Adds 9-tryte address checksum.
+     * @param index     Key index to start search from.
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public GetNewAddressResponse getNextAvailableAddress(String seed, int security, boolean checksum, int index) throws ArgumentException {
+        return generateNewAddresses(seed, security, checksum, index, 1, false);
+    }
+    
+    /**
+     * 
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @param checksum  Adds 9-tryte address checksum.
+     * @param amount    Total number of addresses to generate.
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int amount) throws ArgumentException {
+        return generateNewAddresses(seed, security, checksum, 0, amount, false);
+    }
+    
+    /**
+     * 
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @param checksum  Adds 9-tryte address checksum.
+     * @param index     Key index to start search from.
+     * @param amount    Total number of addresses to generate.
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int index, int amount) throws ArgumentException {
+        return generateNewAddresses(seed, security, checksum, 0, amount, false);
+    }
+    
+    /**
+     * 
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @param checksum  Adds 9-tryte address checksum.
+     * @param index     Key index to start search from.
+     * @param amount    Total number of addresses to generate.
+     * @param addSpendAddresses If <code>true</code>, it returns all addresses, even those who were determined to be spent from
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int index, int amount, boolean addSpendAddresses) throws ArgumentException {
+        if ((!InputValidator.isValidSeed(seed))) {
+            throw new IllegalStateException(INVALID_SEED_INPUT_ERROR);
+        }
+        
+        StopWatch stopWatch = new StopWatch();
+        List<String> allAddresses = new ArrayList<>();
 
-            //allAddresses = allAddresses.subList(allAddresses.size() - 2, allAddresses.size() - 1);
-            allAddresses = allAddresses.subList(allAddresses.size() - 1, allAddresses.size());
+        for (int i = index, numUnspentFound=0; numUnspentFound < amount; i++) {
+
+            final String newAddress = IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl.clone());
+            final FindTransactionResponse response = findTransactionsByAddresses(newAddress);
+
+            
+            if (response.getHashes().length == 0) {
+                //Unspent address
+                allAddresses.add(newAddress);
+                numUnspentFound++;
+            } else if (addSpendAddresses) {
+                //Spend address, were interested anyways
+                allAddresses.add(newAddress);
+            }
+        }
+        
+        return GetNewAddressResponse.create(allAddresses, stopWatch.getElapsedTimeMili());
+    }
+    
+    /**
+     * 
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @param checksum  Adds 9-tryte address checksum.
+     * @param index     Key index to start search from. The generation of the address is not deterministic.
+     * @param amount    Total number of addresses to generate.
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public GetNewAddressResponse getAddressesUnchecked(String seed, int security, boolean checksum, int index, int amount) throws ArgumentException {
+        if ((!InputValidator.isValidSeed(seed))) {
+            throw new IllegalStateException(INVALID_SEED_INPUT_ERROR);
+        }
+        
+        StopWatch stopWatch = new StopWatch();
+
+        List<String> allAddresses = new ArrayList<>();
+        for (int i = index; i < index + amount; i++) {
+            allAddresses.add(IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl.clone()));
         }
         return GetNewAddressResponse.create(allAddresses, stopWatch.getElapsedTimeMili());
     }
