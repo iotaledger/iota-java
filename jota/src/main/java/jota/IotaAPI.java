@@ -73,7 +73,7 @@ public class IotaAPI extends IotaAPICore {
     }
     
     /**
-     * 
+     * Checks all addresses until the first unspent address is found. Starts at index 0.
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param checksum  Adds 9-tryte address checksum.
@@ -85,7 +85,7 @@ public class IotaAPI extends IotaAPICore {
     }
     
     /**
-     * 
+     * Checks all addresses until the first unspent address is found.
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param checksum  Adds 9-tryte address checksum.
@@ -98,7 +98,8 @@ public class IotaAPI extends IotaAPICore {
     }
     
     /**
-     * 
+     * Generates new addresses, meaning addresses which were not spend from, according to the connected node.
+     * Starts at index 0, untill <code>amount</code> of unspent addresses are found.
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param checksum  Adds 9-tryte address checksum.
@@ -111,7 +112,8 @@ public class IotaAPI extends IotaAPICore {
     }
     
     /**
-     * 
+     * Generates new addresses, meaning addresses which were not spend from, according to the connected node.
+     * Stops when <code>amount</code> of unspent addresses are found,starting from <code>index</code>
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param checksum  Adds 9-tryte address checksum.
@@ -125,7 +127,8 @@ public class IotaAPI extends IotaAPICore {
     }
     
     /**
-     * 
+     * Generates new addresses, meaning addresses which were not spend from, according to the connected node.
+     * Stops when <code>amount</code> of unspent addresses are found,starting from <code>index</code>
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param checksum  Adds 9-tryte address checksum.
@@ -163,7 +166,8 @@ public class IotaAPI extends IotaAPICore {
     }
     
     /**
-     * 
+     * Generates <code>amount</code> of addresses, starting from <code>index</code>
+     * This does not mean that these addresses are safe to use (unspent)
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param checksum  Adds 9-tryte address checksum.
