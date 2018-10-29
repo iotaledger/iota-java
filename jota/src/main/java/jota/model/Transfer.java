@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 /**
  * This class represents a Transfer.
  *
- * @author pinpong
  */
 public class Transfer {
 

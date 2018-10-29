@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-/**
- * @author Adrian
- */
 public class BaseException extends Exception {
 
     /**

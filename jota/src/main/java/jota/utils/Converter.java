@@ -197,9 +197,9 @@ public class Converter {
     }
 
     /**
-     * Converts trites to trytes.
+     * Converts trits to trytes.
      *
-     * @param trits  Teh trits to be converted.
+     * @param trits  The trits to be converted.
      * @param offset The offset to start from.
      * @param size   The size.
      * @return The trytes.
@@ -247,6 +247,45 @@ public class Converter {
             value = value * 3 + trits[i];
         }
         return value;
+    }
+    
+    /**
+     * Converts the specified integer to its corresponding trits value.
+     * 
+     * @param value the integer we want to convert
+     * @return The array of trits 
+     */
+    public static int[] fromValue(int value) {
+        if (0 == value) {
+            return new int[] {0};
+        }
+        
+        int[] destination = new int[
+           (int) (1 + Math.floor(Math.log(2 * Math.max(1, Math.abs(value))) / Math.log(3)))
+        ];
+        
+        int i = 0;
+        int absoluteValue = value < 0 ? -value : value;
+        while (absoluteValue > 0) {
+            int remainder = absoluteValue % RADIX;
+            absoluteValue = (int) Math.floor(absoluteValue / RADIX);
+
+            if (remainder > MAX_TRIT_VALUE) {
+                remainder = MIN_TRIT_VALUE;
+                absoluteValue++;
+            }
+
+            destination[i] = remainder;
+            i++;
+        }
+
+        if (value < 0) {
+            for (int j = 0; j < destination.length; j++) {
+                destination[j] = -destination[j];
+            }
+        }
+
+        return destination;
     }
 
     /**

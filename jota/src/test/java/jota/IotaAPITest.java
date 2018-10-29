@@ -270,7 +270,7 @@ public class IotaAPITest {
     @Category(IntegrationTest.class)
     public void shouldFailBeforeSnapshotTimeStamp() throws ArgumentException {
         try {
-            iotaAPI.broadcastAndStore(TEST_TRYTES);
+            iotaAPI.storeAndBroadcast(TEST_TRYTES);
             fail("Transaction did not fail on old timestamp value");
         } catch (IllegalAccessError e) {
             //TODO Check for specific error

@@ -47,7 +47,7 @@ public class Inputs {
      * @param inputsList The input list.
      */
     public void setInputsList(List<Input> inputsList) {
-        inputsList = inputsList;
+        this.inputsList = inputsList;
     }
 
     /**

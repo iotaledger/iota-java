@@ -6,7 +6,6 @@ import java.util.List;
 /**
  * This class represents an Signature.
  *
- * @author Adrian
  **/
 public class Signature {
 

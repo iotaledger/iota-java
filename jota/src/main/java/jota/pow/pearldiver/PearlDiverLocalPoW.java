@@ -1,4 +1,4 @@
-package cfb.pearldiver;
+package jota.pow.pearldiver;
 
 import jota.IotaLocalPoW;
 import jota.utils.Converter;

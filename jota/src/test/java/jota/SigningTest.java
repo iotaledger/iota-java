@@ -68,7 +68,7 @@ public class SigningTest {
         // address of our test seed
         // (but remove the checksum) with the key of our fifth address
         String hashToSign = removeChecksum(FIRST_ADDR);
-        Signing signing = new Signing(null);
+        Signing signing = new Signing();
         final int[] key = signing.key(Converter.trits(TEST_SEED), 5, 2);
         int[] normalizedHash = new Bundle().normalizedBundle(hashToSign);
         int[] signature = signing.signatureFragment(Arrays.copyOfRange(normalizedHash, 0, 27), Arrays.copyOfRange(key, 0, 6561));
@@ -79,7 +79,7 @@ public class SigningTest {
 
     @Test
     public void testKeyLength() throws ArgumentException {
-        Signing signing = new Signing(null);
+        Signing signing = new Signing();
         int[] key = signing.key(Converter.trits(TEST_SEED), 5, 1);
         assertEquals(Signing.KEY_LENGTH, key.length);
         key = signing.key(Converter.trits(TEST_SEED), 5, 2);
@@ -90,7 +90,7 @@ public class SigningTest {
 
     @Test
     public void testVerifying() throws ArgumentException {
-        assertTrue(new Signing(null).validateSignatures(removeChecksum(SIXTH_ADDR), new String[]{SIGNATURE1, SIGNATURE2}, removeChecksum(FIRST_ADDR)));
+        assertTrue(new Signing().validateSignatures(removeChecksum(SIXTH_ADDR), new String[]{SIGNATURE1, SIGNATURE2}, removeChecksum(FIRST_ADDR)));
     }
 
     private String removeChecksum(String address) throws ArgumentException {

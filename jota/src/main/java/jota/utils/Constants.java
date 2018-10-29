@@ -36,6 +36,9 @@ public class Constants {
      * The length of an tag
      */
     public static int TAG_LENGTH = 27;
+    
+    public static int MIN_SECURITY_LEVEL = 1;
+    public static int MAX_SECURITY_LEVEL = 3;
 
     public static final String INVALID_TRYTES_INPUT_ERROR = "Invalid trytes provided.";
     public static final String INVALID_HASHES_INPUT_ERROR = "Invalid hashes provided.";
@@ -46,13 +49,16 @@ public class Constants {
     public static final String INVALID_TRANSFERS_INPUT_ERROR = "Invalid transfers provided.";
     public static final String INVALID_ADDRESSES_INPUT_ERROR = "Invalid addresses provided.";
     public static final String INVALID_INPUT_ERROR = "Invalid input provided.";
-
+    public static final String INVALID_TAG_ERROR = "Invalid tag provided.";
+    
     public static final String INVALID_BUNDLE_ERROR = "Invalid bundle.";
     public static final String INVALID_BUNDLE_SUM_ERROR = "Invalid bundle sum.";
     public static final String INVALID_BUNDLE_HASH_ERROR = "Invalid bundle hash.";
     public static final String INVALID_SIGNATURES_ERROR = "Invalid signatures.";
     public static final String INVALID_VALUE_TRANSFER_ERROR = "Invalid value transfer: the transfer does not require a signature.";
 
+    public static final String TRANSACTION_NOT_FOUND = "Transaction was not found on the node";
+    
     public static final String NOT_ENOUGH_BALANCE_ERROR = "Not enough balance.";
     public static final String NO_REMAINDER_ADDRESS_ERROR = "No remainder address defined.";
 

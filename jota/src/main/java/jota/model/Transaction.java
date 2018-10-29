@@ -3,6 +3,8 @@ package jota.model;
 import jota.pow.ICurl;
 import jota.pow.SpongeFactory;
 import jota.utils.Converter;
+import jota.utils.InputValidator;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -14,7 +16,6 @@ import java.util.Arrays;
 /**
  * This class represents an iota transaction.
  *
- * @author pinpong
  */
 public class Transaction {
 
@@ -73,15 +74,7 @@ public class Transaction {
         this.obsoleteTag = tag;
         this.timestamp = timestamp;
     }
-
-    public long getAttachmentTimestampLowerBound() {
-        return attachmentTimestampLowerBound;
-    }
-
-    public void setAttachmentTimestampLowerBound(long attachmentTimestampLowerBound) {
-        this.attachmentTimestampLowerBound = attachmentTimestampLowerBound;
-    }
-
+    
     /**
      * Initializes a new instance of the Signature class.
      */
@@ -109,6 +102,14 @@ public class Transaction {
     public Transaction(String trytes, ICurl customCurl) {
         transactionObject(trytes);
         this.customCurl = customCurl;
+    }
+    
+    public long getAttachmentTimestampLowerBound() {
+        return attachmentTimestampLowerBound;
+    }
+
+    public void setAttachmentTimestampLowerBound(long attachmentTimestampLowerBound) {
+        this.attachmentTimestampLowerBound = attachmentTimestampLowerBound;
     }
 
     public long getAttachmentTimestampUpperBound() {
@@ -484,5 +485,13 @@ public class Transaction {
         this.setAttachmentTimestampLowerBound(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7884, 7911)));
         this.setAttachmentTimestampUpperBound(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7911, 7938)));
         this.setNonce(trytes.substring(2646, 2673));
+    }
+    
+    /**
+     * Checks if the current index is 0
+     * @return if this is a tail transaction
+     */
+    public boolean isTailTransaction() {
+        return getCurrentIndex() == 0;
     }
 }

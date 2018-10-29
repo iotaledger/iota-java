@@ -6,7 +6,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 /**
  * This class represents an Input.
  *
- * @author Adrian
  **/
 public class Input {
 

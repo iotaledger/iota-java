@@ -1,9 +1,13 @@
 package jota.utils;
 
 import jota.error.ArgumentException;
+import jota.model.Input;
 import jota.model.Transfer;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import static jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
@@ -24,7 +28,7 @@ public class InputValidator {
      **/
     public static boolean isAddress(String address) {
         return (address.length() == Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM ||
-                address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM) && isTrytes(address, address.length());
+                address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM) && isTrytes(address);
     }
 
     /**
@@ -72,14 +76,48 @@ public class InputValidator {
     }
 
     /**
-     * Determines whether the specified string contains only characters from the trytes alphabet (see <see cref="Constants.TryteAlphabet"/>).
+     * Determines whether the specified string contains only characters from the trytes alphabet
+     * @param trytes The trytes to validate.
+     * @return <code>true</code> if the specified trytes are trytes, otherwise <code>false</code>.
+     */
+    public static boolean isTrytes(String trytes) {
+        return isTrytesOfExactLength(trytes, 0);
+    }
+    
+    /**
+     * Determines whether the specified string contains only characters from the trytes alphabet.
      *
      * @param trytes The trytes to validate.
      * @param length The length.
-     * @return <code>true</code> if the specified trytes are trytes otherwise, <code>false</code>.
+     * @return <code>true</code> if the specified trytes are trytes and have the correct size, otherwise <code>false</code>.
      **/
-    public static boolean isTrytes(final String trytes, final int length) {
+    public static boolean isTrytesOfExactLength(String trytes, int length) {
+        if (length < 0 ) return false;
+        
         return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
+    }
+    
+    /**
+     * Determines whether the specified string contains only characters from the trytes alphabet 
+     * and has a maximum (including) of the provided length
+     * @param trytes The trytes to validate.
+     * @param maxLength The length.
+     * @return <code>true</code> if the specified trytes are trytes and have the correct size, otherwise <code>false</code>.
+     */
+    public static boolean isTrytesOfMaxLength(String trytes, int maxLength) {
+        if (trytes.length() > maxLength) return false;
+        return isTrytesOfExactLength(trytes, 0);
+    }
+    
+    /**
+     * Determines whether the specified string consist only of '9'.
+     *
+     * @param trytes The trytes to validate.
+     * @param length The length.
+     * @return <code>true</code> if the specified string consist only of '9'; otherwise, <code>false</code>.
+     **/
+    public static boolean isEmptyTrytes(final String trytes) {
+        return isNinesTrytes(trytes, 0);
     }
 
     /**
@@ -112,7 +150,7 @@ public class InputValidator {
     public static boolean isArrayOfTrytes(String[] trytes) {
         for (String tryte : trytes) {
             // Check if correct 2673 trytes
-            if (!isTrytes(tryte, 2673)) {
+            if (!isTrytesOfExactLength(tryte, 2673)) {
                 return false;
             }
         }
@@ -130,15 +168,8 @@ public class InputValidator {
             return false;
 
         for (String hash : hashes) {
-            // Check if address with checksum
-            if (hash.length() == 90) {
-                if (!isTrytes(hash, 90)) {
-                    return false;
-                }
-            } else {
-                if (!isTrytes(hash, 81)) {
-                    return false;
-                }
+            if (!isHash(hash)) {
+                return false;
             }
         }
         return true;
@@ -183,12 +214,88 @@ public class InputValidator {
         }
 
         // Check if message is correct trytes encoded of any length
-        if (transfer.getMessage() == null || !isTrytes(transfer.getMessage(), transfer.getMessage().length())) {
+        if (transfer.getMessage() == null || !isTrytesOfExactLength(transfer.getMessage(), transfer.getMessage().length())) {
             return false;
         }
 
         // Check if tag is correct trytes encoded and not longer than 27 trytes
-        if (transfer.getTag() == null || !isTrytes(transfer.getTag(), transfer.getTag().length()) || transfer.getTag().length() > Constants.TAG_LENGTH) {
+        if (transfer.getTag() == null || !isTrytesOfExactLength(transfer.getTag(), transfer.getTag().length()) || transfer.getTag().length() > Constants.TAG_LENGTH) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    /**
+     * Checks if the tags are valid. 
+     *
+     * @param tags The tags to validate.
+     * @return <code>true</code> if the specified tags are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean areValidTags(String... tags) {
+     // Input validation of tags
+        if (tags == null || tags.length == 0) {
+            return false;
+        }
+
+        for (final String tag : tags) {
+            if (!isValidTag(tag)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Checks if the tag is valid. 
+     *
+     * @param tag The tag to validate.
+     * @return <code>true</code> if the specified tag is valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isValidTag(String tag) {
+        return tag != null && !isTrytesOfExactLength(tag, Constants.TAG_LENGTH);
+    }
+    
+    /**
+     * Checks if the inputs are valid. 
+     *
+     * @param inputs The inputs to validate.
+     * @return <code>true</code> if the specified inputs are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean areValidInputs(Input... inputs){
+        // Input validation of input objects
+        if (inputs == null || inputs.length == 0) {
+            return false;
+        }
+
+        for (final Input input : inputs) {
+            if (!isValidInput(input)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Checks if the input is valid. 
+     *
+     * @param input The input to validate.
+     * @return <code>true</code> if the specified input is valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isValidInput(Input input){
+        if (input == null) {
+            return false;
+        }
+
+        if (!isAddress(input.getAddress())) {
+            return false;
+        }
+
+        if (input.getKeyIndex() < 0) {
+            return false;
+        }
+        
+        if (input.getSecurity() < 1 || input.getSecurity() > 3) {
             return false;
         }
 
@@ -196,13 +303,13 @@ public class InputValidator {
     }
 
     /**
-     * Checks if the seed is valid. If not, an exception is thrown.
+     * Checks if the seed is valid.
      *
-     * @param seed The seed to validate.
-     * @return <code>true</code> if the specified seed is valid; otherwise, <code>false</code>.
+     * @param seed The input to validate.
+     * @return <code>true</code> if the specified input is valid; otherwise, <code>false</code>.
      **/
     public static boolean isValidSeed(String seed) {
-        return isTrytes(seed, seed.length());
+        return isTrytesOfExactLength(seed, seed.length());
     }
 
     /**
@@ -212,14 +319,17 @@ public class InputValidator {
      * @return <code>true</code> if the specified hashes are valid; otherwise, <code>false</code>.
      **/
     public static boolean isHashes(List<String> hashes) {
+        if (hashes == null || hashes.size() == 0) {
+            return false;
+        }
         for (String hash : hashes) {
-            if (!isTrytes(hash, 81)) {
+            if (!isHash(hash)) {
                 return false;
             }
         }
         return true;
     }
-
+    
     /**
      * Checks if input is correct hash.
      *
@@ -227,10 +337,54 @@ public class InputValidator {
      * @return <code>true</code> if the specified hash are valid; otherwise, <code>false</code>.
      **/
     public static boolean isHash(String hash) {
-        if (!isTrytes(hash, 81)) {
+     // Check if address with checksum
+        if (hash.length() == 90) {
+            return isTrytesOfExactLength(hash, 0); //We already checked length
+        } else {
+            return isTrytesOfExactLength(hash, 81);
+        }
+    }
+    
+    /**
+     * Checks if the uris are valid. 
+     *
+     * @param uris The uris to validate.
+     * @return <code>true</code> if the specified uris are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean areValidUris(String... uris) {
+        if (uris == null || uris.length == 0) {
             return false;
         }
+        for (String uri : uris) {
+            if (!isValidUri(uri)) {
+                return false;
+            }
+        }
         return true;
+    }
+    
+    /**
+     * Checks if the uri is valid. 
+     *
+     * @param uri The uri to validate.
+     * @return <code>true</code> if the specified uri is valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isValidUri(String uri) {
+        if (uri.length() < 7) {
+            return false;
+        }
+        
+        String protocol = uri.substring(0, 6);
+        if (!protocol.equals("tcp://") && !protocol.equals("udp://")) {
+            return false;
+        }
+        
+        try {
+            new URI(uri);
+            return true;
+        } catch (URISyntaxException e) {
+            return false;
+        }
     }
 
     /**
@@ -244,7 +398,7 @@ public class InputValidator {
         for (String tryteValue : trytes) {
 
             // Check if correct 2673 trytes
-            if (!isTrytes(tryteValue, 2673)) {
+            if (!isTrytesOfExactLength(tryteValue, 2673)) {
                 return false;
             }
 

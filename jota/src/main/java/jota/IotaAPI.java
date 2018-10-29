@@ -206,24 +206,24 @@ public class IotaAPI extends IotaAPICore {
     }
 
     /**
-     * Wrapper function that broadcasts and stores the specified trytes.
+     * Wrapper function that stores and broadcasts the specified trytes.
      *
      * @param trytes The trytes.
-     * @return A StoreTransactionsResponse.
+     * @return A BroadcastTransactionsResponse.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public StoreTransactionsResponse broadcastAndStore(final String... trytes) throws ArgumentException {
+    public BroadcastTransactionsResponse storeAndBroadcast(final String... trytes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
             throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
         }
 
         try {
-            broadcastTransactions(trytes);
+            storeTransactions(trytes);
         } catch (Exception e) {
             throw new ArgumentException(e.toString());
         }
-        return storeTransactions(trytes);
+        return broadcastTransactions(trytes);
     }
 
     /**
@@ -243,7 +243,7 @@ public class IotaAPI extends IotaAPICore {
         final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
 
         try {
-            broadcastAndStore(res.getTrytes());
+            storeAndBroadcast(res.getTrytes());
         } catch (ArgumentException e) {
             return new ArrayList<>();
         }
@@ -649,82 +649,18 @@ public class IotaAPI extends IotaAPICore {
         if (!InputValidator.isHash(transaction)) {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
-
+        
+        StopWatch stopWatch = new StopWatch();
+        
         Bundle bundle = traverseBundle(transaction, null, new Bundle());
         if (bundle == null) {
             throw new ArgumentException(INVALID_BUNDLE_ERROR);
         }
 
-        StopWatch stopWatch = new StopWatch();
-
-        long totalSum = 0;
-        String bundleHash = bundle.getTransactions().get(0).getBundle();
-        
-        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
-        curl.reset();
-
-        List<Signature> signaturesToValidate = new ArrayList<>();
-
-        for (int i = 0; i < bundle.getTransactions().size(); i++) {
-            Transaction trx = bundle.getTransactions().get(i);
-            Long bundleValue = trx.getValue();
-            totalSum += bundleValue;
-
-            if (i != bundle.getTransactions().get(i).getCurrentIndex()) {
-                throw new ArgumentException(INVALID_BUNDLE_ERROR);
-            }
-
-            String trxTrytes = trx.toTrytes().substring(2187, 2187 + 162);
-            // Absorb bundle hash + value + timestamp + lastIndex + currentIndex trytes.
-            curl.absorb(Converter.trits(trxTrytes));
-            // Check if input transaction
-            if (bundleValue < 0) {
-                String address = trx.getAddress();
-                Signature sig = new Signature();
-                sig.setAddress(address);
-                sig.getSignatureFragments().add(trx.getSignatureFragments());
-
-                // Find the subsequent txs with the remaining signature fragment
-                for (int y = i + 1; y < bundle.getTransactions().size(); y++) {
-                    Transaction newBundleTx = bundle.getTransactions().get(y);
-
-                    // Check if new tx is part of the signature fragment
-                    if (newBundleTx.getAddress().equals(address) && newBundleTx.getValue() == 0) {
-                        if (sig.getSignatureFragments().indexOf(newBundleTx.getSignatureFragments()) == -1)
-                            sig.getSignatureFragments().add(newBundleTx.getSignatureFragments());
-                    }
-                }
-                signaturesToValidate.add(sig);
-            }
-        }
-
-        // Check for total sum, if not equal 0 return error
-        if (totalSum != 0)
-            throw new ArgumentException(INVALID_BUNDLE_SUM_ERROR);
-        int[] bundleFromTrxs = new int[243];
-        curl.squeeze(bundleFromTrxs);
-        String bundleFromTxString = Converter.trytes(bundleFromTrxs);
-
-        // Check if bundle hash is the same as returned by tx object
-        if (!bundleFromTxString.equals(bundleHash)) {
-            throw new ArgumentException(INVALID_BUNDLE_HASH_ERROR);
-        }
-        
-        // Last tx in the bundle should have currentIndex === lastIndex
-        bundle.setLength(bundle.getTransactions().size());
-        if (!(bundle.getTransactions().get(bundle.getLength() - 1).getCurrentIndex() == (bundle.getTransactions().get(bundle.getLength() - 1).getLastIndex())))
+        if (!BundleValidator.isBundle(bundle)){
             throw new ArgumentException(INVALID_BUNDLE_ERROR);
-
-        // Validate the signatures
-        for (Signature aSignaturesToValidate : signaturesToValidate) {
-            String[] signatureFragments = aSignaturesToValidate.getSignatureFragments().toArray(new String[aSignaturesToValidate.getSignatureFragments().size()]);
-            String address = aSignaturesToValidate.getAddress();
-            boolean isValidSignature = new Signing(customCurl.clone()).validateSignatures(address, signatureFragments, bundleHash);
-
-            if (!isValidSignature)
-                throw new ArgumentException(INVALID_SIGNATURES_ERROR);
-        }
-
+        } 
+        
         return GetBundleResponse.create(bundle.getTransactions(), stopWatch.getElapsedTimeMili());
     }
 
@@ -904,8 +840,8 @@ public class IotaAPI extends IotaAPICore {
      * transaction hash is not a tail, we return an error.
      *
      * @param trunkTx    Hash of a trunk or a tail transaction of a bundle.
-     * @param bundleHash The bundle hashes.
-     * @param bundle     List of bundles to be populated.
+     * @param bundleHash The bundle hash.
+     * @param bundle     bundle to be populated.
      * @return Transaction objects.
      * @throws ArgumentException is thrown when an invalid input is provided.
      */
@@ -932,6 +868,7 @@ public class IotaAPI extends IotaAPICore {
             }
             // If different bundle hash, return with bundle
             if (!bundleHash.equals(trx.getBundle())) {
+                bundle.setLength(bundle.getTransactions().size());
                 return bundle;
             }
             // If only one bundle element, return
@@ -1285,7 +1222,44 @@ public class IotaAPI extends IotaAPICore {
         throw new IllegalStateException(NOT_ENOUGH_BALANCE_ERROR);
     }
 
-
+    /**
+     * Checks if a transaction hash is promotable
+     * @param tail the transaction we want to promote
+     * @return true if it is, otherwise false
+     * @throws ArgumentException when we can't get the consistency of this transaction
+     */
+    public boolean isPromotable(Transaction tail) throws ArgumentException {
+        long lowerBound = tail.getAttachmentTimestamp();
+        CheckConsistencyResponse consistencyResponse = checkConsistency(tail.getHash());
+        
+        return consistencyResponse.getState() && isAboveMaxDepth(lowerBound);
+    }
+    
+    /**
+     * Checks if a transaction hash is promotable
+     * @param tail the transaction hash we want to check
+     * @return true if it is, otherwise false
+     * @throws ArgumentException when we can't get the consistency of this transaction
+     * or when the transaction is not found
+     */
+    public boolean isPromotable(String tail) throws ArgumentException {
+        GetTrytesResponse transaction = getTrytes(tail);
+        if (0 == transaction.getTrytes().length) {
+            throw new ArgumentException(TRANSACTION_NOT_FOUND);
+        }
+        
+        return isPromotable(new Transaction(transaction.getTrytes()[0]));
+    }
+    
+    private boolean isAboveMaxDepth (long attachmentTimestamp) {
+        // Check against future timestamps
+        return attachmentTimestamp < System.currentTimeMillis() &&
+            // Check if transaction wasn't issued before last 6 milestones
+            // Milestones are being issued every ~2mins
+            System.currentTimeMillis() - attachmentTimestamp < 11 * 60 * 1000;
+    }
+    
+    
     /**
      * Attempts to promote a transaction using a provided bundle and, if successful, returns the promoting Transactions.
      *
@@ -1322,7 +1296,7 @@ public class IotaAPI extends IotaAPICore {
                 bundle.getTransactions().stream().map(tx -> tx.toTrytes()).toArray(String[]::new));
 
         try {
-            broadcastAndStore(res.getTrytes());
+            storeAndBroadcast(res.getTrytes());
         } catch (ArgumentException e) {
             return Collections.emptyList();
         }
