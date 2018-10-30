@@ -5,7 +5,6 @@ import jota.model.Input;
 import jota.model.Transfer;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -66,7 +65,7 @@ public class InputValidator {
      *
      * @param address The address to validate.
      * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
-     * @throws ArgumentException is thrown when the specified input is not valid.
+     * @throws ArgumentException when the specified input is not valid.
      **/
     public static boolean checkAddress(String address) throws ArgumentException {
         if (!isAddress(address)) {
@@ -142,15 +141,14 @@ public class InputValidator {
     }
 
     /**
-     * Determines whether the specified string array contains only trytes.
-     *
+     * Determines whether the specified string array contains only trytes of a transaction length
      * @param trytes The trytes array to validate.
      * @return <code>true</code> if the specified array contains only valid trytes otherwise, <code>false</code>.
      **/
     public static boolean isArrayOfTrytes(String[] trytes) {
         for (String tryte : trytes) {
             // Check if correct 2673 trytes
-            if (!isTrytesOfExactLength(tryte, 2673)) {
+            if (!isTrytesOfExactLength(tryte, Constants.TRANSACTION_SIZE)) {
                 return false;
             }
         }
@@ -180,6 +178,7 @@ public class InputValidator {
      *
      * @param transfers The transfers list to validate.
      * @return <code>true</code> if the specified transfers are valid; otherwise, <code>false</code>.
+     * @throws ArgumentException when the specified input is not valid.
      **/
     public static boolean isTransfersCollectionValid(final List<Transfer> transfers) throws ArgumentException {
 
@@ -295,7 +294,7 @@ public class InputValidator {
             return false;
         }
         
-        if (input.getSecurity() < 1 || input.getSecurity() > 3) {
+        if (input.getSecurity() < Constants.MIN_SECURITY_LEVEL || input.getSecurity() > Constants.MAX_SECURITY_LEVEL) {
             return false;
         }
 
@@ -309,7 +308,9 @@ public class InputValidator {
      * @return <code>true</code> if the specified input is valid; otherwise, <code>false</code>.
      **/
     public static boolean isValidSeed(String seed) {
-        return isTrytesOfExactLength(seed, seed.length());
+        if (seed.length() > Constants.SEED_LENGTH_MAX) return false;
+        
+        return isTrytes(seed);
     }
 
     /**
@@ -338,10 +339,10 @@ public class InputValidator {
      **/
     public static boolean isHash(String hash) {
      // Check if address with checksum
-        if (hash.length() == 90) {
+        if (hash.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM) {
             return isTrytesOfExactLength(hash, 0); //We already checked length
         } else {
-            return isTrytesOfExactLength(hash, 81);
+            return isTrytesOfExactLength(hash, Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM);
         }
     }
     
@@ -398,11 +399,11 @@ public class InputValidator {
         for (String tryteValue : trytes) {
 
             // Check if correct 2673 trytes
-            if (!isTrytesOfExactLength(tryteValue, 2673)) {
+            if (!isTrytesOfExactLength(tryteValue, Constants.TRANSACTION_SIZE)) {
                 return false;
             }
 
-            String lastTrytes = tryteValue.substring(2673 - (3 * 81));
+            String lastTrytes = tryteValue.substring(Constants.TRANSACTION_SIZE - (3 * 81));
 
             if (isNinesTrytes(lastTrytes, lastTrytes.length())) {
                 return false;

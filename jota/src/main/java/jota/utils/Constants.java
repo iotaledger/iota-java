@@ -3,7 +3,6 @@ package jota.utils;
 /**
  * This class defines the global constants.
  *
- * @author pinpong
  */
 public class Constants {
 
@@ -16,28 +15,45 @@ public class Constants {
      * The maximum seed length
      */
     public static final int SEED_LENGTH_MAX = 81;
+    
+    /**
+     * The length of a hash in trits
+     */
+    public static int HASH_LENGTH_TRITS = 243;
 
     /**
-     * The length of an address without checksum
+     * The length of an address without checksum in trytes
      */
     public static int ADDRESS_LENGTH_WITHOUT_CHECKSUM = 81;
 
     /**
-     * The length of an address with checksum
+     * The length of an address with checksum in trytes
      */
     public static int ADDRESS_LENGTH_WITH_CHECKSUM = 90;
 
     /**
-     * The length of an message
+     * The length of a message
      */
     public static int MESSAGE_LENGTH = 2187;
+    
+    /**
+     * Size of a full transaction, whether it has been attached or not.
+     */
+    public static int TRANSACTION_SIZE = 2673;
 
     /**
      * The length of an tag
      */
     public static int TAG_LENGTH = 27;
     
+    /**
+     * Maximum security level of an address
+     */
     public static int MIN_SECURITY_LEVEL = 1;
+    
+    /**
+     * Minimum security level of an address
+     */
     public static int MAX_SECURITY_LEVEL = 3;
 
     public static final String INVALID_TRYTES_INPUT_ERROR = "Invalid trytes provided.";

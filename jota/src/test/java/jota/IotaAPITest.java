@@ -272,7 +272,7 @@ public class IotaAPITest {
         try {
             iotaAPI.storeAndBroadcast(TEST_TRYTES);
             fail("Transaction did not fail on old timestamp value");
-        } catch (IllegalAccessError e) {
+        } catch (ArgumentException e) {
             //TODO Check for specific error
         }
     }

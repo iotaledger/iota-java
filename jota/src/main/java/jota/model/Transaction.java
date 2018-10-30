@@ -2,6 +2,7 @@ package jota.model;
 
 import jota.pow.ICurl;
 import jota.pow.SpongeFactory;
+import jota.utils.Constants;
 import jota.utils.Converter;
 import jota.utils.InputValidator;
 
@@ -453,15 +454,13 @@ public class Transaction {
         }
 
         // validity check
-        for (int i = 2279; i < 2295; i++) {
-            if (trytes.charAt(i) != '9') {
-                log.warn("Trytes {} does not seem a valid tryte", trytes);
-                return;
-            }
+        if (!InputValidator.isNinesTrytes(trytes.substring(2279, 2295), 16)) {
+            log.warn("Trytes {} does not seem a valid tryte", trytes);
+            return;
         }
 
         int[] transactionTrits = Converter.trits(trytes);
-        int[] hash = new int[243];
+        int[] hash = new int[Constants.HASH_LENGTH_TRITS];
 
         ICurl curl = SpongeFactory.create(SpongeFactory.Mode.CURLP81);
         // generate the correct transaction hash
@@ -470,17 +469,17 @@ public class Transaction {
         curl.squeeze(hash, 0, hash.length);
 
         this.setHash(Converter.trytes(hash));
-        this.setSignatureFragments(trytes.substring(0, 2187));
-        this.setAddress(trytes.substring(2187, 2268));
+        this.setSignatureFragments(trytes.substring(0, Constants.MESSAGE_LENGTH));
+        this.setAddress(trytes.substring(Constants.MESSAGE_LENGTH, Constants.MESSAGE_LENGTH + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM));
         this.setValue(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6804, 6837)));
-        this.setObsoleteTag(trytes.substring(2295, 2322));
+        this.setObsoleteTag(trytes.substring(2295, 2295 + Constants.TAG_LENGTH));
         this.setTimestamp(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6966, 6993)));
         this.setCurrentIndex(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6993, 7020)));
         this.setLastIndex(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7020, 7047)));
-        this.setBundle(trytes.substring(2349, 2430));
-        this.setTrunkTransaction(trytes.substring(2430, 2511));
-        this.setBranchTransaction(trytes.substring(2511, 2592));
-        this.setTag(trytes.substring(2592, 2619));
+        this.setBundle(trytes.substring(2349, 2349 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM));
+        this.setTrunkTransaction(trytes.substring(2430, 2430 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM));
+        this.setBranchTransaction(trytes.substring(2511, 2511 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM));
+        this.setTag(trytes.substring(2592, 2592 + Constants.TAG_LENGTH));
         this.setAttachmentTimestamp(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7857, 7884)));
         this.setAttachmentTimestampLowerBound(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7884, 7911)));
         this.setAttachmentTimestampUpperBound(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7911, 7938)));

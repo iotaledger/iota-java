@@ -197,14 +197,13 @@ public class Signing {
 
 
     public Boolean validateSignatures(String expectedAddress, String[] signatureFragments, String bundleHash) {
-        int securityLevel = signatureFragments.length;
         Bundle bundle = new Bundle();
 
-        int[][] normalizedBundleFragments = new int[securityLevel][27];
+        int[][] normalizedBundleFragments = new int[3][27];
         int[] normalizedBundleHash = bundle.normalizedBundle(bundleHash);
 
         // Split hash into 3 fragments
-        for (int i = 0; i < securityLevel; i++) {
+        for (int i = 0; i < 3; i++) {
             normalizedBundleFragments[i] = Arrays.copyOfRange(normalizedBundleHash, i * 27, (i + 1) * 27);
         }
 
@@ -213,7 +212,7 @@ public class Signing {
 
         for (int i = 0; i < signatureFragments.length; i++) {
 
-            int[] digestBuffer = digest(normalizedBundleFragments[i % securityLevel], Converter.trits(signatureFragments[i]));
+            int[] digestBuffer = digest(normalizedBundleFragments[i % 3], Converter.trits(signatureFragments[i]));
 
             System.arraycopy(digestBuffer, 0, digests, i * HASH_LENGTH, HASH_LENGTH);
         }
