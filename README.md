@@ -2,6 +2,8 @@
 
 # IOTA Java Library
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/847795740b4745b3a450e4398191deca)](https://app.codacy.com/app/kwek20/iota-java?utm_source=github.com&utm_medium=referral&utm_content=iotaledger/iota-java&utm_campaign=Badge_Grade_Settings)
+
 [![JitPack][jitpack-badge]][jitpack]
 [![Build Status][travis-badge]][travis]
 [![License][license-badge]][license]  
