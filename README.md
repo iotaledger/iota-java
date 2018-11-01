@@ -279,7 +279,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-[iota-logo]: https://raw.githubusercontent.com/iotaledger/documentation/master/source/images/iota-logo.png
+[iota-logo]: https://avatars0.githubusercontent.com/u/20126597?s=200&v=4
 [codacity]: https://www.codacy.com/app/kwek20/iota-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iotaledger/iota-java&amp;utm_campaign=Badge_Grade
 [codacity-badge]: https://api.codacy.com/project/badge/Grade/92feea51a15c4e589386c269475b8761
 [jitpack]: https://jitpack.io/#iotaledger/iota-java
