@@ -27,7 +27,7 @@ public class Signing {
     }
     
     public Signing(ICurl curl) {
-        this(Optional.of(curl));
+        this(curl != null ? Optional.of(curl) : Optional.empty());
     }
      
     /**

@@ -249,7 +249,7 @@ public class InputValidator {
      * @return <code>true</code> if the specified tag is valid; otherwise, <code>false</code>.
      **/
     public static boolean isValidTag(String tag) {
-        return tag != null && !isTrytesOfExactLength(tag, Constants.TAG_LENGTH);
+        return tag != null && tag.length() <= Constants.TAG_LENGTH && isTrytes(tag);
     }
     
     /**
