@@ -10,12 +10,12 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import static jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
+import static jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
 import static jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
 
 /**
  * This class provides methods to validate the parameters of different iota API methods.
  *
- * @author pinpong
  */
 public class InputValidator {
 
@@ -141,10 +141,12 @@ public class InputValidator {
     }
 
     /**
+     * Deprecated due to ambigue function name, please switch to {@link #areTransactionTrytes}
      * Determines whether the specified string array contains only trytes of a transaction length
      * @param trytes The trytes array to validate.
      * @return <code>true</code> if the specified array contains only valid trytes otherwise, <code>false</code>.
      **/
+    @Deprecated
     public static boolean isArrayOfTrytes(String[] trytes) {
         for (String tryte : trytes) {
             // Check if correct 2673 trytes
@@ -387,6 +389,23 @@ public class InputValidator {
             return false;
         }
     }
+    
+    /**
+      * Determines whether the specified string array contains only trytes of a transaction length
+      * @param trytes The trytes array to validate.
+      * @return <code>true</code> if the specified array contains only valid trytes otherwise, <code>false</code>.
+      **/
+    public static boolean areTransactionTrytes(String... trytes) {
+        for (String tryteValue : trytes) {
+
+            // Check if correct 2673 trytes
+            if (!isTrytesOfExactLength(tryteValue, Constants.TRANSACTION_SIZE)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     /**
      * Checks if attached trytes if last 241 trytes are non-zero
@@ -411,5 +430,14 @@ public class InputValidator {
         }
 
         return true;
+    }
+    
+    /**
+     * Checks if the security level is valid
+     * @param level the level
+     * @return <code>true</code> if the level is between 1 and 3(inclusive); otherwise, <code>false</code>.
+     */
+    public static boolean isValidSecurityLevel(int level) {
+       return level >= Constants.MIN_SECURITY_LEVEL && level <= Constants.MAX_SECURITY_LEVEL;
     }
 }

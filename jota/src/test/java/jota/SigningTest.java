@@ -52,13 +52,13 @@ public class SigningTest {
         Signing signing = new Signing(curl);
         String seed = "EV9QRJFJZVFNLYUFXWKXMCRRPNAZYQVEYB9VEPUHQNXJCWKZFVUCTQJFCUAMXAHMMIUQUJDG9UGGQBPIY";
 
-        for(int i = 1; i < 5; i++) {
+        for(int i = Constants.MIN_SECURITY_LEVEL; i < Constants.MAX_SECURITY_LEVEL; i++) {
             int[] key1 = signing.key(Converter.trits(seed), 0, i);
-            assertEquals(Signing.KEY_LENGTH * i, key1.length);
+            assertEquals(Constants.KEY_LENGTH * i, key1.length);
             int[] key2 = signing.key(Converter.trits(seed + seed), 0, i);
-            assertEquals(Signing.KEY_LENGTH * i, key2.length );
+            assertEquals(Constants.KEY_LENGTH * i, key2.length );
             int[] key3 = signing.key(Converter.trits(seed + seed + seed), 0, i);
-            assertEquals(Signing.KEY_LENGTH * i, key3.length );
+            assertEquals(Constants.KEY_LENGTH * i, key3.length );
         }
     }
 
@@ -81,11 +81,11 @@ public class SigningTest {
     public void testKeyLength() throws ArgumentException {
         Signing signing = new Signing();
         int[] key = signing.key(Converter.trits(TEST_SEED), 5, 1);
-        assertEquals(Signing.KEY_LENGTH, key.length);
+        assertEquals(Constants.KEY_LENGTH, key.length);
         key = signing.key(Converter.trits(TEST_SEED), 5, 2);
-        assertEquals(2 * Signing.KEY_LENGTH, key.length);
+        assertEquals(2 * Constants.KEY_LENGTH, key.length);
         key = signing.key(Converter.trits(TEST_SEED), 5, 3);
-        assertEquals(3 * Signing.KEY_LENGTH, key.length);
+        assertEquals(3 * Constants.KEY_LENGTH, key.length);
     }
 
     @Test

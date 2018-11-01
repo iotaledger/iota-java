@@ -29,7 +29,6 @@ import static jota.utils.Constants.*;
  *
  * {@code GetNodeInfoResponse response = api.getNodeInfo();}
  *
- * @author davassi
  */
 public class IotaAPI extends IotaAPICore {
 
@@ -368,7 +367,7 @@ public class IotaAPI extends IotaAPICore {
             throw new IllegalStateException(INVALID_SEED_INPUT_ERROR);
         }
 
-        if (security < 1) {
+        if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 
@@ -544,13 +543,13 @@ public class IotaAPI extends IotaAPICore {
             throw new IllegalStateException(INVALID_SEED_INPUT_ERROR);
         }
 
-        if (security < 1) {
+        if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 
         // If start value bigger than end, return error
         // or if difference between end and start is bigger than 500 keys
-        if (start > end || end > (start + 500)) {
+        if ((start > end && end > 0) || end > (start + 500)) {
             throw new IllegalStateException(INVALID_INPUT_ERROR);
         }
 
@@ -597,7 +596,7 @@ public class IotaAPI extends IotaAPICore {
      **/
     public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, final List<String> tips, long threshold, int start, StopWatch stopWatch, int security) throws ArgumentException, IllegalStateException {
 
-        if (security < 1) {
+        if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 
@@ -680,7 +679,10 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
     public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, boolean returnAll, int start, int end, boolean inclusionStates, long threshold) throws ArgumentException {
-
+        if (!InputValidator.isValidSecurityLevel(security)) {
+            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
+        }
+        
         if (start > end || end > (start + 1000)) {
             throw new ArgumentException(INVALID_INPUT_ERROR);
         }
@@ -957,7 +959,10 @@ public class IotaAPI extends IotaAPICore {
     public List<Transaction> initiateTransfer(int securitySum, String inputAddress, String remainderAddress,
                                               List<Transfer> transfers, List<Transaction> tips,
                                               boolean testMode) throws ArgumentException {
-
+        if (securitySum < Constants.MIN_SECURITY_LEVEL) {
+            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
+        }
+        
         // validate input address
         if (!InputValidator.isAddress(inputAddress))
             throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);

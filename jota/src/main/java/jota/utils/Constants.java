@@ -5,6 +5,11 @@ package jota.utils;
  *
  */
 public class Constants {
+    
+    /**
+     * 
+     */
+    public final static int KEY_LENGTH = 6561;
 
     /**
      * This String contains all possible characters of the tryte alphabet
@@ -61,6 +66,7 @@ public class Constants {
     public static final String INVALID_TAIL_HASH_INPUT_ERROR = "Invalid tail hash provided.";
     public static final String INVALID_SEED_INPUT_ERROR = "Invalid seed provided.";
     public static final String INVALID_SECURITY_LEVEL_INPUT_ERROR = "Invalid security level provided.";
+    public static final String INVALID_INDEX_INPUT_ERROR = "Invalid index provided.";
     public static final String INVALID_ATTACHED_TRYTES_INPUT_ERROR = "Invalid attached trytes provided.";
     public static final String INVALID_TRANSFERS_INPUT_ERROR = "Invalid transfers provided.";
     public static final String INVALID_ADDRESSES_INPUT_ERROR = "Invalid addresses provided.";
