@@ -1,7 +1,7 @@
 ![IOTA Logo][iota-logo]
 
 # IOTA Java Library
-[![Codacy Badge][codacity-badge]][codacity]
+[![Codacy Badge][codacy-badge]][codacy]
 [![JitPack][jitpack-badge]][jitpack]
 [![Build Status][travis-badge]][travis]
 [![License][license-badge]][license]  
@@ -36,7 +36,7 @@ All the boilerplate code for connecting to the node REST interface has been hidd
 1. [Disclaimer](#disclaimer)
 1. [Supporting the project](#supporting-the-project)
     1. [Join the Discussion](#join-the-discussion)
-1. [License](#license)
+1. [License](codacity#license)
 
 ## Installation
 
@@ -280,8 +280,8 @@ limitations under the License.
 ```
 
 [iota-logo]: https://avatars0.githubusercontent.com/u/20126597?s=200&v=4
-[codacity]: https://www.codacy.com/app/kwek20/iota-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iotaledger/iota-java&amp;utm_campaign=Badge_Grade
-[codacity-badge]: https://api.codacy.com/project/badge/Grade/92feea51a15c4e589386c269475b8761
+[codacy]: https://www.codacy.com/app/kwek20/iota-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iotaledger/iota-java&amp;utm_campaign=Badge_Grade
+[codacy-badge]: https://api.codacy.com/project/badge/Grade/92feea51a15c4e589386c269475b8761
 [jitpack]: https://jitpack.io/#iotaledger/iota-java
 [jitpack-badge]: https://jitpack.io/v/iotaledger/iota-java.svg
 [travis]: https://travis-ci.org/iotaledger/iota-java
