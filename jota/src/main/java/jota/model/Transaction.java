@@ -41,6 +41,28 @@ public class Transaction {
     private String tag;
     private long attachmentTimestampLowerBound;
     private long attachmentTimestampUpperBound;
+    
+    /**
+     * Converts an array of transaction trytes into an array of transaction objects.
+     * @param trytes the array of transactions trytes
+     * @return the transaction objects
+     */
+    public static Transaction[] asTransactionObjects(String... trytes) {
+        Transaction[] transactions = new Transaction[trytes.length];
+        for (int i = 0; i < trytes.length; i++) {
+            transactions[i] = asTransactionObject(trytes[i]);
+        }
+        return transactions;
+    }
+    
+    /**
+     * Converts  transaction trytes into a transaction object.
+     * @param trytes the transaction trytes
+     * @return the transaction object
+     */
+    public static Transaction asTransactionObject(String trytes) {
+        return new Transaction(trytes);
+    }
 
     /**
      * Initializes a new instance of the Signature class.
