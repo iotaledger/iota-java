@@ -288,8 +288,8 @@ limitations under the License.
 [travis-badge]: https://travis-ci.org/iotaledger/iota-java.svg?branch=master
 [license]: https://github.com/iotaledger/iota-java/blob/master/LICENSE
 [license-badge]: https://img.shields.io/github/license/iotaledger/iota-java.svg
-[iota-iri]: https://github.com/iotaledger/iri/tree/v1.5.3
-[iota-iri-badge]: https://img.shields.io/badge/IOTA%20IRI%20compatibility-v1.5.0-blue.svg
+[iota-iri]: https://github.com/iotaledger/iri/tree/v1.5.5
+[iota-iri-badge]: https://img.shields.io/badge/IOTA%20IRI%20compatibility-v1.5.5-blue.svg
 [iota-api]: https://iota.readme.io/reference
 [iota-api-badge]: https://img.shields.io/badge/IOTA%20API%20coverage-15/15%20commands-green.svg
 [javadoc]: https://iotaledger.github.io/iota-java/javadoc/
