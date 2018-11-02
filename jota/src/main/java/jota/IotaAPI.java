@@ -137,7 +137,7 @@ public class IotaAPI extends IotaAPICore {
      */
     public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int index, int amount, boolean addSpendAddresses) throws ArgumentException {
         if ((!InputValidator.isValidSeed(seed))) {
-            throw new IllegalStateException(INVALID_SEED_INPUT_ERROR);
+            throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
         }
         
         StopWatch stopWatch = new StopWatch();
@@ -175,7 +175,7 @@ public class IotaAPI extends IotaAPICore {
      */
     public GetNewAddressResponse getAddressesUnchecked(String seed, int security, boolean checksum, int index, int amount) throws ArgumentException {
         if ((!InputValidator.isValidSeed(seed))) {
-            throw new IllegalStateException(INVALID_SEED_INPUT_ERROR);
+            throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
         }
         
         StopWatch stopWatch = new StopWatch();

@@ -220,7 +220,7 @@ public class InputValidator {
         }
 
         // Check if tag is correct trytes encoded and not longer than 27 trytes
-        return isValidTag(transfer.getTag());ue;
+        return isValidTag(transfer.getTag());
     }
     
     /**
