@@ -23,11 +23,11 @@ public class Signing {
 
     
     public Signing() {
-        this(Optional.ofNullable(null));
+        this(Optional.empty());
     }
     
     public Signing(ICurl curl) {
-        this(Optional.empty());
+        this(curl != null ? Optional.of(curl) : Optional.empty());
     }
      
     /**

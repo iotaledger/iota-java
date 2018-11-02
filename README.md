@@ -1,7 +1,7 @@
 ![IOTA Logo][iota-logo]
 
 # IOTA Java Library
-
+[![Codacy Badge][codacy-badge]][codacy]
 [![JitPack][jitpack-badge]][jitpack]
 [![Build Status][travis-badge]][travis]
 [![License][license-badge]][license]  
@@ -36,7 +36,7 @@ All the boilerplate code for connecting to the node REST interface has been hidd
 1. [Disclaimer](#disclaimer)
 1. [Supporting the project](#supporting-the-project)
     1. [Join the Discussion](#join-the-discussion)
-1. [License](#license)
+1. [License](codacity#license)
 
 ## Installation
 
@@ -279,17 +279,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-[iota-logo]: https://raw.githubusercontent.com/iotaledger/documentation/master/source/images/iota-logo.png
+[iota-logo]: https://avatars0.githubusercontent.com/u/20126597?s=200&v=4
+[codacy]: https://www.codacy.com/app/kwek20/iota-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iotaledger/iota-java&amp;utm_campaign=Badge_Grade
+[codacy-badge]: https://api.codacy.com/project/badge/Grade/92feea51a15c4e589386c269475b8761
 [jitpack]: https://jitpack.io/#iotaledger/iota-java
 [jitpack-badge]: https://jitpack.io/v/iotaledger/iota-java.svg
 [travis]: https://travis-ci.org/iotaledger/iota-java
 [travis-badge]: https://travis-ci.org/iotaledger/iota-java.svg?branch=master
 [license]: https://github.com/iotaledger/iota-java/blob/master/LICENSE
 [license-badge]: https://img.shields.io/github/license/iotaledger/iota-java.svg
-[iota-iri]: https://github.com/iotaledger/iri/tree/v1.5.0
-[iota-iri-badge]: https://img.shields.io/badge/IOTA%20IRI%20compatibility-v1.5.0-blue.svg
+[iota-iri]: https://github.com/iotaledger/iri/tree/v1.5.5
+[iota-iri-badge]: https://img.shields.io/badge/IOTA%20IRI%20compatibility-v1.5.5-blue.svg
 [iota-api]: https://iota.readme.io/reference
-[iota-api-badge]: https://img.shields.io/badge/IOTA%20API%20coverage-14/15%20commands-red.svg
+[iota-api-badge]: https://img.shields.io/badge/IOTA%20API%20coverage-15/15%20commands-green.svg
 [javadoc]: https://iotaledger.github.io/iota-java/javadoc/
 [issues]: https://github.com/iotaledger/iota-java/issues
 [new-issue]: https://github.com/iotaledger/iota-java/issues/new

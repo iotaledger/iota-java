@@ -220,11 +220,7 @@ public class InputValidator {
         }
 
         // Check if tag is correct trytes encoded and not longer than 27 trytes
-        if (transfer.getTag() == null || !isTrytesOfExactLength(transfer.getTag(), transfer.getTag().length()) || transfer.getTag().length() > Constants.TAG_LENGTH) {
-            return false;
-        }
-
-        return true;
+        return isValidTag(transfer.getTag());
     }
     
     /**
@@ -254,7 +250,7 @@ public class InputValidator {
      * @return <code>true</code> if the specified tag is valid; otherwise, <code>false</code>.
      **/
     public static boolean isValidTag(String tag) {
-        return tag != null && !isTrytesOfExactLength(tag, Constants.TAG_LENGTH);
+        return tag != null && tag.length() <= Constants.TAG_LENGTH && isTrytes(tag);
     }
     
     /**
@@ -296,11 +292,7 @@ public class InputValidator {
             return false;
         }
         
-        if (input.getSecurity() < Constants.MIN_SECURITY_LEVEL || input.getSecurity() > Constants.MAX_SECURITY_LEVEL) {
-            return false;
-        }
-
-        return true;
+        return isValidSecurityLevel(input.getSecurity());
     }
 
     /**
@@ -378,7 +370,7 @@ public class InputValidator {
         }
         
         String protocol = uri.substring(0, 6);
-        if (!protocol.equals("tcp://") && !protocol.equals("udp://")) {
+        if (!"tcp://".equals(protocol) && !"udp://".equals(protocol)) {
             return false;
         }
         
