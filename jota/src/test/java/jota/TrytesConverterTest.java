@@ -14,20 +14,20 @@ public class TrytesConverterTest {
 
     @Test
     public void shouldConvertStringToTrytes() {
-        assertEquals(TrytesConverter.toTrytes("Z"), "IC");
-        assertEquals(TrytesConverter.toTrytes("JOTA JOTA"), "TBYBCCKBEATBYBCCKB");
+        assertEquals(TrytesConverter.asciiToTrytes("Z"), "IC");
+        assertEquals(TrytesConverter.asciiToTrytes("JOTA JOTA"), "TBYBCCKBEATBYBCCKB");
     }
 
     @Test
     public void shouldConvertTrytesToString() {
-        assertEquals(TrytesConverter.toString("IC"), "Z");
-        assertEquals(TrytesConverter.toString("TBYBCCKBEATBYBCCKB"), "JOTA JOTA");
+        assertEquals(TrytesConverter.trytesToAscii("IC"), "Z");
+        assertEquals(TrytesConverter.trytesToAscii("TBYBCCKBEATBYBCCKB"), "JOTA JOTA");
     }
 
     @Test
     public void shouldConvertBackAndForth() {
         String str = RandomStringUtils.randomAlphabetic(1000).toUpperCase();
-        String back = TrytesConverter.toString(TrytesConverter.toTrytes(str));
+        String back = TrytesConverter.trytesToAscii(TrytesConverter.asciiToTrytes(str));
         assertTrue(str.equals(back));
     }
 }

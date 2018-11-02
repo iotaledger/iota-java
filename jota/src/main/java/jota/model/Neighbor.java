@@ -3,7 +3,6 @@ package jota.model;
 /**
  * This class represents an Neighbor.
  *
- * @author pinpong
  **/
 public class Neighbor {
 

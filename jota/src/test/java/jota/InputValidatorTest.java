@@ -34,7 +34,7 @@ public class InputValidatorTest {
 
     @Test
     public void shouldIsTrytes() {
-        assertEquals(InputValidator.isTrytes(TEST_TRYTES, TEST_TRYTES.length()), true);
+        assertEquals(InputValidator.isTrytesOfExactLength(TEST_TRYTES, TEST_TRYTES.length()), true);
     }
 
     @Test

@@ -2,7 +2,10 @@ package jota.model;
 
 import jota.pow.ICurl;
 import jota.pow.SpongeFactory;
+import jota.utils.Constants;
 import jota.utils.Converter;
+import jota.utils.InputValidator;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -14,7 +17,6 @@ import java.util.Arrays;
 /**
  * This class represents an iota transaction.
  *
- * @author pinpong
  */
 public class Transaction {
 
@@ -39,6 +41,28 @@ public class Transaction {
     private String tag;
     private long attachmentTimestampLowerBound;
     private long attachmentTimestampUpperBound;
+    
+    /**
+     * Converts an array of transaction trytes into an array of transaction objects.
+     * @param trytes the array of transactions trytes
+     * @return the transaction objects
+     */
+    public static Transaction[] asTransactionObjects(String... trytes) {
+        Transaction[] transactions = new Transaction[trytes.length];
+        for (int i = 0; i < trytes.length; i++) {
+            transactions[i] = asTransactionObject(trytes[i]);
+        }
+        return transactions;
+    }
+    
+    /**
+     * Converts  transaction trytes into a transaction object.
+     * @param trytes the transaction trytes
+     * @return the transaction object
+     */
+    public static Transaction asTransactionObject(String trytes) {
+        return new Transaction(trytes);
+    }
 
     /**
      * Initializes a new instance of the Signature class.
@@ -73,15 +97,7 @@ public class Transaction {
         this.obsoleteTag = tag;
         this.timestamp = timestamp;
     }
-
-    public long getAttachmentTimestampLowerBound() {
-        return attachmentTimestampLowerBound;
-    }
-
-    public void setAttachmentTimestampLowerBound(long attachmentTimestampLowerBound) {
-        this.attachmentTimestampLowerBound = attachmentTimestampLowerBound;
-    }
-
+    
     /**
      * Initializes a new instance of the Signature class.
      */
@@ -109,6 +125,14 @@ public class Transaction {
     public Transaction(String trytes, ICurl customCurl) {
         transactionObject(trytes);
         this.customCurl = customCurl;
+    }
+    
+    public long getAttachmentTimestampLowerBound() {
+        return attachmentTimestampLowerBound;
+    }
+
+    public void setAttachmentTimestampLowerBound(long attachmentTimestampLowerBound) {
+        this.attachmentTimestampLowerBound = attachmentTimestampLowerBound;
     }
 
     public long getAttachmentTimestampUpperBound() {
@@ -452,15 +476,13 @@ public class Transaction {
         }
 
         // validity check
-        for (int i = 2279; i < 2295; i++) {
-            if (trytes.charAt(i) != '9') {
-                log.warn("Trytes {} does not seem a valid tryte", trytes);
-                return;
-            }
+        if (!InputValidator.isNinesTrytes(trytes.substring(2279, 2295), 16)) {
+            log.warn("Trytes {} does not seem a valid tryte", trytes);
+            return;
         }
 
         int[] transactionTrits = Converter.trits(trytes);
-        int[] hash = new int[243];
+        int[] hash = new int[Constants.HASH_LENGTH_TRITS];
 
         ICurl curl = SpongeFactory.create(SpongeFactory.Mode.CURLP81);
         // generate the correct transaction hash
@@ -469,20 +491,28 @@ public class Transaction {
         curl.squeeze(hash, 0, hash.length);
 
         this.setHash(Converter.trytes(hash));
-        this.setSignatureFragments(trytes.substring(0, 2187));
-        this.setAddress(trytes.substring(2187, 2268));
+        this.setSignatureFragments(trytes.substring(0, Constants.MESSAGE_LENGTH));
+        this.setAddress(trytes.substring(Constants.MESSAGE_LENGTH, Constants.MESSAGE_LENGTH + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM));
         this.setValue(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6804, 6837)));
-        this.setObsoleteTag(trytes.substring(2295, 2322));
+        this.setObsoleteTag(trytes.substring(2295, 2295 + Constants.TAG_LENGTH));
         this.setTimestamp(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6966, 6993)));
         this.setCurrentIndex(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6993, 7020)));
         this.setLastIndex(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7020, 7047)));
-        this.setBundle(trytes.substring(2349, 2430));
-        this.setTrunkTransaction(trytes.substring(2430, 2511));
-        this.setBranchTransaction(trytes.substring(2511, 2592));
-        this.setTag(trytes.substring(2592, 2619));
+        this.setBundle(trytes.substring(2349, 2349 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM));
+        this.setTrunkTransaction(trytes.substring(2430, 2430 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM));
+        this.setBranchTransaction(trytes.substring(2511, 2511 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM));
+        this.setTag(trytes.substring(2592, 2592 + Constants.TAG_LENGTH));
         this.setAttachmentTimestamp(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7857, 7884)));
         this.setAttachmentTimestampLowerBound(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7884, 7911)));
         this.setAttachmentTimestampUpperBound(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7911, 7938)));
         this.setNonce(trytes.substring(2646, 2673));
+    }
+    
+    /**
+     * Checks if the current index is 0
+     * @return if this is a tail transaction
+     */
+    public boolean isTailTransaction() {
+        return getCurrentIndex() == 0;
     }
 }

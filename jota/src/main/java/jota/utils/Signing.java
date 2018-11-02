@@ -9,43 +9,56 @@ import jota.pow.SpongeFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static jota.pow.JCurl.HASH_LENGTH;
-import static jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
+
+import static jota.utils.Constants.*;
 
 
 public class Signing {
-    public final static int KEY_LENGTH = 6561;
+    
 
     private ICurl curl;
 
+    
+    public Signing() {
+        this(Optional.ofNullable(null));
+    }
+    
+    public Signing(ICurl curl) {
+        this(Optional.empty());
+    }
+     
     /**
-     * public Signing() {
-     * this(null);
-     * }
-     *
-     * /**
      *
      * @param curl
      */
-    public Signing(ICurl curl) {
-        this.curl = curl == null ? SpongeFactory.create(SpongeFactory.Mode.KERL) : curl;
+    public Signing(Optional<ICurl> curl) {
+        this.curl = curl == null || !curl.isPresent() ? SpongeFactory.create(SpongeFactory.Mode.KERL) : curl.get();
     }
-
+    
     /**
-     * @param inSeed
-     * @param index
-     * @param security
-     * @return
-     * @throws ArgumentException is thrown when the specified security level is not valid.
+     * Returns the sub-seed trits given a seed and an index
+     * @param inSeed the seed
+     * @param index the index
+     * @return the sub-seed
      */
-    public int[] key(final int[] inSeed, final int index, int security) throws ArgumentException {
-        if (security < 1) {
-            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
+    public int[] subseed(int[] inSeed, int index) throws ArgumentException {
+        if (index < 0) {
+            throw new ArgumentException(INVALID_INDEX_INPUT_ERROR);
         }
-
+        
         int[] seed = inSeed.clone();
 
+        /*
+         * 
+         * index 0 = [0,0,0,1,0,-1,0,1,1,0,-1,1,-1,0]
+         * index 1 = [1,0,0,1,0,-1,0,1,1,0,-1,1,-1,0]
+         * index 2 = [-1,1,0,1,0,-1,0,1,1,0,-1,1,-1,0]
+         * index 3 = [0,1,0,1,0,-1,0,1,1,0,-1,1,-1,0]
+         */
+        
         // Derive subseed.
         for (int i = 0; i < index; i++) {
             for (int j = 0; j < seed.length; j++) {
@@ -56,7 +69,43 @@ public class Signing {
                 }
             }
         }
+        return seed;
+    }
+    
+    /**
+     * Calculates security based on <code>inSeed length / key length</code>
+     * @param inSeed
+     * @param index
+     * @return
+     * @throws ArgumentException is thrown when the specified security level is not valid<br/>
+     *         ArgumentException is thrown when inSeed length is not dividable by 3<br/>
+     *         ArgumentException is thrown when index is below 1<br/>
+     */
+    public int[] key(final int[] inSeed, int index) throws ArgumentException {
+        return key(inSeed, index, (int) Math.floor(inSeed.length / KEY_LENGTH));
+    }
 
+    /**
+     * 
+     * @param inSeed
+     * @param index
+     * @param security
+     * @return 
+     * @throws ArgumentException is thrown when the specified security level is not valid<br/>
+     *         ArgumentException is thrown when inSeed length is not dividable by 3<br/>
+     *         ArgumentException is thrown when index is below 1<br/>
+     */
+    public int[] key(final int[] inSeed, final int index, int security) throws ArgumentException {
+        if (!InputValidator.isValidSecurityLevel(security)) {
+            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
+        }
+        
+        if (inSeed.length % 3 != 0) {
+            throw new ArgumentException(INVALID_SEED_INPUT_ERROR);
+        }
+
+        int[] seed = subseed(inSeed, index);
+        
         ICurl curl = this.getICurlObject(SpongeFactory.Mode.KERL);
         curl.reset();
         curl.absorb(seed, 0, seed.length);
@@ -81,21 +130,11 @@ public class Signing {
         return key;
     }
 
-    public int[] signatureFragment(int[] normalizedBundleFragment, int[] keyFragment) {
-        int[] signatureFragment = keyFragment.clone();
-
-        for (int i = 0; i < 27; i++) {
-
-            for (int j = 0; j < 13 - normalizedBundleFragment[i]; j++) {
-                curl.reset()
-                        .absorb(signatureFragment, i * HASH_LENGTH, HASH_LENGTH)
-                        .squeeze(signatureFragment, i * HASH_LENGTH, HASH_LENGTH);
-            }
-        }
-
-        return signatureFragment;
-    }
-
+    /**
+     * Address generates the address trits from the given digests.
+     * @param digests the digests
+     * @return the address trits
+     */
     public int[] address(int[] digests) {
         int[] address = new int[HASH_LENGTH];
         ICurl curl = this.getICurlObject(SpongeFactory.Mode.KERL);
@@ -105,9 +144,18 @@ public class Signing {
         return address;
     }
 
-    public int[] digests(int[] key) {
+    /**
+     * Digests hashes each segment of each key fragment 26 times and returns them.
+     * @param key the key trits
+     * @return the digests
+     * @throws ArgumentException if the security level is invalid
+     */
+    public int[] digests(int[] key) throws ArgumentException {
         int security = (int) Math.floor(key.length / KEY_LENGTH);
-
+        if (!InputValidator.isValidSecurityLevel(security)) {
+            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
+        }
+        
         int[] digests = new int[security * HASH_LENGTH];
         int[] keyFragment = new int[KEY_LENGTH];
 
@@ -130,6 +178,12 @@ public class Signing {
         return digests;
     }
 
+    /**
+     * 
+     * @param normalizedBundleFragment
+     * @param signatureFragment
+     * @return
+     */
     public int[] digest(int[] normalizedBundleFragment, int[] signatureFragment) {
         curl.reset();
         ICurl jCurl = this.getICurlObject(SpongeFactory.Mode.KERL);
@@ -148,6 +202,21 @@ public class Signing {
         curl.squeeze(buffer);
 
         return buffer;
+    }
+    
+    public int[] signatureFragment(int[] normalizedBundleFragment, int[] keyFragment) {
+        int[] signatureFragment = keyFragment.clone();
+
+        for (int i = 0; i < 27; i++) {
+
+            for (int j = 0; j < 13 - normalizedBundleFragment[i]; j++) {
+                curl.reset()
+                        .absorb(signatureFragment, i * HASH_LENGTH, HASH_LENGTH)
+                        .squeeze(signatureFragment, i * HASH_LENGTH, HASH_LENGTH);
+            }
+        }
+
+        return signatureFragment;
     }
 
     public Boolean validateSignatures(Bundle signedBundle, String inputAddress) {
@@ -175,7 +244,6 @@ public class Signing {
 
 
     public Boolean validateSignatures(String expectedAddress, String[] signatureFragments, String bundleHash) {
-
         Bundle bundle = new Bundle();
 
         int[][] normalizedBundleFragments = new int[3][27];
@@ -202,6 +270,50 @@ public class Signing {
     
     private ICurl getICurlObject(SpongeFactory.Mode mode) {
     	return SpongeFactory.create(mode);
+    }
+
+    /**
+     * Normalizes the given bundle hash, with resulting digits summing to zero.
+     * It returns a slice with the tryte decimal representation without any 13/M values.
+     * @param bundleHash the bundle hash
+     * @return the normalized bundle hash in trits
+     */
+    public int[] normalizedBundle(String bundleHash) {
+        int[] normalizedBundle = new int[81];
+
+        for (int i = 0; i < 3; i++) {
+
+            long sum = 0;
+            for (int j = 0; j < 27; j++) {
+
+                sum += (normalizedBundle[i * 27 + j] = Converter.value(Converter.tritsString("" + bundleHash.charAt(i * 27 + j))));
+            }
+
+            if (sum >= 0) {
+                while (sum-- > 0) {
+                    for (int j = 0; j < 27; j++) {
+                        if (normalizedBundle[i * 27 + j] > -13) {
+                            normalizedBundle[i * 27 + j]--;
+                            break;
+                        }
+                    }
+                }
+            } else {
+
+                while (sum++ < 0) {
+
+                    for (int j = 0; j < 27; j++) {
+
+                        if (normalizedBundle[i * 27 + j] < 13) {
+                            normalizedBundle[i * 27 + j]++;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return normalizedBundle;
     }
 }
 

@@ -1,9 +1,10 @@
 package jota;
 
-import cfb.pearldiver.PearlDiverLocalPoW;
 import jota.dto.response.SendTransferResponse;
 import jota.error.ArgumentException;
 import jota.model.Transfer;
+import jota.pow.pearldiver.PearlDiverLocalPoW;
+
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Ignore;
