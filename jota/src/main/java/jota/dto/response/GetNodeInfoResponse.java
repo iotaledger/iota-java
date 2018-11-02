@@ -21,6 +21,8 @@ public class GetNodeInfoResponse extends AbstractResponse {
     private long time;
     private int tips;
     private int transactionsToRequest;
+    
+    private String[] features;
 
     /**
      * The name of the IOTA software the node currently running (IRI stands for Initial Reference Implementation).
@@ -166,5 +168,13 @@ public class GetNodeInfoResponse extends AbstractResponse {
      */
     public int getTransactionsToRequest() {
         return transactionsToRequest;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public String[] getFeatures() {
+        return features;
     }
 }
