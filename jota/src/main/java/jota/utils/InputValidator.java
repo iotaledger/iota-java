@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import static jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
+import static jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
 import static jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
 
 /**
@@ -219,7 +220,7 @@ public class InputValidator {
         }
 
         // Check if tag is correct trytes encoded and not longer than 27 trytes
-        return isValidTag(transfer.getTag());
+        return isValidTag(transfer.getTag());ue;
     }
     
     /**

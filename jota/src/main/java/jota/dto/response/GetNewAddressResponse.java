@@ -27,4 +27,12 @@ public class GetNewAddressResponse extends AbstractResponse {
     public List<String> getAddresses() {
         return addresses;
     }
+    
+    /**
+     * Gets the first address, for quick access
+     * @return The address
+     */
+    public String first() {
+        return addresses.get(0);
+    }
 }

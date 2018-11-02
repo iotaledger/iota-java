@@ -127,31 +127,31 @@ public class IotaAPITest {
 
     @Test
     public void shouldCreateANewAddressWithChecksum() throws ArgumentException {
-        final GetNewAddressResponse res1 = iotaAPI.getNewAddress(TEST_SEED1, 1, 0, true, 5, false);
+        final GetNewAddressResponse res1 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 1, true, 0, 5);
         assertThat(res1.getAddresses().get(0), Is.is(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1));
 
-        final GetNewAddressResponse res2 = iotaAPI.getNewAddress(TEST_SEED1, 2, 0, true, 5, false);
+        final GetNewAddressResponse res2 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 2, true, 0, 5);
         assertThat(res2.getAddresses().get(0), Is.is(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2));
 
-        final GetNewAddressResponse res3 = iotaAPI.getNewAddress(TEST_SEED1, 3, 0, true, 5, false);
+        final GetNewAddressResponse res3 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 3, true, 0, 5);
         assertThat(res3.getAddresses().get(0), Is.is(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_3));
     }
 
     @Test
     public void shouldCreateANewAddressWithoutChecksum() throws ArgumentException {
-        final GetNewAddressResponse res1 = iotaAPI.getNewAddress(TEST_SEED1, 1, 0, false, 5, false);
+        final GetNewAddressResponse res1 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 1, false, 0, 5);
         assertThat(res1.getAddresses().get(0), Is.is(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_1));
 
-        final GetNewAddressResponse res2 = iotaAPI.getNewAddress(TEST_SEED1, 2, 0, false, 5, false);
+        final GetNewAddressResponse res2 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 2, false, 0, 5);
         assertThat(res2.getAddresses().get(0), Is.is(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2));
 
-        final GetNewAddressResponse res3 = iotaAPI.getNewAddress(TEST_SEED1, 3, 0, false, 5, false);
+        final GetNewAddressResponse res3 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 3, false, 0, 5);
         assertThat(res3.getAddresses().get(0), Is.is(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_3));
     }
 
     @Test
     public void shouldCreate100Addresses() throws ArgumentException {
-        GetNewAddressResponse res = iotaAPI.getNewAddress(TEST_SEED1, 2, 0, false, 100, false);
+        GetNewAddressResponse res = iotaAPI.getAddressesUnchecked(TEST_SEED1, 2, false, 0, 100);
         assertEquals(res.getAddresses().size(), 100);
     }
 
