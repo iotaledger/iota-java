@@ -1,9 +1,9 @@
-package cfb.pearldiver;
+package jota.pow.pearldiver;
 
-import static cfb.pearldiver.PearlDiver.State.CANCELLED;
-import static cfb.pearldiver.PearlDiver.State.COMPLETED;
-import static cfb.pearldiver.PearlDiver.State.RUNNING;
 import static jota.pow.JCurl.NUMBER_OF_ROUNDSP81;
+import static jota.pow.pearldiver.PearlDiver.State.CANCELLED;
+import static jota.pow.pearldiver.PearlDiver.State.COMPLETED;
+import static jota.pow.pearldiver.PearlDiver.State.RUNNING;
 
 
 /**

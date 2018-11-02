@@ -3,6 +3,8 @@ package jota.model;
 import jota.pow.ICurl;
 import jota.pow.SpongeFactory;
 import jota.utils.Converter;
+import jota.utils.Signing;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -12,7 +14,6 @@ import java.util.List;
 /**
  * This class represents a Bundle, a set of transactions.
  *
- * @author pinpong
  **/
 public class Bundle implements Comparable<Bundle> {
 
@@ -25,7 +26,7 @@ public class Bundle implements Comparable<Bundle> {
      * Initializes a new instance of the Bundle class without transactions.
      */
     public Bundle() {
-        this(new ArrayList<Transaction>(), 0);
+        this(new ArrayList<>(), 0);
     }
 
     /**
@@ -181,41 +182,7 @@ public class Bundle implements Comparable<Bundle> {
      * @return normalizedBundle A normalized bundle hash.
      */
     public int[] normalizedBundle(String bundleHash) {
-        int[] normalizedBundle = new int[81];
-
-        for (int i = 0; i < 3; i++) {
-
-            long sum = 0;
-            for (int j = 0; j < 27; j++) {
-
-                sum += (normalizedBundle[i * 27 + j] = Converter.value(Converter.tritsString("" + bundleHash.charAt(i * 27 + j))));
-            }
-
-            if (sum >= 0) {
-                while (sum-- > 0) {
-                    for (int j = 0; j < 27; j++) {
-                        if (normalizedBundle[i * 27 + j] > -13) {
-                            normalizedBundle[i * 27 + j]--;
-                            break;
-                        }
-                    }
-                }
-            } else {
-
-                while (sum++ < 0) {
-
-                    for (int j = 0; j < 27; j++) {
-
-                        if (normalizedBundle[i * 27 + j] < 13) {
-                            normalizedBundle[i * 27 + j]++;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        return normalizedBundle;
+        return new Signing().normalizedBundle(bundleHash);
     }
 
 

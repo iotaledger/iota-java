@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static jota.utils.Constants.*;
-
 
 /**
  * IotaAPI Builder. Usage:
@@ -29,7 +27,6 @@ import static jota.utils.Constants.*;
  *
  * {@code GetNodeInfoResponse response = api.getNodeInfo();}
  *
- * @author davassi
  */
 public class IotaAPI extends IotaAPICore {
 
@@ -44,50 +41,148 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Generates a new address from a seed and returns the remainderAddress.
      * This is either done deterministically, or by providing the index of the new remainderAddress.
-     *
+     * <br/><br/>
+     * Deprecated -> Use the new functions {@link #getNextAvailableAddress}, {@link #getAddressesUnchecked} and {@link #generateNewAddresses}
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param index     Key index to start search from. If the index is provided, the generation of the address is not deterministic.
      * @param checksum  Adds 9-tryte address checksum.
      * @param total     Total number of addresses to generate.
      * @param returnAll If <code>true</code>, it returns all addresses which were deterministically generated (until findTransactions returns null).
-     * @return An array of strings with the specifed number of addresses.
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Deprecated
     public GetNewAddressResponse getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws ArgumentException {
-
-        StopWatch stopWatch = new StopWatch();
-
-        List<String> allAddresses = new ArrayList<>();
 
         // If total number of addresses to generate is supplied, simply generate
         // and return the list of all addresses
         if (total != 0) {
-            for (int i = index; i < index + total; i++) {
-                allAddresses.add(IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl.clone()));
-            }
-            return GetNewAddressResponse.create(allAddresses, stopWatch.getElapsedTimeMili());
-        }
-
-
-        // No total provided: Continue calling findTransactions to see if address was
-        // already created if null, return list of addresses
-        for (int i = index; ; i++) {
-
-            final String newAddress = IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl.clone());
-            final FindTransactionResponse response = findTransactionsByAddresses(newAddress);
-
-            allAddresses.add(newAddress);
-            if (response.getHashes().length == 0) {
-                break;
-            }
+            return getAddressesUnchecked(seed, security, checksum, index, total);
         }
 
         // If !returnAll return only the last address that was generated
         if (!returnAll) {
+            return generateNewAddresses(seed, security, checksum, 0, 1, true);
+        } else {
+            return generateNewAddresses(seed, security, checksum, 0, 1, false);
+        }
+    }
+    
+    /**
+     * Checks all addresses until the first unspent address is found. Starts at index 0.
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @param checksum  Adds 9-tryte address checksum.
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public GetNewAddressResponse getNextAvailableAddress(String seed, int security, boolean checksum) throws ArgumentException {
+        return generateNewAddresses(seed, security, checksum, 0, 1, false);
+    }
+    
+    /**
+     * Checks all addresses until the first unspent address is found.
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @param checksum  Adds 9-tryte address checksum.
+     * @param index     Key index to start search from.
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public GetNewAddressResponse getNextAvailableAddress(String seed, int security, boolean checksum, int index) throws ArgumentException {
+        return generateNewAddresses(seed, security, checksum, index, 1, false);
+    }
+    
+    /**
+     * Generates new addresses, meaning addresses which were not spend from, according to the connected node.
+     * Starts at index 0, untill <code>amount</code> of unspent addresses are found.
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @param checksum  Adds 9-tryte address checksum.
+     * @param amount    Total number of addresses to generate.
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int amount) throws ArgumentException {
+        return generateNewAddresses(seed, security, checksum, 0, amount, false);
+    }
+    
+    /**
+     * Generates new addresses, meaning addresses which were not spend from, according to the connected node.
+     * Stops when <code>amount</code> of unspent addresses are found,starting from <code>index</code>
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @param checksum  Adds 9-tryte address checksum.
+     * @param index     Key index to start search from.
+     * @param amount    Total number of addresses to generate.
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int index, int amount) throws ArgumentException {
+        return generateNewAddresses(seed, security, checksum, 0, amount, false);
+    }
+    
+    /**
+     * Generates new addresses, meaning addresses which were not spend from, according to the connected node.
+     * Stops when <code>amount</code> of unspent addresses are found,starting from <code>index</code>
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @param checksum  Adds 9-tryte address checksum.
+     * @param index     Key index to start search from.
+     * @param amount    Total number of addresses to generate.
+     * @param addSpendAddresses If <code>true</code>, it returns all addresses, even those who were determined to be spent from
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int index, int amount, boolean addSpendAddresses) throws ArgumentException {
+        if ((!InputValidator.isValidSeed(seed))) {
+            throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
+        }
+        
+        StopWatch stopWatch = new StopWatch();
+        List<String> allAddresses = new ArrayList<>();
 
-            //allAddresses = allAddresses.subList(allAddresses.size() - 2, allAddresses.size() - 1);
-            allAddresses = allAddresses.subList(allAddresses.size() - 1, allAddresses.size());
+        for (int i = index, numUnspentFound=0; numUnspentFound < amount; i++) {
+
+            final String newAddress = IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl.clone());
+            final FindTransactionResponse response = findTransactionsByAddresses(newAddress);
+
+            
+            if (response.getHashes().length == 0) {
+                //Unspent address
+                allAddresses.add(newAddress);
+                numUnspentFound++;
+            } else if (addSpendAddresses) {
+                //Spend address, were interested anyways
+                allAddresses.add(newAddress);
+            }
+        }
+        
+        return GetNewAddressResponse.create(allAddresses, stopWatch.getElapsedTimeMili());
+    }
+    
+    /**
+     * Generates <code>amount</code> of addresses, starting from <code>index</code>
+     * This does not mean that these addresses are safe to use (unspent)
+     * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @param checksum  Adds 9-tryte address checksum.
+     * @param index     Key index to start search from. The generation of the address is not deterministic.
+     * @param amount    Total number of addresses to generate.
+     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public GetNewAddressResponse getAddressesUnchecked(String seed, int security, boolean checksum, int index, int amount) throws ArgumentException {
+        if ((!InputValidator.isValidSeed(seed))) {
+            throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
+        }
+        
+        StopWatch stopWatch = new StopWatch();
+
+        List<String> allAddresses = new ArrayList<>();
+        for (int i = index; i < index + amount; i++) {
+            allAddresses.add(IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl.clone()));
         }
         return GetNewAddressResponse.create(allAddresses, stopWatch.getElapsedTimeMili());
     }
@@ -105,11 +200,11 @@ public class IotaAPI extends IotaAPICore {
 
         // validate seed
         if ((!InputValidator.isValidSeed(seed))) {
-            throw new IllegalStateException(INVALID_SEED_INPUT_ERROR);
+            throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
         }
 
         if (start > end || end > (start + 500)) {
-            throw new ArgumentException(INVALID_INPUT_ERROR);
+            throw new ArgumentException(Constants.INVALID_INPUT_ERROR);
         }
 
         StopWatch stopWatch = new StopWatch();
@@ -167,7 +262,7 @@ public class IotaAPI extends IotaAPICore {
         if (tailTxArray.length != 0 && inclusionStates) {
                 gisr = getLatestInclusion(tailTxArray);
             if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0) {
-                throw new IllegalStateException(GET_INCLUSION_STATE_RESPONSE_ERROR);
+                throw new IllegalStateException(Constants.GET_INCLUSION_STATE_RESPONSE_ERROR);
             }
         }
         final GetInclusionStateResponse finalInclusionStates = gisr;
@@ -192,7 +287,7 @@ public class IotaAPI extends IotaAPICore {
                             }
                             // If error returned from getBundle, simply ignore it because the bundle was most likely incorrect
                         } catch (ArgumentException e) {
-                            log.warn(GET_BUNDLE_RESPONSE_ERROR);
+                            log.warn(Constants.GET_BUNDLE_RESPONSE_ERROR);
                         }
                     }
                 });
@@ -206,24 +301,24 @@ public class IotaAPI extends IotaAPICore {
     }
 
     /**
-     * Wrapper function that broadcasts and stores the specified trytes.
+     * Wrapper function that stores and broadcasts the specified trytes.
      *
      * @param trytes The trytes.
-     * @return A StoreTransactionsResponse.
+     * @return A BroadcastTransactionsResponse.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public StoreTransactionsResponse broadcastAndStore(final String... trytes) throws ArgumentException {
+    public BroadcastTransactionsResponse storeAndBroadcast(final String... trytes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
-            throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
+            throw new ArgumentException(Constants.INVALID_TRYTES_INPUT_ERROR);
         }
 
         try {
-            broadcastTransactions(trytes);
+            storeTransactions(trytes);
         } catch (Exception e) {
             throw new ArgumentException(e.toString());
         }
-        return storeTransactions(trytes);
+        return broadcastTransactions(trytes);
     }
 
     /**
@@ -243,7 +338,7 @@ public class IotaAPI extends IotaAPICore {
         final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
 
         try {
-            broadcastAndStore(res.getTrytes());
+            storeAndBroadcast(res.getTrytes());
         } catch (ArgumentException e) {
             return new ArrayList<>();
         }
@@ -266,7 +361,7 @@ public class IotaAPI extends IotaAPICore {
     public List<Transaction> findTransactionsObjectsByHashes(String[] hashes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfHashes(hashes)) {
-            throw new IllegalStateException(INVALID_HASHES_INPUT_ERROR);
+            throw new IllegalStateException(Constants.INVALID_HASHES_INPUT_ERROR);
         }
 
         final GetTrytesResponse trytesResponse = getTrytes(hashes);
@@ -365,16 +460,16 @@ public class IotaAPI extends IotaAPICore {
 
         // validate seed
         if ((!InputValidator.isValidSeed(seed))) {
-            throw new IllegalStateException(INVALID_SEED_INPUT_ERROR);
+            throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
         }
 
-        if (security < 1) {
-            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
+        if (!InputValidator.isValidSecurityLevel(security)) {
+            throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionValid(transfers)) {
-            throw new ArgumentException(INVALID_TRANSFERS_INPUT_ERROR);
+            throw new ArgumentException(Constants.INVALID_TRANSFERS_INPUT_ERROR);
         }
 
         // Create a new bundle
@@ -493,7 +588,7 @@ public class IotaAPI extends IotaAPICore {
 
                 // Return not enough balance error
                 if (totalValue > totalBalance) {
-                    throw new IllegalStateException(NOT_ENOUGH_BALANCE_ERROR);
+                    throw new IllegalStateException(Constants.NOT_ENOUGH_BALANCE_ERROR);
                 }
 
                 return addRemainder(seed, security, confirmedInputs, bundle, tag, totalValue, remainder, signatureFragments);
@@ -541,17 +636,17 @@ public class IotaAPI extends IotaAPICore {
 
         // validate the seed
         if ((!InputValidator.isValidSeed(seed))) {
-            throw new IllegalStateException(INVALID_SEED_INPUT_ERROR);
+            throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
         }
 
-        if (security < 1) {
-            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
+        if (!InputValidator.isValidSecurityLevel(security)) {
+            throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 
         // If start value bigger than end, return error
         // or if difference between end and start is bigger than 500 keys
-        if (start > end || end > (start + 500)) {
-            throw new IllegalStateException(INVALID_INPUT_ERROR);
+        if ((start > end && end > 0) || end > (start + 500)) {
+            throw new IllegalStateException(Constants.INVALID_INPUT_ERROR);
         }
 
         StopWatch stopWatch = new StopWatch();
@@ -597,8 +692,8 @@ public class IotaAPI extends IotaAPICore {
      **/
     public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, final List<String> tips, long threshold, int start, StopWatch stopWatch, int security) throws ArgumentException, IllegalStateException {
 
-        if (security < 1) {
-            throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
+        if (!InputValidator.isValidSecurityLevel(security)) {
+            throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 
         GetBalancesResponse getBalancesResponse = getBalances(100, addresses, tips);
@@ -633,7 +728,7 @@ public class IotaAPI extends IotaAPICore {
         if (thresholdReached) {
             return GetBalancesAndFormatResponse.create(inputs, totalBalance, stopWatch.getElapsedTimeMili());
         }
-        throw new IllegalStateException(NOT_ENOUGH_BALANCE_ERROR);
+        throw new IllegalStateException(Constants.NOT_ENOUGH_BALANCE_ERROR);
     }
 
     /**
@@ -647,84 +742,20 @@ public class IotaAPI extends IotaAPICore {
     public GetBundleResponse getBundle(String transaction) throws ArgumentException {
 
         if (!InputValidator.isHash(transaction)) {
-            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
+            throw new ArgumentException(Constants.INVALID_HASHES_INPUT_ERROR);
         }
-
+        
+        StopWatch stopWatch = new StopWatch();
+        
         Bundle bundle = traverseBundle(transaction, null, new Bundle());
         if (bundle == null) {
-            throw new ArgumentException(INVALID_BUNDLE_ERROR);
+            throw new ArgumentException(Constants.INVALID_BUNDLE_ERROR);
         }
 
-        StopWatch stopWatch = new StopWatch();
-
-        long totalSum = 0;
-        String bundleHash = bundle.getTransactions().get(0).getBundle();
+        if (!BundleValidator.isBundle(bundle)){
+            throw new ArgumentException(Constants.INVALID_BUNDLE_ERROR);
+        } 
         
-        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
-        curl.reset();
-
-        List<Signature> signaturesToValidate = new ArrayList<>();
-
-        for (int i = 0; i < bundle.getTransactions().size(); i++) {
-            Transaction trx = bundle.getTransactions().get(i);
-            Long bundleValue = trx.getValue();
-            totalSum += bundleValue;
-
-            if (i != bundle.getTransactions().get(i).getCurrentIndex()) {
-                throw new ArgumentException(INVALID_BUNDLE_ERROR);
-            }
-
-            String trxTrytes = trx.toTrytes().substring(2187, 2187 + 162);
-            // Absorb bundle hash + value + timestamp + lastIndex + currentIndex trytes.
-            curl.absorb(Converter.trits(trxTrytes));
-            // Check if input transaction
-            if (bundleValue < 0) {
-                String address = trx.getAddress();
-                Signature sig = new Signature();
-                sig.setAddress(address);
-                sig.getSignatureFragments().add(trx.getSignatureFragments());
-
-                // Find the subsequent txs with the remaining signature fragment
-                for (int y = i + 1; y < bundle.getTransactions().size(); y++) {
-                    Transaction newBundleTx = bundle.getTransactions().get(y);
-
-                    // Check if new tx is part of the signature fragment
-                    if (newBundleTx.getAddress().equals(address) && newBundleTx.getValue() == 0) {
-                        if (sig.getSignatureFragments().indexOf(newBundleTx.getSignatureFragments()) == -1)
-                            sig.getSignatureFragments().add(newBundleTx.getSignatureFragments());
-                    }
-                }
-                signaturesToValidate.add(sig);
-            }
-        }
-
-        // Check for total sum, if not equal 0 return error
-        if (totalSum != 0)
-            throw new ArgumentException(INVALID_BUNDLE_SUM_ERROR);
-        int[] bundleFromTrxs = new int[243];
-        curl.squeeze(bundleFromTrxs);
-        String bundleFromTxString = Converter.trytes(bundleFromTrxs);
-
-        // Check if bundle hash is the same as returned by tx object
-        if (!bundleFromTxString.equals(bundleHash)) {
-            throw new ArgumentException(INVALID_BUNDLE_HASH_ERROR);
-        }
-        
-        // Last tx in the bundle should have currentIndex === lastIndex
-        bundle.setLength(bundle.getTransactions().size());
-        if (!(bundle.getTransactions().get(bundle.getLength() - 1).getCurrentIndex() == (bundle.getTransactions().get(bundle.getLength() - 1).getLastIndex())))
-            throw new ArgumentException(INVALID_BUNDLE_ERROR);
-
-        // Validate the signatures
-        for (Signature aSignaturesToValidate : signaturesToValidate) {
-            String[] signatureFragments = aSignaturesToValidate.getSignatureFragments().toArray(new String[aSignaturesToValidate.getSignatureFragments().size()]);
-            String address = aSignaturesToValidate.getAddress();
-            boolean isValidSignature = new Signing(customCurl.clone()).validateSignatures(address, signatureFragments, bundleHash);
-
-            if (!isValidSignature)
-                throw new ArgumentException(INVALID_SIGNATURES_ERROR);
-        }
-
         return GetBundleResponse.create(bundle.getTransactions(), stopWatch.getElapsedTimeMili());
     }
 
@@ -744,9 +775,12 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
     public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, boolean returnAll, int start, int end, boolean inclusionStates, long threshold) throws ArgumentException {
-
+        if (!InputValidator.isValidSecurityLevel(security)) {
+            throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
+        }
+        
         if (start > end || end > (start + 1000)) {
-            throw new ArgumentException(INVALID_INPUT_ERROR);
+            throw new ArgumentException(Constants.INVALID_INPUT_ERROR);
         }
 
         StopWatch stopWatch = new StopWatch();
@@ -813,7 +847,7 @@ public class IotaAPI extends IotaAPICore {
     public ReplayBundleResponse replayBundle(String tailTransactionHash, int depth, int minWeightMagnitude, String reference) throws ArgumentException {
 
         if (!InputValidator.isHash(tailTransactionHash)) {
-            throw new ArgumentException(INVALID_TAIL_HASH_INPUT_ERROR);
+            throw new ArgumentException(Constants.INVALID_TAIL_HASH_INPUT_ERROR);
         }
 
         StopWatch stopWatch = new StopWatch();
@@ -904,8 +938,8 @@ public class IotaAPI extends IotaAPICore {
      * transaction hash is not a tail, we return an error.
      *
      * @param trunkTx    Hash of a trunk or a tail transaction of a bundle.
-     * @param bundleHash The bundle hashes.
-     * @param bundle     List of bundles to be populated.
+     * @param bundleHash The bundle hash.
+     * @param bundle     bundle to be populated.
      * @return Transaction objects.
      * @throws ArgumentException is thrown when an invalid input is provided.
      */
@@ -915,16 +949,16 @@ public class IotaAPI extends IotaAPICore {
         if (gtr != null) {
 
             if (gtr.getTrytes().length == 0) {
-                throw new ArgumentException(INVALID_BUNDLE_ERROR);
+                throw new ArgumentException(Constants.INVALID_BUNDLE_ERROR);
             }
 
             Transaction trx = new Transaction(gtr.getTrytes()[0], customCurl.clone());
             if (trx.getBundle() == null) {
-                throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
+                throw new ArgumentException(Constants.INVALID_TRYTES_INPUT_ERROR);
             }
             // If first transaction to search is not a tail, return error
             if (bundleHash == null && trx.getCurrentIndex() != 0) {
-                throw new ArgumentException(INVALID_TAIL_HASH_INPUT_ERROR);
+                throw new ArgumentException(Constants.INVALID_TAIL_HASH_INPUT_ERROR);
             }
             // If no bundle hash, define it
             if (bundleHash == null) {
@@ -932,6 +966,7 @@ public class IotaAPI extends IotaAPICore {
             }
             // If different bundle hash, return with bundle
             if (!bundleHash.equals(trx.getBundle())) {
+                bundle.setLength(bundle.getTransactions().size());
                 return bundle;
             }
             // If only one bundle element, return
@@ -946,7 +981,7 @@ public class IotaAPI extends IotaAPICore {
             // Continue traversing with new trunkTx
             return traverseBundle(trunkTx, bundleHash, bundle);
         } else {
-            throw new ArgumentException(GET_TRYTES_RESPONSE_ERROR);
+            throw new ArgumentException(Constants.GET_TRYTES_RESPONSE_ERROR);
         }
     }
     
@@ -1020,19 +1055,22 @@ public class IotaAPI extends IotaAPICore {
     public List<Transaction> initiateTransfer(int securitySum, String inputAddress, String remainderAddress,
                                               List<Transfer> transfers, List<Transaction> tips,
                                               boolean testMode) throws ArgumentException {
-
+        if (securitySum < Constants.MIN_SECURITY_LEVEL) {
+            throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
+        }
+        
         // validate input address
         if (!InputValidator.isAddress(inputAddress))
-            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
+            throw new ArgumentException(Constants.INVALID_ADDRESSES_INPUT_ERROR);
 
         // validate remainder address
         if (remainderAddress != null && !InputValidator.isAddress(remainderAddress)) {
-            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
+            throw new ArgumentException(Constants.INVALID_ADDRESSES_INPUT_ERROR);
         }
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionValid(transfers)) {
-            throw new ArgumentException(INVALID_TRANSFERS_INPUT_ERROR);
+            throw new ArgumentException(Constants.INVALID_TRANSFERS_INPUT_ERROR);
         }
 
         // Create a new bundle
@@ -1145,7 +1183,7 @@ public class IotaAPI extends IotaAPICore {
             }
             // Return not enough balance error
             if (totalValue > totalBalance) {
-                throw new IllegalStateException(NOT_ENOUGH_BALANCE_ERROR);
+                throw new IllegalStateException(Constants.NOT_ENOUGH_BALANCE_ERROR);
             }
 
             // If there is a remainder value
@@ -1156,7 +1194,7 @@ public class IotaAPI extends IotaAPICore {
 
                 // Remainder bundle entry if necessary
                 if (remainderAddress == null) {
-                    throw new IllegalStateException(NO_REMAINDER_ADDRESS_ERROR);
+                    throw new IllegalStateException(Constants.NO_REMAINDER_ADDRESS_ERROR);
                 }
 
                 bundle.addEntry(1, remainderAddress, remainder, tag, timestamp);
@@ -1167,7 +1205,7 @@ public class IotaAPI extends IotaAPICore {
 
             return bundle.getTransactions();
         } else {
-            throw new RuntimeException(INVALID_VALUE_TRANSFER_ERROR);
+            throw new RuntimeException(Constants.INVALID_VALUE_TRANSFER_ERROR);
         }
 
     }
@@ -1282,10 +1320,47 @@ public class IotaAPI extends IotaAPICore {
                 totalTransferValue -= thisBalance;
             }
         }
-        throw new IllegalStateException(NOT_ENOUGH_BALANCE_ERROR);
+        throw new IllegalStateException(Constants.NOT_ENOUGH_BALANCE_ERROR);
     }
 
-
+    /**
+     * Checks if a transaction hash is promotable
+     * @param tail the transaction we want to promote
+     * @return true if it is, otherwise false
+     * @throws ArgumentException when we can't get the consistency of this transaction
+     */
+    public boolean isPromotable(Transaction tail) throws ArgumentException {
+        long lowerBound = tail.getAttachmentTimestamp();
+        CheckConsistencyResponse consistencyResponse = checkConsistency(tail.getHash());
+        
+        return consistencyResponse.getState() && isAboveMaxDepth(lowerBound);
+    }
+    
+    /**
+     * Checks if a transaction hash is promotable
+     * @param tail the transaction hash we want to check
+     * @return true if it is, otherwise false
+     * @throws ArgumentException when we can't get the consistency of this transaction
+     * or when the transaction is not found
+     */
+    public boolean isPromotable(String tail) throws ArgumentException {
+        GetTrytesResponse transaction = getTrytes(tail);
+        if (0 == transaction.getTrytes().length) {
+            throw new ArgumentException(Constants.TRANSACTION_NOT_FOUND);
+        }
+        
+        return isPromotable(new Transaction(transaction.getTrytes()[0]));
+    }
+    
+    private boolean isAboveMaxDepth (long attachmentTimestamp) {
+        // Check against future timestamps
+        return attachmentTimestamp < System.currentTimeMillis() &&
+            // Check if transaction wasn't issued before last 6 milestones
+            // Milestones are being issued every ~2mins
+            System.currentTimeMillis() - attachmentTimestamp < 11 * 60 * 1000;
+    }
+    
+    
     /**
      * Attempts to promote a transaction using a provided bundle and, if successful, returns the promoting Transactions.
      *
@@ -1322,7 +1397,7 @@ public class IotaAPI extends IotaAPICore {
                 bundle.getTransactions().stream().map(tx -> tx.toTrytes()).toArray(String[]::new));
 
         try {
-            broadcastAndStore(res.getTrytes());
+            storeAndBroadcast(res.getTrytes());
         } catch (ArgumentException e) {
             return Collections.emptyList();
         }

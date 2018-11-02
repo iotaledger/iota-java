@@ -16,7 +16,6 @@ import static jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
 /**
  * Client Side computation service.
  *
- * @author davassi
  */
 public class IotaAPIUtils {
 
@@ -33,7 +32,7 @@ public class IotaAPIUtils {
      */
     public static String newAddress(String seed, int security, int index, boolean checksum, ICurl curl) throws ArgumentException {
 
-        if (security < 1) {
+        if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
 

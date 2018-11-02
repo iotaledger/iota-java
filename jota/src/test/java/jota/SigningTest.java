@@ -52,13 +52,13 @@ public class SigningTest {
         Signing signing = new Signing(curl);
         String seed = "EV9QRJFJZVFNLYUFXWKXMCRRPNAZYQVEYB9VEPUHQNXJCWKZFVUCTQJFCUAMXAHMMIUQUJDG9UGGQBPIY";
 
-        for(int i = 1; i < 5; i++) {
+        for(int i = Constants.MIN_SECURITY_LEVEL; i < Constants.MAX_SECURITY_LEVEL; i++) {
             int[] key1 = signing.key(Converter.trits(seed), 0, i);
-            assertEquals(Signing.KEY_LENGTH * i, key1.length);
+            assertEquals(Constants.KEY_LENGTH * i, key1.length);
             int[] key2 = signing.key(Converter.trits(seed + seed), 0, i);
-            assertEquals(Signing.KEY_LENGTH * i, key2.length );
+            assertEquals(Constants.KEY_LENGTH * i, key2.length );
             int[] key3 = signing.key(Converter.trits(seed + seed + seed), 0, i);
-            assertEquals(Signing.KEY_LENGTH * i, key3.length );
+            assertEquals(Constants.KEY_LENGTH * i, key3.length );
         }
     }
 
@@ -68,7 +68,7 @@ public class SigningTest {
         // address of our test seed
         // (but remove the checksum) with the key of our fifth address
         String hashToSign = removeChecksum(FIRST_ADDR);
-        Signing signing = new Signing(null);
+        Signing signing = new Signing();
         final int[] key = signing.key(Converter.trits(TEST_SEED), 5, 2);
         int[] normalizedHash = new Bundle().normalizedBundle(hashToSign);
         int[] signature = signing.signatureFragment(Arrays.copyOfRange(normalizedHash, 0, 27), Arrays.copyOfRange(key, 0, 6561));
@@ -79,18 +79,18 @@ public class SigningTest {
 
     @Test
     public void testKeyLength() throws ArgumentException {
-        Signing signing = new Signing(null);
+        Signing signing = new Signing();
         int[] key = signing.key(Converter.trits(TEST_SEED), 5, 1);
-        assertEquals(Signing.KEY_LENGTH, key.length);
+        assertEquals(Constants.KEY_LENGTH, key.length);
         key = signing.key(Converter.trits(TEST_SEED), 5, 2);
-        assertEquals(2 * Signing.KEY_LENGTH, key.length);
+        assertEquals(2 * Constants.KEY_LENGTH, key.length);
         key = signing.key(Converter.trits(TEST_SEED), 5, 3);
-        assertEquals(3 * Signing.KEY_LENGTH, key.length);
+        assertEquals(3 * Constants.KEY_LENGTH, key.length);
     }
 
     @Test
     public void testVerifying() throws ArgumentException {
-        assertTrue(new Signing(null).validateSignatures(removeChecksum(SIXTH_ADDR), new String[]{SIGNATURE1, SIGNATURE2}, removeChecksum(FIRST_ADDR)));
+        assertTrue(new Signing().validateSignatures(removeChecksum(SIXTH_ADDR), new String[]{SIGNATURE1, SIGNATURE2}, removeChecksum(FIRST_ADDR)));
     }
 
     private String removeChecksum(String address) throws ArgumentException {

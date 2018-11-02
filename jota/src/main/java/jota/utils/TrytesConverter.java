@@ -8,7 +8,7 @@ package jota.utils;
 public class TrytesConverter {
 
     /**
-     * Conversion of ascii encoded bytes to trytes.
+     * Conversion of ASCII encoded bytes to trytes.
      * Input is a string (can be stringified JSON object), return value is Trytes
      *
      * How the conversion works:
@@ -37,7 +37,7 @@ public class TrytesConverter {
      * @param inputString The input String.
      * @return The ASCII char "Z" is represented as "IC" in trytes.
      */
-    public static String toTrytes(String inputString) {
+    public static String asciiToTrytes(String inputString) {
 
         StringBuilder trytes = new StringBuilder();
 
@@ -62,15 +62,13 @@ public class TrytesConverter {
     }
 
     /**
-     * Trytes to bytes
-     * Reverse operation from the byteToTrytes function in send.js
+     * Converts Trytes of even length to an ASCII string.
+     * Reverse operation from the asciiToTrytes 
      * 2 Trytes == 1 Byte
-     * We assume that the trytes are a JSON encoded object thus for our encoding:
-     * First character = {
-     * Last character = }
-     * Everything after that is 9's padding
+     * @param inputTrytes the trytes we want to convert
+     * @return an ASCII string or null when the inputTrytes are uneven
      */
-    public static String toString(String inputTrytes) {
+    public static String trytesToAscii(String inputTrytes) {
 
         // If input length is odd, return null
         if (inputTrytes.length() % 2 != 0)
