@@ -56,7 +56,7 @@ allprojects {
 Add this in your module `build.gradle` file:
 ```gradle
 dependencies {
-    compile 'com.github.iotaledger:iota-java:1.0.0-beta1'
+    compile 'com.github.iotaledger:iota-java:1.0.0-beta2'
 }
 ```
 
@@ -82,7 +82,7 @@ Add this in your module `pom.xml` file:
 </dependency>
 ```
 For the [VERSION_INFORMATION], you can choose to set it to a release number, or the first 10 characters of a commit hash.
-`<version>17e0de8ed5</version>` or `<version>1.0.0-beta1</version>`
+`<version>f3200c8380</version>` or `<version>1.0.0-beta2</version>`
 
 Or check it out at [Jitpack](https://jitpack.io/#iotaledger/iota-java) for more specific information
 
@@ -96,7 +96,7 @@ Reference your new project to the "jota" project.
 
 ##### Linking jar
 In order to build the jar; the following command should be run on the "jota" project:
-'mvn clean install -Prelease -DprofileIdEnabled=true'
+'mvn clean install'
 
 This will generate a jar with the following format: `jota-[VERSION]-jar-with-dependencies.jar`
 
