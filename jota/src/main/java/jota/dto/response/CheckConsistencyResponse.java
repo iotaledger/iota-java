@@ -19,7 +19,7 @@ public class CheckConsistencyResponse extends AbstractResponse {
 
     /**
      * If state is false, this provides information on the cause of the inconsistency.
-     * @return
+     * @return the information of the state of the tail transactions
      */
     public String getInfo() {
         return info;
