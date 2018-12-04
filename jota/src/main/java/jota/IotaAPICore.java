@@ -9,8 +9,11 @@ import jota.utils.InputValidator;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+
+import org.iota.mddoclet.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -133,9 +136,10 @@ public class IotaAPICore {
     /**
      * Get the node information.
      *
-     * @return The information about the node.
+     * @return {@link GetNodeInfoResponse}
      * @throws ArgumentException 
      */
+    @Document
     public GetNodeInfoResponse getNodeInfo() throws ArgumentException {
         final Call<GetNodeInfoResponse> res = service.getNodeInfo(IotaCommandRequest.createNodeInfoRequest());
         return wrapCheckedException(res).body();
@@ -147,6 +151,7 @@ public class IotaAPICore {
      * @return The set of neighbors the node is connected with.
      * @throws ArgumentException 
      */
+    @Document
     public GetNeighborsResponse getNeighbors() throws ArgumentException {
         final Call<GetNeighborsResponse> res = service.getNeighbors(IotaCommandRequest.createGetNeighborsRequest());
         return wrapCheckedException(res).body();
@@ -158,6 +163,7 @@ public class IotaAPICore {
      * @param uris The list of URI elements.
      * @throws ArgumentException 
      */
+    @Document
     public AddNeighborsResponse addNeighbors(String... uris) throws ArgumentException {
         final Call<AddNeighborsResponse> res = service.addNeighbors(IotaNeighborsRequest.createAddNeighborsRequest(uris));
         return wrapCheckedException(res).body();
@@ -169,6 +175,7 @@ public class IotaAPICore {
      * @param uris The list of URI elements.
      * @throws ArgumentException 
      */
+    @Document
     public RemoveNeighborsResponse removeNeighbors(String... uris) throws ArgumentException {
         final Call<RemoveNeighborsResponse> res = service.removeNeighbors(IotaNeighborsRequest.createRemoveNeighborsRequest(uris));
         return wrapCheckedException(res).body();
@@ -180,6 +187,7 @@ public class IotaAPICore {
      * @return The the list of tips.
      * @throws ArgumentException 
      */
+    @Document
     public GetTipsResponse getTips() throws ArgumentException {
         final Call<GetTipsResponse> res = service.getTips(IotaCommandRequest.createGetTipsRequest());
         return wrapCheckedException(res).body();
@@ -192,6 +200,7 @@ public class IotaAPICore {
      * @return The transaction hashes which are returned depend on the input.
      * @throws ArgumentException 
      */
+    @Document
     public FindTransactionResponse findTransactions(String[] addresses, String[] tags, String[] approvees, String[] bundles) throws ArgumentException {
 
         final IotaFindTransactionsRequest findTransRequest = IotaFindTransactionsRequest
@@ -211,6 +220,7 @@ public class IotaAPICore {
      * @param addresses A List of addresses.
      * @return The transaction hashes which are returned depend on the input.
      */
+    @Document
     public FindTransactionResponse findTransactionsByAddresses(final String... addresses) throws ArgumentException {
         List<String> addressesWithoutChecksum = new ArrayList<>();
 
@@ -229,6 +239,7 @@ public class IotaAPICore {
      * @return The transaction hashes which are returned depend on the input.
      * @throws ArgumentException 
      */
+    @Document
     public FindTransactionResponse findTransactionsByBundles(final String... bundles) throws ArgumentException {
         return findTransactions(null, null, null, bundles);
     }
@@ -240,6 +251,7 @@ public class IotaAPICore {
      * @return The transaction hashes which are returned depend on the input.
      * @throws ArgumentException 
      */
+    @Document
     public FindTransactionResponse findTransactionsByApprovees(final String... approvees) throws ArgumentException {
         return findTransactions(null, null, approvees, null);
     }
@@ -252,6 +264,7 @@ public class IotaAPICore {
      * @return The transaction hashes which are returned depend on the input.
      * @throws ArgumentException 
      */
+    @Document
     public FindTransactionResponse findTransactionsByDigests(final String... digests) throws ArgumentException {
         return findTransactions(null, digests, null, null);
     }
@@ -265,6 +278,7 @@ public class IotaAPICore {
      * @param tips         List of tips (including milestones) you want to search for the inclusion state.
      * @return The inclusion states of a set of transactions.
      */
+    @Document
     public GetInclusionStateResponse getInclusionStates(String[] transactions, String[] tips) throws ArgumentException {
 
         if (!InputValidator.isArrayOfHashes(transactions)) {
@@ -287,6 +301,7 @@ public class IotaAPICore {
      * @param hashes The of transaction hashes of which you want to get trytes from.
      * @return The the raw transaction data (trytes) of a specific transaction.
      */
+    @Document
     public GetTrytesResponse getTrytes(String... hashes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfHashes(hashes)) {
@@ -305,6 +320,7 @@ public class IotaAPICore {
      * @return The Tip selection which returns trunkTransaction and branchTransaction
      * @throws ArgumentException 
      */
+    @Document
     public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth, String reference) throws ArgumentException {
 
         final Call<GetTransactionsToApproveResponse> res = service.getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(depth, reference));
@@ -315,6 +331,7 @@ public class IotaAPICore {
      * {@link #getTransactionsToApprove(Integer, String)}
      * @throws ArgumentException 
      */
+    @Document
     public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth) throws ArgumentException {
         return getTransactionsToApprove(depth, null);
     }
@@ -328,6 +345,7 @@ public class IotaAPICore {
      * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
      * @throws ArgumentException 
      */
+    @Document
     private GetBalancesResponse getBalances(Integer threshold, String[] addresses, String[] tips) throws ArgumentException {
         final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses, tips));
         return wrapCheckedException(res).body();
@@ -370,6 +388,7 @@ public class IotaAPICore {
      * @param addresses List of addresses to check if they were ever spent from.
      * @return The state of each address (true/false)
      */
+    @Document
     public WereAddressesSpentFromResponse wereAddressesSpentFrom(String... addresses) throws ArgumentException {
         if (!InputValidator.isAddressesArrayValid(addresses)) {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
@@ -385,6 +404,7 @@ public class IotaAPICore {
      * @param tails The tails describing the subtangle.
      * @return The The the raw transaction data (trytes) of a specific transaction.
      */
+    @Document
     public CheckConsistencyResponse checkConsistency(String... tails) throws ArgumentException {
         if (!InputValidator.isArrayOfHashes(tails)) {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
@@ -403,6 +423,7 @@ public class IotaAPICore {
      * @param minWeightMagnitude The Proof of Work intensity.
      * @param trytes A List of trytes (raw transaction data) to attach to the tangle.
      */
+    @Document
     public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws ArgumentException {
 
         if (!InputValidator.isHash(trunkTransaction)) {
@@ -444,6 +465,7 @@ public class IotaAPICore {
      * Interrupts and completely aborts the attachToTangle process.
      * @throws ArgumentException 
      */
+    @Document
     public InterruptAttachingToTangleResponse interruptAttachingToTangle() throws ArgumentException {
         final Call<InterruptAttachingToTangleResponse> res = service.interruptAttachingToTangle(IotaCommandRequest.createInterruptAttachToTangleRequest());
         return wrapCheckedException(res).body();
@@ -454,6 +476,7 @@ public class IotaAPICore {
      *
      * @param trytes The list of raw data of transactions to be rebroadcast.
      */
+    @Document
     public BroadcastTransactionsResponse broadcastTransactions(String... trytes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
@@ -470,6 +493,7 @@ public class IotaAPICore {
      * @param trytes The list of raw data of transactions to be rebroadcast.
      * @throws ArgumentException 
      */
+    @Document
     public StoreTransactionsResponse storeTransactions(String... trytes) throws ArgumentException {
         final Call<StoreTransactionsResponse> res = service.storeTransactions(IotaStoreTransactionsRequest.createStoreTransactionsRequest(trytes));
         return wrapCheckedException(res).body();

@@ -9,6 +9,7 @@ import jota.pow.ICurl;
 import jota.pow.SpongeFactory;
 import jota.utils.*;
 import org.apache.commons.lang3.StringUtils;
+import org.iota.mddoclet.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +75,7 @@ public class IotaAPI extends IotaAPICore {
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param checksum  Adds 9-tryte address checksum.
-     * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
+     * @return GetNewAddressResponse .
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
     public GetNewAddressResponse getNextAvailableAddress(String seed, int security, boolean checksum) throws ArgumentException {
@@ -90,6 +91,7 @@ public class IotaAPI extends IotaAPICore {
      * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public GetNewAddressResponse getNextAvailableAddress(String seed, int security, boolean checksum, int index) throws ArgumentException {
         return generateNewAddresses(seed, security, checksum, index, 1, false);
     }
@@ -104,6 +106,7 @@ public class IotaAPI extends IotaAPICore {
      * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int amount) throws ArgumentException {
         return generateNewAddresses(seed, security, checksum, 0, amount, false);
     }
@@ -135,6 +138,7 @@ public class IotaAPI extends IotaAPICore {
      * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int index, int amount, boolean addSpendAddresses) throws ArgumentException {
         if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
@@ -173,6 +177,7 @@ public class IotaAPI extends IotaAPICore {
      * @return GetNewAddressResponse containing an array of strings with the specified number of addresses.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public GetNewAddressResponse getAddressesUnchecked(String seed, int security, boolean checksum, int index, int amount) throws ArgumentException {
         if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
@@ -196,6 +201,7 @@ public class IotaAPI extends IotaAPICore {
      * @return Bundle of transfers.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public GetTransferResponse getTransfers(String seed, int security, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException {
 
         // validate seed
@@ -225,6 +231,7 @@ public class IotaAPI extends IotaAPICore {
      * @return A Transaction objects.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public Bundle[] bundlesFromAddresses(String[] addresses, final Boolean inclusionStates) throws ArgumentException {
 
         List<Transaction> trxs = findTransactionObjectsByAddresses(addresses);
@@ -307,6 +314,7 @@ public class IotaAPI extends IotaAPICore {
      * @return A BroadcastTransactionsResponse.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public BroadcastTransactionsResponse storeAndBroadcast(final String... trytes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
@@ -331,6 +339,7 @@ public class IotaAPI extends IotaAPICore {
      * @return Transactions objects.
      * @throws ArgumentException is thrown when invalid trytes is provided.
      */
+    @Document
     public List<Transaction> sendTrytes(final String[] trytes, final int depth, final int minWeightMagnitude, final String reference) throws ArgumentException {
         final GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth, reference);
 
@@ -358,6 +367,7 @@ public class IotaAPI extends IotaAPICore {
      * @param hashes The hashes
      * @return Transaction objects.
      **/
+    @Document
     public List<Transaction> findTransactionsObjectsByHashes(String[] hashes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfHashes(hashes)) {
@@ -381,6 +391,7 @@ public class IotaAPI extends IotaAPICore {
      * @param addresses The addresses.
      * @return Transactions.
      **/
+    @Document
     public List<Transaction> findTransactionObjectsByAddresses(String[] addresses) throws ArgumentException {
         List<String> addressesWithoutChecksum = new ArrayList<>();
 
@@ -403,6 +414,7 @@ public class IotaAPI extends IotaAPICore {
      * @param tags The tags.
      * @return Transactions.
      **/
+    @Document
     public List<Transaction> findTransactionObjectsByTag(String[] tags) throws ArgumentException {
         FindTransactionResponse ftr = findTransactions(null, tags, null, null);
         if (ftr == null || ftr.getHashes() == null)
@@ -418,6 +430,7 @@ public class IotaAPI extends IotaAPICore {
      * @param approvees The approvees.
      * @return Transactions.
      **/
+    @Document
     public List<Transaction> findTransactionObjectsByApprovees(String[] approvees) throws ArgumentException {
         FindTransactionResponse ftr = findTransactions(null, null, approvees, null);
         if (ftr == null || ftr.getHashes() == null)
@@ -434,6 +447,7 @@ public class IotaAPI extends IotaAPICore {
      * @param bundles The bundles.
      * @return Transactions.
      **/
+    @Document
     public List<Transaction> findTransactionObjectsByBundle(String[] bundles) throws ArgumentException {
         FindTransactionResponse ftr = findTransactions(null, null, null, bundles);
         if (ftr == null || ftr.getHashes() == null)
@@ -456,6 +470,7 @@ public class IotaAPI extends IotaAPICore {
      * @return Returns bundle trytes.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public List<String> prepareTransfers(String seed, int security, final List<Transfer> transfers, String remainder, List<Input> inputs, List<Transaction> tips, boolean validateInputs) throws ArgumentException {
 
         // validate seed
@@ -632,6 +647,7 @@ public class IotaAPI extends IotaAPICore {
      * @param tips      The starting points we walk back from to find the balance of the addresses
      * @throws ArgumentException is thrown when the specified input is not valid.
      **/
+    @Document
     public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold, final String... tips) throws ArgumentException {
 
         // validate the seed
@@ -690,6 +706,7 @@ public class IotaAPI extends IotaAPICore {
      * @return Inputs object.
      * @throws ArgumentException is thrown when the specified security level is not valid.
      **/
+    @Document
     public GetBalancesAndFormatResponse getBalanceAndFormat(final List<String> addresses, final List<String> tips, long threshold, int start, StopWatch stopWatch, int security) throws ArgumentException, IllegalStateException {
 
         if (!InputValidator.isValidSecurityLevel(security)) {
@@ -739,6 +756,7 @@ public class IotaAPI extends IotaAPICore {
      * @return an array of bundle, if there are multiple arrays it means that there are conflicting bundles.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public GetBundleResponse getBundle(String transaction) throws ArgumentException {
 
         if (!InputValidator.isHash(transaction)) {
@@ -774,6 +792,7 @@ public class IotaAPI extends IotaAPICore {
      * @param threshold       Min balance required.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, boolean returnAll, int start, int end, boolean inclusionStates, long threshold) throws ArgumentException {
         if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
@@ -800,6 +819,7 @@ public class IotaAPI extends IotaAPICore {
      * @return list of address boolean checks
      * @throws ArgumentException
      */
+    @Document
     public boolean[] checkWereAddressSpentFrom(String[] addresses) throws ArgumentException {
         List<String> rawAddresses=new ArrayList<>();
         for(String address: addresses) {
@@ -844,6 +864,7 @@ public class IotaAPI extends IotaAPICore {
      * @return Analyzed Transaction objects.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public ReplayBundleResponse replayBundle(String tailTransactionHash, int depth, int minWeightMagnitude, String reference) throws ArgumentException {
 
         if (!InputValidator.isHash(tailTransactionHash)) {
@@ -884,6 +905,7 @@ public class IotaAPI extends IotaAPICore {
      * @param hashes The hashes.
      * @return Inclusion state.
      */
+    @Document
     public GetInclusionStateResponse getLatestInclusion(String[] hashes) throws ArgumentException {
         GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
 
@@ -908,6 +930,7 @@ public class IotaAPI extends IotaAPICore {
      * @return Array of valid Transaction objects.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, final List<Transfer> transfers, List<Input> inputs, String remainderAddress, boolean validateInputs, boolean validateInputAddresses, final List<Transaction> tips) throws ArgumentException {
 
         StopWatch stopWatch = new StopWatch();
@@ -943,6 +966,7 @@ public class IotaAPI extends IotaAPICore {
      * @return Transaction objects.
      * @throws ArgumentException is thrown when an invalid input is provided.
      */
+    @Document
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
         GetTrytesResponse gtr = getTrytes(trunkTx);
         
@@ -1052,6 +1076,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException is thrown when an invalid argument is provided.
      * @throws IllegalStateException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
      */
+    @Document
     public List<Transaction> initiateTransfer(int securitySum, String inputAddress, String remainderAddress,
                                               List<Transfer> transfers, List<Transaction> tips,
                                               boolean testMode) throws ArgumentException {
@@ -1216,6 +1241,7 @@ public class IotaAPI extends IotaAPICore {
      * @param trytes   The trytes.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public void validateTransfersAddresses(String seed, int security, List<String> trytes) throws ArgumentException {
 
         HashSet<String> addresses = new HashSet<>();
@@ -1269,6 +1295,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException is thrown when an invalid argument is provided.
      * @throws IllegalStateException     is thrown when a transfer fails because their is not enough balance to perform the transfer.
      */
+    @Document
     public List<String> addRemainder(final String seed,
                                      final int security,
                                      final List<Input> inputs,
@@ -1329,6 +1356,7 @@ public class IotaAPI extends IotaAPICore {
      * @return true if it is, otherwise false
      * @throws ArgumentException when we can't get the consistency of this transaction
      */
+    @Document
     public boolean isPromotable(Transaction tail) throws ArgumentException {
         long lowerBound = tail.getAttachmentTimestamp();
         CheckConsistencyResponse consistencyResponse = checkConsistency(tail.getHash());
@@ -1372,6 +1400,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException invalid method arguments provided
      * @throws NotPromotableException transaction is not promotable
      */
+    @Document
     public List<Transaction> promoteTransaction(final String tail, final int depth, final int minWeightMagnitude, final Bundle bundle) throws BaseException {
         if (bundle == null || bundle.getTransactions().size() == 0) {
             throw new ArgumentException("Need at least one transaction in the bundle");

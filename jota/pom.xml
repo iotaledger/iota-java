@@ -42,5 +42,63 @@
             <artifactId>jadler-all</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.iota</groupId>
+            <artifactId>mddoclet</artifactId>
+        </dependency>
     </dependencies>
+    
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+            </plugin>   
+
+            <!-- The javadoc for the report can be called by running "mvn site" and will generate the the iota
+                 documentation in Markdown format. To compile this report you need the iri-mdx-doclet files from:
+                 https://github.com/iotaledger/iri-mdx-doclet. Follow the documentation on the github site to compile
+                 and install the iri-mdx-doclet locally in your maven repository.
+
+                 Note: If you need the classic api documentation run "mvn javadoc:javadoc" instead.
+                 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${version.maven-javadoc-plugin}</version>
+                <reportSets>
+                    <reportSet>
+                        <id>javadoc</id>
+                        <configuration>
+                            <!-- This dependency can be found at: https://github.com/iotaledger/iri-mdx-doclet -->
+                            <doclet>org.iota.mddoclet.MDDoclet</doclet>
+                            <sourcepath>src/main/java</sourcepath>
+                            <useStandardDocletOptions>false</useStandardDocletOptions>
+                            <additionalOptions>
+                                <additionalOption>-version "${project.version}"</additionalOption>
+                                <additionalOption>-template "iota-java"</additionalOption>
+                                <additionalOption>
+                                    -repolink "https://github.com/iotaledger/iota-java/blob/dev/jota/src/main/java/"
+                                </additionalOption>
+                            </additionalOptions>
+                            <quiet>true</quiet>
+                            <docletArtifact>
+                                <groupId>org.iota</groupId>
+                                <artifactId>mddoclet</artifactId>
+                                <version>0.2</version>
+                                <!--  
+                                <groupId>com.github.iotaledger</groupId>
+                                <artifactId>iri-mdx-doclet</artifactId>
+                                <version>${md-doclet-version}</version>
+                                -->
+                            </docletArtifact>
+                        </configuration>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
