@@ -46,7 +46,7 @@ public class IotaCommandRequest {
     /**
      * Interrupt attaching to the tangle
      *
-     * @return
+     * @return The interrupted attach command
      */
     public static IotaCommandRequest createInterruptAttachToTangleRequest() {
         return new IotaCommandRequest(IotaAPICommands.INTERRUPT_ATTACHING_TO_TANGLE);

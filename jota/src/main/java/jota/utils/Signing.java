@@ -73,29 +73,34 @@ public class Signing {
     }
     
     /**
+     * Generates the key which is needed as a part of address generation.
+     * Used in {@link #digests(int[])}
      * Calculates security based on <code>inSeed length / key length</code>
-     * @param inSeed
-     * @param index
-     * @return
-     * @throws ArgumentException is thrown when the specified security level is not valid<br/>
-     *         ArgumentException is thrown when inSeed length is not dividable by 3<br/>
-     *         ArgumentException is thrown when index is below 1<br/>
+     * 
+     * @param inSeed    Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param index     Key index for the address
+     * @return The key
+     * @throws ArgumentException is thrown when the specified security level is not valid
+     * @throws ArgumentException is thrown when inSeed length is not dividable by 3
+     * @throws ArgumentException is thrown when index is below 1
      */
-    public int[] key(final int[] inSeed, int index) throws ArgumentException {
+    public int[] key(int[] inSeed, int index) throws ArgumentException {
         return key(inSeed, index, (int) Math.floor(inSeed.length / KEY_LENGTH));
     }
 
     /**
+     * Generates the key which is needed as a part of address generation.
+     * Used in {@link #digests(int[])}
      * 
-     * @param inSeed
-     * @param index
-     * @param security
-     * @return 
-     * @throws ArgumentException is thrown when the specified security level is not valid<br/>
-     *         ArgumentException is thrown when inSeed length is not dividable by 3<br/>
-     *         ArgumentException is thrown when index is below 1<br/>
+     * @param inSeed    Tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param index     Key index for the address
+     * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
+     * @return The key
+     * @throws ArgumentException is thrown when the specified security level is not valid
+     * @throws ArgumentException is thrown when inSeed length is not dividable by 3
+     * @throws ArgumentException is thrown when index is below 1
      */
-    public int[] key(final int[] inSeed, final int index, int security) throws ArgumentException {
+    public int[] key(int[] inSeed, int index, int security) throws ArgumentException {
         if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
@@ -182,7 +187,7 @@ public class Signing {
      * 
      * @param normalizedBundleFragment
      * @param signatureFragment
-     * @return
+     * @return The digest
      */
     public int[] digest(int[] normalizedBundleFragment, int[] signatureFragment) {
         curl.reset();

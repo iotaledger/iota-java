@@ -56,7 +56,8 @@
         <version.maven-release-plugin>2.5.3</version.maven-release-plugin>
         <version.maven-source-plugin>3.0.1</version.maven-source-plugin>
         <version.maven-javadoc-plugin>2.10.4</version.maven-javadoc-plugin>
-        <version.maven-surefire-plugin>2.13</version.maven-surefire-plugin>
+        <version.maven-surefire-plugin>2.12</version.maven-surefire-plugin>
+        <version.maven-site-plugin>3.7.1</version.maven-site-plugin>
     </properties>
 
     <modules>
@@ -210,6 +211,10 @@
                                 <phase>package</phase>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <version>${version.maven-site-plugin}</version>
                     </plugin>
                 </plugins>
             </build>

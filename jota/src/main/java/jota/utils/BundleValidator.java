@@ -22,7 +22,6 @@ public class BundleValidator {
     /**
      * Validates all signatures of a bundle
      * @param bundle the bundle
-     * @param bundleHash
      * @param customCurl
      * @return true if all signatures are valid. Otherwise false
      */
