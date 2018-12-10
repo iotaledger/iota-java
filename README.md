@@ -56,7 +56,7 @@ allprojects {
 Add this in your module `build.gradle` file:
 ```gradle
 dependencies {
-    compile 'com.github.iotaledger:iota-java:1.0.0-beta2'
+    compile 'com.github.iotaledger:iota-java:1.0.0-beta3'
 }
 ```
 
@@ -82,8 +82,7 @@ Add this in your module `pom.xml` file:
 </dependency>
 ```
 For the [VERSION_INFORMATION], you can choose to set it to a release number, or the first 10 characters of a commit hash.
-`<version>f3200c8380</version>` or `<version>1.0.0-beta2</version>`
-
+`<version>a98de8ea50</version>` or `<version>1.0.0-beta3</version>`
 Or check it out at [Jitpack](https://jitpack.io/#iotaledger/iota-java) for more specific information
 
 ### Manual
@@ -233,7 +232,9 @@ The following third party library dependencies and versions are used by the IOTA
 - [Legion of the Bouncy Castle](https://www.bouncycastle.org/java.html) Java cryptography APIs: `1.58`
 
 ## Changes:
-- Changes in [**v0.9.11**](https://github.com/iotaledger/iota-java/compare/v0.9.6...0.9.11)
+- Changes in [**1.0.0-beta3**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta2...1.0.0-beta3)
+- Changes in [**1.0.0-beta2**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta1...1.0.0-beta2)
+- Changes in [**1.0.0-beta1**](https://github.com/iotaledger/iota-java/compare/0.9.10...1.0.0-beta1)
 - Changes in [**v0.9.10**](https://github.com/iotaledger/iota-java/compare/v0.9.6...0.9.10)
 - Changes in [**v0.9.6**](https://github.com/iotaledger/iota-java/compare/v0.9.5...v0.9.6)
 - Changes in [**v0.9.5**](https://github.com/iotaledger/iota-java/compare/v0.9.4...v0.9.5)
