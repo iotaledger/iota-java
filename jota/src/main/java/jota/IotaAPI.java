@@ -54,7 +54,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
     @Deprecated
-    public GetNewAddressResponse getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws ArgumentException {
+    public GetNewAddressResponse getNewAddress(final String seed, int security, int index, boolean checksum, int total, boolean returnAll) throws ArgumentException {
 
         // If total number of addresses to generate is supplied, simply generate
         // and return the list of all addresses
@@ -63,11 +63,7 @@ public class IotaAPI extends IotaAPICore {
         }
 
         // If !returnAll return only the last address that was generated
-        if (!returnAll) {
-            return generateNewAddresses(seed, security, checksum, 0, 1, true);
-        } else {
-            return generateNewAddresses(seed, security, checksum, 0, 1, false);
-        }
+        return generateNewAddresses(seed, security, checksum, index, 1, returnAll);
     }
     
     /**
