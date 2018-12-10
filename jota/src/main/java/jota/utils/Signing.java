@@ -291,7 +291,7 @@ public class Signing {
             long sum = 0;
             for (int j = 0; j < 27; j++) {
 
-                sum += (normalizedBundle[i * 27 + j] = Converter.value(Converter.tritsString("" + bundleHash.charAt(i * 27 + j))));
+                sum += (normalizedBundle[i * 27 + j] = Converter.value(Converter.trits("" + bundleHash.charAt(i * 27 + j))));
             }
 
             if (sum >= 0) {

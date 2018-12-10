@@ -80,9 +80,11 @@ public class IotaUnitConverter {
      **/
     public static String createAmountDisplayText(double amountInUnit, IotaUnits unit, boolean extended) {
         DecimalFormat df;
-        if (extended) df = new DecimalFormat("##0.##################");
-        else
+        if (extended) {
+            df = new DecimalFormat("##0.##################");
+        } else {
             df = new DecimalFormat("##0.##");
+        }
 
         String result = "";
         // display unit as integer if value is between 1-999 or in decimal format

@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import static jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
-import static jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
 import static jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
 
 /**
@@ -91,7 +90,9 @@ public class InputValidator {
      * @return <code>true</code> if the specified trytes are trytes and have the correct size, otherwise <code>false</code>.
      **/
     public static boolean isTrytesOfExactLength(String trytes, int length) {
-        if (length < 0 ) return false;
+        if (length < 0 ) {
+            return false;
+        }
         
         return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
     }
@@ -104,7 +105,10 @@ public class InputValidator {
      * @return <code>true</code> if the specified trytes are trytes and have the correct size, otherwise <code>false</code>.
      */
     public static boolean isTrytesOfMaxLength(String trytes, int maxLength) {
-        if (trytes.length() > maxLength) return false;
+        if (trytes.length() > maxLength) {
+            return false;
+        }
+        
         return isTrytesOfExactLength(trytes, 0);
     }
     
@@ -163,8 +167,9 @@ public class InputValidator {
      * @return <code>true</code> the specified array contains only valid hashes; otherwise, <code>false</code>.
      **/
     public static boolean isArrayOfHashes(String[] hashes) {
-        if (hashes == null)
+        if (hashes == null) {
             return false;
+        }
 
         for (String hash : hashes) {
             if (!isHash(hash)) {
@@ -301,7 +306,9 @@ public class InputValidator {
      * @return <code>true</code> if the specified input is valid; otherwise, <code>false</code>.
      **/
     public static boolean isValidSeed(String seed) {
-        if (seed.length() > Constants.SEED_LENGTH_MAX) return false;
+        if (seed.length() > Constants.SEED_LENGTH_MAX) {
+            return false;
+        }
         
         return isTrytes(seed);
     }

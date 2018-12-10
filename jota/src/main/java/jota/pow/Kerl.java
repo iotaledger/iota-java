@@ -58,8 +58,8 @@ public class Kerl extends JCurl {
         }
         if (setUniqueNumbers.size() == 1 && setUniqueNumbers.contains(-1)) {
             base = HALF_3.clone();
-            bigint_not(base);
-            bigint_add(base, 1);
+            bigintNot(base);
+            bigintAdd(base, 1);
         } else {
             int size = INT_LENGTH;
             for (int i = Kerl.HASH_LENGTH - 1; i-- > 0; ) {
@@ -81,7 +81,7 @@ public class Kerl extends JCurl {
                 }
                 final int in = trits[i] + 1;
                 { // Add
-                    int sz = bigint_add(base, in);
+                    int sz = bigintAdd(base, in);
                     if (sz > size) {
                         size = sz;
                     }
@@ -89,16 +89,16 @@ public class Kerl extends JCurl {
             }
 
             if (sum(base) != 0) {
-                if (bigint_cmp(HALF_3, base) <= 0) {
+                if (bigintCmp(HALF_3, base) <= 0) {
                     // base is >= HALF_3.
                     // just do base - HALF_3
-                    base = bigint_sub(base, HALF_3);
+                    base = bigintSub(base, HALF_3);
                 } else {
                     // we don't have a wrapping sub.
                     // so we need to be clever.
-                    base = bigint_sub(HALF_3, base);
-                    bigint_not(base);
-                    bigint_add(base, 1);
+                    base = bigintSub(HALF_3, base);
+                    bigintNot(base);
+                    bigintAdd(base, 1);
                 }
             }
 
@@ -131,7 +131,7 @@ public class Kerl extends JCurl {
             base[INT_LENGTH - 1 - i] |= Kerl.toUnsignedInt(bytes[i * 4 + 3]);
         }
 
-        if (bigint_cmp(base, HALF_3) == 0) {
+        if (bigintCmp(base, HALF_3) == 0) {
             int val = 0;
             if (base[0] > 0) {
                 val = -1;
@@ -147,17 +147,17 @@ public class Kerl extends JCurl {
             // See if we have a positive or negative two's complement number.
             if (Kerl.toUnsignedLong(base[INT_LENGTH - 1]) >> 31 != 0) {
                 // negative value.
-                bigint_not(base);
-                if (bigint_cmp(base, HALF_3) > 0) {
-                    base = bigint_sub(base, HALF_3);
+                bigintNot(base);
+                if (bigintCmp(base, HALF_3) > 0) {
+                    base = bigintSub(base, HALF_3);
                     flipTrits = true;
                 } else {
-                    bigint_add(base, 1);
-                    base = bigint_sub(HALF_3, base);
+                    bigintAdd(base, 1);
+                    base = bigintSub(HALF_3, base);
                 }
             } else {
                 // positive. we need to shift right by HALF_3
-                base = bigint_add(HALF_3, base);
+                base = bigintAdd(HALF_3, base);
             }
 
             int size = INT_LENGTH;
@@ -190,19 +190,19 @@ public class Kerl extends JCurl {
         return out;
     }
 
-    private static void bigint_not(int[] base) {
+    private static void bigintNot(int[] base) {
         for (int i = 0; i < base.length; i++) {
             base[i] = ~base[i];
         }
     }
 
-    private static int bigint_add(int[] base, final int rh) {
-        Pair<Integer, Boolean> res = full_add(base[0], rh, false);
+    private static int bigintAdd(int[] base, final int rh) {
+        Pair<Integer, Boolean> res = fullAdd(base[0], rh, false);
         base[0] = res.low;
 
         int j = 1;
         while (res.hi) {
-            res = full_add(base[j], 0, true);
+            res = fullAdd(base[j], 0, true);
             base[j] = res.low;
             j += 1;
         }
@@ -210,12 +210,12 @@ public class Kerl extends JCurl {
         return j;
     }
 
-    private static int[] bigint_add(final int[] lh, final int[] rh) {
+    private static int[] bigintAdd(final int[] lh, final int[] rh) {
         int[] out = new int[INT_LENGTH];
         boolean carry = false;
         Pair<Integer, Boolean> ret;
         for (int i = 0; i < INT_LENGTH; i++) {
-            ret = full_add(lh[i], rh[i], carry);
+            ret = fullAdd(lh[i], rh[i], carry);
             out[i] = ret.low;
             carry = ret.hi;
         }
@@ -227,7 +227,7 @@ public class Kerl extends JCurl {
         return out;
     }
 
-    private static int bigint_cmp(final int[] lh, final int[] rh) {
+    private static int bigintCmp(final int[] lh, final int[] rh) {
         for (int i = INT_LENGTH - 1; i >= 0; i--) {
             int ret = Long.compare(Kerl.toUnsignedLong(lh[i]), Kerl.toUnsignedLong(rh[i]));
             if (ret != 0) {
@@ -237,12 +237,12 @@ public class Kerl extends JCurl {
         return 0;
     }
 
-    private static int[] bigint_sub(final int[] lh, final int[] rh) {
+    private static int[] bigintSub(final int[] lh, final int[] rh) {
         int[] out = new int[INT_LENGTH];
         boolean noborrow = true;
         Pair<Integer, Boolean> ret;
         for (int i = 0; i < INT_LENGTH; i++) {
-            ret = full_add(lh[i], ~rh[i], noborrow);
+            ret = fullAdd(lh[i], ~rh[i], noborrow);
             out[i] = ret.low;
             noborrow = ret.hi;
         }
@@ -254,7 +254,7 @@ public class Kerl extends JCurl {
         return out;
     }
 
-    private static Pair<Integer, Boolean> full_add(final int ia, final int ib, final boolean carry) {
+    private static Pair<Integer, Boolean> fullAdd(final int ia, final int ib, final boolean carry) {
         long a = Kerl.toUnsignedLong(ia);
         long b = Kerl.toUnsignedLong(ib);
 
@@ -284,7 +284,9 @@ public class Kerl extends JCurl {
     @Override
     public Kerl absorb(final int[] trits, int offset, int length) {
 
-        if (length % 243 != 0) throw new RuntimeException("Illegal length: " + length);
+        if (length % 243 != 0) {
+            throw new RuntimeException("Illegal length: " + length);
+        }
 
         do {
 
@@ -307,7 +309,9 @@ public class Kerl extends JCurl {
     @Override
     public int[] squeeze(final int[] trits, int offset, int length) {
 
-        if (length % 243 != 0) throw new RuntimeException("Illegal length: " + length);
+        if (length % 243 != 0) {
+            throw new RuntimeException("Illegal length: " + length);
+        }
 
         do {
 

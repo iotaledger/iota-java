@@ -20,7 +20,7 @@ public class Parallel {
      * @param operation
      * @param <T>
      */
-    public static <T> void For(final Iterable<T> elements, final Operation<T> operation) {
+    public static <T> void of(final Iterable<T> elements, final Operation<T> operation) {
         try {
             // invokeAll blocks for us until all submitted tasks in the call complete
             forPool.invokeAll(createCallables(elements, operation));

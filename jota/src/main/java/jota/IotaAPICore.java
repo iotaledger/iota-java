@@ -50,7 +50,7 @@ public class IotaAPICore {
      *
      * @param builder The builder.
      */
-    protected IotaAPICore(final Builder builder) {
+    protected IotaAPICore(Builder<?> builder) {
         protocol = builder.protocol;
         host = builder.host;
         port = builder.port;
@@ -58,9 +58,9 @@ public class IotaAPICore {
         postConstruct();
     }
 
-    protected static <T> Response<T> wrapCheckedException(final Call<T> call) throws ArgumentException {
+    protected static <tt> Response<tt> wrapCheckedException(Call<tt> call) throws ArgumentException {
         try {
-            final Response<T> res = call.execute();
+            final Response<tt> res = call.execute();
 
             String error = "";
 
@@ -353,7 +353,7 @@ public class IotaAPICore {
      * @param depth Number of bundles to go back to determine the transactions for approval.
      * @param reference Hash of transaction to start random-walk from.
      *                  This used to make sure the tips returned reference a given transaction in their past.
-     *                  Can be <t>null</t>.
+     *                  Can be <tt>null</tt>.
      * @return {@link GetTransactionsToApproveResponse}
      * @throws ArgumentException
      */
@@ -414,7 +414,7 @@ public class IotaAPICore {
      * @param threshold The confirmation threshold between 0 and 100(inclusive). 
      *                  Should be set to 100 for getting balance by counting only confirmed transactions.
      * @param addresses The addresses where we will find the balance for.
-     * @param tips The tips to find the balance through. Can be <t>null</t>
+     * @param tips The tips to find the balance through. Can be <tt>null</tt>
      * @return {@link GetBalancesResponse}
      * @throws ArgumentException The the request was considered wrong in any way by the node
      */
@@ -538,8 +538,10 @@ public class IotaAPICore {
                 Transaction txn = new Transaction(trytes[i]);
                 txn.setTrunkTransaction(previousTransaction == null ? trunkTransaction : previousTransaction);
                 txn.setBranchTransaction(previousTransaction == null ? branchTransaction : trunkTransaction);
-                if (txn.getTag().isEmpty() || txn.getTag().matches("9*"))
+                if (txn.getTag().isEmpty() || txn.getTag().matches("9*")) {
                     txn.setTag(txn.getObsoleteTag());
+                }
+                
                 txn.setAttachmentTimestamp(System.currentTimeMillis());
                 txn.setAttachmentTimestampLowerBound(0);
                 txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
@@ -625,6 +627,7 @@ public class IotaAPICore {
         return port;
     }
 
+    @SuppressWarnings("unchecked")
     public static class Builder<T extends Builder<T>> {
         String protocol, host, port;
         IotaLocalPoW localPoW;
@@ -679,7 +682,7 @@ public class IotaAPICore {
 
             return nodeConfig;
         }
-
+        
         public T config(Properties properties) {
             nodeConfig = properties;
             return (T) this;

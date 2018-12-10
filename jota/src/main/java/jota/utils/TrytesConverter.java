@@ -74,8 +74,9 @@ public class TrytesConverter {
     public static String trytesToAscii(String inputTrytes) throws ArgumentException {
 
         // If input length is odd, return null
-        if (inputTrytes.length() % 2 != 0)
+        if (inputTrytes.length() % 2 != 0) {
             throw new ArgumentException("Odd amount of trytes supplied");
+        }
 
         StringBuilder string = new StringBuilder();
 
