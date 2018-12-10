@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -27,9 +28,10 @@ import java.util.concurrent.TimeUnit;
 import static jota.utils.Constants.*;
 
 /**
+ * 
  * This class provides access to the Iota core API
- *
- * @author Adrian
+ * Handles direct methods with the connected node(s), and does basic verification
+ * 
  */
 public class IotaAPICore {
 
@@ -73,6 +75,9 @@ public class IotaAPICore {
                 throw new IllegalAccessError("401 " + error);
             } else if (res.code() == 500) {
                 throw new IllegalAccessError("500 " + error);
+            } else if (!res.isSuccessful()) {
+                //Timeout most likely
+                throw new ArgumentException(res.message());
             }
             return res;
         } catch (IOException e) {
@@ -131,9 +136,9 @@ public class IotaAPICore {
     }
 
     /**
-     * Get the node information.
+     * Returns information about this node.
      *
-     * @return The information about the node.
+     * @return {@link GetNodeInfoResponse}
      * @throws ArgumentException 
      */
     public GetNodeInfoResponse getNodeInfo() throws ArgumentException {
@@ -142,9 +147,10 @@ public class IotaAPICore {
     }
 
     /**
-     * Get the list of neighbors from the node.
+     * Returns the set of neighbors you are connected with, as well as their activity statistics (or counters).
+     * The activity counters are reset after restarting IRI.
      *
-     * @return The set of neighbors the node is connected with.
+     * @return {@link GetNeighborsResponse}
      * @throws ArgumentException 
      */
     public GetNeighborsResponse getNeighbors() throws ArgumentException {
@@ -153,9 +159,16 @@ public class IotaAPICore {
     }
 
     /**
-     * Add a list of neighbors to the node.
+     * Temporarily add a list of neighbors to your node.
+     * The added neighbors will not be available after restart.
+     * Add the neighbors to your config file 
+     * or supply them in the <tt>-n</tt> command line option if you want to add them permanently.
      *
-     * @param uris The list of URI elements.
+     * The URI (Unique Resource Identification) for adding neighbors is:
+     * <b>udp://IPADDRESS:PORT</b>
+     *
+     * @param uris list of neighbors to add
+     * @return {@link AddNeighborsResponse}
      * @throws ArgumentException 
      */
     public AddNeighborsResponse addNeighbors(String... uris) throws ArgumentException {
@@ -164,9 +177,15 @@ public class IotaAPICore {
     }
 
     /**
-     * Removes a list of neighbors from the node.
+     * Temporarily removes a list of neighbors from your node.
+     * The added neighbors will be added again after relaunching IRI.
+     * Remove the neighbors from your config file or make sure you don't supply them in the -n command line option if you want to keep them removed after restart.
      *
-     * @param uris The list of URI elements.
+     * The URI (Unique Resource Identification) for removing neighbors is:
+     * <b>udp://IPADDRESS:PORT</b>
+     *
+     * @param uris The URIs of the neighbors we want to remove.
+     * @return {@link RemoveNeighborsResponse}
      * @throws ArgumentException 
      */
     public RemoveNeighborsResponse removeNeighbors(String... uris) throws ArgumentException {
@@ -175,9 +194,9 @@ public class IotaAPICore {
     }
 
     /**
-     * Get the list of latest tips (unconfirmed transactions).
+     * Returns all tips currently known by this node.
      *
-     * @return The the list of tips.
+     * @return {@link GetTipsResponse}
      * @throws ArgumentException 
      */
     public GetTipsResponse getTips() throws ArgumentException {
@@ -187,9 +206,20 @@ public class IotaAPICore {
 
 
     /**
-     * Find the transactions which match the specified input
+     * <p>
+     * Find the transactions which match the specified input and return.
+     * All input values are lists, for which a list of return values (transaction hashes), in the same order, is returned for all individual elements.
+     * The input fields can either be <tt>bundles</tt>, <tt>addresses</tt>, <tt>tags</tt> or <tt>approvees</tt>.
+     * </p>
+     * 
+     * Using multiple of these input fields returns the intersection of the values.
+     * Can error if the node found more transactions than the max transactions send amount
      *
-     * @return The transaction hashes which are returned depend on the input.
+     * @param addresses Array of hashes from addresses
+     * @param tags Array of tags
+     * @param approvees Array of transaction hashes
+     * @param bundles Array of bundle hashes
+     * @return {@link FindTransactionResponse}
      * @throws ArgumentException 
      */
     public FindTransactionResponse findTransactions(String[] addresses, String[] tags, String[] approvees, String[] bundles) throws ArgumentException {
@@ -208,8 +238,9 @@ public class IotaAPICore {
     /**
      * Find the transactions by addresses
      *
-     * @param addresses A List of addresses.
-     * @return The transaction hashes which are returned depend on the input.
+     * @param addresses An array of addresses.
+     * @return {@link FindTransactionResponse}
+     * @throws ArgumentException 
      */
     public FindTransactionResponse findTransactionsByAddresses(final String... addresses) throws ArgumentException {
         List<String> addressesWithoutChecksum = new ArrayList<>();
@@ -225,8 +256,8 @@ public class IotaAPICore {
     /**
      * Find the transactions by bundles
      *
-     * @param bundles A List of bundles.
-     * @return The transaction hashes which are returned depend on the input.
+     * @param bundles An array of bundles.
+     * @return {@link FindTransactionResponse}
      * @throws ArgumentException 
      */
     public FindTransactionResponse findTransactionsByBundles(final String... bundles) throws ArgumentException {
@@ -236,8 +267,8 @@ public class IotaAPICore {
     /**
      * Find the transactions by approvees
      *
-     * @param approvees A List of approvess.
-     * @return The transaction hashes which are returned depend on the input.
+     * @param approvees An array of approveess.
+     * @return {@link FindTransactionResponse}
      * @throws ArgumentException 
      */
     public FindTransactionResponse findTransactionsByApprovees(final String... approvees) throws ArgumentException {
@@ -246,10 +277,10 @@ public class IotaAPICore {
 
 
     /**
-     * Find the transactions by digests
+     * Find the transactions by tags
      *
-     * @param digests A List of digests.
-     * @return The transaction hashes which are returned depend on the input.
+     * @param digests A List of tags.
+     * @return {@link FindTransactionResponse}
      * @throws ArgumentException 
      */
     public FindTransactionResponse findTransactionsByDigests(final String... digests) throws ArgumentException {
@@ -258,12 +289,22 @@ public class IotaAPICore {
 
 
     /**
-     * Get the inclusion states of a set of transactions. This is for determining if a transaction was accepted and confirmed by the network or not.
-     * Search for multiple tips (and thus, milestones) to get past inclusion states of transactions.
+     * <p>
+     * Get the inclusion states of a set of transactions.
+     * This is for determining if a transaction was accepted and confirmed by the network or not.
+     * You can search for multiple tips (and thus, milestones) to get past inclusion states of transactions.
+     * </p>
+     * <p>
+     * This API call returns a list of boolean values in the same order as the submitted transactions.<br/>
+     * Boolean values will be <tt>true</tt> for confirmed transactions, otherwise <tt>false</tt>.
+     * </p>
      *
-     * @param transactions The list of transactions you want to get the inclusion state for.
-     * @param tips         List of tips (including milestones) you want to search for the inclusion state.
-     * @return The inclusion states of a set of transactions.
+     * @param transactions Array of transactions you want to get the inclusion state for.
+     * @param tips Array of tips (including milestones) you want to search for the inclusion state.
+     * @return {@link GetInclusionStateResponse}
+     * @throws ArgumentException when a transaction hash is invalid
+     * @throws ArgumentException when a tip is invalid
+     * @throws ArgumentException
      */
     public GetInclusionStateResponse getInclusionStates(String[] transactions, String[] tips) throws ArgumentException {
 
@@ -282,10 +323,14 @@ public class IotaAPICore {
     }
 
     /**
-     * Returns the raw trytes data of a transaction.
+     * Returns the raw transaction data (trytes) of a specific transaction.
+     * These trytes can then be easily converted into the actual transaction object.
+     * You can use {@link Transaction#Transaction(String)} for conversion to an object.
      *
-     * @param hashes The of transaction hashes of which you want to get trytes from.
-     * @return The the raw transaction data (trytes) of a specific transaction.
+     * @param hashes The transaction hashes you want to get trytes from.
+     * @return {@link GetTrytesResponse}
+     * @throws ArgumentException when a transaction hash is invalid
+     * @throws ArgumentException
      */
     public GetTrytesResponse getTrytes(String... hashes) throws ArgumentException {
 
@@ -298,12 +343,19 @@ public class IotaAPICore {
     }
 
     /**
-     * Tip selection which returns trunkTransaction and branchTransaction.
+     * Tip selection which returns <tt>trunkTransaction</tt> and <tt>branchTransaction</tt>.
+     * The input value <tt>depth</tt> determines how many milestones to go back for finding the transactions to approve.
+     * The higher your <tt>depth</tt> value, the more work you have to do as you are confirming more transactions.
+     * If the <tt>depth</tt> is too large (usually above 15, it depends on the node's configuration) an error will be returned.
+     * The <tt>reference</tt> is an optional hash of a transaction you want to approve.
+     * If it can't be found at the specified <tt>depth</tt> then an error will be returned.
      *
-     * @param depth The number of bundles to go back to determine the transactions for approval.
-     * @param reference Hash of transaction to start random-walk from, used to make sure the tips returned reference a given transaction in their past.
-     * @return The Tip selection which returns trunkTransaction and branchTransaction
-     * @throws ArgumentException 
+     * @param depth Number of bundles to go back to determine the transactions for approval.
+     * @param reference Hash of transaction to start random-walk from.
+     *                  This used to make sure the tips returned reference a given transaction in their past.
+     *                  Can be <t>null</t>.
+     * @return {@link GetTransactionsToApproveResponse}
+     * @throws ArgumentException
      */
     public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth, String reference) throws ArgumentException {
 
@@ -312,21 +364,37 @@ public class IotaAPICore {
     }
 
     /**
-     * {@link #getTransactionsToApprove(Integer, String)}
-     * @throws ArgumentException 
+     * Tip selection which returns <tt>trunkTransaction</tt> and <tt>branchTransaction</tt>.
+     * The input value <tt>depth</tt> determines how many milestones to go back for finding the transactions to approve.
+     * The higher your <tt>depth</tt> value, the more work you have to do as you are confirming more transactions.
+     * If the <tt>depth</tt> is too large (usually above 15, it depends on the node's configuration) an error will be returned.
+     * The <tt>reference</tt> is an optional hash of a transaction you want to approve.
+     * If it can't be found at the specified <tt>depth</tt> then an error will be returned.
+     *
+     * @param depth Number of bundles to go back to determine the transactions for approval.
+     * @return {@link GetTransactionsToApproveResponse}
      */
     public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth) throws ArgumentException {
         return getTransactionsToApprove(depth, null);
     }
 
     /**
-     * Similar to getInclusionStates.
+     * <p>
+     * Calculates the confirmed balance, as viewed by the specified <tt>tips</tt>. 
+     * If you do not specify the referencing <tt>tips</tt>, 
+     * the returned balance is based on the latest confirmed milestone.
+     * In addition to the balances, it also returns the referencing <tt>tips</tt> (or milestone), 
+     * as well as the index with which the confirmed balance was determined.
+     * The balances are returned as a list in the same order as the addresses were provided as input.
+     * </p>
      *
-     * @param threshold The confirmation threshold, should be set to 100.
-     * @param addresses The array list of addresses you want to get the confirmed balance from.
-     * @param tips The starting points we walk back from to find the balance of the addresses
-     * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
-     * @throws ArgumentException 
+     * @param threshold The confirmation threshold between 0 and 100(inclusive). 
+     *                  Should be set to 100 for getting balance by counting only confirmed transactions.
+     * @param addresses The addresses where we will find the balance for.
+     * @param tips The optional tips to find the balance through.
+     * @return {@link GetBalancesResponse}
+     * @throws ArgumentException The the request was considered wrong in any way by the node
+     * @throws ArgumentException
      */
     private GetBalancesResponse getBalances(Integer threshold, String[] addresses, String[] tips) throws ArgumentException {
         final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses, tips));
@@ -334,12 +402,21 @@ public class IotaAPICore {
     }
 
     /**
-     * Similar to getInclusionStates.
+     * <p>
+     * Calculates the confirmed balance, as viewed by the specified <tt>tips</tt>. 
+     * If you do not specify the referencing <tt>tips</tt>, 
+     * the returned balance is based on the latest confirmed milestone.
+     * In addition to the balances, it also returns the referencing <tt>tips</tt> (or milestone), 
+     * as well as the index with which the confirmed balance was determined.
+     * The balances are returned as a list in the same order as the addresses were provided as input.
+     * </p>
      *
-     * @param threshold The confirmation threshold, should be set to 100.
-     * @param addresses The list of addresses you want to get the confirmed balance from.
-     * @param tips The starting points we walk back from to find the balance of the addresses
-     * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
+     * @param threshold The confirmation threshold between 0 and 100(inclusive). 
+     *                  Should be set to 100 for getting balance by counting only confirmed transactions.
+     * @param addresses The addresses where we will find the balance for.
+     * @param tips The tips to find the balance through. Can be <t>null</t>
+     * @return {@link GetBalancesResponse}
+     * @throws ArgumentException The the request was considered wrong in any way by the node
      */
     public GetBalancesResponse getBalances(Integer threshold, List<String> addresses, List<String> tips) throws ArgumentException {
 
@@ -349,16 +426,22 @@ public class IotaAPICore {
             String addressO = Checksum.removeChecksum(address);
             addressesWithoutChecksum.add(addressO);
         }
-        String[] tipsArray = tips != null ? tips.toArray(new String[]{}) : null;
-        return getBalances(threshold, addressesWithoutChecksum.toArray(new String[]{}), tipsArray);
+        String[] tipsArray = tips != null ? tips.toArray(new String[tips.size()]) : null;
+        return getBalances(threshold, addressesWithoutChecksum.toArray(new String[addresses.size()]), tipsArray);
     }
     
     /**
-     * Similar to getInclusionStates.
+     * <p>
+     * Calculates the confirmed balance, as viewed by the latest solid milestone. 
+     * In addition to the balances, it also returns the referencing <tt>milestone</tt>, 
+     * and the index with which the confirmed balance was determined.
+     * The balances are returned as a list in the same order as the addresses were provided as input.
+     * </p>
      *
      * @param threshold The confirmation threshold, should be set to 100.
      * @param addresses The list of addresses you want to get the confirmed balance from.
-     * @return The confirmed balance which a list of addresses have at the latest confirmed milestone.
+     * @return {@link GetBalancesResponse}
+     * @throws ArgumentException
      */
     public GetBalancesResponse getBalances(Integer threshold, List<String> addresses) throws ArgumentException {
         return getBalances(threshold, addresses, null);
@@ -368,7 +451,9 @@ public class IotaAPICore {
      * Check if a list of addresses was ever spent from, in the current epoch, or in previous epochs.
      *
      * @param addresses List of addresses to check if they were ever spent from.
-     * @return The state of each address (true/false)
+     * @return {@link WereAddressesSpentFromResponse}
+     * @throws ArgumentException when an address is invalid
+     * @throws ArgumentException
      */
     public WereAddressesSpentFromResponse wereAddressesSpentFrom(String... addresses) throws ArgumentException {
         if (!InputValidator.isAddressesArrayValid(addresses)) {
@@ -383,7 +468,9 @@ public class IotaAPICore {
      * Checks the consistency of the subtangle formed by the provided tails.
      *
      * @param tails The tails describing the subtangle.
-     * @return The The the raw transaction data (trytes) of a specific transaction.
+     * @return {@link CheckConsistencyResponse}
+     * @throws ArgumentException when a tail hash is invalid
+     * @throws ArgumentException
      */
     public CheckConsistencyResponse checkConsistency(String... tails) throws ArgumentException {
         if (!InputValidator.isArrayOfHashes(tails)) {
@@ -396,12 +483,39 @@ public class IotaAPICore {
 
 
     /**
-     * Attaches the specified transactions (trytes) to the Tangle by doing Proof of Work.
-     *
-     * @param trunkTransaction The trunk transaction to approve.
-     * @param branchTransaction The branch transaction to approve.
-     * @param minWeightMagnitude The Proof of Work intensity.
-     * @param trytes A List of trytes (raw transaction data) to attach to the tangle.
+     * <p>
+     * Prepares the specified transactions (trytes) for attachment to the Tangle by doing Proof of Work.
+     * You need to supply <tt>branchTransaction</tt> as well as <tt>trunkTransaction</tt>.
+     * These are the tips which you're going to validate and reference with this transaction. 
+     * These are obtainable by the <tt>getTransactionsToApprove</tt> API call.
+     * </p>
+     * <p>
+     * The returned value is a different set of tryte values which you can input into 
+     * <tt>broadcastTransactions</tt> and <tt>storeTransactions</tt>.
+     * The last 243 trytes of the return value consist of the following:
+     * <ul>
+     * <li><code>trunkTransaction</code></li>
+     * <li><code>branchTransaction</code></li>
+     * <li><code>nonce</code></li>
+     * </ul>
+     * </p>
+     * These are valid trytes which are then accepted by the network.
+     * @param trunkTransaction A reference to an external transaction (tip) used as trunk.
+     *                         The transaction with index 0 will have this tip in its trunk.
+     *                         All other transactions reference the previous transaction in the bundle (Their index-1).
+     *                         
+     * @param branchTransaction A reference to an external transaction (tip) used as branch.
+     *                          Each Transaction in the bundle will have this tip as their branch, except the last.
+     *                          The last one will have the branch in its trunk.
+     * @param minWeightMagnitude The amount of work we should do to confirm this transaction. 
+     *                           Each 0-trit on the end of the transaction represents 1 magnitude. 
+     *                           A 9-tryte represents 3 magnitudes, since a 9 is represented by 3 0-trits.
+     *                           Transactions with a different minWeightMagnitude are compatible.
+     * @param trytes The list of trytes to prepare for network attachment, by doing proof of work.
+     * @return {@link GetAttachToTangleResponse}
+     * @throws ArgumentException when a trunk or branch hash is invalid
+     * @throws ArgumentException when the provided transaction trytes are invalid
+     * @throws ArgumentException
      */
     public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws ArgumentException {
 
@@ -413,12 +527,11 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
-        if (!InputValidator.isArrayOfTrytes(trytes)) {
+        if (!InputValidator.areTransactionTrytes(trytes)) {
             throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
         }
 
         if (localPoW != null) {
-            System.out.println("Doing local PoW!");
             final String[] resultTrytes = new String[trytes.length];
             String previousTransaction = null;
             for (int i = 0; i < trytes.length; i++) {
@@ -441,7 +554,9 @@ public class IotaAPICore {
     }
 
     /**
-     * Interrupts and completely aborts the attachToTangle process.
+     * Interrupts and completely aborts the <tt>attachToTangle</tt> process.
+     * 
+     * @return {@link InterruptAttachingToTangleResponse}
      * @throws ArgumentException 
      */
     public InterruptAttachingToTangleResponse interruptAttachingToTangle() throws ArgumentException {
@@ -450,9 +565,14 @@ public class IotaAPICore {
     }
 
     /**
-     * Broadcast a list of transactions to all neighbors. The input trytes for this call are provided by attachToTangle.
-     *
-     * @param trytes The list of raw data of transactions to be rebroadcast.
+     * Broadcast a list of transactions to all neighbors.
+     * The trytes to be used for this call should be valid, attached transaction trytes.
+     * These trytes are returned by <tt>attachToTangle</tt>, or by doing proof of work somewhere else.
+     * 
+     * @param trytes The list of transaction trytes to broadcast
+     * @return {@link BroadcastTransactionsResponse}
+     * @throws ArgumentException when the provided transaction trytes are invalid
+     * @throws ArgumentException 
      */
     public BroadcastTransactionsResponse broadcastTransactions(String... trytes) throws ArgumentException {
 
@@ -465,9 +585,12 @@ public class IotaAPICore {
     }
 
     /**
-     * Store transactions into the local storage. The trytes to be used for this call are returned by attachToTangle.
+     * Stores transactions in the local storage.
+     * The trytes to be used for this call should be valid, attached transaction trytes.
+     * These trytes are returned by <tt>attachToTangle</tt>, or by doing proof of work somewhere else.
      *
-     * @param trytes The list of raw data of transactions to be rebroadcast.
+     * @param trytes Transaction data to be stored.
+     * @return {@link StoreTransactionsResponse}
      * @throws ArgumentException 
      */
     public StoreTransactionsResponse storeTransactions(String... trytes) throws ArgumentException {

@@ -38,7 +38,7 @@ public class IotaWereAddressesSpentFromRequest extends IotaCommandRequest {
     /**
      * Sets the addresses.
      *
-     * @param trytes The addresses.
+     * @param addresses The addresses.
      */
     public void setAddresses(String[] addresses) {
         this.addresses = addresses;

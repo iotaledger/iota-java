@@ -49,10 +49,21 @@ public class IotaAPIUtils {
         return address;
     }
 
-    public static List<String> signInputsAndReturn(final String seed,
-                                                   final List<Input> inputs,
-                                                   final Bundle bundle,
-                                                   final List<String> signatureFragments, ICurl curl) throws ArgumentException {
+    /**
+     * Finalizes and signs the bundle transactions.
+     * Bundle and inputs are assumed correct.
+     * 
+     * @param seed The tryte-encoded seed. It should be noted that this seed is not transferred.
+     * @param inputs
+     * @param bundle The bundle
+     * @param signatureFragments
+     * @param curl The curl instance.
+     * @return list of transaction trytes in the bundle
+     * @throws ArgumentException When the seed is invalid
+     */
+    public static List<String> signInputsAndReturn(String seed, List<Input> inputs, Bundle bundle,
+                                                                List<String> signatureFragments, 
+                                                                ICurl curl) throws ArgumentException {
 
         bundle.finalize(curl);
         bundle.addTrytes(signatureFragments);
@@ -62,7 +73,7 @@ public class IotaAPIUtils {
         //  Here we do the actual signing of the inputs
         //  Iterate over all bundle transactions, find the inputs
         //  Get the corresponding private key and calculate the signatureFragment
-        for (int i = 0; i < bundle.getTransactions().size(); i++) {
+        for (int i = bundle.getTransactions().size()-1; i >= 0; i--) {
             if (bundle.getTransactions().get(i).getValue() < 0) {
                 String thisAddress = bundle.getTransactions().get(i).getAddress();
 
@@ -116,7 +127,6 @@ public class IotaAPIUtils {
         for (Transaction tx : bundle.getTransactions()) {
             bundleTrytes.add(tx.toTrytes());
         }
-        Collections.reverse(bundleTrytes);
         return bundleTrytes;
     }
 }

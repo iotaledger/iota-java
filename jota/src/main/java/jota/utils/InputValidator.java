@@ -112,10 +112,9 @@ public class InputValidator {
      * Determines whether the specified string consist only of '9'.
      *
      * @param trytes The trytes to validate.
-     * @param length The length.
      * @return <code>true</code> if the specified string consist only of '9'; otherwise, <code>false</code>.
      **/
-    public static boolean isEmptyTrytes(final String trytes) {
+    public static boolean isEmptyTrytes(String trytes) {
         return isNinesTrytes(trytes, 0);
     }
 

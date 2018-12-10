@@ -21,7 +21,7 @@ public class NamedThreadFactory implements ThreadFactory {
 
     /**
      * @param r
-     * @return
+     * @return The new thread with name and number
      */
     @Override
     public synchronized Thread newThread(Runnable r) {

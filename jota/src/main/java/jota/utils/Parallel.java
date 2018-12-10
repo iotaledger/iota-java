@@ -33,9 +33,9 @@ public class Parallel {
      * @param elements
      * @param operation
      * @param <T>
-     * @return
+     * @return a collection of tasks which are currently performing
      */
-    public static <T> Collection<Callable<Void>> createCallables(final Iterable<T> elements, final Operation<T> operation) {
+    public static <T> Collection<Callable<Void>> createCallables(Iterable<T> elements, Operation<T> operation) {
         List<Callable<Void>> callables = new LinkedList<>();
         for (final T elem : elements) {
             callables.add(new Callable<Void>() {
