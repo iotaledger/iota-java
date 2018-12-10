@@ -8,7 +8,6 @@ import jota.pow.ICurl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
@@ -114,9 +113,9 @@ public class IotaAPIUtils {
 
                         //  Convert signature to trytes and assign it again to this bundle entry
                         bundle.getTransactions().get(i+j).setSignatureFragments(Converter.trytes(signedFragment));
-                    }
-					else
+                    } else {
 						throw new ArgumentException("Inconsistent security-level and transactions");
+                    }
                 }
             }
         }

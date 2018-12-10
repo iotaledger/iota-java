@@ -13,8 +13,10 @@ public class PearlDiverLocalPoW implements IotaLocalPoW {
     @Override
     public String performPoW(String trytes, int minWeightMagnitude) {
         int[] trits = Converter.trits(trytes);
-        if (!pearlDiver.search(trits, minWeightMagnitude, 0))
+        if (!pearlDiver.search(trits, minWeightMagnitude, 0)) {
             throw new IllegalStateException("PearlDiver search failed");
+        }
+        
         return Converter.trytes(trits);
     }
 }

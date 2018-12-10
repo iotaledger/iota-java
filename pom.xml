@@ -53,11 +53,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- plugins -->
+        <version.maven-checkstyle-plugin>3.0.0</version.maven-checkstyle-plugin>
         <version.maven-release-plugin>2.5.3</version.maven-release-plugin>
         <version.maven-source-plugin>3.0.1</version.maven-source-plugin>
         <version.maven-javadoc-plugin>2.10.4</version.maven-javadoc-plugin>
         <version.maven-surefire-plugin>2.12</version.maven-surefire-plugin>
         <version.maven-site-plugin>3.7.1</version.maven-site-plugin>
+        
+        <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
     </properties>
 
     <modules>
@@ -126,6 +129,29 @@
 
     <build>
         <plugins>
+            <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-checkstyle-plugin</artifactId>
+	            <version>${version.maven-checkstyle-plugin}</version>
+	            <configuration>
+	                <logViolationsToConsole>true</logViolationsToConsole>
+	            </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <configLocation>${checkstyle.config.location}</configLocation>
+                            <encoding>UTF-8</encoding>
+                            <consoleOutput>true</consoleOutput>
+                            <failsOnError>true</failsOnError>
+                        </configuration>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+	        </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>${version.maven-release-plugin}</version>
@@ -196,6 +222,7 @@
                             </execution>
                         </executions>
                     </plugin>
+                    
                     <plugin>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>${version.maven-javadoc-plugin}</version>

@@ -109,17 +109,17 @@ public class JCurl implements ICurl {
     public JCurl transform() {
 
         int scratchpadIndex = 0;
-        int prev_scratchpadIndex = 0;
+        int prevScratchpadIndex = 0;
         for (int round = 0; round < numberOfRounds; round++) {
             System.arraycopy(state, 0, scratchpad, 0, STATE_LENGTH);
             for (int stateIndex = 0; stateIndex < STATE_LENGTH; stateIndex++) {
-                prev_scratchpadIndex = scratchpadIndex;
+                prevScratchpadIndex = scratchpadIndex;
                 if (scratchpadIndex < 365) {
                     scratchpadIndex += 364;
                 } else {
                     scratchpadIndex += -365;
                 }
-                state[stateIndex] = TRUTH_TABLE[scratchpad[prev_scratchpadIndex] + (scratchpad[scratchpadIndex] << 2) + 5];
+                state[stateIndex] = TRUTH_TABLE[scratchpad[prevScratchpadIndex] + (scratchpad[scratchpadIndex] << 2) + 5];
             }
         }
 
@@ -217,7 +217,7 @@ public class JCurl implements ICurl {
 
 
     public void absorb(final Pair<long[], long[]> pair, int offset, int length) {
-        int o = offset, l = length, i = 0;
+        int o = offset, l = length;
         do {
             System.arraycopy(pair.low, o, stateLow, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
             System.arraycopy(pair.hi, o, stateHigh, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
@@ -227,7 +227,7 @@ public class JCurl implements ICurl {
     }
 
     public Pair<long[], long[]> squeeze(Pair<long[], long[]> pair, int offset, int length) {
-        int o = offset, l = length, i = 0;
+        int o = offset, l = length;
         long[] low = pair.low;
         long[] hi = pair.hi;
         do {
