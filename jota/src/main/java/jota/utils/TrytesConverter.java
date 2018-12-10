@@ -1,5 +1,7 @@
 package jota.utils;
 
+import jota.error.ArgumentException;
+
 /**
  * This class allows to convert between ASCII and tryte encoded strings.
  *
@@ -67,12 +69,13 @@ public class TrytesConverter {
      * 2 Trytes == 1 Byte
      * @param inputTrytes the trytes we want to convert
      * @return an ASCII string or null when the inputTrytes are uneven
+     * @throws ArgumentException When the trytes in the string are an odd number
      */
-    public static String trytesToAscii(String inputTrytes) {
+    public static String trytesToAscii(String inputTrytes) throws ArgumentException {
 
         // If input length is odd, return null
         if (inputTrytes.length() % 2 != 0)
-            return null;
+            throw new ArgumentException("Odd amount of trytes supplied");
 
         StringBuilder string = new StringBuilder();
 
