@@ -12,7 +12,9 @@ public class IotaStoreTransactionsRequest extends IotaCommandRequest {
     private String[] trytes;
 
     /**
-     * Initializes a new instance of the IotaStoreTransactionsRequest class.
+     * Initializes a new instance of the IotaStoreTransactionsRequest class
+     * .
+     * @param trytes
      */
     private IotaStoreTransactionsRequest(final String... trytes) {
         super(IotaAPICommands.STORE_TRANSACTIONS);
@@ -20,7 +22,10 @@ public class IotaStoreTransactionsRequest extends IotaCommandRequest {
     }
 
     /**
-     * Create a new instance of the IotaStoreTransactionsRequest class.
+     * Initializes a new instance of the IotaStoreTransactionsRequest class.
+     * 
+     * @param trytes
+     * @return the instance
      */
     public static IotaStoreTransactionsRequest createStoreTransactionsRequest(final String... trytes) {
         return new IotaStoreTransactionsRequest(trytes);

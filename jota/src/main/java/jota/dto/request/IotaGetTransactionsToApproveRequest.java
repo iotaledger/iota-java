@@ -12,6 +12,9 @@ public class IotaGetTransactionsToApproveRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaGetTransactionsToApproveRequest class.
+     * 
+     * @param depth
+     * @param reference
      */
     private IotaGetTransactionsToApproveRequest(final Integer depth, final String reference) {
         super(IotaAPICommands.GET_TRANSACTIONS_TO_APPROVE);
@@ -20,7 +23,11 @@ public class IotaGetTransactionsToApproveRequest extends IotaCommandRequest {
     }
 
     /**
-     * Create a new instance of the IotaGetTransactionsToApproveRequest class.
+     * Initializes a new instance of the IotaGetTransactionsToApproveRequest class.
+     * 
+     * @param depth
+     * @param reference
+     * @return the instance
      */
     public static IotaGetTransactionsToApproveRequest createIotaGetTransactionsToApproveRequest(Integer depth, final String reference) {
         return new IotaGetTransactionsToApproveRequest(depth, reference);

@@ -108,7 +108,7 @@ public class Multisig {
      *
      * @param multisigAddress
      * @param digests
-     * @return <t>true</t> if the digests turn into multiSigAddress, otherwise <t>false</t>
+     * @return <tt>true</tt> if the digests turn into multiSigAddress, otherwise <tt>false</tt>
      **/
     public boolean validateAddress(String multisigAddress, int[][] digests) {
 

@@ -13,6 +13,8 @@ public class IotaBroadcastTransactionRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaBroadcastTransactionRequest class.
+     * 
+     * @param trytes
      */
     private IotaBroadcastTransactionRequest(final String... trytes) {
         super(IotaAPICommands.BROADCAST_TRANSACTIONS);
@@ -21,6 +23,9 @@ public class IotaBroadcastTransactionRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaBroadcastTransactionRequest class.
+     * 
+     * @param trytes
+     * @return the new instance
      */
     public static IotaBroadcastTransactionRequest createBroadcastTransactionsRequest(final String... trytes) {
         return new IotaBroadcastTransactionRequest(trytes);

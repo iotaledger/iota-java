@@ -15,7 +15,12 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
     private String[] trytes;
 
     /**
-     * Initializes a new instance of the IotaAttachedToTangleRequest class.
+     * Initializes a new instance of the IotaAttachedToTangleRequest class.\
+     * 
+     * @param trunkTransaction
+     * @param branchTransaction
+     * @param minWeightMagnitude
+     * @param trytes
      */
     private IotaAttachToTangleRequest(final String trunkTransaction, final String branchTransaction, final Integer minWeightMagnitude, final String... trytes) {
         super(IotaAPICommands.ATTACH_TO_TANGLE);
@@ -26,7 +31,13 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
     }
 
     /**
-     * Create a new instance of the IotaAttachedToTangleRequest class.
+     * Initializes a new instance of the IotaAttachedToTangleRequest class.
+     * 
+     * @param trunkTransaction
+     * @param branchTransaction
+     * @param minWeightMagnitude
+     * @param trytes
+     * @return
      */
     public static IotaAttachToTangleRequest createAttachToTangleRequest(final String trunkTransaction, final String branchTransaction, final Integer minWeightMagnitude, final String... trytes) {
         return new IotaAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes);

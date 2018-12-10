@@ -39,10 +39,11 @@ public class IotaAPI extends IotaAPICore {
     }
 
     /**
+     * <p>
      * Generates a new address from a seed and returns the remainderAddress.
      * This is either done deterministically, or by providing the index of the new remainderAddress.
-     * <br/><br/>
-     * Deprecated -> Use the new functions {@link #getNextAvailableAddress}, {@link #getAddressesUnchecked} and {@link #generateNewAddresses}
+     * </p>
+     * Deprecated - Use the new functions {@link #getNextAvailableAddress}, {@link #getAddressesUnchecked} and {@link #generateNewAddresses}
      * 
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
@@ -697,7 +698,7 @@ public class IotaAPI extends IotaAPICore {
      * @return {@link GetBalancesAndFormatResponse}
      * @throws ArgumentException If the seed is invalid
      * @throws ArgumentException If the security level is wrong.
-     * @throws ArgumentException when <tt>start<tt> and <tt>end<tt> are more then 500 apart
+     * @throws ArgumentException when <tt>start</tt> and <tt>end</tt> are more then 500 apart
      * @see #getBalanceAndFormat(List, List, long, int, StopWatch, int)
      **/
     public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold, final String... tips) throws ArgumentException {
@@ -856,7 +857,7 @@ public class IotaAPI extends IotaAPICore {
      * @param threshold       Minimum balance required.
      * @return {@link GetAccountDataResponse}
      * @throws ArgumentException when the specified security level is not valid.
-     * @throws ArgumentException when <tt>start<tt> and <tt>end<tt> are invalid
+     * @throws ArgumentException when <tt>start</tt> and <tt>end<tt> are invalid
      * @see #getTransfers(String, int, Integer, Integer, Boolean)
      */
     public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, boolean returnAll, int start, int end, boolean inclusionStates, long threshold) throws ArgumentException {
@@ -1001,13 +1002,13 @@ public class IotaAPI extends IotaAPICore {
      *                           When this is not defined, but a remaining exists, the next free address is used.
      * @param validateInputs     Whether or not to validate the balances of the provided inputs.
      * @param validateInputAddresses  Whether or not to validate if the destination address is already use. 
-     *                                If a key reuse is detect ot it's send to inputs.
+     *                                If a key reuse is detect or it's send to inputs.
      * @param tips               The starting points we walk back from to find the balance of the addresses
      *                           If multiple tips are supplied, only the first tip is used for {@link #getTransactionsToApprove(Integer, String)}
      * @return {@link SendTransferResponse}
      * @throws ArgumentException If the seed is invalid
      * @throws ArgumentException If the security level is wrong.
-     * @throws ArgumentException When <tt>validateInputAddresses</tt> is </tt>true</tt>, if validateTransfersAddresses has an error.
+     * @throws ArgumentException When <tt>validateInputAddresses</tt> is <tt>true</tt>, if validateTransfersAddresses has an error.
      * @throws IllegalStateException If the transfers are not all valid
      * @throws IllegalStateException If there is not enough balance in the inputs to supply to the transfers
      * @see #prepareTransfers(String, int, List, String, List, List, boolean)
@@ -1411,18 +1412,19 @@ public class IotaAPI extends IotaAPICore {
      * @param remainderAddress   The address used for sending the remainder value (of the last input).
      *                           If this is <tt>null</tt>, {@link #getNextAvailableAddress(String, int, boolean)} is used.
      * @param signatureFragments The signature fragments (message), used for signing. 
-     *                           Should be {@value Constants#MESSAGE_LENGTH} characters long, can be padded with 9s.
+     *                           Should be 2187 characters long, can be padded with 9s.
      * @return A list of signed inputs to be used in a transaction 
      * @throws ArgumentException When the seed is invalid
      * @throws ArgumentException When the security level is wrong.
-     * @throws IllegalStateException When the inputs do not contain enough balance to reach </tt>totalValue</tt>.
+     * @throws IllegalStateException When the inputs do not contain enough balance to reach <tt>totalValue</tt>.
      * @see IotaAPIUtils#signInputsAndReturn
      * @see #getNextAvailableAddress(String, int, boolean)
      */
     public List<String> addRemainder(String seed, int security, List<Input> inputs, Bundle bundle, 
                                      String tag, long totalValue, String remainderAddress,
                                      List<String> signatureFragments) throws ArgumentException {
-
+        //TODO: replace 2187 with {@value Constants#MESSAGE_LENGTH}. 
+        // https://bugs.eclipse.org/bugs/show_bug.cgi?id=490247
         long totalTransferValue = totalValue;
         for (int i = 0; i < inputs.size(); i++) {
             long thisBalance = inputs.get(i).getBalance();

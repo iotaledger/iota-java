@@ -14,6 +14,8 @@ public class IotaGetInclusionStateRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaGetInclusionStateRequest class.
+     * @param transactions
+     * @param tips
      */
     private IotaGetInclusionStateRequest(final String[] transactions, final String[] tips) {
         super(IotaAPICommands.GET_INCLUSIONS_STATES);
@@ -22,7 +24,11 @@ public class IotaGetInclusionStateRequest extends IotaCommandRequest {
     }
 
     /**
-     * Create a new instance of the IotaGetInclusionStateRequest class.
+     * Initializes a new instance of the IotaGetInclusionStateRequest class.
+     * 
+     * @param transactions
+     * @param tips
+     * @return the instance      
      */
     public static IotaGetInclusionStateRequest createGetInclusionStateRequest(String[] transactions, String[] tips) {
         return new IotaGetInclusionStateRequest(transactions, tips);
@@ -30,6 +36,10 @@ public class IotaGetInclusionStateRequest extends IotaCommandRequest {
 
     /**
      * Create a new instance of the IotaGetInclusionStateRequest class.
+     * 
+     * @param transactions
+     * @param tips
+     * @return the instance
      */
     public static IotaGetInclusionStateRequest createGetInclusionStateRequest(Collection<String> transactions, Collection<String> tips) {
         return createGetInclusionStateRequest(

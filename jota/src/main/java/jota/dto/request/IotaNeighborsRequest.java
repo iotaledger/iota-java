@@ -11,6 +11,9 @@ public class IotaNeighborsRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaNeighborsRequest class.
+     * 
+     * @param type
+     * @param uris
      */
     private IotaNeighborsRequest(IotaAPICommands type, final String... uris) {
         super(type);
@@ -18,14 +21,20 @@ public class IotaNeighborsRequest extends IotaCommandRequest {
     }
 
     /**
-     * Create a new instance of the IotaNeighborsRequest class.
+     * Initializes a new instance of the IotaNeighborsRequest class.
+     * 
+     * @param uris
+     * @return the instance
      */
     public static IotaNeighborsRequest createAddNeighborsRequest(String... uris) {
         return new IotaNeighborsRequest(IotaAPICommands.ADD_NEIGHBORS, uris);
     }
 
     /**
-     * Create a new instance of the IotaNeighborsRequest class.
+     * Initializes a new instance of the IotaNeighborsRequest class.
+     * 
+     * @param uris
+     * @return the instance
      */
     public static IotaNeighborsRequest createRemoveNeighborsRequest(String... uris) {
         return new IotaNeighborsRequest(IotaAPICommands.REMOVE_NEIGHBORS, uris);

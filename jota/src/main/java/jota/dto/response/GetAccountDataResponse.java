@@ -18,6 +18,13 @@ public class GetAccountDataResponse extends AbstractResponse {
 
     /**
      * Initializes a new instance of the GetAccountDataResponse class.
+     * 
+     * @param addresses
+     * @param transferBundle
+     * @param inputs
+     * @param balance
+     * @param duration
+     * @return the instance
      */
     public static GetAccountDataResponse create(List<String> addresses, Bundle[] transferBundle, List<Input> inputs, long balance, long duration) {
         GetAccountDataResponse res = new GetAccountDataResponse();

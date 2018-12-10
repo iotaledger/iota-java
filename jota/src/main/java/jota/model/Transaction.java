@@ -66,6 +66,23 @@ public class Transaction {
 
     /**
      * Initializes a new instance of the Signature class.
+     * 
+     * @param signatureFragments
+     * @param currentIndex
+     * @param lastIndex
+     * @param nonce
+     * @param hash
+     * @param obsoleteTag
+     * @param timestamp
+     * @param trunkTransaction
+     * @param branchTransaction
+     * @param address
+     * @param value
+     * @param bundle
+     * @param tag
+     * @param attachmentTimestamp
+     * @param attachmentTimestampLowerBound
+     * @param attachmentTimestampUpperBound
      */
     public Transaction(String signatureFragments, long currentIndex, long lastIndex, String nonce, String hash, String obsoleteTag, long timestamp, String trunkTransaction, String branchTransaction, String address, long value, String bundle, String tag, long attachmentTimestamp, long attachmentTimestampLowerBound, long attachmentTimestampUpperBound) {
 
@@ -89,6 +106,11 @@ public class Transaction {
 
     /**
      * Initializes a new instance of the Signature class.
+     * 
+     * @param address
+     * @param value
+     * @param tag
+     * @param timestamp
      */
     public Transaction(String address, long value, String tag, long timestamp) {
         this.address = address;
@@ -100,6 +122,8 @@ public class Transaction {
     
     /**
      * Initializes a new instance of the Signature class.
+     * 
+     * @param curl
      */
     public Transaction(ICurl curl) {
         customCurl = curl;
@@ -114,6 +138,8 @@ public class Transaction {
 
     /**
      * Initializes a new instance of the Signature class.
+     * 
+     * @param trytes
      */
     public Transaction(String trytes) {
         transactionObject(trytes);
@@ -121,6 +147,9 @@ public class Transaction {
 
     /**
      * Initializes a new instance of the Signature class.
+     * 
+     * @param trytes
+     * @param customCurl
      */
     public Transaction(String trytes, ICurl customCurl) {
         transactionObject(trytes);
@@ -430,6 +459,7 @@ public class Transaction {
 
     /**
      * Converts the transaction to the corresponding trytes representation
+     * @return The transaction trytes
      */
     public String toTrytes() {
         int[] valueTrits = Converter.trits(this.getValue(), 81);
@@ -467,6 +497,8 @@ public class Transaction {
 
     /**
      * Initializes a new instance of the Signature class.
+     * 
+     * @param trytes
      */
     public void transactionObject(final String trytes) {
 
