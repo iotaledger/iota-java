@@ -16,6 +16,14 @@ public class Neighbor {
 
     /**
      * Initializes a new instance of the Neighbor class.
+     * 
+     * @param address
+     * @param numberOfAllTransactions
+     * @param numberOfInvalidTransactions
+     * @param numberOfNewTransactions
+     * @param numberOfRandomTransactionRequests
+     * @param numberOfSentTransactions
+     * @param connectionType
      */
     public Neighbor(String address, Integer numberOfAllTransactions, Integer numberOfInvalidTransactions, Integer numberOfNewTransactions, Integer numberOfRandomTransactionRequests, Integer numberOfSentTransactions, String connectionType) {
         this.address = address;

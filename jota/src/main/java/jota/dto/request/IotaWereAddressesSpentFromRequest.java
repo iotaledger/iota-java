@@ -13,6 +13,8 @@ public class IotaWereAddressesSpentFromRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaWereAddressesSpentFromRequest class.
+     * 
+     * @param addresses
      */
     private IotaWereAddressesSpentFromRequest(String... addresses) {
         super(IotaAPICommands.WERE_ADDRESSES_SPENT_FROM);
@@ -20,7 +22,10 @@ public class IotaWereAddressesSpentFromRequest extends IotaCommandRequest {
     }
 
     /**
-     * Create a new instance of the IotaWereAddressesSpentFromRequest class.
+     * Initializes a new instance of the IotaWereAddressesSpentFromRequest class.
+     * 
+     * @param addresses
+     * @return the instance
      */
     public static IotaWereAddressesSpentFromRequest create(String... addresses) {
         return new IotaWereAddressesSpentFromRequest(addresses);

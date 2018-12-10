@@ -21,6 +21,7 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
     /**
      * Create a new instance of the IotaFindTransactionsRequest class.
+     * @return the instance
      */
     public static IotaFindTransactionsRequest createFindTransactionRequest() {
         return new IotaFindTransactionsRequest();
@@ -28,6 +29,9 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaFindTransactionsRequest class.
+     * 
+     * @param bundles
+     * @return the instance
      */
     public IotaFindTransactionsRequest byBundles(String... bundles) {
         this.bundles = bundles;
@@ -36,6 +40,9 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaFindTransactionsRequest class.
+     * 
+     * @param addresses
+     * @return the instance
      */
     public IotaFindTransactionsRequest byAddresses(String... addresses) {
         this.addresses = addresses;
@@ -44,6 +51,9 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaFindTransactionsRequest class.
+     * 
+     * @param tags
+     * @return the instance
      */
     public IotaFindTransactionsRequest byTags(String... tags) {
         this.tags = tags;
@@ -52,6 +62,9 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaFindTransactionsRequest class.
+     * 
+     * @param approvees
+     * @return the instance
      */
     public IotaFindTransactionsRequest byApprovees(String... approvees) {
         this.approvees = approvees;

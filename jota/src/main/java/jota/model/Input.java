@@ -16,6 +16,11 @@ public class Input {
 
     /**
      * Initializes a new instance of the Input class.
+     * 
+     * @param address
+     * @param balance
+     * @param keyIndex
+     * @param security
      */
     public Input(String address, long balance, int keyIndex, int security) {
         this.address = address;

@@ -18,6 +18,14 @@ public class Transfer {
 
     /**
      * Initializes a new instance of the Transfer class.
+     * 
+     * @param timestamp
+     * @param address
+     * @param hash
+     * @param persistence
+     * @param value
+     * @param message
+     * @param tag
      */
     public Transfer(String timestamp, String address, String hash, Boolean persistence, long value, String message,
                     String tag) {
@@ -32,6 +40,9 @@ public class Transfer {
 
     /**
      * Initializes a new instance of the Transfer class.
+     * 
+     * @param address
+     * @param value
      */
     public Transfer(String address, long value) {
         this.address = address;
@@ -42,6 +53,11 @@ public class Transfer {
 
     /**
      * Initializes a new instance of the Transfer class.
+     * 
+     * @param address
+     * @param value
+     * @param message
+     * @param tag
      */
     public Transfer(String address, long value, String message, String tag) {
         this.address = address;

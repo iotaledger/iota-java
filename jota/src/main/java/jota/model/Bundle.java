@@ -31,6 +31,9 @@ public class Bundle implements Comparable<Bundle> {
 
     /**
      * Initializes a new instance of the Bundle class.
+     * 
+     * @param transactions
+     * @param length
      */
     public Bundle(List<Transaction> transactions, int length) {
         this.transactions = transactions;
@@ -190,7 +193,11 @@ public class Bundle implements Comparable<Bundle> {
      * Compares the current object with another object of the same type.
      *
      * @param o An object to compare with this object.
-     * @return A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other" /> parameter.Zero This object is equal to <paramref name="other" />. Greater than zero This object is greater than <paramref name="other" />.
+     * @return A value that indicates the relative order of the objects being compared. 
+     *         The return value has the following meanings: 
+     *         Value Meaning Less than zero This object is less than the parameter.
+     *         Zero This object is equal to other. 
+     *         Greater than zero This object is greater than other.
      */
     @Override
     public int compareTo(Bundle o) {

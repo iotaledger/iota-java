@@ -11,6 +11,8 @@ public class IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaCommandRequest class.
+     * 
+     * @param command
      */
     protected IotaCommandRequest(IotaAPICommands command) {
         this.command = command.command();

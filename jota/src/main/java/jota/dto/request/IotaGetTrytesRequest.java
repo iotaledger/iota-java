@@ -11,6 +11,8 @@ public class IotaGetTrytesRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaGetTrytesRequest class.
+     * 
+     * @param hashes
      */
     private IotaGetTrytesRequest(final String... hashes) {
         super(IotaAPICommands.GET_TRYTES);
@@ -18,7 +20,10 @@ public class IotaGetTrytesRequest extends IotaCommandRequest {
     }
 
     /**
-     * Create a new instance of the IotaGetTrytesRequest class.
+     * Initializes a new instance of the IotaGetTrytesRequest class.
+     * 
+     * @param hashes
+     * @return the instance
      */
     public static IotaGetTrytesRequest createGetTrytesRequest(String... hashes) {
         return new IotaGetTrytesRequest(hashes);

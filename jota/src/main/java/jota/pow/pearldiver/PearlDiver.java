@@ -8,7 +8,7 @@ import static jota.pow.pearldiver.PearlDiver.State.RUNNING;
 
 /**
  * (c) 2016 Come-from-Beyond
- * See <https://github.com/iotaledger/iri/blob/dev/src/main/java/com/iota/iri/hash/PearlDiver.java
+ * See <a href="https://github.com/iotaledger/iri/blob/dev/src/main/java/com/iota/iri/hash/PearlDiver.java">PearlDiver</a>
  */
 public class PearlDiver {
 

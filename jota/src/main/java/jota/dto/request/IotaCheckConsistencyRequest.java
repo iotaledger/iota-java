@@ -11,6 +11,7 @@ public class IotaCheckConsistencyRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaCheckConsistencyRequest class.
+     * @param tails
      */
     private IotaCheckConsistencyRequest(final String... tails) {
         super(IotaAPICommands.CHECK_CONSISTENCY);
@@ -18,7 +19,9 @@ public class IotaCheckConsistencyRequest extends IotaCommandRequest {
     }
 
     /**
-     * Create a new instance of the IotaGetBalancesRequest class.
+     * Initializes a new instance of the IotaCheckConsistencyRequest class.
+     * @param tails
+     * @return the instance
      */
     public static IotaCheckConsistencyRequest create(final String... tails) {
         return new IotaCheckConsistencyRequest(tails);

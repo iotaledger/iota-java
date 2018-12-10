@@ -13,6 +13,10 @@ public class IotaGetBalancesRequest extends IotaCommandRequest {
 
     /**
      * Initializes a new instance of the IotaGetBalancesRequest class.
+     * 
+     * @param threshold
+     * @param addresses
+     * @param tips
      */
     private IotaGetBalancesRequest(final Integer threshold, final String[] addresses, final String... tips) {
         super(IotaAPICommands.GET_BALANCES);
@@ -22,7 +26,12 @@ public class IotaGetBalancesRequest extends IotaCommandRequest {
     }
 
     /**
-     * Create a new instance of the IotaGetBalancesRequest class.
+     * Initializes a new instance of the IotaGetBalancesRequest class.
+     * 
+     * @param threshold
+     * @param addresses
+     * @param tips
+     * @return the instance
      */
     public static IotaGetBalancesRequest createIotaGetBalancesRequest(final Integer threshold, final String[] addresses, final String... tips) {
         return new IotaGetBalancesRequest(threshold, addresses, tips);

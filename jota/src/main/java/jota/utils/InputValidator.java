@@ -206,7 +206,7 @@ public class InputValidator {
      * Determines whether the specified transfer is valid.
      *
      * @param transfer The transfer to validate.
-     * @return <code>true</code> if the specified transfer is valid; otherwise, <code>false</code>>.
+     * @return <code>true</code> if the specified transfer is valid; otherwise, <code>false</code>.
      **/
     public static boolean isValidTransfer(final Transfer transfer) {
 
