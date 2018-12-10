@@ -857,7 +857,7 @@ public class IotaAPI extends IotaAPICore {
      * @param threshold       Minimum balance required.
      * @return {@link GetAccountDataResponse}
      * @throws ArgumentException when the specified security level is not valid.
-     * @throws ArgumentException when <tt>start</tt> and <tt>end<tt> are invalid
+     * @throws ArgumentException when <tt>start</tt> and <tt>end</tt> are invalid
      * @see #getTransfers(String, int, Integer, Integer, Boolean)
      */
     public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, boolean returnAll, int start, int end, boolean inclusionStates, long threshold) throws ArgumentException {

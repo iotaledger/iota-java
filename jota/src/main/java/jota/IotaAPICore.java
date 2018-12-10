@@ -492,13 +492,15 @@ public class IotaAPICore {
      * <p>
      * The returned value is a different set of tryte values which you can input into 
      * <tt>broadcastTransactions</tt> and <tt>storeTransactions</tt>.
+     * </p>
+     * 
      * The last 243 trytes of the return value consist of the following:
      * <ul>
      * <li><code>trunkTransaction</code></li>
      * <li><code>branchTransaction</code></li>
      * <li><code>nonce</code></li>
      * </ul>
-     * </p>
+     * 
      * These are valid trytes which are then accepted by the network.
      * @param trunkTransaction A reference to an external transaction (tip) used as trunk.
      *                         The transaction with index 0 will have this tip in its trunk.
