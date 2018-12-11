@@ -116,15 +116,14 @@
     </dependencyManagement>
 
     <distributionManagement>
-        <repository>
-            <id>bintray-iotaledger-maven</id>
-            <name>iotaledger-maven</name>
-            <url>https://api.bintray.com/maven/iotaledger/maven/jota/;publish=1</url>
-        </repository>
         <snapshotRepository>
-            <id>jfrog-snapshots</id>
-            <url>http://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
     <build>
