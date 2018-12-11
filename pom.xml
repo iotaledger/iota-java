@@ -45,6 +45,14 @@
             <id>jpkrohling</id>
             <name>Juraci Paixão Kröhling</name>
         </developer>
+	<developer>
+		<id>th0br0</id>
+		<name>Andreas C. Osowski</name>
+	</developer>
+	<developer>
+		<id>kwek20</id>
+		<name>Brord van Wierst</name>
+	</developer>
     </developers>
 
     <properties>
@@ -120,14 +128,21 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
     </distributionManagement>
 
     <build>
         <plugins>
+		<plugin>
+			<groupId>org.sonatype.plugins</groupId>
+			<artifactId>nexus-staging-maven-plugin</artifactId>
+			<version>1.6.7</version>
+			<extensions>true</extensions>
+			<configuration>
+				<serverId>ossrh</serverId>
+				<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+				<autoReleaseAfterClose>true</autoReleaseAfterClose>
+			</configuration>
+		</plugin>
             <plugin>
 	            <groupId>org.apache.maven.plugins</groupId>
 	            <artifactId>maven-checkstyle-plugin</artifactId>
@@ -242,6 +257,20 @@
                         <artifactId>maven-site-plugin</artifactId>
                         <version>${version.maven-site-plugin}</version>
                     </plugin>
+		    <plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-gpg-plugin</artifactId>
+			    <version>1.5</version>
+			    <executions>
+				    <execution>
+					    <id>sign-artifacts</id>
+					    <phase>verify</phase>
+					    <goals>
+						    <goal>sign</goal>
+					    </goals>
+				    </execution>
+			    </executions>
+		    </plugin>
                 </plugins>
             </build>
         </profile>
