@@ -1,6 +1,5 @@
-![IOTA Logo][iota-logo]
+# IOTA Java client library
 
-# IOTA Java Library
 [![Codacy Badge][codacy-badge]][codacy]
 [![JitPack][jitpack-badge]][jitpack]
 [![Build Status][travis-badge]][travis]
@@ -8,19 +7,16 @@
 [![IOTA IRI compatibility][iota-iri-badge]][iota-iri]
 [![IOTA API coverage][iota-api-badge]][iota-api]
 
-This is the **official** Java library for the IOTA Core.
-It's a simple Java wrapper around IOTA node’s [_JSON-REST HTTP interface_][iota-api]
-and allows to connect to a _local_ or a _remote_ IOTA node easily using it's Java API interface.
+This is the **official** Java client library, which allows you to do the following:
+* Create transactions
+* Sign transactions
+* Interact with an IRI node
 
-The IOTA Java wrapper is designed to be **thread-safe** and kept as simple as possible in order to be **easily maintainable**, accordingly with the ongoing natural evolution of IOTA’s API.
-All the boilerplate code for connecting to the node REST interface has been hidden as implementation detail (using Retrofit 2) — you'll only interact with **pure Java**.
+|Table of contents|
+|:----|
+| [Installing the library](#installing-the-library)|
 
-
-
-
-## Table of Contents
-
-1. [Installation](#installation)
+1. 
     1. [Gradle Dependency](#gradle-dependency)
     1. [Maven Dependency](#maven-dependency)
     1. [Manual](#manual)
@@ -35,7 +31,7 @@ All the boilerplate code for connecting to the node REST interface has been hidd
 1. [Changes](#changes)
 1. [Disclaimer](#disclaimer)
 1. [Supporting the project](#supporting-the-project)
-    1. [Join the Discussion](#join-the-discussion)
+    1. [Joining the Discussion](#join-the-discussion)
 1. [License](codacity#license)
 
 ## Installation
