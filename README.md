@@ -116,7 +116,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
 
 3. In the jota directory, run the following command:
 
-    `mvn clean install
+    `mvn clean install`
 
 You'll have a .jar file called `jota-[VERSION]-jar-with-dependencies.jar`, depending on your version of the library.
 
@@ -241,12 +241,12 @@ A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-ja
 If the IOTA Java client library has been useful to you and you feel like contributing, consider posting a [**bug report**][new-issue], [**feature request**][new-issue] or a [**pull request**][new-pull-request].  
 We have some [basic contribution guidelines][contribution-guidelines] to keep our code base stable and consistent.
 
-### Joining the Discussion
+## Joining the Discussion
 
 If you want to get involved in the community, need help with getting setup, have any issues related with the library or just want to discuss Blockchain, Distributed Ledgers and IoT with other people, feel free to join our [Discord][iota-discord].  
 You can also ask questions on our dedicated [IOTA Forum][iota-forum].
 
-## License:
+## License
 
 The [full license text][license] can be found [here*][license].
 
