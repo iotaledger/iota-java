@@ -19,10 +19,6 @@ Please report any issues in our [issue tracker][issues].
 |:----|
 | [Prerequisites](#prerequisites)
 | [Downloading the library](#downloading-the-library)|
-| [Dependencies](#dependencies)
-| [Downloading the library with Gradle](#downloading-the-library-with-gradle) |
-| [Downloading the library with Maven](#downloading-the-library-with-maven) |
-| [Downloading the library manually](#downloading-the-library-manually) |
 | [Getting started](#getting-started) |
 | [API reference](#api-reference)|
 | [Examples](#examples)|
