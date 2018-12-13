@@ -161,7 +161,8 @@ For a full list of API commands for the IOTA Java client library, go to the [Git
 Here are some of the most commonly used API functions:
 
 - [`getTransactionsObjects()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getTransactionsObjects-java.lang.String:A-)
-- [`findTransactionObjects()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#findTransactionObjects-java.lang.String:A-) - [`getTransactionsObjects()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getTransactionsObjects-java.lang.String:A-)
+- [`findTransactionObjects()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#findTransactionObjects-java.lang.String:A-)
+- [`getTransactionsObjects()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getTransactionsObjects-java.lang.String:A-)
 - [`getLatestInclusion()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getLatestInclusion-java.lang.String:A-)
 - [`broadcastAndStore()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#broadcastAndStore-java.lang.String...-)
 - [`getNewAddress()`](https://iotaledger.github.io/iota-java/javadoc/jota/IotaAPI.html#getNewAddress-java.lang.String-int-int-boolean-int-boolean-)
@@ -221,7 +222,7 @@ Here are some of the most commonly used API functions:
 
 ## Examples
 
-We have a list of **test cases** on the [`src/test/java` directory][tests] that you can use as a reference when developing apps with IOTA.
+We have a list of test cases on the [`src/test/java` directory][tests] that you can use as a reference when developing apps with IOTA.
 A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/jota/IotaAPITest.java).
 
 ## Change logs:
@@ -238,7 +239,7 @@ A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-ja
 
 ## Supporting the project
 
-If the IOTA Java client library has been useful to you and you feel like contributing, consider posting a [**bug report**][new-issue], [**feature request**][new-issue] or a [**pull request**][new-pull-request].  
+If the IOTA Java client library has been useful to you and you feel like contributing, consider posting a [bug report][new-issue], [feature request][new-issue] or a [pull request][new-pull-request].  
 We have some [basic contribution guidelines][contribution-guidelines] to keep our code base stable and consistent.
 
 ## Joining the Discussion
@@ -248,7 +249,7 @@ You can also ask questions on our dedicated [IOTA Forum][iota-forum].
 
 ## License
 
-The [full license text][license] can be found [here*][license].
+The [full license text][license] can be found [here][license].
 
 ```
 Copyright 2017 IOTA Foundation
