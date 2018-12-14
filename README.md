@@ -13,7 +13,7 @@ This is the **official** Java client library, which allows you to do the followi
 * Interact with an IRI node
 
 This is beta software, so there may be performance and stability issues.
-Please report any issues in our [issue tracker][issues].
+Please report any issues in our [issue tracker](https://github.com/iotaledger/iota-java/issues/new-issue).
 
 |Table of contents|
 |:----|
@@ -37,7 +37,7 @@ To use the IOTA Java client library, your computer must have the following minim
 
 The IOTA Java client library is available on [**jitpack.io**][jitpack].
 
-### Dependencies:
+### Dependencies
 
 The IOTA Java client library uses the following third-party libraries:
 
@@ -55,7 +55,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
 
 ### Downloading the library with Gradle
 
-1. Add the following repository to your root `build.gradle` file (**not** your module `build.gradle` file):
+ 1. Add the following repository to your root `build.gradle` file (**not** your module `build.gradle` file):
 
     ```gradle
     allprojects {
@@ -191,17 +191,16 @@ A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-ja
 
 ## Supporting the project
 
-If the IOTA Java client library has been useful to you and you feel like contributing, consider posting a [bug report][new-issue], [feature request][new-issue] or a [pull request][new-pull-request].  
-We have some [basic contribution guidelines][contribution-guidelines] to keep our code base stable and consistent.
+If the IOTA Java client library has been useful to you and you feel like contributing, consider posting a [bug report](https://github.com/iotaledger/iota-java/issues/new-issue), feature request or a [pull request](https://github.com/iotaledger/iota-java/pulls/).  
+We have some [basic contribution guidelines](contribution-guidelines.md) to keep our code base stable and consistent.
 
 ## Joining the Discussion
 
-If you want to get involved in the community, need help with getting setup, have any issues related with the library or just want to discuss blockchain, distributed ledgers, and IoT with other people, feel free to join our [Discord][iota-discord].  
-You can also ask questions on our dedicated [IOTA Forum][iota-forum].
+If you want to get involved in the community, need help with getting setup, have any issues related with the library or just want to discuss blockchain, distributed ledgers, and IoT with other people, feel free to join our [Discord](https://discordapp.com/invite/fNGZXvh).  
 
 ## License
 
-The [full license text][license] can be found [here][license].
+The Apache 2.0 license can be found [here](license).
 
 [iota-logo]: https://avatars0.githubusercontent.com/u/20126597?s=200&v=4
 [codacy]: https://www.codacy.com/app/kwek20/iota-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iotaledger/iota-java&amp;utm_campaign=Badge_Grade
