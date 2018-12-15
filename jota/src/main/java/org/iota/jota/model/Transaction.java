@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.iota.jota.pow.ICurl;
-import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.InputValidator;
@@ -515,7 +514,7 @@ public class Transaction {
         int[] transactionTrits = Converter.trits(trytes);
         int[] hash = new int[Constants.HASH_LENGTH_TRITS];
 
-        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.CURLP81);
+        ICurl curl = customCurl.clone();
         // generate the correct transaction hash
         curl.reset();
         curl.absorb(transactionTrits, 0, transactionTrits.length);

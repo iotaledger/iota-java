@@ -1,4 +1,4 @@
-package jota.category;
+package org.iota.jota.category;
 
 public interface IntegrationTest {
 }

@@ -8,9 +8,11 @@ import org.iota.jota.store.Store;
 
 public abstract class IotaClientConfig implements IotaConfig {
     
-    
     protected Store store;
     
+    /**
+     * Used for empty construction in {@link IotaDefaultConfig}
+     */
     protected IotaClientConfig() {
         
     }

@@ -1,29 +1,39 @@
-package jota;
+package org.iota.jota;
 
-import com.google.gson.Gson;
-import jota.category.IntegrationTest;
-import jota.dto.response.*;
-import jota.error.ArgumentException;
-import jota.model.Bundle;
-import jota.model.Input;
-import jota.model.Transaction;
-import jota.model.Transfer;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
+import org.iota.jota.IotaAPI;
+import org.iota.jota.category.IntegrationTest;
+import org.iota.jota.dto.response.CheckConsistencyResponse;
+import org.iota.jota.dto.response.GetAccountDataResponse;
+import org.iota.jota.dto.response.GetBalancesAndFormatResponse;
+import org.iota.jota.dto.response.GetBundleResponse;
+import org.iota.jota.dto.response.GetInclusionStateResponse;
+import org.iota.jota.dto.response.GetNewAddressResponse;
+import org.iota.jota.dto.response.GetNodeInfoResponse;
+import org.iota.jota.dto.response.GetTransferResponse;
+import org.iota.jota.dto.response.ReplayBundleResponse;
+import org.iota.jota.dto.response.SendTransferResponse;
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.model.Bundle;
+import org.iota.jota.model.Input;
+import org.iota.jota.model.Transaction;
+import org.iota.jota.model.Transfer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import com.google.gson.Gson;
 
 /**
  * Let's do some integration test coverage against a default local real node.
@@ -72,7 +82,8 @@ public class IotaAPITest {
 
     @Before
     public void createApiClientInstance() {
-        iotaAPI = new IotaAPI.Builder().port("80").build();
+        iotaAPI = new IotaAPI.Builder().port(80).build();
+        Assert.assertNotNull(iotaAPI);
     }
 
     @Test
@@ -89,7 +100,7 @@ public class IotaAPITest {
         iotaAPI = new IotaAPI.Builder().host("somewhere_over_the_rainbow").build();
         assertThat(iotaAPI.getHost(), Is.is("somewhere_over_the_rainbow"));
 
-        iotaAPI = new IotaAPI.Builder().port("15515").build();
+        iotaAPI = new IotaAPI.Builder().port(15515).build();
         assertThat(iotaAPI.getPort(), Is.is("15515"));
 
         iotaAPI = new IotaAPI.Builder().protocol("https").build();

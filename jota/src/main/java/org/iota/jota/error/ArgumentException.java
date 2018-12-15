@@ -3,9 +3,9 @@ package org.iota.jota.error;
 /**
  * This exception occurs when an invalid argument is provided.
  *
- * @author Adrian
  */
 public class ArgumentException extends BaseException {
+    
     /**
      * Serial version UID
      */

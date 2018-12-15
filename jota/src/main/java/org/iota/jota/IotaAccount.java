@@ -6,7 +6,6 @@ import org.iota.jota.config.IotaConfig;
 import org.iota.jota.config.IotaFileConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.connection.ConnectionFactory;
-import org.iota.jota.connection.HttpConnector;
 import org.iota.jota.store.IotaStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +24,10 @@ public class IotaAccount {
      * 
      * @throws Exception If the config did not load for whatever reason
      */
-    public IotaAccount(IotaAPI api, IotaStore store, IotaConfig config) throws Exception {
-        this.api = api;
-        this.store = store;
-        this.config = config;
-        
+    protected IotaAccount(Builder builder) throws Exception {
+        this.store = builder.store;
+        this.api = builder.api;
+        this.config = builder.config;
         
         log.info(this.toString());
     }
@@ -40,7 +38,7 @@ public class IotaAccount {
      * The default storage will be at {@value jota.config.IotaFileStore#DEFAULT_STORE}
      * @throws Exception If the config did not load for whatever reason
      */
-    public IotaAccount(IotaAPI api) throws Exception {
+    public IotaAccount() throws Exception {
         this(new Builder().generate());
     }
     
@@ -50,7 +48,7 @@ public class IotaAccount {
      * @param store The method we use for storing key/value data
      * @throws Exception If the config did not load for whatever reason
      */
-    public IotaAccount(IotaAPI api, IotaStore store) throws Exception {
+    public IotaAccount(IotaStore store) throws Exception {
         this(new Builder().store(store).generate());
     }
     
@@ -60,7 +58,7 @@ public class IotaAccount {
      * @param config The location of the config
      * @throws Exception If the config did not load for whatever reason
      */
-    public IotaAccount(IotaAPI api, IotaStore store, String config) throws Exception {
+    public IotaAccount(IotaStore store, String config) throws Exception {
         this(new Builder().store(store).config(new IotaFileConfig(config)).generate());
     }
 
@@ -70,7 +68,7 @@ public class IotaAccount {
      * @param iotaConfig The config we load nodes from
      * @throws Exception If the config did not load for whatever reason
      */
-    public IotaAccount(IotaAPI api, IotaStore store, IotaConfig iotaConfig) throws Exception {
+    public IotaAccount(IotaStore store, IotaConfig iotaConfig) throws Exception {
         this(new Builder().store(store).config(iotaConfig).generate());
     }
     
@@ -95,17 +93,23 @@ public class IotaAccount {
         return builder.toString();
     }
     
-    public static class AccountBuilder{
+    public static class Builder extends IotaAPICore.Builder<IotaAccount.Builder, IotaAPI>{
         
         private IotaStore store;
+        private IotaAPI api;
         
         public Builder store(IotaStore store) {
             this.store = store;
             return this;
         }
+        
+        public Builder api(IotaAPI api) {
+            this.api = api;
+            return this;
+        }
 
         @Override
-        public Builder generate() throws Exception {
+        public IotaAccount.Builder generate() throws Exception {
             //If a config is specified through ENV, that one will be in the stream, otherwise default config is used
             Arrays.stream(getConfigs()).forEachOrdered(config -> {
                 if (config != null) {
@@ -114,6 +118,10 @@ public class IotaAccount {
                     if (null == store) {
                         store = config.getStore();
                     }
+                    
+                    if (null == api) {
+                        api = new IotaAPI.Builder().build();
+                    }
                 }
             });
             
@@ -121,7 +129,7 @@ public class IotaAccount {
         }
         
         @Override
-        protected IotaAPI compile() throws Exception {
+        protected IotaAPI compile(){
             return new IotaAPI(this);
         }
     }

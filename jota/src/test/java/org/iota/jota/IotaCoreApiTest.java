@@ -1,15 +1,15 @@
-package jota;
+package org.iota.jota;
 
 import com.google.gson.Gson;
-import jota.category.IntegrationTest;
-import jota.dto.response.*;
-import jota.error.ArgumentException;
+
 import org.hamcrest.core.IsNull;
+import org.iota.jota.category.IntegrationTest;
+import org.iota.jota.dto.response.*;
+import org.iota.jota.error.ArgumentException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.assertFalse;
@@ -19,7 +19,7 @@ import static org.junit.Assert.fail;
 
 
 /**
- * @author Adrian
+ *
  */
 public class IotaCoreApiTest {
 

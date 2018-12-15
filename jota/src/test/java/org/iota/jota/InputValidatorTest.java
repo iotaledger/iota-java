@@ -1,8 +1,8 @@
-package jota;
+package org.iota.jota;
 
-import jota.error.ArgumentException;
-import jota.model.Transfer;
-import jota.utils.InputValidator;
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.model.Transfer;
+import org.iota.jota.utils.InputValidator;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -10,9 +10,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author pinpong
- */
 public class InputValidatorTest {
 
     private static final String TEST_ADDRESS_WITHOUT_CHECKSUM = "PNGMCSNRCTRHCHPXYTPKEJYPCOWKOMRXZFHH9N9VDIKMNVAZCMIYRHVJIAZARZTUETJVFDMBEBIQE9QTHBFWDAOEFA";
@@ -34,7 +31,7 @@ public class InputValidatorTest {
 
     @Test
     public void shouldIsTrytes() {
-        assertEquals(InputValidator.isTrytesOfExactLength(TEST_TRYTES, TEST_TRYTES.length()), true);
+        assertEquals(InputValidator.isTrytes(TEST_TRYTES, TEST_TRYTES.length()), true);
     }
 
     @Test
@@ -49,7 +46,7 @@ public class InputValidatorTest {
 
     @Test
     public void shouldIsArrayOfTrytes() {
-        assertEquals(InputValidator.isArrayOfTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}), true);
+        assertEquals(InputValidator.isArrayOfRawTransactionTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}), true);
     }
 
     @Test

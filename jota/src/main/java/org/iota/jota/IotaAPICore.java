@@ -2,14 +2,17 @@ package org.iota.jota;
 
 import static org.iota.jota.utils.Constants.*;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
+import java.util.Random;
+import org.iota.jota.config.IotaConfig;
+import org.iota.jota.config.IotaDefaultConfig;
+import org.iota.jota.config.IotaEnvConfig;
+import org.iota.jota.config.IotaFileConfig;
+import org.iota.jota.config.IotaPropertiesConfig;
+import org.iota.jota.connection.Connection;
 import org.iota.jota.dto.request.IotaAttachToTangleRequest;
 import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
 import org.iota.jota.dto.request.IotaCheckConsistencyRequest;
@@ -40,18 +43,13 @@ import org.iota.jota.dto.response.StoreTransactionsResponse;
 import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transaction;
+import org.iota.jota.pow.ICurl;
+import org.iota.jota.pow.SpongeFactory;
+import org.iota.jota.store.PropertiesStore;
 import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.InputValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * 
@@ -60,105 +58,76 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * 
  */
 public class IotaAPICore {
-
-    // version header
-    private static final String X_IOTA_API_VERSION_HEADER_NAME = "X-IOTA-API-Version";
-    private static final String X_IOTA_API_VERSION_HEADER_VALUE = "1";
-
     private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
 
-    private IotaAPIService service;
-    private String protocol, host, port;
-    private IotaLocalPoW localPoW;
-
+    protected List<Connection> nodes = new ArrayList<>();
+    
+    protected ICurl customCurl;
+    protected IotaLocalPoW localPoW;
+    
+    private Connection service = null;
+    
     /**
      * Build the API core.
      *
      * @param builder The builder.
      */
-    protected IotaAPICore(Builder<?> builder) {
-        protocol = builder.protocol;
-        host = builder.host;
-        port = builder.port;
+    protected <T extends Builder<T, E>, E extends IotaAPICore> IotaAPICore(Builder<T, E> builder) {
         localPoW = builder.localPoW;
-        postConstruct();
+        customCurl = builder.customCurl;
     }
-
-    protected static <tt> Response<tt> wrapCheckedException(Call<tt> call) throws ArgumentException {
+    
+    public boolean hasNodes() {
+        return nodes != null && nodes.size() > 0;
+    }
+    
+    public Connection getRandomNode() {
+        if (!hasNodes()) return null;
+        return nodes.get(new Random().nextInt(nodes.size()));
+    }
+    
+    public List<Connection> getNodes() {
+        return nodes;
+    }
+    
+    public boolean addNode(Connection n) {
         try {
-            final Response<tt> res = call.execute();
-
-            String error = "";
-
-            if (res.errorBody() != null) {
-                error = res.errorBody().string();
+            for (Connection c : nodes) {
+                if (c.toString().equals(n.toString())) {
+                    log.warn("Tried to add a node we allready have: " + n);
+                    return true;
+                }
             }
-
-            if (res.code() == 400) {
-                throw new ArgumentException(error);
-
-            } else if (res.code() == 401) {
-                throw new IllegalAccessError("401 " + error);
-            } else if (res.code() == 500) {
-                throw new IllegalAccessError("500 " + error);
-            } else if (!res.isSuccessful()) {
-                //Timeout most likely
-                throw new ArgumentException(res.message());
-            }
-            return res;
-        } catch (IOException e) {
-            log.error("Execution of the API call raised exception. IOTA Node not reachable?", e);
-            throw new IllegalStateException(e.getMessage());
+            
+            n.start();
+            
+            //Huray! Lets add it
+            nodes.add(n);
+            log.debug("Added node: " + n.toString());
+            //Legacy wants a node in service for getting ports etc
+            if (null == service) service = n;
+            
+            return true;
+        } catch (Exception e) {
+            log.warn("Failed to add node connection to pool due to " + e.getMessage());
+            return false;
         }
-
     }
-
-    private static String env(String env, String def) {
-        final String value = System.getenv(env);
-        if (value == null) {
-            log.warn("Environment variable '{}' is not defined, and actual value has not been specified. "
-                    + "Rolling back to default value: '{}'", env, def);
-            return def;
-        }
-        return value;
+    
+    public ICurl getCurl() {
+        return customCurl;
     }
-
-    /**
-     * added header for IRI
-     */
-    private void postConstruct() {
-
-        final String nodeUrl = protocol + "://" + host + ":" + port;
-
-        // Create OkHttpBuilder
-        final OkHttpClient client = new OkHttpClient.Builder()
-                .readTimeout(5000, TimeUnit.SECONDS)
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public okhttp3.Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request();
-                        Request newRequest;
-
-                        newRequest = request.newBuilder()
-                                .addHeader(X_IOTA_API_VERSION_HEADER_NAME, X_IOTA_API_VERSION_HEADER_VALUE)
-                                .build();
-
-                        return chain.proceed(newRequest);
-                    }
-                })
-                .connectTimeout(5000, TimeUnit.SECONDS)
-                .build();
-
-        // use client to create Retrofit service
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(nodeUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-
-        service = retrofit.create(IotaAPIService.class);
-
-        log.debug("Jota-API Java proxy pointing to node url: '{}'", nodeUrl);
+    
+    public void setCurl(ICurl localPoW) {
+        this.customCurl = localPoW;
+    }
+    
+    public IotaLocalPoW getLocalPoW() {
+        return localPoW;
+    }
+    
+    public void setLocalPoW(IotaLocalPoW localPoW) {
+        this.localPoW = localPoW;
     }
 
     /**
@@ -168,8 +137,7 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public GetNodeInfoResponse getNodeInfo() throws ArgumentException {
-        final Call<GetNodeInfoResponse> res = service.getNodeInfo(IotaCommandRequest.createNodeInfoRequest());
-        return wrapCheckedException(res).body();
+        return service.getNodeInfo(IotaCommandRequest.createNodeInfoRequest());
     }
 
     /**
@@ -180,8 +148,7 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public GetNeighborsResponse getNeighbors() throws ArgumentException {
-        final Call<GetNeighborsResponse> res = service.getNeighbors(IotaCommandRequest.createGetNeighborsRequest());
-        return wrapCheckedException(res).body();
+        return service.getNeighbors(IotaCommandRequest.createGetNeighborsRequest());
     }
 
     /**
@@ -198,8 +165,7 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public AddNeighborsResponse addNeighbors(String... uris) throws ArgumentException {
-        final Call<AddNeighborsResponse> res = service.addNeighbors(IotaNeighborsRequest.createAddNeighborsRequest(uris));
-        return wrapCheckedException(res).body();
+        return service.addNeighbors(IotaNeighborsRequest.createAddNeighborsRequest(uris));
     }
 
     /**
@@ -215,8 +181,7 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public RemoveNeighborsResponse removeNeighbors(String... uris) throws ArgumentException {
-        final Call<RemoveNeighborsResponse> res = service.removeNeighbors(IotaNeighborsRequest.createRemoveNeighborsRequest(uris));
-        return wrapCheckedException(res).body();
+        return service.removeNeighbors(IotaNeighborsRequest.createRemoveNeighborsRequest(uris));
     }
 
     /**
@@ -226,8 +191,7 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public GetTipsResponse getTips() throws ArgumentException {
-        final Call<GetTipsResponse> res = service.getTips(IotaCommandRequest.createGetTipsRequest());
-        return wrapCheckedException(res).body();
+        return service.getTips(IotaCommandRequest.createGetTipsRequest());
     }
 
 
@@ -249,16 +213,22 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public FindTransactionResponse findTransactions(String[] addresses, String[] tags, String[] approvees, String[] bundles) throws ArgumentException {
-
+        String[] addressesWithoutChecksum = new String[addresses.length];
+        if (null != addresses) {
+            for (int i = 0; i < addresses.length; i++) {
+                String addressO = Checksum.removeChecksum(addresses[i]);
+                addressesWithoutChecksum[i] = addressO;
+            }
+        }
+        
         final IotaFindTransactionsRequest findTransRequest = IotaFindTransactionsRequest
                 .createFindTransactionRequest()
-                .byAddresses(addresses)
+                .byAddresses(addressesWithoutChecksum)
                 .byTags(tags)
                 .byApprovees(approvees)
                 .byBundles(bundles);
 
-        final Call<FindTransactionResponse> res = service.findTransactions(findTransRequest);
-        return wrapCheckedException(res).body();
+        return service.findTransactions(findTransRequest);
     }
 
     /**
@@ -268,15 +238,16 @@ public class IotaAPICore {
      * @return {@link FindTransactionResponse}
      * @throws ArgumentException 
      */
-    public FindTransactionResponse findTransactionsByAddresses(final String... addresses) throws ArgumentException {
-        List<String> addressesWithoutChecksum = new ArrayList<>();
-
-        for (String address : addresses) {
-            String addressO = Checksum.removeChecksum(address);
-            addressesWithoutChecksum.add(addressO);
+    public FindTransactionResponse findTransactionsByAddresses(String... addresses) throws ArgumentException {
+        if (!InputValidator.isStringArrayValid(addresses)) {
+            throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
         }
-
-        return findTransactions(addressesWithoutChecksum.toArray(new String[addressesWithoutChecksum.size()]), null, null, null);
+        
+        if (!InputValidator.isAddressesArrayValid(addresses)) {
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
+        }
+        
+        return findTransactions(addresses, null, null, null);
     }
 
     /**
@@ -286,7 +257,16 @@ public class IotaAPICore {
      * @return {@link FindTransactionResponse}
      * @throws ArgumentException 
      */
-    public FindTransactionResponse findTransactionsByBundles(final String... bundles) throws ArgumentException {
+    public FindTransactionResponse findTransactionsByBundles(String... bundles) throws ArgumentException {
+        if (!InputValidator.isStringArrayValid(bundles)) {
+            throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
+        }
+        
+        if (!InputValidator.isAddressesArrayValid(bundles)) {
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
+        }
+        
+        
         return findTransactions(null, null, null, bundles);
     }
 
@@ -297,20 +277,49 @@ public class IotaAPICore {
      * @return {@link FindTransactionResponse}
      * @throws ArgumentException 
      */
-    public FindTransactionResponse findTransactionsByApprovees(final String... approvees) throws ArgumentException {
+    public FindTransactionResponse findTransactionsByApprovees(String... approvees) throws ArgumentException {
+        if (!InputValidator.isStringArrayValid(approvees)) {
+            throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
+        }
+        
+        if (!InputValidator.isAddressesArrayValid(approvees)) {
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
+        }
+        
         return findTransactions(null, null, approvees, null);
     }
 
+    /**
+     * Find the transactions by digests
+     * Deprecated, Use findTransactionsByTag
+     * 
+     * @param digests A List of digests. Each should be 27 trytes.
+     * @return The transaction hashes which are returned depend on the input.
+     * @throws ArgumentException 
+     */
+    @Deprecated
+    public FindTransactionResponse findTransactionsByDigests(String... digests) throws ArgumentException {
+        return findTransactionsByTags(digests);
+    }
+    
 
     /**
      * Find the transactions by tags
      *
-     * @param digests A List of tags.
+     * @param tags A List of tags.
      * @return {@link FindTransactionResponse}
      * @throws ArgumentException 
      */
-    public FindTransactionResponse findTransactionsByDigests(final String... digests) throws ArgumentException {
-        return findTransactions(null, digests, null, null);
+    public FindTransactionResponse findTransactionsByTags(String... tags) throws ArgumentException {
+        if (!InputValidator.isStringArrayValid(tags)) {
+            throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
+        }
+        
+        if (!InputValidator.isArrayOfTrytes(tags, TAG_LENGTH)) {
+            throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
+        }
+        
+        return findTransactions(null, tags, null, null);
     }
 
 
@@ -342,10 +351,8 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
-
-        final Call<GetInclusionStateResponse> res = service.getInclusionStates(IotaGetInclusionStateRequest
+        return service.getInclusionStates(IotaGetInclusionStateRequest
                 .createGetInclusionStateRequest(transactions, tips));
-        return wrapCheckedException(res).body();
     }
 
     /**
@@ -364,8 +371,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
         
-        final Call<GetTrytesResponse> res = service.getTrytes(IotaGetTrytesRequest.createGetTrytesRequest(hashes));
-        return wrapCheckedException(res).body();
+        return service.getTrytes(IotaGetTrytesRequest.createGetTrytesRequest(hashes));
     }
 
     /**
@@ -384,9 +390,11 @@ public class IotaAPICore {
      * @throws ArgumentException
      */
     public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth, String reference) throws ArgumentException {
-
-        final Call<GetTransactionsToApproveResponse> res = service.getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(depth, reference));
-        return wrapCheckedException(res).body();
+        if (depth < 0) {
+            throw new ArgumentException(INVALID_APPROVE_DEPTH_ERROR);
+        }
+        
+        return service.getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(depth, reference));
     }
 
     /**
@@ -423,8 +431,20 @@ public class IotaAPICore {
      * @throws ArgumentException
      */
     private GetBalancesResponse getBalances(Integer threshold, String[] addresses, String[] tips) throws ArgumentException {
-        final Call<GetBalancesResponse> res = service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses, tips));
-        return wrapCheckedException(res).body();
+        if (threshold < 0 || threshold > 100) {
+            throw new ArgumentException(INVALID_THRESHOLD_ERROR);
+        }
+        
+        if (!InputValidator.isArrayOfHashes(addresses)) {
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
+        }
+        
+        String[] addressesWithoutChecksum = new String[addresses.length];
+        for (int i = 0; i < addresses.length; i++) {
+            addressesWithoutChecksum[i] = Checksum.removeChecksum(addresses[0]);
+        }
+        
+        return service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addressesWithoutChecksum, tips));
     }
 
     /**
@@ -445,15 +465,8 @@ public class IotaAPICore {
      * @throws ArgumentException The the request was considered wrong in any way by the node
      */
     public GetBalancesResponse getBalances(Integer threshold, List<String> addresses, List<String> tips) throws ArgumentException {
-
-        List<String> addressesWithoutChecksum = new ArrayList<>();
-
-        for (String address : addresses) {
-            String addressO = Checksum.removeChecksum(address);
-            addressesWithoutChecksum.add(addressO);
-        }
         String[] tipsArray = tips != null ? tips.toArray(new String[tips.size()]) : null;
-        return getBalances(threshold, addressesWithoutChecksum.toArray(new String[addresses.size()]), tipsArray);
+        return getBalances(threshold, addresses.toArray(new String[addresses.size()]), tipsArray);
     }
     
     /**
@@ -486,8 +499,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
-        final Call<WereAddressesSpentFromResponse> res = service.wereAddressesSpentFrom(IotaWereAddressesSpentFromRequest.create(addresses));
-        return wrapCheckedException(res).body();
+        return service.wereAddressesSpentFrom(IotaWereAddressesSpentFromRequest.create(addresses));
     }
     
     /**
@@ -503,8 +515,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
-        final Call<CheckConsistencyResponse> res = service.checkConsistency(IotaCheckConsistencyRequest.create(tails));
-        return wrapCheckedException(res).body();
+        return service.checkConsistency(IotaCheckConsistencyRequest.create(tails));
     }
 
 
@@ -555,7 +566,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
-        if (!InputValidator.areTransactionTrytes(trytes)) {
+        if (!InputValidator.isArrayOfRawTransactionTrytes(trytes)) {
             throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
         }
 
@@ -579,8 +590,7 @@ public class IotaAPICore {
             return new GetAttachToTangleResponse(resultTrytes);
         }
 
-        final Call<GetAttachToTangleResponse> res = service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
-        return wrapCheckedException(res).body();
+        return service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
     }
 
     /**
@@ -590,8 +600,7 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public InterruptAttachingToTangleResponse interruptAttachingToTangle() throws ArgumentException {
-        final Call<InterruptAttachingToTangleResponse> res = service.interruptAttachingToTangle(IotaCommandRequest.createInterruptAttachToTangleRequest());
-        return wrapCheckedException(res).body();
+        return service.interruptAttachingToTangle(IotaCommandRequest.createInterruptAttachToTangleRequest());
     }
 
     /**
@@ -605,13 +614,11 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public BroadcastTransactionsResponse broadcastTransactions(String... trytes) throws ArgumentException {
-
-        if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
+        if (!InputValidator.isArrayOfRawTransactionTrytes(trytes)) {
             throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR);
         }
 
-        final Call<BroadcastTransactionsResponse> res = service.broadcastTransactions(IotaBroadcastTransactionRequest.createBroadcastTransactionsRequest(trytes));
-        return wrapCheckedException(res).body();
+        return service.broadcastTransactions(IotaBroadcastTransactionRequest.createBroadcastTransactionsRequest(trytes));
     }
 
     /**
@@ -624,95 +631,141 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public StoreTransactionsResponse storeTransactions(String... trytes) throws ArgumentException {
-        final Call<StoreTransactionsResponse> res = service.storeTransactions(IotaStoreTransactionsRequest.createStoreTransactionsRequest(trytes));
-        return wrapCheckedException(res).body();
+        if (!InputValidator.isArrayOfRawTransactionTrytes(trytes)) {
+            throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR);
+        }
+        
+        return service.storeTransactions(IotaStoreTransactionsRequest.createStoreTransactionsRequest(trytes));
     }
 
     /**
      * Gets the protocol.
-     *
+     * Deprecated - Nodes could not have a protocol. Get specific connection and check url
      * @return The protocol to use when connecting to the remote node.
      */
+    @Deprecated
     public String getProtocol() {
-        return protocol;
+        //Should be carefull, its still possible to not display the protocol if url doesn't contain :
+        //Will never break because a split on not found character returns the entire string in [0]
+        return service.url().split(":")[0];
     }
 
     /**
      * Gets the host.
-     *
+     * Deprecated - Nodes could not have a host. Get specific connection and check url
      * @return The host you want to connect to.
      */
+    @Deprecated
     public String getHost() {
-        return host;
+        return service.url().split("://")[1];
     }
 
     /**
      * Gets the port.
-     *
+     * Deprecated - Get specific connection and check port
      * @return The port of the host you want to connect to.
      */
+    @Deprecated
     public String getPort() {
-        return port;
+        return service.port() + "";
     }
-
+   
+    //All casts are to T, and are okay unless you do really weird things.
+    //Warnings are annoying
     @SuppressWarnings("unchecked")
-    public static class Builder<T extends Builder<T>> {
-        String protocol, host, port;
+    public static class Builder<T extends Builder<T, E>, E extends IotaAPICore> {
+        
+        private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
+        
+        String protocol, host;
+        int port;
         IotaLocalPoW localPoW;
-        private FileReader fileReader = null;
-        private BufferedReader bufferedReader = null;
-        private Properties nodeConfig = null;
-
-        public IotaAPICore build() {
-            // resolution order: builder value, configuration file, default value
-            
-            if (null == protocol) {
-                protocol = getFromConfigurationOrEnvironment("iota.node.protocol", "IOTA_NODE_PROTOCOL", "http");
+        
+        IotaConfig config;
+        
+        private ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
+        
+        public E build() {
+            try {
+                generate();
+            } catch (Exception e) {
+                //You must know that the message comes from creating/building here, so we just log the error
+                log.error(e.getMessage());
+                
+                return null;
             }
-
-            if (null == host) {
-                host = getFromConfigurationOrEnvironment("iota.node.host", "IOTA_NODE_HOST", "localhost");
-            }
-
-            if (null == port) {
-                port = getFromConfigurationOrEnvironment("iota.node.port", "IOTA_NODE_PORT", "14265");
-            }
-
-            return new IotaAPICore(this);
+            return compile();
         }
-
-        private String getFromConfigurationOrEnvironment(String propertyKey, String envName, String defaultValue) {
-            if (getNodeConfig().getProperty(propertyKey) != null) {
-                return nodeConfig.getProperty(propertyKey);
-            } else {
-                return env(envName, defaultValue);
-            }
-        }
-
-        private Properties getNodeConfig() {
-            if (null != nodeConfig) {
-                return nodeConfig;
-            }
-
-            nodeConfig = new Properties();
-            if (null == fileReader) {
-                try {
-                    fileReader = new FileReader("../node_config.properties");
-
-                    if (null == bufferedReader) {
-                        bufferedReader = new BufferedReader(fileReader);
+        
+        /**
+         * 
+         * @return
+         * @throws Exception
+         */
+        protected T generate() throws Exception {
+            Arrays.stream(getConfigs()).forEachOrdered(config -> {
+                if (config != null) {
+                    if (null == protocol) {
+                        protocol = config.getLegacyProtocol();
                     }
-                    nodeConfig.load(bufferedReader);
-                } catch (IOException e) {
-                    log.debug("node_config.properties not found. Rolling back for another solution...");
+    
+                    if (null == host) {
+                        host = config.getLegacyHost();
+                    }
+    
+                    if (0 == port) {
+                        port = config.getLegacyPort();
+                    }
+                }
+            });
+            return (T) this;
+        }
+        
+        protected IotaConfig[] getConfigs() throws Exception{
+            IotaEnvConfig env = new IotaEnvConfig();
+            
+            if (config == null) {
+                String configName = env.getConfigName();
+                
+                if (configName != null) {
+                    config = new IotaFileConfig(configName);
+                } else {
+                    config = new IotaFileConfig();
                 }
             }
+            
+            return new IotaConfig[] {
+                    config,
+                    env,
+                    new IotaDefaultConfig(),
+            };
+        }
 
-            return nodeConfig;
+        /**
+         * Separated function so we don't generate 2 object instances (IotaAPICore and IotaApi)
+         * @return a filled IotaAPICore
+         */
+        protected E compile() {
+            return (E) new IotaAPICore(this);
+        }
+        
+        public T withCustomCurl(ICurl curl) {
+            customCurl = curl;
+            return (T) this;
         }
         
         public T config(Properties properties) {
-            nodeConfig = properties;
+            try {
+                config = new IotaPropertiesConfig(new PropertiesStore(properties));
+            } catch (Exception e) {
+                // Huh? This can't happen since properties should already be loaded
+                log.error(e.getMessage());
+            }
+            return (T) this;
+        }
+
+        public T config(IotaConfig properties) {
+            config = properties;
             return (T) this;
         }
 
@@ -721,7 +774,7 @@ public class IotaAPICore {
             return (T) this;
         }
 
-        public T port(String port) {
+        public T port(int port) {
             this.port = port;
             return (T) this;
         }

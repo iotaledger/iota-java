@@ -1,14 +1,12 @@
-package jota;
+package org.iota.jota;
 
-import jota.error.ArgumentException;
-import jota.utils.Checksum;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author pinpong
- */
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.utils.Checksum;
+
 public class ChecksumTest {
 
     private static final String TEST_ADDRESS_WITHOUT_CHECKSUM = "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZC";

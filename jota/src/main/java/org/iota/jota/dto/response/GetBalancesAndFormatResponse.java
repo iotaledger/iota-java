@@ -38,7 +38,7 @@ public class GetBalancesAndFormatResponse extends AbstractResponse {
      * @param input The input.
      */
     public void setInputs(List<Input> input) {
-        this.inputs = inputs;
+        this.inputs = input;
     }
 
     /**

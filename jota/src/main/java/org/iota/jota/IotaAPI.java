@@ -63,9 +63,8 @@ public class IotaAPI extends IotaAPICore {
     private static final Logger log = LoggerFactory.getLogger(IotaAPI.class);
     private ICurl customCurl;
 
-    protected IotaAPI(Builder builder) {
+    protected <T extends IotaAPICore.Builder<T, E>, E extends IotaAPICore> IotaAPI(IotaAPICore.Builder<T, E> builder) {
         super(builder);
-        customCurl = builder.customCurl;
     }
 
     /**
@@ -482,7 +481,7 @@ public class IotaAPI extends IotaAPICore {
      * @return Transactions.
      **/
     public List<Transaction> findTransactionObjectsByTag(String[] tags) throws ArgumentException {
-        FindTransactionResponse ftr = findTransactionsByDigests(tags);
+        FindTransactionResponse ftr = findTransactionsByTags(tags);
         if (ftr == null || ftr.getHashes() == null) {
             return new ArrayList<>();
         }
@@ -1606,18 +1605,8 @@ public class IotaAPI extends IotaAPICore {
 
         return Arrays.stream(res.getTrytes()).map(trytes -> new Transaction(trytes, customCurl.clone())).collect(Collectors.toList());
     }
-
-    public static class Builder extends IotaAPICore.Builder<Builder> {
-        private ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
-
-        public Builder withCustomCurl(ICurl curl) {
-            customCurl = curl;
-            return this;
-        }
-
-        public IotaAPI build() {
-            super.build();
-            return new IotaAPI(this);
-        }
+    
+    public static class Builder extends IotaAPICore.Builder<IotaAPI.Builder, IotaAPI> {
+        
     }
 }

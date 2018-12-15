@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.iota.jota.store.FlatFileStore;
 import org.iota.jota.store.IotaFileStore;
 import org.iota.jota.store.IotaStore;
+import org.iota.jota.store.PropertiesStore;
 
 public class IotaFileConfig extends IotaClientConfig {
 
@@ -20,6 +21,10 @@ public class IotaFileConfig extends IotaClientConfig {
     public IotaFileConfig() throws Exception {
         super(new FlatFileStore(DEFAULT_CONFIG_NAME));
     }
+    
+    public IotaFileConfig(FlatFileStore store) throws Exception {
+        super(store);
+    }
 
     public IotaFileConfig(String url) throws Exception {
         super(new FlatFileStore(url));
@@ -27,6 +32,11 @@ public class IotaFileConfig extends IotaClientConfig {
     
     public IotaFileConfig(Optional<String> url) throws Exception {
         super(new FlatFileStore(url.isPresent() ? url.get() : DEFAULT_CONFIG_NAME));
+    }
+
+    // In legacy, every config is a properties.
+    protected IotaFileConfig(PropertiesStore store) throws Exception {
+        super(store);
     }
 
     @Override

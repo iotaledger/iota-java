@@ -1,14 +1,14 @@
-package jota;
+package org.iota.jota;
 
-import jota.category.IntegrationTest;
-import jota.error.ArgumentException;
-import jota.model.Bundle;
-import jota.model.Transaction;
-import jota.model.Transfer;
-import jota.pow.SpongeFactory;
-import jota.utils.Converter;
-import jota.utils.Multisig;
-import jota.utils.Signing;
+import org.iota.jota.category.IntegrationTest;
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.model.Bundle;
+import org.iota.jota.model.Transaction;
+import org.iota.jota.model.Transfer;
+import org.iota.jota.pow.SpongeFactory;
+import org.iota.jota.utils.Converter;
+import org.iota.jota.utils.Multisig;
+import org.iota.jota.utils.Signing;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

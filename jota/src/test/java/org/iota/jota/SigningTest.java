@@ -1,10 +1,10 @@
-package jota;
+package org.iota.jota;
 
-import jota.error.ArgumentException;
-import jota.model.Bundle;
-import jota.pow.ICurl;
-import jota.pow.SpongeFactory;
-import jota.utils.*;
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.model.Bundle;
+import org.iota.jota.pow.ICurl;
+import org.iota.jota.pow.SpongeFactory;
+import org.iota.jota.utils.*;
 import org.junit.Test;
 
 import java.util.Arrays;

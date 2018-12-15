@@ -1,11 +1,12 @@
-package jota;
+package org.iota.jota;
 
-import jota.utils.Constants;
-import jota.utils.InputValidator;
-import jota.utils.SeedRandomGenerator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+
+import org.iota.jota.utils.Constants;
+import org.iota.jota.utils.InputValidator;
+import org.iota.jota.utils.SeedRandomGenerator;
 
 /**
  * @author pinpong

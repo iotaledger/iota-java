@@ -1,11 +1,10 @@
-package jota;
-
-import jota.dto.response.SendTransferResponse;
-import jota.error.ArgumentException;
-import jota.model.Transfer;
-import jota.pow.pearldiver.PearlDiverLocalPoW;
+package org.iota.jota;
 
 import org.hamcrest.core.IsNull;
+import org.iota.jota.dto.response.SendTransferResponse;
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.model.Transfer;
+import org.iota.jota.pow.pearldiver.PearlDiverLocalPoW;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
