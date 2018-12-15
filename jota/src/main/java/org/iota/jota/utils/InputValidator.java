@@ -232,7 +232,7 @@ public class InputValidator {
      * @return <code>true</code> if the specified seed is valid; otherwise, <code>false</code>.
      **/
     public static boolean isValidSeed(String seed) {
-        return isTrytes(seed, seed.length());
+        return isTrytes(seed, Constants.SEED_LENGTH_MAX);
     }
 
     /**

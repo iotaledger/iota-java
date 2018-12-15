@@ -5,13 +5,7 @@ import static org.iota.jota.utils.Constants.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
-import org.iota.jota.config.IotaConfig;
-import org.iota.jota.config.IotaDefaultConfig;
-import org.iota.jota.config.IotaEnvConfig;
-import org.iota.jota.config.IotaFileConfig;
-import org.iota.jota.config.IotaPropertiesConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.dto.request.IotaAttachToTangleRequest;
 import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
@@ -45,7 +39,7 @@ import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.pow.ICurl;
 import org.iota.jota.pow.SpongeFactory;
-import org.iota.jota.store.PropertiesStore;
+import org.iota.jota.utils.AbstractBuilder;
 import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.InputValidator;
 import org.slf4j.Logger;
@@ -673,7 +667,7 @@ public class IotaAPICore {
     //All casts are to T, and are okay unless you do really weird things.
     //Warnings are annoying
     @SuppressWarnings("unchecked")
-    public static class Builder<T extends Builder<T, E>, E extends IotaAPICore> {
+    public static class Builder<T extends Builder<T, E>, E extends IotaAPICore> extends AbstractBuilder<T, E> {
         
         private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
         
@@ -681,20 +675,10 @@ public class IotaAPICore {
         int port;
         IotaLocalPoW localPoW;
         
-        IotaConfig config;
-        
         private ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
         
-        public E build() {
-            try {
-                generate();
-            } catch (Exception e) {
-                //You must know that the message comes from creating/building here, so we just log the error
-                log.error(e.getMessage());
-                
-                return null;
-            }
-            return compile();
+        public Builder() {
+            super(log);
         }
         
         /**
@@ -720,26 +704,6 @@ public class IotaAPICore {
             });
             return (T) this;
         }
-        
-        protected IotaConfig[] getConfigs() throws Exception{
-            IotaEnvConfig env = new IotaEnvConfig();
-            
-            if (config == null) {
-                String configName = env.getConfigName();
-                
-                if (configName != null) {
-                    config = new IotaFileConfig(configName);
-                } else {
-                    config = new IotaFileConfig();
-                }
-            }
-            
-            return new IotaConfig[] {
-                    config,
-                    env,
-                    new IotaDefaultConfig(),
-            };
-        }
 
         /**
          * Separated function so we don't generate 2 object instances (IotaAPICore and IotaApi)
@@ -751,21 +715,6 @@ public class IotaAPICore {
         
         public T withCustomCurl(ICurl curl) {
             customCurl = curl;
-            return (T) this;
-        }
-        
-        public T config(Properties properties) {
-            try {
-                config = new IotaPropertiesConfig(new PropertiesStore(properties));
-            } catch (Exception e) {
-                // Huh? This can't happen since properties should already be loaded
-                log.error(e.getMessage());
-            }
-            return (T) this;
-        }
-
-        public T config(IotaConfig properties) {
-            config = properties;
             return (T) this;
         }
 

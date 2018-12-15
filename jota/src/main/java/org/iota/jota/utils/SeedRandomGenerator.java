@@ -3,9 +3,8 @@ package org.iota.jota.utils;
 import java.security.SecureRandom;
 
 /**
+ * 
  * This class allows to create a secure random generated seed.
- *
- * @author pinpong
  */
 public class SeedRandomGenerator {
 

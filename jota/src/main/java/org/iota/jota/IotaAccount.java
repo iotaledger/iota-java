@@ -1,33 +1,42 @@
 package org.iota.jota;
 
-import java.util.Arrays;
-
-import org.iota.jota.config.IotaConfig;
-import org.iota.jota.config.IotaFileConfig;
-import org.iota.jota.connection.Connection;
-import org.iota.jota.connection.ConnectionFactory;
-import org.iota.jota.store.IotaStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
+import org.apache.commons.lang3.StringUtils;
+
+import org.iota.jota.config.IotaConfig;
+import org.iota.jota.config.IotaFileConfig;
+import org.iota.jota.store.IotaStore;
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.utils.AbstractBuilder;
+import org.iota.jota.utils.Constants;
+import org.iota.jota.utils.InputValidator;
+
+
 public class IotaAccount {
     
-    private static final Logger log = LoggerFactory.getLogger(ConnectionFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(IotaAccount.class);
     
     private IotaStore store;
 
     private IotaConfig config;
 
     private IotaAPI api;
+
+    private String seed;
     
     /**
      * 
      * @throws Exception If the config did not load for whatever reason
      */
-    protected IotaAccount(Builder builder) throws Exception {
+    protected IotaAccount(Builder builder) {
         this.store = builder.store;
         this.api = builder.api;
-        this.config = builder.config;
+        this.config = builder.getConfig();
+        this.seed = builder.seed;
         
         log.info(this.toString());
     }
@@ -38,8 +47,8 @@ public class IotaAccount {
      * The default storage will be at {@value jota.config.IotaFileStore#DEFAULT_STORE}
      * @throws Exception If the config did not load for whatever reason
      */
-    public IotaAccount() throws Exception {
-        this(new Builder().generate());
+    public IotaAccount(String seed) throws Exception {
+        this(new Builder(seed).generate());
     }
     
     /**
@@ -48,8 +57,8 @@ public class IotaAccount {
      * @param store The method we use for storing key/value data
      * @throws Exception If the config did not load for whatever reason
      */
-    public IotaAccount(IotaStore store) throws Exception {
-        this(new Builder().store(store).generate());
+    public IotaAccount(String seed, IotaStore store) throws Exception {
+        this(new Builder(seed).store(store).generate());
     }
     
     /**
@@ -58,8 +67,8 @@ public class IotaAccount {
      * @param config The location of the config
      * @throws Exception If the config did not load for whatever reason
      */
-    public IotaAccount(IotaStore store, String config) throws Exception {
-        this(new Builder().store(store).config(new IotaFileConfig(config)).generate());
+    public IotaAccount(String seed, IotaStore store, String config) throws Exception {
+        this(new Builder(seed).store(store).config(new IotaFileConfig(config)).generate());
     }
 
     /**
@@ -68,8 +77,8 @@ public class IotaAccount {
      * @param iotaConfig The config we load nodes from
      * @throws Exception If the config did not load for whatever reason
      */
-    public IotaAccount(IotaStore store, IotaConfig iotaConfig) throws Exception {
-        this(new Builder().store(store).config(iotaConfig).generate());
+    public IotaAccount(String seed, IotaStore store, IotaConfig iotaConfig) throws Exception {
+        this(new Builder(seed).store(store).config(iotaConfig).generate());
     }
     
     @Override
@@ -79,24 +88,38 @@ public class IotaAccount {
         builder.append("iota-java accounts configured with the following: ");
         
         builder.append(System.getProperty("line.separator"));
+        builder.append("Seed: " + seed.substring(0, 10) + StringUtils.repeat('X', Constants.SEED_LENGTH_MAX - 10));
+        
+        builder.append(System.getProperty("line.separator"));
         builder.append("Config file: " + config);
         
         builder.append(System.getProperty("line.separator"));
         builder.append("Storage file: " + store);
         
         builder.append(System.getProperty("line.separator"));
-        builder.append("Registrered nodes: " + System.getProperty("line.separator"));
-        for (Connection n : api.nodes) {
-            builder.append(n.toString() + System.getProperty("line.separator"));
-        }
+        builder.append(api.toString());
         
         return builder.toString();
     }
     
-    public static class Builder extends IotaAPICore.Builder<IotaAccount.Builder, IotaAPI>{
+    public static class Builder extends AbstractBuilder<Builder, IotaAccount>{
+        
+        private static final Logger log = LoggerFactory.getLogger(IotaAccount.class);
         
         private IotaStore store;
         private IotaAPI api;
+
+        private String seed;
+        
+        public Builder(String seed) throws ArgumentException {
+            super(log);
+            
+            if (!InputValidator.isValidSeed(seed)) {
+                throw new ArgumentException(Constants.INVALID_SEED_INPUT_ERROR);
+            }
+            
+            this.seed = seed;
+        }
         
         public Builder store(IotaStore store) {
             this.store = store;
@@ -109,7 +132,7 @@ public class IotaAccount {
         }
 
         @Override
-        public IotaAccount.Builder generate() throws Exception {
+        protected Builder generate() throws Exception {
             //If a config is specified through ENV, that one will be in the stream, otherwise default config is used
             Arrays.stream(getConfigs()).forEachOrdered(config -> {
                 if (config != null) {
@@ -125,12 +148,12 @@ public class IotaAccount {
                 }
             });
             
-            return super.generate();
+            return this;
         }
         
         @Override
-        protected IotaAPI compile(){
-            return new IotaAPI(this);
+        protected IotaAccount compile(){
+            return new IotaAccount(this);
         }
     }
 }

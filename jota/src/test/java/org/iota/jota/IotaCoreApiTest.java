@@ -111,7 +111,7 @@ public class IotaCoreApiTest {
     @Test
     @Category(IntegrationTest.class)
     public void shouldFindTransactionsByDigests() throws ArgumentException {
-        FindTransactionResponse trans = proxy.findTransactionsByDigests(TEST_HASH);
+        FindTransactionResponse trans = proxy.findTransactionsByTags(TEST_HASH);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
