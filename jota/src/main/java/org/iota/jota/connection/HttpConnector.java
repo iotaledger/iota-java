@@ -68,11 +68,11 @@ public class HttpConnector implements Connection {
         return protocol + "://" + host;
     }
     
-    public void start() {
+    public boolean start() {
         final String nodeUrl = protocol + "://" + host + ":" + port;
 
         // Create OkHttpBuilder
-        final OkHttpClient client = new OkHttpClient.Builder()
+        OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(500, TimeUnit.SECONDS)
                 .writeTimeout(500, TimeUnit.SECONDS)
                 .readTimeout(500, TimeUnit.SECONDS)
@@ -92,14 +92,14 @@ public class HttpConnector implements Connection {
                 .build();
 
         // use client to create Retrofit service
-        final Retrofit retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(nodeUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
         
-
         service = retrofit.create(IotaAPIHTTPService.class);
+        return true;
     }
     
     public void stop() {

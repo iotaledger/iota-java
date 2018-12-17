@@ -10,9 +10,8 @@ import static org.iota.jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
 import java.util.List;
 
 /**
- * This class provides methods to validate the parameters of different iota API methods.
- *
- * @author pinpong
+ * 
+ * This class provides methods to validate the parameters of different iota API methods
  */
 public class InputValidator {
 
@@ -33,8 +32,8 @@ public class InputValidator {
      * @param addresses The address list to validate.
      * @return <code>true</code> if the specified addresses are valid; otherwise, <code>false</code>.
      **/
-    public static boolean isAddressesCollectionValid(final List<String> addresses) throws ArgumentException {
-        for (final String address : addresses) {
+    public static boolean isAddressesCollectionValid(List<String> addresses) throws ArgumentException {
+        for (String address : addresses) {
             if (!checkAddress(address)) {
                 return false;
             }
@@ -78,7 +77,7 @@ public class InputValidator {
      * @param length The length.
      * @return <code>true</code> if the specified trytes are trytes otherwise, <code>false</code>.
      **/
-    public static boolean isTrytes(final String trytes, final int length) {
+    public static boolean isTrytes(String trytes, int length) {
         return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
     }
 
@@ -89,7 +88,7 @@ public class InputValidator {
      * @param length The length.
      * @return <code>true</code> if the specified string consist only of '9'; otherwise, <code>false</code>.
      **/
-    public static boolean isNinesTrytes(final String trytes, final int length) {
+    public static boolean isNinesTrytes(String trytes, int length) {
         return trytes.matches("^[9]{" + (length == 0 ? "0," : length) + "}$");
     }
 
@@ -99,7 +98,7 @@ public class InputValidator {
      * @param value The value to validate.
      * @return <code>true</code> the specified string represents an integer value; otherwise, <code>false</code>.
      **/
-    public static boolean isValue(final String value) {
+    public static boolean isValue(String value) {
         return NumberUtils.isCreatable(value);
     }
 
@@ -180,7 +179,7 @@ public class InputValidator {
      * @param transfers The transfers list to validate.
      * @return <code>true</code> if the specified transfers are valid; otherwise, <code>false</code>.
      **/
-    public static boolean isTransfersCollectionValid(final List<Transfer> transfers) throws ArgumentException {
+    public static boolean isTransfersCollectionValid(List<Transfer> transfers) throws ArgumentException {
 
         // Input validation of transfers object
         if (transfers == null || transfers.isEmpty()) {
@@ -202,7 +201,7 @@ public class InputValidator {
      * @param transfer The transfer to validate.
      * @return <code>true</code> if the specified transfer is valid; otherwise, <code>false</code>>.
      **/
-    public static boolean isValidTransfer(final Transfer transfer) {
+    public static boolean isValidTransfer(Transfer transfer) {
 
         if (transfer == null) {
             return false;
@@ -243,7 +242,7 @@ public class InputValidator {
      **/
     public static boolean isHashes(List<String> hashes) {
         for (String hash : hashes) {
-            if (!isTrytes(hash, Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM)) {
+            if (!isHash(hash)) {
                 return false;
             }
         }

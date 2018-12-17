@@ -3,10 +3,18 @@ package org.iota.jota;
 import static org.iota.jota.utils.Constants.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.iota.jota.config.ApiConfig;
+import org.iota.jota.config.options.ApiBuilderSettings;
+import org.iota.jota.config.options.ApiOptions;
+
 import org.iota.jota.connection.Connection;
+import org.iota.jota.connection.HttpConnector;
 import org.iota.jota.dto.request.IotaAttachToTangleRequest;
 import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
 import org.iota.jota.dto.request.IotaCheckConsistencyRequest;
@@ -42,8 +50,6 @@ import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.utils.AbstractBuilder;
 import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.InputValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -54,21 +60,18 @@ import org.slf4j.LoggerFactory;
 public class IotaAPICore {
     private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
 
-    protected List<Connection> nodes = new ArrayList<>();
+    ApiOptions options;
     
-    protected ICurl customCurl;
-    protected IotaLocalPoW localPoW;
+    protected List<Connection> nodes = new ArrayList<>();
     
     private Connection service = null;
     
-    /**
-     * Build the API core.
-     *
-     * @param builder The builder.
-     */
-    protected <T extends Builder<T, E>, E extends IotaAPICore> IotaAPICore(Builder<T, E> builder) {
-        localPoW = builder.localPoW;
-        customCurl = builder.customCurl;
+    protected IotaAPICore(ApiOptions options) {
+        this.options = options;
+        
+        for (Connection c : options.getNodes()) {
+            addNode(c);
+        }
     }
     
     public boolean hasNodes() {
@@ -93,35 +96,40 @@ public class IotaAPICore {
                 }
             }
             
-            n.start();
+            boolean started = n.start();
+            if (started) {
             
-            //Huray! Lets add it
-            nodes.add(n);
-            log.debug("Added node: " + n.toString());
-            //Legacy wants a node in service for getting ports etc
-            if (null == service) service = n;
-            
-            return true;
+                //Huray! Lets add it
+                nodes.add(n);
+                log.debug("Added node: " + n.toString());
+                //Legacy wants a node in service for getting ports etc
+                if (null == service) service = n;
+            }
+            return started;
         } catch (Exception e) {
             log.warn("Failed to add node connection to pool due to " + e.getMessage());
             return false;
         }
     }
     
+    /**
+     * Gives a clone of the custom curl defined in {@link ApiOptions}
+     * @return
+     */
     public ICurl getCurl() {
-        return customCurl;
+        return options.getCustomCurl().clone();
     }
     
     public void setCurl(ICurl localPoW) {
-        this.customCurl = localPoW;
+        options.setCustomCurl(localPoW);
     }
     
     public IotaLocalPoW getLocalPoW() {
-        return localPoW;
+        return options.getLocalPoW();
     }
     
     public void setLocalPoW(IotaLocalPoW localPoW) {
-        this.localPoW = localPoW;
+        options.setLocalPoW(localPoW);
     }
 
     /**
@@ -564,7 +572,8 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
         }
 
-        if (localPoW != null) {
+        IotaLocalPoW pow = options.getLocalPoW();
+        if (pow != null) {
             final String[] resultTrytes = new String[trytes.length];
             String previousTransaction = null;
             for (int i = 0; i < trytes.length; i++) {
@@ -578,7 +587,7 @@ public class IotaAPICore {
                 txn.setAttachmentTimestamp(System.currentTimeMillis());
                 txn.setAttachmentTimestampLowerBound(0);
                 txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
-                resultTrytes[i] = localPoW.performPoW(txn.toTrytes(), minWeightMagnitude);
+                resultTrytes[i] = pow.performPoW(txn.toTrytes(), minWeightMagnitude);
                 previousTransaction = new Transaction(resultTrytes[i]).getHash();
             }
             return new GetAttachToTangleResponse(resultTrytes);
@@ -663,18 +672,38 @@ public class IotaAPICore {
     public String getPort() {
         return service.port() + "";
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("----------------------");
+        builder.append(System.getProperty("line.separator"));
+        builder.append(options.toString());
+        
+        builder.append(System.getProperty("line.separator"));
+        builder.append("Registrered nodes: " + System.getProperty("line.separator"));
+        for (Connection n : nodes) {
+            builder.append(n.toString() + System.getProperty("line.separator"));
+        }
+        
+        return builder.toString();
+    }
    
     //All casts are to T, and are okay unless you do really weird things.
     //Warnings are annoying
     @SuppressWarnings("unchecked")
-    public static class Builder<T extends Builder<T, E>, E extends IotaAPICore> extends AbstractBuilder<T, E> {
+    protected abstract static class Builder<T extends Builder<T, E>, E extends IotaAPICore> 
+            extends AbstractBuilder<T, E, ApiConfig> 
+            implements ApiConfig, ApiBuilderSettings {
         
         private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
         
+        List<Connection> nodes = new ArrayList<>();
+        
         String protocol, host;
         int port;
-        IotaLocalPoW localPoW;
         
+        // If this is null, no local PoW is done, therefor no default value
+        IotaLocalPoW localPoW;
         private ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
         
         public Builder() {
@@ -687,7 +716,7 @@ public class IotaAPICore {
          * @throws Exception
          */
         protected T generate() throws Exception {
-            Arrays.stream(getConfigs()).forEachOrdered(config -> {
+            for (ApiConfig config : getConfigs()) {
                 if (config != null) {
                     if (null == protocol) {
                         protocol = config.getLegacyProtocol();
@@ -700,17 +729,37 @@ public class IotaAPICore {
                     if (0 == port) {
                         port = config.getLegacyPort();
                     }
+                    
+                    if (config.hasNodes()) {
+                        for (Connection c : config.getNodes()) {
+                            nodes.add(c);
+                        }
+                    }
                 }
-            });
+            };
+            
+            if (!hasNodes()) {
+                //Either we have a legacy node defined in the builder, or in the config.
+                if (null != host && null != protocol && 0 != port) {
+                    nodes.add(new HttpConnector(protocol, host, port));
+                } else {
+                  //Fallback on legacy option from config
+                    for (ApiConfig config : getConfigs()) {
+                        if (config.getLegacyHost() != null
+                                && config.getLegacyProtocol() != null
+                                && config.getLegacyPort() != 0) {
+                            nodes.add(new HttpConnector(
+                                    config.getLegacyProtocol(), 
+                                    config.getLegacyHost(), 
+                                    config.getLegacyPort())
+                            );
+                            
+                            break; //If we define one in config, dont check rest, Otherwise we end up using custom & default
+                        }
+                    }
+                }
+            }
             return (T) this;
-        }
-
-        /**
-         * Separated function so we don't generate 2 object instances (IotaAPICore and IotaApi)
-         * @return a filled IotaAPICore
-         */
-        protected E compile() {
-            return (E) new IotaAPICore(this);
         }
         
         public T withCustomCurl(ICurl curl) {
@@ -736,6 +785,50 @@ public class IotaAPICore {
         public T localPoW(IotaLocalPoW localPoW) {
             this.localPoW = localPoW;
             return (T) this;
+        }
+        
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public IotaLocalPoW getLocalPoW() {
+            return localPoW;
+        }
+
+        public ICurl getCustomCurl() {
+            return customCurl;
+        }
+
+        public List<Connection> getNodes() {
+            return nodes;
+        }
+
+        @Override
+        public boolean hasNodes() {
+            return nodes != null && nodes.size() > 0;
+        }
+
+        @Override
+        public int getLegacyPort() {
+            return getPort();
+        }
+
+        @Override
+        public String getLegacyProtocol() {
+            return getProtocol();
+        }
+
+        @Override
+        public String getLegacyHost() {
+            return getHost();
         }
     }
 }

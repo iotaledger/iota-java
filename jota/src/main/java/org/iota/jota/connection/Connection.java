@@ -6,7 +6,7 @@ public interface Connection extends IotaApi {
     String X_IOTA_API_VERSION_HEADER_NAME = "X-IOTA-API-Version";
     String X_IOTA_API_VERSION_HEADER_VALUE = "1";
     
-    void start();
+    boolean start();
     
     void stop();
     

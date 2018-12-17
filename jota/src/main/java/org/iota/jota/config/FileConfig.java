@@ -5,10 +5,10 @@ import java.util.Optional;
 
 import org.iota.jota.store.FlatFileStore;
 import org.iota.jota.store.IotaFileStore;
-import org.iota.jota.store.IotaStore;
+import org.iota.jota.store.PersistenceAdapter;
 import org.iota.jota.store.PropertiesStore;
 
-public class IotaFileConfig extends IotaClientConfig {
+public class FileConfig extends IotaClientConfig {
 
     private static final String DEFAULT_CONFIG_NAME = ".." + File.separator + "node_config.properties";
     
@@ -18,24 +18,28 @@ public class IotaFileConfig extends IotaClientConfig {
     
     private static final String CONFIG_STORE = "storage.url";
     
-    public IotaFileConfig() throws Exception {
+    private static final String CONFIG_MWM = "accounts.mwm";
+    private static final String CONFIG_DEPTH = "accounts.depth";
+    private static final String CONFIG_SECURITY = "accounts.security";
+    
+    public FileConfig() throws Exception {
         super(new FlatFileStore(DEFAULT_CONFIG_NAME));
     }
     
-    public IotaFileConfig(FlatFileStore store) throws Exception {
+    public FileConfig(FlatFileStore store) throws Exception {
         super(store);
     }
 
-    public IotaFileConfig(String url) throws Exception {
+    public FileConfig(String url) throws Exception {
         super(new FlatFileStore(url));
     }
     
-    public IotaFileConfig(Optional<String> url) throws Exception {
+    public FileConfig(Optional<String> url) throws Exception {
         super(new FlatFileStore(url.isPresent() ? url.get() : DEFAULT_CONFIG_NAME));
     }
 
     // In legacy, every config is a properties.
-    protected IotaFileConfig(PropertiesStore store) throws Exception {
+    protected FileConfig(PropertiesStore store) throws Exception {
         super(store);
     }
 
@@ -55,7 +59,22 @@ public class IotaFileConfig extends IotaClientConfig {
     }
 
     @Override
-    public IotaStore getStore() {
+    public PersistenceAdapter getStore() {
         return new IotaFileStore(stringOrNull(CONFIG_STORE));
+    }
+    
+    @Override
+    public int getMwm() {
+        return intOrNull(CONFIG_MWM);
+    }
+
+    @Override
+    public int getDept() {
+        return intOrNull(CONFIG_DEPTH);
+    }
+
+    @Override
+    public int getSecurityLevel() {
+        return intOrNull(CONFIG_SECURITY);
     }
 }

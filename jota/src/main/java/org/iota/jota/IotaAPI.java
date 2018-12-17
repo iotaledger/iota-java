@@ -1,14 +1,19 @@
 package org.iota.jota;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.iota.jota.config.options.ApiOptions;
 import org.iota.jota.dto.response.BroadcastTransactionsResponse;
 import org.iota.jota.dto.response.CheckConsistencyResponse;
 import org.iota.jota.dto.response.FindTransactionResponse;
@@ -33,7 +38,6 @@ import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
-import org.iota.jota.pow.ICurl;
 import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.utils.BundleValidator;
 import org.iota.jota.utils.Checksum;
@@ -42,14 +46,13 @@ import org.iota.jota.utils.InputValidator;
 import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.Parallel;
 import org.iota.jota.utils.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 
 /**
  * IotaAPI Builder. Usage:
  * <p>
- * {@code IotaApiProxy api = IotaApiProxy.Builder}
+ * {@code IotaAPI api = new IotaAPI.Builder()}
  * {@code .protocol("http")}
  * {@code .nodeAddress("localhost")}
  * {@code .port(12345)}
@@ -61,10 +64,13 @@ import org.slf4j.LoggerFactory;
 public class IotaAPI extends IotaAPICore {
 
     private static final Logger log = LoggerFactory.getLogger(IotaAPI.class);
-    private ICurl customCurl;
 
-    protected <T extends IotaAPICore.Builder<T, E>, E extends IotaAPICore> IotaAPI(IotaAPICore.Builder<T, E> builder) {
-        super(builder);
+    protected IotaAPI(ApiOptions options) {
+        super(options);
+    }
+
+    protected IotaAPI(Builder builder) {
+        super(new ApiOptions(builder));
     }
 
     /**
@@ -195,7 +201,7 @@ public class IotaAPI extends IotaAPICore {
 
         for (int i = index, numUnspentFound=0; numUnspentFound < amount; i++) {
 
-            final String newAddress = IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl.clone());
+            final String newAddress = IotaAPIUtils.newAddress(seed, security, i, checksum, getCurl());
             final FindTransactionResponse response = findTransactionsByAddresses(newAddress);
 
             
@@ -236,7 +242,7 @@ public class IotaAPI extends IotaAPICore {
 
         List<String> allAddresses = new ArrayList<>();
         for (int i = index; i < index + amount; i++) {
-            allAddresses.add(IotaAPIUtils.newAddress(seed, security, i, checksum, customCurl.clone()));
+            allAddresses.add(IotaAPIUtils.newAddress(seed, security, i, checksum, getCurl()));
         }
         return GetNewAddressResponse.create(allAddresses, stopWatch.getElapsedTimeMili());
     }
@@ -418,7 +424,7 @@ public class IotaAPI extends IotaAPICore {
         final List<Transaction> trx = new ArrayList<>();
 
         for (final String tryte : Arrays.asList(res.getTrytes())) {
-            trx.add(new Transaction(tryte, customCurl.clone()));
+            trx.add(new Transaction(tryte, getCurl()));
         }
         return trx;
     }
@@ -443,7 +449,7 @@ public class IotaAPI extends IotaAPICore {
         final List<Transaction> trxs = new ArrayList<>();
 
         for (final String tryte : trytesResponse.getTrytes()) {
-            trxs.add(new Transaction(tryte, customCurl.clone()));
+            trxs.add(new Transaction(tryte, getCurl()));
         }
         return trxs;
     }
@@ -701,7 +707,7 @@ public class IotaAPI extends IotaAPICore {
         } else {
 
             // If no input required, don't sign and simply finalize the bundle
-            bundle.finalize(customCurl.clone());
+            bundle.finalize(getCurl());
             bundle.addTrytes(signatureFragments);
 
             List<Transaction> trxb = bundle.getTransactions();
@@ -761,7 +767,7 @@ public class IotaAPI extends IotaAPICore {
 
             for (int i = start; i < end; i++) {
 
-                String address = IotaAPIUtils.newAddress(seed, security, i, false, customCurl.clone());
+                String address = IotaAPIUtils.newAddress(seed, security, i, false, getCurl());
                 allAddresses.add(address);
             }
 
@@ -1092,7 +1098,7 @@ public class IotaAPI extends IotaAPICore {
                 throw new ArgumentException(Constants.INVALID_BUNDLE_ERROR);
             }
 
-            Transaction trx = new Transaction(gtr.getTrytes()[0], customCurl.clone());
+            Transaction trx = new Transaction(gtr.getTrytes()[0], getCurl());
             if (trx.getBundle() == null) {
                 throw new ArgumentException(Constants.INVALID_TRYTES_INPUT_ERROR);
             }
@@ -1392,7 +1398,7 @@ public class IotaAPI extends IotaAPICore {
         List<String> inputAddresses = new ArrayList<>();
 
         for (String trx : trytes) {
-            Transaction transaction = new Transaction(trx, customCurl.clone());
+            Transaction transaction = new Transaction(trx, getCurl());
             addresses.add(transaction.getAddress());
             inputTransactions.add(transaction);
         }
@@ -1474,7 +1480,7 @@ public class IotaAPI extends IotaAPICore {
                     // Remainder bundle entry
                     bundle.addEntry(1, remainderAddress, remainder, tag, timestamp);
                     // Final function for signing inputs
-                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, customCurl.clone());
+                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, getCurl());
                 } else if (remainder > 0) {
                     // Generate a new Address by calling getNewAddress
 
@@ -1483,11 +1489,11 @@ public class IotaAPI extends IotaAPICore {
                     bundle.addEntry(1, res.getAddresses().get(0), remainder, tag, timestamp);
 
                     // Final function for signing inputs
-                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, customCurl.clone());
+                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, getCurl());
                 } else {
                     // If there is no remainder, do not add transaction to bundle
                     // simply sign and return
-                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, customCurl.clone());
+                    return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, getCurl());
                 }
 
                 // If multiple inputs provided, subtract the totalTransferValue by
@@ -1603,10 +1609,14 @@ public class IotaAPI extends IotaAPICore {
             return Collections.emptyList();
         }
 
-        return Arrays.stream(res.getTrytes()).map(trytes -> new Transaction(trytes, customCurl.clone())).collect(Collectors.toList());
+        return Arrays.stream(res.getTrytes()).map(trytes -> new Transaction(trytes, getCurl())).collect(Collectors.toList());
     }
     
     public static class Builder extends IotaAPICore.Builder<IotaAPI.Builder, IotaAPI> {
         
+        @Override
+        protected IotaAPI compile() {
+            return new IotaAPI(this);
+        }
     }
 }

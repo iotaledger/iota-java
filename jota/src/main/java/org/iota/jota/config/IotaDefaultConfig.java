@@ -1,7 +1,8 @@
 package org.iota.jota.config;
 
 import org.iota.jota.store.IotaFileStore;
-import org.iota.jota.store.IotaStore;
+import org.iota.jota.store.PersistenceAdapter;
+import org.iota.jota.utils.Constants;
 
 public class IotaDefaultConfig extends IotaClientConfig {
 
@@ -21,8 +22,22 @@ public class IotaDefaultConfig extends IotaClientConfig {
     }
 
     @Override
-    public IotaStore getStore() {
+    public PersistenceAdapter getStore() {
         return new IotaFileStore();
     }
 
+    @Override
+    public int getMwm() {
+        return 14;
+    }
+
+    @Override
+    public int getDept() {
+        return 3;
+    }
+
+    @Override
+    public int getSecurityLevel() {
+        return Constants.MIN_SECURITY_LEVEL;
+    }
 }

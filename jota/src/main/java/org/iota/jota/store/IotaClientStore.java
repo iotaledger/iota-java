@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.iota.jota.model.Bundle;
 
-public class IotaClientStore implements IotaStore {
+public class IotaClientStore implements PersistenceAdapter {
 
     protected Store store;
     

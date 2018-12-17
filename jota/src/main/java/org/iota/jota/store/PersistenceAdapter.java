@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.iota.jota.model.Bundle;
 
-public interface IotaStore {
+public interface PersistenceAdapter {
     
     String BUNDLE = "bundle";
+    
+    //PersistenceAdapter open(String id);
     
     /**
      * 

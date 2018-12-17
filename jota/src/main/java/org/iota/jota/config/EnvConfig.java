@@ -2,9 +2,9 @@ package org.iota.jota.config;
 
 import org.iota.jota.store.EnvironmentStore;
 import org.iota.jota.store.IotaFileStore;
-import org.iota.jota.store.IotaStore;
+import org.iota.jota.store.PersistenceAdapter;
 
-public class IotaEnvConfig extends IotaClientConfig {
+public class EnvConfig extends IotaClientConfig {
 
     private static final String CONFIG_PARAM = "CONFIG";
     private static final String ENV_PROT = "IOTA_NODE_PROTOCOL";
@@ -12,7 +12,11 @@ public class IotaEnvConfig extends IotaClientConfig {
     private static final String ENV_PORT = "IOTA_NODE_PORT";
     private static final String ENV_STORE = "IOTA_STORE_LOCATION";
     
-    public IotaEnvConfig() throws Exception {
+    private static final String ENV_MWM = "IOTA_ACCOUNT_MWM";
+    private static final String ENV_DEPTH = "IOTA_ACCOUNT_DEPTH";
+    private static final String ENV_SECURITY = "IOTA_ACCOUNT_SECURITY";
+    
+    public EnvConfig() throws Exception {
         super(new EnvironmentStore());
     }
     
@@ -36,7 +40,22 @@ public class IotaEnvConfig extends IotaClientConfig {
     }
 
     @Override
-    public IotaStore getStore() {
+    public PersistenceAdapter getStore() {
         return new IotaFileStore(stringOrNull(ENV_STORE));
+    }
+    
+    @Override
+    public int getMwm() {
+        return intOrNull(ENV_MWM);
+    }
+
+    @Override
+    public int getDept() {
+        return intOrNull(ENV_DEPTH);
+    }
+
+    @Override
+    public int getSecurityLevel() {
+        return intOrNull(ENV_SECURITY);
     }
 }

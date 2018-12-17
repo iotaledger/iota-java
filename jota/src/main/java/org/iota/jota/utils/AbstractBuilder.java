@@ -1,12 +1,14 @@
 package org.iota.jota.utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
-import org.iota.jota.config.IotaConfig;
 import org.iota.jota.config.IotaDefaultConfig;
-import org.iota.jota.config.IotaEnvConfig;
-import org.iota.jota.config.IotaFileConfig;
-import org.iota.jota.config.IotaPropertiesConfig;
+import org.iota.jota.config.Config;
+import org.iota.jota.config.EnvConfig;
+import org.iota.jota.config.FileConfig;
+import org.iota.jota.config.PropertiesConfig;
 import org.iota.jota.store.PropertiesStore;
 
 import org.slf4j.Logger;
@@ -17,10 +19,10 @@ import org.slf4j.Logger;
  * @param <E>
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractBuilder<T, E> {
+public abstract class AbstractBuilder<T, E, F extends Config> {
     
     private Logger log;
-    private IotaConfig config;
+    private FileConfig config;
     
     public AbstractBuilder(Logger log) {
         this.log = log;
@@ -42,9 +44,14 @@ public abstract class AbstractBuilder<T, E> {
 
     protected abstract T generate() throws Exception;
     
+    public T config(F config) {
+        
+        return (T) this;
+    }
+
     public T config(Properties properties) {
         try {
-            setConfig(new IotaPropertiesConfig(new PropertiesStore(properties)));
+            setConfig(new PropertiesConfig(new PropertiesStore(properties)));
         } catch (Exception e) {
             // Huh? This can't happen since properties should already be loaded
             log.error(e.getMessage());
@@ -52,36 +59,36 @@ public abstract class AbstractBuilder<T, E> {
         return (T) this;
     }
 
-    public T config(IotaConfig properties) {
+    public T config(PropertiesConfig properties) {
         setConfig(properties);
         return (T) this;
     }
     
-    protected IotaConfig[] getConfigs() throws Exception{
-        IotaEnvConfig env = new IotaEnvConfig();
+    protected List<F> getConfigs() throws Exception{
+        EnvConfig env = new EnvConfig();
         
         if (getConfig() == null) {
             String configName = env.getConfigName();
             
             if (configName != null) {
-                setConfig(new IotaFileConfig(configName));
+                setConfig(new FileConfig(configName));
             } else {
-                setConfig(new IotaFileConfig());
+                setConfig(new FileConfig());
             }
         }
+        ArrayList<F> array = new ArrayList<>();
+        array.add((F) getConfig());
+        array.add((F)env);
+        array.add((F) new IotaDefaultConfig());
         
-        return new IotaConfig[] {
-                getConfig(),
-                env,
-                new IotaDefaultConfig(),
-        };
+        return array;
     }
 
-    public IotaConfig getConfig() {
+    public FileConfig getConfig() {
         return config;
     }
 
-    public void setConfig(IotaConfig config) {
+    public void setConfig(FileConfig config) {
         this.config = config;
     }
     
