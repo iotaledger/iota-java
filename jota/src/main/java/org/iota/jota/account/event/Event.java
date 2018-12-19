@@ -1,5 +1,5 @@
 package org.iota.jota.account.event;
 
-public @interface AccountEvent {
+public interface Event {
 
 }

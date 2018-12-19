@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
+import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.config.AccountConfig;
 import org.iota.jota.config.FileConfig;
 import org.iota.jota.config.options.AccountBuilderSettings;
@@ -30,7 +30,6 @@ public class IotaAccount {
      */
     protected IotaAccount(AccountOptions options) {
         this.options = options;
-        log.info(this.toString());
     }
     
     protected IotaAccount(Builder builder) {
@@ -93,7 +92,7 @@ public class IotaAccount {
         return null;
     }
     
-    public void requestDeposit(String depositAddress, int amount, Date timeOut, String otherConditions){
+    public void requestDeposit(String depositAddress, int amount, Date timeOut, ExpireCondition... otherConditions){
         
     }
     

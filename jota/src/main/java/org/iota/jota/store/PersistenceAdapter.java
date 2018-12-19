@@ -2,7 +2,7 @@ package org.iota.jota.store;
 
 import java.util.List;
 
-import org.iota.jota.model.Bundle;
+import org.iota.jota.types.Trits;
 
 public interface PersistenceAdapter {
     
@@ -34,11 +34,11 @@ public interface PersistenceAdapter {
      * 
      * @return
      */
-    List<Bundle> getPendingBundles();
+    List<Trits> getPendingBundles();
     
     /**
      * 
      * @param bundles
      */
-    void setPendingBundles(List<Bundle> bundles);
+    void setPendingBundles(List<Trits> bundles);
 }

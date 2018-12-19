@@ -3,7 +3,7 @@ package org.iota.jota.store;
 import java.io.Serializable;
 import java.util.List;
 
-import org.iota.jota.model.Bundle;
+import org.iota.jota.types.Trits;
 
 public class IotaClientStore implements PersistenceAdapter {
 
@@ -27,6 +27,8 @@ public class IotaClientStore implements PersistenceAdapter {
     
     @Override
     public int getIndexAndIncrease(String seed) {
+        if (!canWrite()) return -1;
+        
         Serializable index = store.get(seed);
         
         if (index == null) {
@@ -43,13 +45,13 @@ public class IotaClientStore implements PersistenceAdapter {
     }
     
     @Override
-    public void setPendingBundles(List<Bundle> bundles) {
+    public void setPendingBundles(List<Trits> bundles) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public List<Bundle> getPendingBundles() {
+    public List<Trits> getPendingBundles() {
         // TODO Auto-generated method stub
         return null;
     }
