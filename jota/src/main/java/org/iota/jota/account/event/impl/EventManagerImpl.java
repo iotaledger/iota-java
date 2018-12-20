@@ -59,12 +59,14 @@ public class EventManagerImpl implements EventManager {
                }
                
                List<Pair<EventListener, Method>> listeners = this.listeners.get(param.getClass());
-               if (listeners == null) {
-                   listeners = Collections.synchronizedList(new ArrayList<>());
-                   this.listeners.put((Class) param.getClass(), listeners);
+               synchronized (listeners) {
+                   if (listeners == null) {
+                       listeners = Collections.synchronizedList(new ArrayList<>());
+                       this.listeners.put((Class) param.getClass(), listeners);
+                   }
+                   
+                   listeners.add(new Pair<EventListener, Method>(listener, method));
                }
-               
-               listeners.add(new Pair<EventListener, Method>(listener, method));
            }
        }
     }
@@ -78,20 +80,23 @@ public class EventManagerImpl implements EventManager {
             Entry<Class<? extends Event>, List<Pair<EventListener, Method>>> entry = listIterator.next();
             
             List<Pair<EventListener, Method>> pairs = entry.getValue();
-            int size = pairs.size();
+            synchronized (pairs) {
+                int size = pairs.size();
             
-            Iterator<Pair<EventListener, Method>> pairIterator = pairs.iterator();
             
-            while (pairIterator.hasNext()) {
-                Pair<EventListener, Method> pair = pairIterator.next();
-                if (pair.low.equals(listener)) {
-                    pairIterator.remove();
-                    size--;
+                Iterator<Pair<EventListener, Method>> pairIterator = pairs.iterator();
+                
+                while (pairIterator.hasNext()) {
+                    Pair<EventListener, Method> pair = pairIterator.next();
+                    if (pair.low.equals(listener)) {
+                        pairIterator.remove();
+                        size--;
+                    }
                 }
-            }
-            
-            if (size == 0) {
-                listIterator.remove();
+                
+                if (size == 0) {
+                    listIterator.remove();
+                }
             }
         }
     }
