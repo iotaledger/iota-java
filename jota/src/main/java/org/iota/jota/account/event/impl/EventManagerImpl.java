@@ -4,12 +4,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.Event;
@@ -22,7 +23,7 @@ public class EventManagerImpl implements EventManager {
     Map<Class<? extends Event>, List<Pair<EventListener, Method>>> listeners;
 
     public EventManagerImpl() {
-        listeners = new HashMap<>();
+        listeners = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -59,7 +60,7 @@ public class EventManagerImpl implements EventManager {
                
                List<Pair<EventListener, Method>> listeners = this.listeners.get(param.getClass());
                if (listeners == null) {
-                   listeners = new ArrayList<>();
+                   listeners = Collections.synchronizedList(new ArrayList<>());
                    this.listeners.put((Class) param.getClass(), listeners);
                }
                
@@ -69,7 +70,7 @@ public class EventManagerImpl implements EventManager {
     }
 
     @Override
-    public void unregisterListener(EventListener listener) {
+    public void unRegisterListener(EventListener listener) {
         Set<Entry<Class<? extends Event>, List<Pair<EventListener, Method>>>> lists = listeners.entrySet();
         Iterator<Entry<Class<? extends Event>, List<Pair<EventListener, Method>>>> listIterator = lists.iterator();
         

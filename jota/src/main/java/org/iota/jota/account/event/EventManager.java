@@ -6,5 +6,5 @@ public interface EventManager {
 
     public void registerListener(EventListener listener);
     
-    public void unregisterListener(EventListener listener);
+    public void unRegisterListener(EventListener listener);
 }

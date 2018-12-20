@@ -88,6 +88,10 @@ public class IotaAccount {
         return null;
     }
     
+    public Bundle sendZeroValue(String message, String tag){
+        return null;
+    }
+    
     public Bundle sendMulti(String[] addresses, int[] amounts, int securityLevel, String[] messages, String tag) {
         return null;
     }
