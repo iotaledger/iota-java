@@ -2,11 +2,19 @@ package org.iota.jota.account.event.events;
 
 import org.iota.jota.account.event.AccountEventType;
 import org.iota.jota.account.event.impl.EventImpl;
+import org.iota.jota.model.Bundle;
 
 public class TransferConfirmedEvent extends EventImpl {
 
-    public TransferConfirmedEvent() {
+    private Bundle bundle;
+    
+    public TransferConfirmedEvent(Bundle bundle) {
         super(AccountEventType.TransferConfirmed);
+        this.bundle = bundle;
+    }
+
+    public Bundle getBundle() {
+        return bundle;
     }
 
 }

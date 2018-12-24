@@ -34,7 +34,16 @@ public class EventManagerImpl implements EventManager {
         
         for (Pair<EventListener, Method> listener : listeners) {
             try {
+                boolean accessible = listener.hi.isAccessible();
+                if (!accessible) {
+                    listener.hi.setAccessible(true);
+                }
+                
                 listener.hi.invoke(listener.low, event);
+                
+                if (!accessible) {
+                    listener.hi.setAccessible(false);
+                }
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 e.printStackTrace();
                 

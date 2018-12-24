@@ -65,6 +65,12 @@ public class Bundle implements Comparable<Bundle> {
     public void setLength(int length) {
         this.length = length;
     }
+    
+    public String getBundleHash() {
+        if (getLength() == 0) return EMPTY_HASH;
+        return transactions.get(0).getBundle();
+        
+    }
 
     /**
      * Adds a bundle entry.

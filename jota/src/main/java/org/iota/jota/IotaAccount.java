@@ -3,9 +3,20 @@ package org.iota.jota;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Future;
 
+import org.iota.jota.account.AccountState;
 import org.iota.jota.account.condition.ExpireCondition;
+import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.event.EventManager;
+import org.iota.jota.account.event.EventTaskService;
+import org.iota.jota.account.event.impl.EventManagerImpl;
+import org.iota.jota.account.promoter.PromoterReattacherImpl;
+import org.iota.jota.account.transferchecker.IncomingTransferCheckerImpl;
+import org.iota.jota.account.transferchecker.OutgoingTransferCheckerImpl;
 import org.iota.jota.config.AccountConfig;
 import org.iota.jota.config.FileConfig;
 import org.iota.jota.config.options.AccountBuilderSettings;
@@ -24,12 +35,20 @@ public class IotaAccount {
     
     private AccountOptions options;
     
+    private EventManager eventManager;
+    
+    List<EventTaskService> tasks = new ArrayList<>();
+    
+    
     /**
      * 
      * @param builder
      */
     protected IotaAccount(AccountOptions options) {
         this.options = options;
+        this.eventManager = new EventManagerImpl();
+        
+        load();
     }
     
     protected IotaAccount(Builder builder) {
@@ -84,19 +103,67 @@ public class IotaAccount {
         this(new Builder(seed).store(store).config(iotaConfig).generate());
     }
     
-    public Bundle send(String address, int amount, int securityLevel, String message, String tag){
+    private void load() {
+        addTask(new PromoterReattacherImpl(eventManager));
+        addTask(new IncomingTransferCheckerImpl(eventManager));
+        addTask(new OutgoingTransferCheckerImpl(eventManager));
+        
+        shutdownHook();
+    }
+    
+    private void shutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            log.info("Shutting down IOTA Accounts, please hold tight...");
+            try {
+                unload();
+            } catch (Exception e) {
+                log.error("Exception occurred shutting down accounts module: ", e);
+            }
+        }, "Shutdown Hook"));
+    }
+    
+    /**
+     * Unloads all registered tasks. 
+     * Any tasks added during this method execution are ignored and cleared in the end.
+     */
+    private void unload() {
+        for (EventTaskService task : tasks.toArray(new EventTaskService[tasks.size()])) {
+            getEventManager().unRegisterListener(task);
+            task.shutdown();
+        }
+        tasks.clear();
+    }
+
+    private void addTask(EventTaskService task) {
+        if (task != null) {
+            task.load();
+            getEventManager().registerListener(task);
+            tasks.add(task);
+        }
+    }
+    
+    public Future<Bundle> send(String address, int amount, int securityLevel, String message, String tag){
         return null;
     }
     
-    public Bundle sendZeroValue(String message, String tag){
+    public Future<Bundle> sendZeroValue(String message, String tag){
         return null;
     }
     
-    public Bundle sendMulti(String[] addresses, int[] amounts, int securityLevel, String[] messages, String tag) {
+    public Future<Bundle> sendMulti(String[] addresses, int[] amounts, int securityLevel, String[] messages, String tag) {
         return null;
     }
     
-    public void requestDeposit(String depositAddress, int amount, Date timeOut, ExpireCondition... otherConditions){
+    public Future<DepositRequest> requestDeposit(String depositAddress, int amount, Date timeOut, ExpireCondition... otherConditions){
+        
+        return null;
+    }
+    
+    public AccountState exportAccount() {
+        return null;
+    }
+    
+    public void importAccount(AccountState state) {
         
     }
     
@@ -110,6 +177,10 @@ public class IotaAccount {
     
     public IotaAPI getApi(){
         return options.getApi();
+    }
+    
+    public EventManager getEventManager() {
+        return eventManager;
     }
     
     @Override
