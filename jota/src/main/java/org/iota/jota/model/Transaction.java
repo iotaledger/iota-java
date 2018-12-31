@@ -3,9 +3,11 @@ package org.iota.jota.model;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.iota.jota.pow.ICurl;
+import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.InputValidator;
@@ -83,7 +85,7 @@ public class Transaction {
      * @param attachmentTimestampUpperBound
      */
     public Transaction(String signatureFragments, long currentIndex, long lastIndex, String nonce, String hash, String obsoleteTag, long timestamp, String trunkTransaction, String branchTransaction, String address, long value, String bundle, String tag, long attachmentTimestamp, long attachmentTimestampLowerBound, long attachmentTimestampUpperBound) {
-
+        this();
         this.hash = hash;
         this.obsoleteTag = obsoleteTag;
         this.signatureFragments = signatureFragments;
@@ -111,6 +113,7 @@ public class Transaction {
      * @param timestamp
      */
     public Transaction(String address, long value, String tag, long timestamp) {
+        this();
         this.address = address;
         this.value = value;
         this.tag = tag;
@@ -121,7 +124,7 @@ public class Transaction {
     /**
      * Initializes a new instance of the Signature class.
      * 
-     * @param curl
+     * @param curl custom curl instance used for creating the hash
      */
     public Transaction(ICurl curl) {
         customCurl = curl;
@@ -129,29 +132,31 @@ public class Transaction {
 
     /**
      * Initializes a new instance of the Signature class.
+     * Default Mode.KERL is being used
      */
     public Transaction() {
-        customCurl = null;
+        customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
     }
 
     /**
      * Initializes a new instance of the Signature class.
      * 
-     * @param trytes
+     * @param trytes transaction trytes
      */
     public Transaction(String trytes) {
+        this();
         transactionObject(trytes);
     }
 
     /**
      * Initializes a new instance of the Signature class.
      * 
-     * @param trytes
-     * @param customCurl
+     * @param trytes transaction trytes
+     * @param customCurl custom curl instance used for creating the hash
      */
     public Transaction(String trytes, ICurl customCurl) {
+       this(customCurl);
         transactionObject(trytes);
-        this.customCurl = customCurl;
     }
     
     public long getAttachmentTimestampLowerBound() {

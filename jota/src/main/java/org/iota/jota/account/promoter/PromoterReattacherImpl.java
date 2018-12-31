@@ -23,14 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PromoterReattacherImpl implements PromoterReattacher, EventTaskService {
-    
-    private final static Logger logger = LoggerFactory.getLogger(PromoterReattacher.class);
 
     private static final long PROMOTE_DELAY = 10000;
     
     private UnboundScheduledExecutorService service;
-    
-    private ScheduledExecutorService scheduler;
 
     private EventManager eventManager;
     
@@ -40,13 +36,8 @@ public class PromoterReattacherImpl implements PromoterReattacher, EventTaskServ
         this.eventManager = eventManager;
     }
     
-    
-
     @Override
     public void load() {
-        scheduler = Executors.newScheduledThreadPool(5);
-        
-        service = new UnboundScheduledExecutorService("PromoterReattacherImpl Thread", logger);
         unconfirmedBundles = new ConcurrentHashMap<>();
     }
 
@@ -65,25 +56,29 @@ public class PromoterReattacherImpl implements PromoterReattacher, EventTaskServ
         Runnable r = () -> doTask(event.getBundle());
         unconfirmedBundles.put(
             event.getBundle().getBundleHash(), 
-            scheduler.scheduleWithFixedDelay(r, PROMOTE_DELAY, PROMOTE_DELAY, TimeUnit.MILLISECONDS)
+            //scheduler.scheduleWithFixedDelay(r, PROMOTE_DELAY, PROMOTE_DELAY, TimeUnit.MILLISECONDS)
+            service.scheduleAtFixedRate(r, PROMOTE_DELAY, PROMOTE_DELAY, TimeUnit.MILLISECONDS)
         );
+        System.out.println("Added bundle");
+        //service.scheduleAtFixedRate(r, PROMOTE_DELAY, PROMOTE_DELAY, TimeUnit.MILLISECONDS);
     }
     
     @AccountEvent
     private void onConfirmed(TransferConfirmedEvent event) {
         ScheduledFuture<?> runnable = unconfirmedBundles.get(event.getBundle().getBundleHash());
         runnable.cancel(true);
-        
+        System.out.println("confirmed bundle");
         unconfirmedBundles.remove(event.getBundle().getBundleHash());
     }
 
     private void doTask(Bundle bundle) {
         AccountState state = null;
         Bundle pendingBundle;
+        System.out.println("doTask bundle");
         while ((pendingBundle = getPendingBundle(state)) != null) {
             Transaction promotableTail = findPromotableTail(pendingBundle);
             if (promotableTail != null) {
-                promote(pendingBundle, promotableTail);
+                promote(pendingBundle, promotableTail); 
             } else {
                 reattach(pendingBundle);
             }
@@ -108,17 +103,14 @@ public class PromoterReattacherImpl implements PromoterReattacher, EventTaskServ
     }
 
     private Transaction findPromotableTail(Bundle pendingBundle) {
-        // TODO Auto-generated method stub
         return null;
     }
     
     private Bundle createReattachBundle(Bundle pendingBundle) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     private Bundle getPendingBundle(AccountState state) {
-        // TODO Auto-generated method stub
         return null;
     }
 }

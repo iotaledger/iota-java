@@ -5,14 +5,17 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import org.apache.commons.lang3.StringUtils;
 import org.iota.jota.account.AccountState;
 import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.EventTaskService;
+import org.iota.jota.account.event.events.SendTransferEvent;
 import org.iota.jota.account.event.impl.EventManagerImpl;
 import org.iota.jota.account.promoter.PromoterReattacherImpl;
 import org.iota.jota.account.transferchecker.IncomingTransferCheckerImpl;
@@ -21,12 +24,15 @@ import org.iota.jota.config.AccountConfig;
 import org.iota.jota.config.FileConfig;
 import org.iota.jota.config.options.AccountBuilderSettings;
 import org.iota.jota.config.options.AccountOptions;
+import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.store.PersistenceAdapter;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
+import org.iota.jota.model.Transfer;
 import org.iota.jota.utils.AbstractBuilder;
 import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.InputValidator;
+import org.iota.jota.utils.TrytesConverter;
 
 
 public class IotaAccount {
@@ -38,6 +44,8 @@ public class IotaAccount {
     private EventManager eventManager;
     
     List<EventTaskService> tasks = new ArrayList<>();
+    
+    String testSeed = "IHDEENZYITYVYSPKAURUZAQKGVJEREFDJMYTANNXXGPZ9GJWTEOJJ9IPMXOGZNQLSNMFDSQOTZAEETUEA";
     
     
     /**
@@ -142,8 +150,29 @@ public class IotaAccount {
         }
     }
     
-    public Future<Bundle> send(String address, int amount, int securityLevel, String message, String tag){
-        return null;
+    public Bundle send(String address, int amount, int securityLevel, String message, String tag){
+        int secLvl = securityLevel == 0 ? options.getSecurityLevel() : securityLevel;
+        String tryteMsg = TrytesConverter.asciiToTrytes(message);
+        String tryteTag = TrytesConverter.asciiToTrytes(tag);
+        StringUtils.rightPad("", Constants.MESSAGE_LENGTH, '9');
+        
+        Transfer transfer = new Transfer(address, 0, tryteMsg, tryteTag);
+        List<Transfer> transfers = new LinkedList<>();
+        transfers.add(transfer);
+        
+        try {
+            SendTransferResponse transferResponse = getApi().sendTransfer(testSeed, secLvl, options.getDept(), options.getMwm(), 
+                    transfers, null, null, false, false, null);
+            
+            Bundle bundle = new Bundle(transferResponse.getTransactions(), transferResponse.getTransactions().size());
+            SendTransferEvent event = new SendTransferEvent(bundle);
+            eventManager.emit(event);
+            return bundle;
+        } catch (ArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
     }
     
     public Future<Bundle> sendZeroValue(String message, String tag){

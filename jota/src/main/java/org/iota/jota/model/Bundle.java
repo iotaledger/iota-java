@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.iota.jota.pow.ICurl;
 import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.utils.Converter;
@@ -16,7 +18,7 @@ import org.iota.jota.utils.Signing;
  **/
 public class Bundle implements Comparable<Bundle> {
 
-    public static String EMPTY_HASH = "999999999999999999999999999999999999999999999999999999999999999999999999999999999";
+    public static final String EMPTY_HASH = "999999999999999999999999999999999999999999999999999999999999999999999999999999999";
     private List<Transaction> transactions;
     private int length;
 
@@ -207,5 +209,10 @@ public class Bundle implements Comparable<Bundle> {
     @Override
     public int compareTo(Bundle o) {
         return Long.compare(this.getTransactions().get(0).getAttachmentTimestamp(), o.getTransactions().get(0).getAttachmentTimestamp());
+    }
+    
+    @Override
+    public String toString() {
+        return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
     }
 }

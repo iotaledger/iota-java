@@ -215,8 +215,9 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public FindTransactionResponse findTransactions(String[] addresses, String[] tags, String[] approvees, String[] bundles) throws ArgumentException {
-        String[] addressesWithoutChecksum = new String[addresses.length];
+        String[] addressesWithoutChecksum = null;
         if (null != addresses) {
+            addressesWithoutChecksum = new String[addresses.length];
             for (int i = 0; i < addresses.length; i++) {
                 String addressO = Checksum.removeChecksum(addresses[i]);
                 addressesWithoutChecksum[i] = addressO;
@@ -704,7 +705,7 @@ public class IotaAPICore {
         
         // If this is null, no local PoW is done, therefor no default value
         IotaLocalPoW localPoW;
-        private ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
+        ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
         
         public Builder() {
             super(log);

@@ -38,6 +38,7 @@ import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
+import org.iota.jota.pow.ICurl;
 import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.utils.BundleValidator;
 import org.iota.jota.utils.Checksum;
@@ -424,6 +425,7 @@ public class IotaAPI extends IotaAPICore {
         final List<Transaction> trx = new ArrayList<>();
 
         for (final String tryte : Arrays.asList(res.getTrytes())) {
+            ICurl curl = getCurl();
             trx.add(new Transaction(tryte, getCurl()));
         }
         return trx;
