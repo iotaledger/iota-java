@@ -8,11 +8,11 @@ public interface Store {
     
     void save() throws Exception;
 
-    Serializable get(String key);
+    <T extends Serializable> T get(String key);
     
-    Serializable get(String key, Serializable def);
+    <T extends Serializable> T get(String key, T def);
     
-    Serializable set(String key, Serializable value);
+    <T extends Serializable> T set(String key, T value);
     
     boolean canWrite();
 }

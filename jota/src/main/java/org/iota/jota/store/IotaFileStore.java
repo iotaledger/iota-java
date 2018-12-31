@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.Optional;
 
 public class IotaFileStore extends IotaClientStore {
-
+    
+    private static final String INDEXES = "indexes";
     private static final String DEFAULT_STORE = ".." + File.separator + "client.store";
     
     public IotaFileStore() {
@@ -17,5 +18,10 @@ public class IotaFileStore extends IotaClientStore {
     
     public IotaFileStore(Optional<String> location) {
         super(new FlatFileStore(location.isPresent() ? location.get() : DEFAULT_STORE));
+    }
+
+    @Override
+    public String getIndexes() {
+        return store.get(INDEXES, "");
     }
 }

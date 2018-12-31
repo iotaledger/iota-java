@@ -15,7 +15,7 @@ import java.util.concurrent.*;
  * that would otherwise have to take care of not starting the same task more than once (when trying to be robust against
  * coding errors or tests that start the same thread multiple times).<br />
  */
-public class DedicatedScheduledExecutorService {
+public class DedicatedScheduledExecutorService extends BoundedScheduledExecutorService implements ReportingExecutorService {
     /**
      * Default logger for this class allowing us to dump debug and status messages.<br />
      * <br />
@@ -89,6 +89,7 @@ public class DedicatedScheduledExecutorService {
      * @param debug debug flag that indicates if every "run" should be accompanied with a log message
      */
     public DedicatedScheduledExecutorService(String threadName, Logger logger, boolean debug) {
+        super(1);
         this.threadName = threadName;
         this.logger = logger;
         this.debug = debug;

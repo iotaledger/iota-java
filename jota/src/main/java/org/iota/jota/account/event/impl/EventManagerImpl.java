@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +30,8 @@ public class EventManagerImpl implements EventManager {
     @Override
     public void emit(Event event) {
         List<Pair<EventListener, Method>> listeners = this.listeners.get(event.getClass());
-        
+        System.out.println("emit");
+        System.out.println(listeners);
         if (listeners == null || listeners.size() == 0) return;
         
         for (Pair<EventListener, Method> listener : listeners) {
@@ -56,22 +58,23 @@ public class EventManagerImpl implements EventManager {
     public void registerListener(EventListener listener) {
        for (Method method : listener.getClass().getDeclaredMethods()) {
            if (method.isAnnotationPresent(AccountEvent.class)) {
+               AccountEvent annotInstance = method.getAnnotation(AccountEvent.class);
+               
                if (method.getParameterCount() != 1) {
                    //Invalid parameters assigned
                    continue;
                }
                
                Parameter param = method.getParameters()[0];
-               if (!param.getType().isAssignableFrom(Event.class)) {
+               if (!Event.class.isAssignableFrom(param.getType())) {
                    //Not an event parameter
                    continue;
                }
-               
-               List<Pair<EventListener, Method>> listeners = this.listeners.get(param.getClass());
-               synchronized (listeners) {
+               List<Pair<EventListener, Method>> listeners = this.listeners.get(param.getType());
+               synchronized (this.listeners) {
                    if (listeners == null) {
                        listeners = Collections.synchronizedList(new ArrayList<>());
-                       this.listeners.put((Class) param.getClass(), listeners);
+                       this.listeners.put((Class) param.getType(), listeners);
                    }
                    
                    listeners.add(new Pair<EventListener, Method>(listener, method));

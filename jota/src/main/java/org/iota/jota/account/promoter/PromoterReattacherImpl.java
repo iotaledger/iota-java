@@ -39,6 +39,7 @@ public class PromoterReattacherImpl implements PromoterReattacher, EventTaskServ
     @Override
     public void load() {
         unconfirmedBundles = new ConcurrentHashMap<>();
+        service = new UnboundScheduledExecutorService();
     }
 
     @Override
@@ -59,7 +60,6 @@ public class PromoterReattacherImpl implements PromoterReattacher, EventTaskServ
             //scheduler.scheduleWithFixedDelay(r, PROMOTE_DELAY, PROMOTE_DELAY, TimeUnit.MILLISECONDS)
             service.scheduleAtFixedRate(r, PROMOTE_DELAY, PROMOTE_DELAY, TimeUnit.MILLISECONDS)
         );
-        System.out.println("Added bundle");
         //service.scheduleAtFixedRate(r, PROMOTE_DELAY, PROMOTE_DELAY, TimeUnit.MILLISECONDS);
     }
     
@@ -74,7 +74,6 @@ public class PromoterReattacherImpl implements PromoterReattacher, EventTaskServ
     private void doTask(Bundle bundle) {
         AccountState state = null;
         Bundle pendingBundle;
-        System.out.println("doTask bundle");
         while ((pendingBundle = getPendingBundle(state)) != null) {
             Transaction promotableTail = findPromotableTail(pendingBundle);
             if (promotableTail != null) {

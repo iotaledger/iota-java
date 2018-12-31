@@ -73,6 +73,7 @@ public class Constants {
     public static final String INVALID_THRESHOLD_ERROR = "Invalid threshold provided. (Between 0 and 100 incl.)";
     public static final String INVALID_APPROVE_DEPTH_ERROR = "Invalid depth provided. (Between 0 and 15, soft upper bound)";
     
+    public static final String INVALID_TAG_INPUT_ERROR = "Invalid tag provided.";
     public static final String INVALID_TRYTES_INPUT_ERROR = "Invalid trytes provided.";
     public static final String INVALID_HASHES_INPUT_ERROR = "Invalid hashes provided.";
     public static final String INVALID_TAIL_HASH_INPUT_ERROR = "Invalid tail hash provided.";

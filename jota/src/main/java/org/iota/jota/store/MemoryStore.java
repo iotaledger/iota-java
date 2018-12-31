@@ -30,13 +30,11 @@ public class MemoryStore implements Store {
     
     @Override
     public void load() throws Exception {
-        // TODO Auto-generated method stub
         
     }
 
     @Override
     public void save() throws Exception {
-        // TODO Auto-generated method stub
         
     }
 

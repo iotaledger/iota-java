@@ -41,4 +41,6 @@ public interface PersistenceAdapter {
      * @param bundles
      */
     void setPendingBundles(List<Trits> bundles);
+
+    String getIndexes();
 }

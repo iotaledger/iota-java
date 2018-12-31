@@ -217,15 +217,25 @@ public class InputValidator {
         }
 
         // Check if tag is correct trytes encoded and not longer than 27 trytes
-        if (transfer.getTag() == null || !isTrytes(transfer.getTag(), transfer.getTag().length()) || transfer.getTag().length() > Constants.TAG_LENGTH) {
+        if (!isTag(transfer.getTag())) {
             return false;
         }
 
         return true;
     }
+    
+    /**
+     * Checks if the seed is valid.
+     * 
+     * @param tag The tag to validate.
+     * @return <code>true</code> if the specified tag is valid; otherwise, <code>false</code>.
+     */
+    public static boolean isTag(String tag) {
+        return tag != null & isTrytes(tag, tag.length()) && tag.length() <= Constants.TAG_LENGTH;
+    }
 
     /**
-     * Checks if the seed is valid. If not, an exception is thrown.
+     * Checks if the seed is valid.
      *
      * @param seed The seed to validate.
      * @return <code>true</code> if the specified seed is valid; otherwise, <code>false</code>.

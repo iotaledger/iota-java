@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.iota.jota.types.Trits;
 
-public class IotaClientStore implements PersistenceAdapter {
+public abstract class IotaClientStore implements PersistenceAdapter {
 
     protected Store store;
     
@@ -15,33 +15,57 @@ public class IotaClientStore implements PersistenceAdapter {
 
     @Override
     public int getCurrentIndex(String seed) {
-        // TODO Auto-generated method stub
-        return 0;
+        synchronized (store) {
+            Serializable index = store.get(seed);
+            
+            if (index == null) {
+                return 0;
+            } else if (!(index instanceof Integer)) {
+                return -1;
+            } else {
+                return ((Integer)index).intValue();
+            }
+        }
     }
 
     @Override
     public void increaseIndex(String seed) {
-        // TODO Auto-generated method stub
+        if (!canWrite()) return;
         
+        synchronized (store) {
+            Serializable index = store.get(seed);
+            
+            if (index == null) {
+                store.set(seed, 1);
+                return;
+            } else if (!(index instanceof Integer)) {
+                //Something went wrong
+                return;
+            } else {
+                int cur = ((Integer)index).intValue();
+                store.set(seed, cur+1);
+            }
+        }
     }
     
     @Override
     public int getIndexAndIncrease(String seed) {
         if (!canWrite()) return -1;
-        
-        Serializable index = store.get(seed);
-        
-        if (index == null) {
-            store.set(seed, 1);
-            return 0;
-        } else if (!(index instanceof Integer)) {
-            //Something went wrong
-            return -1;
+        synchronized (store) {
+            Serializable index = store.get(seed);
+            
+            if (index == null) {
+                store.set(seed, 1);
+                return 0;
+            } else if (!(index instanceof Integer)) {
+                //Something went wrong
+                return -1;
+            }
+            
+            int cur = ((Integer)index).intValue();
+            store.set(seed, cur+1);
+            return cur;
         }
-        
-        int cur = ((Integer)index).intValue();
-        store.set(seed, cur+1);
-        return cur;
     }
     
     @Override

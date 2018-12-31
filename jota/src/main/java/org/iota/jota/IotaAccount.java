@@ -3,6 +3,8 @@ package org.iota.jota;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.iota.jota.utils.Constants.INVALID_TAG_INPUT_ERROR;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -11,6 +13,7 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.iota.jota.account.AccountState;
+import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.event.EventManager;
@@ -46,6 +49,8 @@ public class IotaAccount {
     List<EventTaskService> tasks = new ArrayList<>();
     
     String testSeed = "IHDEENZYITYVYSPKAURUZAQKGVJEREFDJMYTANNXXGPZ9GJWTEOJJ9IPMXOGZNQLSNMFDSQOTZAEETUEA";
+
+    private AccountStateManager accountManager;
     
     
     /**
@@ -112,6 +117,8 @@ public class IotaAccount {
     }
     
     private void load() {
+        accountManager = new AccountStateManager(new AccountState(getApi().getCurl(), getStore()), getStore());
+        
         addTask(new PromoterReattacherImpl(eventManager));
         addTask(new IncomingTransferCheckerImpl(eventManager));
         addTask(new OutgoingTransferCheckerImpl(eventManager));
@@ -150,18 +157,23 @@ public class IotaAccount {
         }
     }
     
-    public Bundle send(String address, int amount, int securityLevel, String message, String tag){
+    public Bundle send(String address, int amount, int securityLevel, String message, String tag) throws ArgumentException{
         int secLvl = securityLevel == 0 ? options.getSecurityLevel() : securityLevel;
         String tryteMsg = TrytesConverter.asciiToTrytes(message);
-        String tryteTag = TrytesConverter.asciiToTrytes(tag);
-        StringUtils.rightPad("", Constants.MESSAGE_LENGTH, '9');
         
-        Transfer transfer = new Transfer(address, 0, tryteMsg, tryteTag);
+        if (tag != null && !InputValidator.isTag(tag)) {
+            throw new ArgumentException(INVALID_TAG_INPUT_ERROR);
+        }
+        
+        StringUtils.rightPad(tag, Constants.MESSAGE_LENGTH, '9');
+        
+        Transfer transfer = new Transfer(address, 0, tryteMsg, tag);
         List<Transfer> transfers = new LinkedList<>();
         transfers.add(transfer);
         
         try {
-            SendTransferResponse transferResponse = getApi().sendTransfer(testSeed, secLvl, options.getDept(), options.getMwm(), 
+            SendTransferResponse transferResponse = getApi().sendTransfer(testSeed, secLvl, 
+                    options.getDept(), options.getMwm(), 
                     transfers, null, null, false, false, null);
             
             Bundle bundle = new Bundle(transferResponse.getTransactions(), transferResponse.getTransactions().size());
@@ -169,16 +181,39 @@ public class IotaAccount {
             eventManager.emit(event);
             return bundle;
         } catch (ArgumentException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return null;
         }
     }
     
-    public Future<Bundle> sendZeroValue(String message, String tag){
-        return null;
+    public Bundle sendZeroValue(String message, String tag) throws ArgumentException{
+        String tryteMsg = TrytesConverter.asciiToTrytes(message);
+        
+        if (tag != null && !InputValidator.isTag(tag)) {
+            throw new ArgumentException(INVALID_TAG_INPUT_ERROR);
+        }
+        
+        StringUtils.rightPad(tag, Constants.MESSAGE_LENGTH, '9');
+        
+        Transfer transfer = new Transfer(getAccountManager().nextZeroValueAddress(), 0, tryteMsg, tag);
+        List<Transfer> transfers = new LinkedList<>();
+        transfers.add(transfer);
+        
+        try {
+            SendTransferResponse transferResponse = getApi().sendTransfer(testSeed, Constants.MIN_SECURITY_LEVEL, 
+                    options.getDept(), options.getMwm(), 
+                    transfers, null, null, false, false, null);
+            
+            Bundle bundle = new Bundle(transferResponse.getTransactions(), transferResponse.getTransactions().size());
+            SendTransferEvent event = new SendTransferEvent(bundle);
+            eventManager.emit(event);
+            return bundle;
+        } catch (ArgumentException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
-    
+
     public Future<Bundle> sendMulti(String[] addresses, int[] amounts, int securityLevel, String[] messages, String tag) {
         return null;
     }
@@ -188,12 +223,34 @@ public class IotaAccount {
         return null;
     }
     
+    /**
+     * Makes a copy of the current account state.
+     * Modifications to the copy do not reflect in the original.
+     * 
+     * The IotaAccount is still using the original account state
+     * @return a clone of the account state.
+     */
     public AccountState exportAccount() {
-        return null;
+        try {
+            return getAccountManager().getAccountState().clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     
+    /**
+     * Saves the current account state, then replaces it with the one provided.
+     * Provided state will also be saved to persist
+     * @param state the new account state
+     */
     public void importAccount(AccountState state) {
+        if (this.accountManager != null) {
+            this.accountManager.save();
+        }
         
+        this.accountManager = new AccountStateManager(state, getStore());
+        state.save(getStore());
     }
     
     public String getSeed(){
@@ -210,6 +267,10 @@ public class IotaAccount {
     
     public EventManager getEventManager() {
         return eventManager;
+    }
+    
+    private AccountStateManager getAccountManager() {
+        return accountManager;
     }
     
     @Override
