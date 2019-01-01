@@ -1,25 +1,32 @@
 package org.iota.jota.account;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-import org.iota.jota.pow.ICurl;
+import org.iota.jota.account.errors.AccountLoadError;
+import org.iota.jota.account.errors.AddressGenerationError;
+import org.iota.jota.account.services.AddressGeneratorService;
 import org.iota.jota.store.PersistenceAdapter;
-import org.iota.jota.utils.IotaAPIUtils;
 
 public class AccountState implements Cloneable {
     
     private Map<Integer, String> indexes;
 
-    public AccountState(ICurl iCurl, PersistenceAdapter store) {
+    public AccountState() {
         this.indexes = new HashMap<>();
-        for (String indexString : store.getIndexes().split(" ")) {
-            try {
-                Integer index = Integer.parseInt(indexString);
-                indexes.push(index, IotaAPIUtils.newAddress(seed, security, index, checksum, curl));
-            } catch (NumberFormatException e) {
-                //Broken number!!
+    }
+    
+    public void load(AddressGeneratorService addressService, PersistenceAdapter store) throws AccountLoadError {
+        String indexesString = store.getIndexes();
+        if (!indexesString.equals("")) {
+            for (String indexString : indexesString.split(" ")) {
+                try {
+                    Integer index = Integer.parseInt(indexString);
+                    indexes.put(index, addressService.get(index));
+                } catch (AddressGenerationError e) {
+                    throw new AccountLoadError(e);
+                }
             }
         }
     }
@@ -33,12 +40,20 @@ public class AccountState implements Cloneable {
         return (AccountState) super.clone();
     }
     
-    public ArrayList<Integer> getIndexes() {
-        return indexList;
+    public Set<Integer> getIndexes() {
+        return indexes.keySet();
     }
 
     public String getSeed() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public String getAddress(Integer index) {
+        return indexes.get(index);
+    }
+    
+    public void addAddress(String address, Integer index) {
+        indexes.put(index, address);
     }
 }

@@ -1,11 +1,16 @@
 package org.iota.jota.account.transferchecker;
 
+import org.iota.jota.IotaAPI;
 import org.iota.jota.account.event.EventManager;
 
 public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements IncomingTransferChecker {
 
-    public IncomingTransferCheckerImpl(EventManager eventManager) {
-        // TODO Auto-generated constructor stub
+    private EventManager eventManager;
+    private IotaAPI api;
+
+    public IncomingTransferCheckerImpl(EventManager eventManager, IotaAPI api) {
+        this.eventManager = eventManager;
+        this.api = api;
     }
 
     @Override

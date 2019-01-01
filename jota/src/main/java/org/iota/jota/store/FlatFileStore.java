@@ -31,11 +31,11 @@ public class FlatFileStore implements Store {
 
     @Override
     public void load() throws Exception {
+        properties = new Properties();
+        
         if (!f.exists()) {
             f.createNewFile();
         } else if (f.canRead() && f.canWrite()) {
-            properties = new Properties();
-            
             FileReader fileReader = null;
             BufferedReader bufferedReader = null;
             

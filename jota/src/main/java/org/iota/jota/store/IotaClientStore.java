@@ -11,6 +11,11 @@ public abstract class IotaClientStore implements PersistenceAdapter {
     
     public IotaClientStore(Store store) {
         this.store = store;
+        try {
+            store.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

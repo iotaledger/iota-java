@@ -2,11 +2,10 @@ package org.iota.jota.account.promoter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.iota.jota.IotaAPI;
 import org.iota.jota.account.AccountState;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
@@ -19,8 +18,6 @@ import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Transaction;
 
 import org.iota.jota.utils.thread.UnboundScheduledExecutorService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PromoterReattacherImpl implements PromoterReattacher, EventTaskService {
 
@@ -31,9 +28,12 @@ public class PromoterReattacherImpl implements PromoterReattacher, EventTaskServ
     private EventManager eventManager;
     
     private Map<String, ScheduledFuture<?>> unconfirmedBundles;
+
+    private IotaAPI api;
     
-    public PromoterReattacherImpl(EventManager eventManager) {
+    public PromoterReattacherImpl(EventManager eventManager, IotaAPI api) {
         this.eventManager = eventManager;
+        this.api = api;
     }
     
     @Override

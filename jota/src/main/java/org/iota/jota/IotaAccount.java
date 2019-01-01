@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,11 +17,14 @@ import org.iota.jota.account.AccountState;
 import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.errors.AccountLoadError;
+import org.iota.jota.account.errors.AddressGenerationError;
 import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.EventTaskService;
 import org.iota.jota.account.event.events.SendTransferEvent;
 import org.iota.jota.account.event.impl.EventManagerImpl;
 import org.iota.jota.account.promoter.PromoterReattacherImpl;
+import org.iota.jota.account.services.AddressGeneratorService;
 import org.iota.jota.account.transferchecker.IncomingTransferCheckerImpl;
 import org.iota.jota.account.transferchecker.OutgoingTransferCheckerImpl;
 import org.iota.jota.config.AccountConfig;
@@ -52,6 +56,7 @@ public class IotaAccount {
 
     private AccountStateManager accountManager;
     
+    boolean loaded = false;
     
     /**
      * 
@@ -61,7 +66,11 @@ public class IotaAccount {
         this.options = options;
         this.eventManager = new EventManagerImpl();
         
-        load();
+        if (load()) {
+            loaded = true;
+        } else {
+            // Loading went wrong! Log...
+        }
     }
     
     protected IotaAccount(Builder builder) {
@@ -116,15 +125,29 @@ public class IotaAccount {
         this(new Builder(seed).store(store).config(iotaConfig).generate());
     }
     
-    private void load() {
-        accountManager = new AccountStateManager(new AccountState(getApi().getCurl(), getStore()), getStore());
-        
-        addTask(new PromoterReattacherImpl(eventManager));
-        addTask(new IncomingTransferCheckerImpl(eventManager));
-        addTask(new OutgoingTransferCheckerImpl(eventManager));
-        
-        shutdownHook();
+    private boolean load() {
+        return load(new AccountState());
     }
+    
+    private boolean load(AccountState state) {
+        try {
+            AddressGeneratorService service = new AddressGeneratorService(options);
+            state.load(service, getStore());
+            accountManager = new AccountStateManager(state, service, options, getStore());
+            
+            addTask(new PromoterReattacherImpl(eventManager, getApi()));
+            addTask(new IncomingTransferCheckerImpl(eventManager, getApi()));
+            addTask(new OutgoingTransferCheckerImpl(eventManager, getApi()));
+            
+            shutdownHook();
+            return true;
+        } catch (AccountLoadError e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    
     
     private void shutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -158,6 +181,10 @@ public class IotaAccount {
     }
     
     public Bundle send(String address, int amount, int securityLevel, String message, String tag) throws ArgumentException{
+        if (!loaded) {
+            return null;
+        }
+        
         int secLvl = securityLevel == 0 ? options.getSecurityLevel() : securityLevel;
         String tryteMsg = TrytesConverter.asciiToTrytes(message);
         
@@ -186,16 +213,47 @@ public class IotaAccount {
         }
     }
     
-    public Bundle sendZeroValue(String message, String tag) throws ArgumentException{
-        String tryteMsg = TrytesConverter.asciiToTrytes(message);
+    /**
+     * 
+     * @param message the optional message to use, can be null
+     * @param tag the optional tag to use, can be null
+     * @return the sent bundle
+     * @throws ArgumentException If an argument is wrong
+     * @throws SendException If an internal error happened whilst sending
+     */
+    public Bundle sendZeroValue(String message, String tag) throws ArgumentException, SendException {
+        return sendZeroValue(Optional.ofNullable(message), Optional.ofNullable(tag));
+    }
+    
+    /**
+     * 
+     * @param message the optional message to use
+     * @param tag the optional tag to use
+     * @return the sent bundle
+     * @throws ArgumentException If an argument is wrong
+     * @throws SendException If an internal error happened whilst sending
+     */
+    public Bundle sendZeroValue(Optional<String> message, Optional<String> tag) throws ArgumentException, SendException {
+        if (!loaded) {
+            return null;
+        }
         
-        if (tag != null && !InputValidator.isTag(tag)) {
+        if (tag.isPresent() && !InputValidator.isTag(tag.get())) {
             throw new ArgumentException(INVALID_TAG_INPUT_ERROR);
         }
         
-        StringUtils.rightPad(tag, Constants.MESSAGE_LENGTH, '9');
+        String tryteTag = tag.orElse("");
+        StringUtils.rightPad(tryteTag, Constants.MESSAGE_LENGTH, '9');
         
-        Transfer transfer = new Transfer(getAccountManager().nextZeroValueAddress(), 0, tryteMsg, tag);
+        String tryteMsg = TrytesConverter.asciiToTrytes( message.orElse("") );
+        
+        Transfer transfer;
+        try {
+            transfer = new Transfer(getAccountManager().nextZeroValueAddress(), 0, tryteMsg, tryteTag);
+        } catch (AddressGenerationError e) {
+            throw new SendException(e);
+        }
+        
         List<Transfer> transfers = new LinkedList<>();
         transfers.add(transfer);
         
@@ -215,10 +273,17 @@ public class IotaAccount {
     }
 
     public Future<Bundle> sendMulti(String[] addresses, int[] amounts, int securityLevel, String[] messages, String tag) {
+        if (!loaded) {
+            return null;
+        }
+        
         return null;
     }
     
     public Future<DepositRequest> requestDeposit(String depositAddress, int amount, Date timeOut, ExpireCondition... otherConditions){
+        if (!loaded) {
+            return null;
+        }
         
         return null;
     }
@@ -231,6 +296,10 @@ public class IotaAccount {
      * @return a clone of the account state.
      */
     public AccountState exportAccount() {
+        if (!loaded) {
+            return null;
+        }
+        
         try {
             return getAccountManager().getAccountState().clone();
         } catch (CloneNotSupportedException e) {
@@ -245,12 +314,14 @@ public class IotaAccount {
      * @param state the new account state
      */
     public void importAccount(AccountState state) {
-        if (this.accountManager != null) {
-            this.accountManager.save();
+        synchronized (this) {
+            if (this.accountManager != null) {
+                this.accountManager.save();
+            }
+            unload();
+            load(state);
+            state.save(getStore());
         }
-        
-        this.accountManager = new AccountStateManager(state, getStore());
-        state.save(getStore());
     }
     
     public String getSeed(){

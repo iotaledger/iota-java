@@ -1017,7 +1017,7 @@ public class IotaAPI extends IotaAPICore {
      * @see #getNodeInfo()
      * @see #getInclusionStates(String[], String[])
      */
-    public GetInclusionStateResponse getLatestInclusion(String[] hashes) throws ArgumentException {
+    public GetInclusionStateResponse getLatestInclusion(String... hashes) throws ArgumentException {
         GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
 
         String[] latestMilestone = {getNodeInfoResponse.getLatestSolidSubtangleMilestone()};
