@@ -29,13 +29,12 @@ public class EventManagerImpl implements EventManager {
 
     @Override
     public void emit(Event event) {
-        List<Pair<EventListener, Method>> listeners = this.listeners.get(event.getClass());
-        System.out.println("emit");
-        System.out.println(listeners);
+        List<Pair<EventListener, Method>> listeners = getListeners(event.getClass());
         if (listeners == null || listeners.size() == 0) return;
         
         for (Pair<EventListener, Method> listener : listeners) {
             try {
+                AccountEvent annotInstance = listener.hi.getAnnotation(AccountEvent.class);
                 boolean accessible = listener.hi.isAccessible();
                 if (!accessible) {
                     listener.hi.setAccessible(true);
@@ -52,6 +51,10 @@ public class EventManagerImpl implements EventManager {
                 //Remove listener?
             }
         }
+    }
+    
+    public List<Pair<EventListener, Method>> getListeners(Class<? extends Event> c){
+        return this.listeners.get(c);
     }
 
     @Override

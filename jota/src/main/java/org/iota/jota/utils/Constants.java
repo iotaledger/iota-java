@@ -81,6 +81,7 @@ public class Constants {
     public static final String INVALID_SECURITY_LEVEL_INPUT_ERROR = "Invalid security level provided.";
     public static final String INVALID_ATTACHED_TRYTES_INPUT_ERROR = "Invalid attached trytes provided.";
     public static final String INVALID_TRANSFERS_INPUT_ERROR = "Invalid transfers provided.";
+    public static final String INVALID_ADDRESS_INPUT_ERROR = "Invalid address provided.";
     public static final String INVALID_ADDRESSES_INPUT_ERROR = "Invalid addresses provided.";
     public static final String INVALID_INPUT_ERROR = "Invalid input provided.";
     public static final String INVALID_INDEX_INPUT_ERROR = "Invalid index provided.";

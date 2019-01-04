@@ -4,13 +4,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.iota.jota.utils.Constants.INVALID_TAG_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_ADDRESS_INPUT_ERROR;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.StringUtils;
 import org.iota.jota.account.AccountState;
@@ -33,10 +38,13 @@ import org.iota.jota.config.options.AccountBuilderSettings;
 import org.iota.jota.config.options.AccountOptions;
 import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.store.PersistenceAdapter;
+import org.iota.jota.types.Trytes;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
+import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
 import org.iota.jota.utils.AbstractBuilder;
+import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.InputValidator;
 import org.iota.jota.utils.TrytesConverter;
@@ -51,8 +59,6 @@ public class IotaAccount {
     private EventManager eventManager;
     
     List<EventTaskService> tasks = new ArrayList<>();
-    
-    String testSeed = "IHDEENZYITYVYSPKAURUZAQKGVJEREFDJMYTANNXXGPZ9GJWTEOJJ9IPMXOGZNQLSNMFDSQOTZAEETUEA";
 
     private AccountStateManager accountManager;
     
@@ -199,7 +205,7 @@ public class IotaAccount {
         transfers.add(transfer);
         
         try {
-            SendTransferResponse transferResponse = getApi().sendTransfer(testSeed, secLvl, 
+            SendTransferResponse transferResponse = getApi().sendTransfer(options.getSeed(), secLvl, 
                     options.getDept(), options.getMwm(), 
                     transfers, null, null, false, false, null);
             
@@ -217,12 +223,13 @@ public class IotaAccount {
      * 
      * @param message the optional message to use, can be null
      * @param tag the optional tag to use, can be null
+     * @param address the optional address to use, can be null
      * @return the sent bundle
      * @throws ArgumentException If an argument is wrong
      * @throws SendException If an internal error happened whilst sending
      */
-    public Bundle sendZeroValue(String message, String tag) throws ArgumentException, SendException {
-        return sendZeroValue(Optional.ofNullable(message), Optional.ofNullable(tag));
+    public Bundle sendZeroValue(String message, String tag, String address) throws ArgumentException, SendException {
+        return sendZeroValue(Optional.ofNullable(message), Optional.ofNullable(tag), Optional.ofNullable(address));
     }
     
     /**
@@ -233,7 +240,7 @@ public class IotaAccount {
      * @throws ArgumentException If an argument is wrong
      * @throws SendException If an internal error happened whilst sending
      */
-    public Bundle sendZeroValue(Optional<String> message, Optional<String> tag) throws ArgumentException, SendException {
+    public Bundle sendZeroValue(Optional<String> message, Optional<String> tag, Optional<String> address) throws ArgumentException, SendException {
         if (!loaded) {
             return null;
         }
@@ -242,27 +249,33 @@ public class IotaAccount {
             throw new ArgumentException(INVALID_TAG_INPUT_ERROR);
         }
         
-        String tryteTag = tag.orElse("");
-        StringUtils.rightPad(tryteTag, Constants.MESSAGE_LENGTH, '9');
-        
-        String tryteMsg = TrytesConverter.asciiToTrytes( message.orElse("") );
-        
-        Transfer transfer;
-        try {
-            transfer = new Transfer(getAccountManager().nextZeroValueAddress(), 0, tryteMsg, tryteTag);
-        } catch (AddressGenerationError e) {
-            throw new SendException(e);
+        String addressHash = Bundle.EMPTY_HASH;
+        // remove the checksum of the address if provided
+        if (address.isPresent()) {
+            if (InputValidator.isAddress(address.get())) {
+                addressHash = Checksum.removeChecksum(address.get());
+            } else {
+                throw new ArgumentException(INVALID_ADDRESS_INPUT_ERROR);
+            }
         }
+
+        String tryteTag = tag.orElse("");
+        tryteTag = StringUtils.rightPad(tryteTag, Constants.TAG_LENGTH, '9');
+        
+        String tryteMessage = message.orElse("");
+        String tryteMsg = TrytesConverter.asciiToTrytes( tryteMessage);
+        
+        Transfer transfer = new Transfer(addressHash, 0, tryteMsg, tryteTag);
         
         List<Transfer> transfers = new LinkedList<>();
         transfers.add(transfer);
         
         try {
-            SendTransferResponse transferResponse = getApi().sendTransfer(testSeed, Constants.MIN_SECURITY_LEVEL, 
-                    options.getDept(), options.getMwm(), 
-                    transfers, null, null, false, false, null);
+            List<String> trytes = prepareTransfers(transfers);
+            List<Transaction> transferResponse = getApi().sendTrytes(
+                    trytes.toArray(new String[trytes.size()]), options.getDept(), options.getMwm(), null);
             
-            Bundle bundle = new Bundle(transferResponse.getTransactions(), transferResponse.getTransactions().size());
+            Bundle bundle = new Bundle(transferResponse, transferResponse.size());
             SendTransferEvent event = new SendTransferEvent(bundle);
             eventManager.emit(event);
             return bundle;
@@ -286,6 +299,80 @@ public class IotaAccount {
         }
         
         return null;
+    }
+    
+    private List<String> prepareTransfers(List<Transfer> transfers){
+        List<String> bundleTrytes = new LinkedList<>();
+        
+        //If there are a lot of transfers, async and add atomic is still faster
+        AtomicLong totalValue = new AtomicLong(0);
+        transfers.stream().forEach(transfer -> totalValue.addAndGet(transfer.getValue()));
+        
+        Bundle bundle = new Bundle();
+        List<String> signatureFragments = prepareBundle(bundle, transfers);
+        
+        if (totalValue.longValue() == 0) {
+            //Zero value!  simply finalize the bundle
+            bundle.finalize(getApi().getCurl());
+            bundle.addTrytes(signatureFragments);
+
+            List<Transaction> trxb = bundle.getTransactions();
+
+            for (Transaction trx : trxb) {
+                bundleTrytes.add(trx.toTrytes());
+            }
+            Collections.reverse(bundleTrytes);
+            return bundleTrytes;
+        } else  {
+            // Oh oh! Were sending value!
+        }
+        
+        return null;
+    }
+    
+    private List<String> prepareBundle(Bundle bundle, List<Transfer> transfers){
+        List<String> signatureFragments = new ArrayList<>();
+        
+        for (Transfer transfer : transfers) {
+            int signatureMessageLength = 1;
+
+            // If message longer than 2187 trytes, increase signatureMessageLength (add 2nd transaction)
+            if (transfer.getMessage().length() > Constants.MESSAGE_LENGTH) {
+
+                // Get total length, message / maxLength (2187 trytes)
+                signatureMessageLength += Math.floor(transfer.getMessage().length() / Constants.MESSAGE_LENGTH);
+
+                String msgCopy = transfer.getMessage();
+
+                // While there is still a message, copy it
+                while (!msgCopy.isEmpty()) {
+
+                    String fragment = StringUtils.substring(msgCopy, 0, Constants.MESSAGE_LENGTH);
+                    msgCopy = StringUtils.substring(msgCopy, Constants.MESSAGE_LENGTH, msgCopy.length());
+
+                    // Pad remainder of fragment
+
+                    fragment = StringUtils.rightPad(fragment, Constants.MESSAGE_LENGTH, '9');
+
+                    signatureFragments .add(fragment);
+                }
+            } else {
+                // Else, get single fragment with 2187 of 9's trytes
+                String fragment = transfer.getMessage();
+
+                if (transfer.getMessage().length() < Constants.MESSAGE_LENGTH) {
+                    fragment = StringUtils.rightPad(fragment, Constants.MESSAGE_LENGTH, '9');
+                }
+                signatureFragments.add(fragment);
+            }
+
+            // get current timestamp in seconds
+            long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
+
+            // Add first entry to the bundle
+            bundle.addEntry(signatureMessageLength, transfer.getAddress(), transfer.getValue(), transfer.getTag(), timestamp);
+        }
+        return signatureFragments;
     }
     
     /**

@@ -109,7 +109,7 @@ public class Bundle implements Comparable<Bundle> {
         curl = customCurl == null ? SpongeFactory.create(SpongeFactory.Mode.KERL) : customCurl;
         do {
           curl.reset();
-
+          
           for (int i = 0; i < this.getTransactions().size(); i++) {
 
             int[] valueTrits = Converter.trits(this.getTransactions().get(i).getValue(), 81);

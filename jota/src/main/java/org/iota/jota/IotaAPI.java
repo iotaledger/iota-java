@@ -410,11 +410,10 @@ public class IotaAPI extends IotaAPICore {
      * @see #storeAndBroadcast(String...)
      */
     public List<Transaction> sendTrytes(String[] trytes, int depth, int minWeightMagnitude, String reference) throws ArgumentException {
-        
         GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth, reference);
 
         // attach to tangle - do pow
-        final GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
+        GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
 
         try {
             storeAndBroadcast(res.getTrytes());
@@ -424,9 +423,9 @@ public class IotaAPI extends IotaAPICore {
 
         final List<Transaction> trx = new ArrayList<>();
 
-        for (final String tryte : Arrays.asList(res.getTrytes())) {
-            ICurl curl = getCurl();
-            trx.add(new Transaction(tryte, getCurl()));
+        for (String tryte : res.getTrytes()) {
+            Transaction t;
+            trx.add(t = new Transaction(tryte, getCurl()));
         }
         return trx;
     }
