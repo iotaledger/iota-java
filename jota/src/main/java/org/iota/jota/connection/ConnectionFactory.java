@@ -18,7 +18,7 @@ public class ConnectionFactory {
     
     private static final Logger log = LoggerFactory.getLogger(ConnectionFactory.class);
     
-    public static Connection createConnection(Properties properties) {
+    public static Connection createConnection(Properties properties, int timeout) {
         if (!preRequirements(properties)) {
             log.error("Configuration of node missing critical sections. Required: " + 
                     KEY_TYPE + ", " + KEY_NAME + " and " + KEY_HOST);
@@ -40,7 +40,8 @@ public class ConnectionFactory {
                 int port = Integer.parseInt(KEY_PORT);
                 return new HttpConnector(
                         propGetString(properties, KEY_PROTOCOL), 
-                        host, port);
+                        host, port,
+                        timeout);
             }
         } catch (Exception e) {
             //Wrong parameters for a connection type
@@ -52,10 +53,10 @@ public class ConnectionFactory {
         return null;
     }
     
-    public static Connection createConnection(Map<String, String> configValues) {
+    public static Connection createConnection(Map<String, String> configValues, int timeout) {
         Properties properties = new Properties();
         properties.putAll(configValues);
-        return createConnection(properties);
+        return createConnection(properties, timeout);
     }
     
     private static String propGetString(Properties properties, String key) {

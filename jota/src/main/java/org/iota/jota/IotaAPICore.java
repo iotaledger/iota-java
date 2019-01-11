@@ -2,6 +2,8 @@ package org.iota.jota;
 
 import static org.iota.jota.utils.Constants.*;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -593,8 +595,9 @@ public class IotaAPICore {
             }
             return new GetAttachToTangleResponse(resultTrytes);
         }
-
-        return service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
+        
+        GetAttachToTangleResponse ret = service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
+        return ret;
     }
 
     /**
@@ -703,6 +706,8 @@ public class IotaAPICore {
         String protocol, host;
         int port;
         
+        int timeout;
+        
         // If this is null, no local PoW is done, therefor no default value
         IotaLocalPoW localPoW;
         ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
@@ -731,6 +736,10 @@ public class IotaAPICore {
                         port = config.getLegacyPort();
                     }
                     
+                    if (0 == timeout) {
+                        timeout = config.getConnectionTimeout();
+                    }
+                    
                     if (config.hasNodes()) {
                         for (Connection c : config.getNodes()) {
                             nodes.add(c);
@@ -742,7 +751,7 @@ public class IotaAPICore {
             if (!hasNodes()) {
                 //Either we have a legacy node defined in the builder, or in the config.
                 if (null != host && null != protocol && 0 != port) {
-                    nodes.add(new HttpConnector(protocol, host, port));
+                    nodes.add(new HttpConnector(protocol, host, port, timeout));
                 } else {
                   //Fallback on legacy option from config
                     for (ApiConfig config : getConfigs()) {
@@ -752,7 +761,8 @@ public class IotaAPICore {
                             nodes.add(new HttpConnector(
                                     config.getLegacyProtocol(), 
                                     config.getLegacyHost(), 
-                                    config.getLegacyPort())
+                                    config.getLegacyPort(),
+                                    timeout)
                             );
                             
                             break; //If we define one in config, dont check rest, Otherwise we end up using custom & default
@@ -769,7 +779,14 @@ public class IotaAPICore {
         }
 
         public T host(String host) {
-            this.host = host;
+            try {
+                // Throws exception if invalid
+                InetAddress.getByName(host);
+                this.host = host;
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            
             return (T) this;
         }
 
@@ -785,6 +802,11 @@ public class IotaAPICore {
 
         public T localPoW(IotaLocalPoW localPoW) {
             this.localPoW = localPoW;
+            return (T) this;
+        }
+        
+        public T timeout(int timeout) {
+            this.timeout = timeout;
             return (T) this;
         }
         
@@ -810,6 +832,11 @@ public class IotaAPICore {
 
         public List<Connection> getNodes() {
             return nodes;
+        }
+        
+        @Override
+        public int getConnectionTimeout() {
+            return timeout;
         }
 
         @Override

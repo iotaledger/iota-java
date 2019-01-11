@@ -32,9 +32,10 @@ public class FlatFileStore implements Store {
     @Override
     public void load() throws Exception {
         properties = new Properties();
-        
+        System.out.println(f.getAbsolutePath());
         if (!f.exists()) {
             f.createNewFile();
+            
         } else if (f.canRead() && f.canWrite()) {
             FileReader fileReader = null;
             BufferedReader bufferedReader = null;

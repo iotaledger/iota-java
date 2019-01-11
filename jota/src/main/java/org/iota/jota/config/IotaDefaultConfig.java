@@ -40,4 +40,9 @@ public class IotaDefaultConfig extends IotaClientConfig {
     public int getSecurityLevel() {
         return Constants.MIN_SECURITY_LEVEL;
     }
+
+    @Override
+    public int getConnectionTimeout() {
+        return 500;
+    }
 }

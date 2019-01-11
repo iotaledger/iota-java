@@ -15,6 +15,7 @@ public class FileConfig extends IotaClientConfig {
     private static final String CONFIG_PROT = "iota.node.protocol";
     private static final String CONFIG_HOST = "iota.node.host";
     private static final String CONFIG_PORT = "iota.node.port";
+    private static final String CONFIG_TIMEOUT = "connection.timeout";
     
     private static final String CONFIG_STORE = "storage.url";
     
@@ -42,6 +43,7 @@ public class FileConfig extends IotaClientConfig {
     protected FileConfig(PropertiesStore store) throws Exception {
         super(store);
     }
+    @Deprecated
 
     @Override
     public int getLegacyPort() {
@@ -76,5 +78,10 @@ public class FileConfig extends IotaClientConfig {
     @Override
     public int getSecurityLevel() {
         return intOrNull(CONFIG_SECURITY);
+    }
+
+    @Override
+    public int getConnectionTimeout() {
+        return intOrNull(CONFIG_TIMEOUT);
     }
 }

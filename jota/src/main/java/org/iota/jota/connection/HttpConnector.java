@@ -47,15 +47,18 @@ public class HttpConnector implements Connection {
     private String protocol;
     private String host;
     private int port;
+    private int timeout;
     
     private IotaAPIHTTPService service;
     
     private static final Logger log = LoggerFactory.getLogger(HttpConnector.class);
 
-    public HttpConnector(String protocol, String host, int port) {
+    public HttpConnector(String protocol, String host, int port, int timeout) {
         this.protocol = protocol;
         this.host = host;
         this.port = port;
+        
+        this.timeout = timeout;
     }
     
     @Override
@@ -73,9 +76,9 @@ public class HttpConnector implements Connection {
 
         // Create OkHttpBuilder
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(500, TimeUnit.SECONDS)
-                .writeTimeout(500, TimeUnit.SECONDS)
-                .readTimeout(500, TimeUnit.SECONDS)
+                .connectTimeout(timeout, TimeUnit.SECONDS)
+                .writeTimeout(timeout, TimeUnit.SECONDS)
+                .readTimeout(timeout, TimeUnit.SECONDS)
                 .addInterceptor(new Interceptor() {
                     @Override
                     public okhttp3.Response intercept(Chain chain) throws IOException {
@@ -90,7 +93,7 @@ public class HttpConnector implements Connection {
                     }
                 })
                 .build();
-
+        
         // use client to create Retrofit service
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(nodeUrl)
@@ -123,10 +126,11 @@ public class HttpConnector implements Connection {
                 throw new IllegalAccessError("401 " + error);
             } else if (res.code() == 500) {
                 throw new IllegalAccessError("500 " + error);
-            } else if (error != null) {
-                //Unknown error
+            } else if (error != null || res.body() == null) {
+                //Unknown error, could be node timeout before our timeout or similar errors
+                throw new IllegalAccessError(res.code() + " " + res.message());
             }
-            
+
             return res;
         } catch (IOException e) {
             log.error("Execution of the API call raised exception. IOTA Node not reachable?", e);

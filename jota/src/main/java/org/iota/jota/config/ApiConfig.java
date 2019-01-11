@@ -14,6 +14,12 @@ public interface ApiConfig extends Config{
 
     boolean hasNodes();
     
+    /**
+     * Connection time out in seconds
+     * @return
+     */
+    int getConnectionTimeout();
+    
     @Deprecated
     public int getLegacyPort();
     

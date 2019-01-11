@@ -481,7 +481,7 @@ public class Transaction {
 
         this.tag = this.tag != null && !this.tag.isEmpty() ? this.tag : this.obsoleteTag;
 
-        return this.getSignatureFragments()
+        String trytes = this.getSignatureFragments()
                 + this.getAddress()
                 + Converter.trytes(valueTrits)
                 + this.getObsoleteTag()
@@ -496,6 +496,7 @@ public class Transaction {
                 + Converter.trytes(attachmentTimestampLowerBoundTrits)
                 + Converter.trytes(attachmentTimestampUpperBoundTrits)
                 + this.getNonce();
+        return trytes;
     }
 
     /**
@@ -519,7 +520,7 @@ public class Transaction {
         int[] transactionTrits = Converter.trits(trytes);
         int[] hash = new int[Constants.HASH_LENGTH_TRITS];
 
-        ICurl curl = customCurl.clone();
+        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.CURLP81);
         // generate the correct transaction hash
         curl.reset();
         curl.absorb(transactionTrits, 0, transactionTrits.length);

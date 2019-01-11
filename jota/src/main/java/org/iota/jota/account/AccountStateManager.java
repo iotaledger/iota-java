@@ -21,7 +21,15 @@ public class AccountStateManager {
         this.options = options;
     }
 
-    public String nextZeroValueAddress() throws AddressGenerationError {
+    public AccountState getAccountState() {
+        return state;
+    }
+
+    public void save() {
+        state.save(store);
+    }
+    
+    public String nextZeroValueAddress(int secLvl) throws AddressGenerationError {
         synchronized (this) {
             for (Integer index : state.getIndexes()) {
                 if (index > 0) {
@@ -44,11 +52,15 @@ public class AccountStateManager {
         }
     }
 
-    public AccountState getAccountState() {
-        return state;
-    }
+    
 
-    public void save() {
-        state.save(store);
+    public String getInputAddress(int secLvl) {
+        try {
+            return nextZeroValueAddress(secLvl);
+        } catch (AddressGenerationError e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
     }
 }

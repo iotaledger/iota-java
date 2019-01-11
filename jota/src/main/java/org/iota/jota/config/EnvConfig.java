@@ -10,12 +10,13 @@ public class EnvConfig extends IotaClientConfig {
     private static final String ENV_PROT = "IOTA_NODE_PROTOCOL";
     private static final String ENV_HOST = "IOTA_NODE_HOST";
     private static final String ENV_PORT = "IOTA_NODE_PORT";
+    private static final String ENV_TIMEOUT = "ENV_TIMEOUT";
+    
     private static final String ENV_STORE = "IOTA_STORE_LOCATION";
     
     private static final String ENV_MWM = "IOTA_ACCOUNT_MWM";
     private static final String ENV_DEPTH = "IOTA_ACCOUNT_DEPTH";
     private static final String ENV_SECURITY = "IOTA_ACCOUNT_SECURITY";
-    
     public EnvConfig() throws Exception {
         super(new EnvironmentStore());
     }
@@ -57,5 +58,10 @@ public class EnvConfig extends IotaClientConfig {
     @Override
     public int getSecurityLevel() {
         return intOrNull(ENV_SECURITY);
+    }
+
+    @Override
+    public int getConnectionTimeout() {
+        return intOrNull(ENV_TIMEOUT);
     }
 }

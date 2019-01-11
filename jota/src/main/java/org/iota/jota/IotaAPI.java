@@ -38,7 +38,6 @@ import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
-import org.iota.jota.pow.ICurl;
 import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.utils.BundleValidator;
 import org.iota.jota.utils.Checksum;
@@ -387,10 +386,13 @@ public class IotaAPI extends IotaAPICore {
         }
 
         try {
+            System.out.println("storeTransactions");
             storeTransactions(trytes);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ArgumentException(e.toString());
         }
+        System.out.println("broadcastTransactions");
         return broadcastTransactions(trytes);
     }
 
@@ -410,12 +412,15 @@ public class IotaAPI extends IotaAPICore {
      * @see #storeAndBroadcast(String...)
      */
     public List<Transaction> sendTrytes(String[] trytes, int depth, int minWeightMagnitude, String reference) throws ArgumentException {
+        System.out.println("gtta");
         GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth, reference);
 
         // attach to tangle - do pow
+        System.out.println("attachToTangle " + minWeightMagnitude);
         GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
 
         try {
+            System.out.println("storeAndBroadcast");
             storeAndBroadcast(res.getTrytes());
         } catch (ArgumentException e) {
             return new ArrayList<>();
@@ -424,9 +429,9 @@ public class IotaAPI extends IotaAPICore {
         final List<Transaction> trx = new ArrayList<>();
 
         for (String tryte : res.getTrytes()) {
-            Transaction t;
-            trx.add(t = new Transaction(tryte, getCurl()));
+            trx.add(new Transaction(tryte, getCurl()));
         }
+        
         return trx;
     }
 
@@ -1058,19 +1063,22 @@ public class IotaAPI extends IotaAPICore {
 
         StopWatch stopWatch = new StopWatch();
 
+        System.out.println("prepare");
         List<String> trytes = prepareTransfers(seed, security, transfers, remainderAddress, inputs, tips, validateInputs);
-
+        
         if (validateInputAddresses) {
             validateTransfersAddresses(seed, security, trytes);
         }
 
         String reference = tips != null && tips.size() > 0 ? tips.get(0).getHash(): null;
 
+        System.out.println("send");
         List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude, reference);
 
         Boolean[] successful = new Boolean[trxs.size()];
-
+        
         for (int i = 0; i < trxs.size(); i++) {
+            System.out.println("findTransactionsByBundles");
             final FindTransactionResponse response = findTransactionsByBundles(trxs.get(i).getBundle());
             successful[i] = response.getHashes().length != 0;
         }

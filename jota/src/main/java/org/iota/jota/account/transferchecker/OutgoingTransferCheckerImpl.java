@@ -58,13 +58,10 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
 
     private void doTask(Bundle bundle) {
         try {
-            System.out.println(bundle.getBundleHash());
-            System.out.println(bundle.getTransactions().get(0).getHash());
-            
-            GetInclusionStateResponse check = api.getLatestInclusion(bundle.getBundleHash());
-            System.out.println("check: " + check.getStates()[0]);
+            String hash = bundle.getTransactions().get(0).getHash();
+            GetInclusionStateResponse check = api.getLatestInclusion(hash);
             if (check.getStates()[0]) {
-                ScheduledFuture<?> runnable = unconfirmedBundles.get(bundle.getBundleHash());
+                ScheduledFuture<?> runnable = unconfirmedBundles.get(hash);
                 runnable.cancel(true);
                 unconfirmedBundles.remove(bundle.getBundleHash());
                 

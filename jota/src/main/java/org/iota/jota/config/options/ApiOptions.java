@@ -27,6 +27,7 @@ public class ApiOptions implements ApiConfig, ApiBuilderSettings {
     
     //Nodes are not active
     private List<Connection> nodes;
+    private int timeout;
     
     public ApiOptions(IotaAPI.Builder builder) {
         localPoW = builder.getLocalPoW();
@@ -82,6 +83,7 @@ public class ApiOptions implements ApiConfig, ApiBuilderSettings {
         this.legacyHost = legacyHost;
     }
     
+    @Override
     public ICurl getCustomCurl() {
         return customCurl;
     }
@@ -91,7 +93,7 @@ public class ApiOptions implements ApiConfig, ApiBuilderSettings {
         this.customCurl = customCurl;
     }
 
-
+    @Override
     public IotaLocalPoW getLocalPoW() {
         return localPoW;
     }
@@ -99,6 +101,15 @@ public class ApiOptions implements ApiConfig, ApiBuilderSettings {
 
     public void setLocalPoW(IotaLocalPoW localPoW) {
         this.localPoW = localPoW;
+    }
+    
+    @Override
+    public int getConnectionTimeout() {
+        return timeout;
+    }
+    
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
     
     @Override

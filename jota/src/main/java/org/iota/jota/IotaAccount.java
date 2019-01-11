@@ -3,9 +3,6 @@ package org.iota.jota;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.iota.jota.utils.Constants.INVALID_TAG_INPUT_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_ADDRESS_INPUT_ERROR;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -14,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +19,6 @@ import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.errors.AccountLoadError;
-import org.iota.jota.account.errors.AddressGenerationError;
 import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.EventTaskService;
 import org.iota.jota.account.event.events.SendTransferEvent;
@@ -36,17 +31,17 @@ import org.iota.jota.config.AccountConfig;
 import org.iota.jota.config.FileConfig;
 import org.iota.jota.config.options.AccountBuilderSettings;
 import org.iota.jota.config.options.AccountOptions;
-import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.store.PersistenceAdapter;
-import org.iota.jota.types.Trytes;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
+import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
 import org.iota.jota.utils.AbstractBuilder;
 import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.InputValidator;
+import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.TrytesConverter;
 
 
@@ -146,6 +141,13 @@ public class IotaAccount {
             addTask(new OutgoingTransferCheckerImpl(eventManager, getApi()));
             
             shutdownHook();
+            
+            try {
+                // Call to nodeInfo to ensure were connected
+                getApi().getNodeInfo();
+            } catch (ArgumentException e) {
+                throw new AccountLoadError(e);
+            }
             return true;
         } catch (AccountLoadError e) {
             e.printStackTrace();
@@ -186,39 +188,83 @@ public class IotaAccount {
         }
     }
     
-    public Bundle send(String address, int amount, int securityLevel, String message, String tag) throws ArgumentException{
+    public Bundle send(String address, int amount, Optional<Integer> securityLevel, 
+                Optional<String> message, Optional<String> tag) throws ArgumentException{
+        
         if (!loaded) {
             return null;
         }
         
-        int secLvl = securityLevel == 0 ? options.getSecurityLevel() : securityLevel;
-        String tryteMsg = TrytesConverter.asciiToTrytes(message);
+        int secLvl = options.getSecurityLevel();
+        if (securityLevel.isPresent()) {
+            if (InputValidator.isValidSecurityLevel(securityLevel.get())) {
+                secLvl = securityLevel.get();
+            } else {
+                throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
+            }
+        }
+        System.out.println(secLvl);
         
-        if (tag != null && !InputValidator.isTag(tag)) {
-            throw new ArgumentException(INVALID_TAG_INPUT_ERROR);
+        String tryteTag = tag.orElse("");
+        tryteTag = StringUtils.rightPad(tryteTag, Constants.TAG_LENGTH, '9');
+        
+        if (!InputValidator.isTag(tryteTag)) {
+            throw new ArgumentException(Constants.INVALID_TAG_INPUT_ERROR);
         }
         
-        StringUtils.rightPad(tag, Constants.MESSAGE_LENGTH, '9');
-        
-        Transfer transfer = new Transfer(address, 0, tryteMsg, tag);
-        List<Transfer> transfers = new LinkedList<>();
-        transfers.add(transfer);
+        String asciiMessage = message.orElse("");
+        String tryteMsg = TrytesConverter.asciiToTrytes( asciiMessage);
+        if (!InputValidator.isTrytes(tryteMsg, tryteMsg.length())) {
+            throw new ArgumentException(Constants.INVALID_INPUT_ERROR);
+        }
         
         try {
-            SendTransferResponse transferResponse = getApi().sendTransfer(options.getSeed(), secLvl, 
-                    options.getDept(), options.getMwm(), 
-                    transfers, null, null, false, false, null);
+            System.out.println("checkWereAddressSpentFrom: " + address);
+            boolean spent = false;//getApi().checkWereAddressSpentFrom(address);
+            if (spent) {
+                throw new ArgumentException(Constants.INVALID_ADDRESS_INPUT_ERROR);
+            }
             
-            Bundle bundle = new Bundle(transferResponse.getTransactions(), transferResponse.getTransactions().size());
+            Transfer transfer = new Transfer(address, amount, tryteMsg, tryteTag);
+            
+            System.out.println("findInputs");
+            List<Input> inputs = findInputs(amount, secLvl);
+            
+            AtomicLong totalValue = new AtomicLong(0);
+            inputs.stream().forEach(input -> totalValue.addAndGet(input.getBalance()));
+            
+            Transfer remainder = null;
+            if (totalValue.get() > amount) {
+                System.out.println("getInputAddress");
+                remainder = new Transfer(accountManager.getInputAddress(secLvl), totalValue.get() - amount, "", tryteTag);
+            }
+        
+            System.out.println("prepare");
+            List<String> trytes = prepareTransfers(transfer, inputs, remainder);
+            
+            System.out.println("send");
+            List<Transaction> transferResponse = getApi().sendTrytes(
+                    trytes.toArray(new String[trytes.size()]), options.getDept(), options.getMwm(), null);
+            
+            Bundle bundle = new Bundle(transferResponse, transferResponse.size());
             SendTransferEvent event = new SendTransferEvent(bundle);
             eventManager.emit(event);
             return bundle;
-        } catch (ArgumentException e) {
-            e.printStackTrace();
+        } catch (ArgumentException | IllegalStateException e) {
+            // TODO: Throw accounts error
+            
+            log.error(e.getMessage());
             return null;
         }
     }
-    
+
+    private List<Input> findInputs(int amount, int securityLevel) {
+        List<Input> inputs = new LinkedList<>();
+        inputs.add(new Input(accountManager.getInputAddress(securityLevel), 2, 1, securityLevel));
+        inputs.add(new Input(accountManager.getInputAddress(securityLevel), 3, 1, securityLevel));
+        return inputs;
+    }
+
     /**
      * 
      * @param message the optional message to use, can be null
@@ -246,7 +292,7 @@ public class IotaAccount {
         }
         
         if (tag.isPresent() && !InputValidator.isTag(tag.get())) {
-            throw new ArgumentException(INVALID_TAG_INPUT_ERROR);
+            throw new ArgumentException(Constants.INVALID_TAG_INPUT_ERROR);
         }
         
         String addressHash = Bundle.EMPTY_HASH;
@@ -255,22 +301,23 @@ public class IotaAccount {
             if (InputValidator.isAddress(address.get())) {
                 addressHash = Checksum.removeChecksum(address.get());
             } else {
-                throw new ArgumentException(INVALID_ADDRESS_INPUT_ERROR);
+                throw new ArgumentException(Constants.INVALID_ADDRESS_INPUT_ERROR);
             }
         }
 
         String tryteTag = tag.orElse("");
         tryteTag = StringUtils.rightPad(tryteTag, Constants.TAG_LENGTH, '9');
         
-        String tryteMessage = message.orElse("");
-        String tryteMsg = TrytesConverter.asciiToTrytes( tryteMessage);
+        //Set a mesage, or use default. We use this to keep track which transfer is the outbound.
+        String asciiMessage = message.orElse(Constants.ACCOUNT_MESSAGE);
+        String tryteMsg = TrytesConverter.asciiToTrytes( asciiMessage);
         
         Transfer transfer = new Transfer(addressHash, 0, tryteMsg, tryteTag);
-        
         List<Transfer> transfers = new LinkedList<>();
         transfers.add(transfer);
         
         try {
+            //Trytes of one bundle
             List<String> trytes = prepareTransfers(transfers);
             List<Transaction> transferResponse = getApi().sendTrytes(
                     trytes.toArray(new String[trytes.size()]), options.getDept(), options.getMwm(), null);
@@ -301,8 +348,61 @@ public class IotaAccount {
         return null;
     }
     
+    /**
+     * Translates input, remainder and transfer to a single list of transfers
+     * 
+     * @param transfer
+     * @param inputs
+     * @param remainder
+     * @return
+     * @see #prepareTransfers(List)
+     */
+    private List<String> prepareTransfers(Transfer transfer, List<Input> inputs, Transfer remainder) {
+        List<Transfer> transfers = new LinkedList<>();
+        
+        // Add the actual transfer
+        transfers.add(transfer);
+        
+        // Add all inputs as spent
+        inputs.stream().forEach(input -> {
+            transfers.add(new Transfer(input.getAddress(), -input.getBalance(), "", transfer.getTag()));
+            
+            // For each security level, add a transfer
+            for (int i = 1; i < input.getSecurity(); i++) {
+                transfers.add(new Transfer(input.getAddress(), 0, "", transfer.getTag()));
+            }
+        });
+        
+        //Add the remainder
+        if (remainder != null){
+            transfers.add(remainder);
+        }
+        
+        Bundle bundle = new Bundle();
+        System.out.println("prepareBundle");
+        List<String> signatureFragments = prepareBundle(bundle, transfers);
+        
+        try {
+            System.out.println("sign");
+            List<String> output = IotaAPIUtils.signInputsAndReturn(getSeed(), inputs, bundle, signatureFragments, getApi().getCurl());
+            Collections.reverse(output);
+            return output;
+        } catch (ArgumentException e) {
+            // Seed is validated at creation, will not happen under normal circumstances
+            return null; 
+        }
+    }
+    
     private List<String> prepareTransfers(List<Transfer> transfers){
         List<String> bundleTrytes = new LinkedList<>();
+        
+        for (Transfer transfer : transfers) {
+            if (transfer.getValue() > 0) {
+                
+            } if (!transfer.getMessage().equals("")) {
+                // Transfer message
+            }
+        }
         
         //If there are a lot of transfers, async and add atomic is still faster
         AtomicLong totalValue = new AtomicLong(0);
@@ -311,25 +411,21 @@ public class IotaAccount {
         Bundle bundle = new Bundle();
         List<String> signatureFragments = prepareBundle(bundle, transfers);
         
-        if (totalValue.longValue() == 0) {
-            //Zero value!  simply finalize the bundle
-            bundle.finalize(getApi().getCurl());
-            bundle.addTrytes(signatureFragments);
-
-            List<Transaction> trxb = bundle.getTransactions();
-
-            for (Transaction trx : trxb) {
-                bundleTrytes.add(trx.toTrytes());
-            }
-            Collections.reverse(bundleTrytes);
-            return bundleTrytes;
-        } else  {
-            // Oh oh! Were sending value!
-        }
+        signatureFragments.stream().forEach(System.out::println);
         
-        return null;
+        //Zero value!  simply finalize the bundle
+        bundle.finalize(getApi().getCurl());
+        bundle.addTrytes(signatureFragments);
+
+        List<Transaction> trxb = bundle.getTransactions();
+
+        for (Transaction trx : trxb) {
+            bundleTrytes.add(trx.toTrytes());
+        }
+        Collections.reverse(bundleTrytes);
+        return bundleTrytes;
     }
-    
+
     private List<String> prepareBundle(Bundle bundle, List<Transfer> transfers){
         List<String> signatureFragments = new ArrayList<>();
         
@@ -370,6 +466,7 @@ public class IotaAccount {
             long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
 
             // Add first entry to the bundle
+            System.out.println("trasnfer add to bundle: " + signatureMessageLength);
             bundle.addEntry(signatureMessageLength, transfer.getAddress(), transfer.getValue(), transfer.getTag(), timestamp);
         }
         return signatureFragments;
@@ -466,6 +563,34 @@ public class IotaAccount {
             this.seed = seed;
         }
         
+        public Builder mwm(int mwm) {
+            if (mwm > 0) {
+                this.mwm = mwm;
+            } else {
+                log.warn(Constants.INVALID_INPUT_ERROR);
+            }
+            return this;
+        }
+        
+        public Builder depth(int depth) {
+            if (depth > 0) {
+                this.depth = depth;
+            } else {
+                log.warn(Constants.INVALID_INPUT_ERROR);
+            }
+            return this;
+        }
+        
+        public Builder securityLevel(int securityLevel) {
+            if (InputValidator.isValidSecurityLevel(securityLevel)) {
+                this.securityLevel = securityLevel;
+            } else {
+                log.warn(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
+            }
+            
+            return this;
+        }
+        
         public Builder store(PersistenceAdapter store) {
             this.store = store;
             return this;
@@ -484,23 +609,23 @@ public class IotaAccount {
                     //calculate Account specific values
                     
                     if (0 == getMwm()) {
-                        mwm = config.getMwm();
+                        mwm(config.getMwm());
                     }
                     
                     if (0 == getDept()) {
-                        depth = config.getDept();
+                        depth(config.getDept());
                     }
                     
                     if (0 == getSecurityLevel()) {
-                        securityLevel = config.getSecurityLevel();
+                        securityLevel(config.getSecurityLevel());
                     }
                     
                     if (null == store) {
-                        store = config.getStore();
+                        store(config.getStore());
                     }
                     
                     if (null == api) {
-                        api = new IotaAPI.Builder().build();
+                        api(new IotaAPI.Builder().build());
                     }
                 }
             }

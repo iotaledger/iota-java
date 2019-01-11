@@ -123,9 +123,9 @@ public class Bundle implements Comparable<Bundle> {
             this.getTransactions().get(i).setLastIndex(this.getTransactions().size() - 1);
 
             int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).getLastIndex(), 27);
-
+            
             int[] t = Converter.trits(this.getTransactions().get(i).getAddress() + Converter.trytes(valueTrits) + this.getTransactions().get(i).getObsoleteTag() + Converter.trytes(timestampTrits) + Converter.trytes(currentIndexTrits) + Converter.trytes(lastIndexTrits));
-
+            
             curl.absorb(t, 0, t.length);
           }
 
@@ -164,22 +164,23 @@ public class Bundle implements Comparable<Bundle> {
         emptySignatureFragment = StringUtils.rightPad(emptySignatureFragment, 2187, '9');
 
         for (int i = 0; i < this.getTransactions().size(); i++) {
-
+            Transaction t = this.getTransactions().get(i);
+            
             // Fill empty signatureMessageFragment
-            this.getTransactions().get(i).setSignatureFragments((signatureFragments.size() <= i || signatureFragments.get(i).isEmpty()) ? emptySignatureFragment : signatureFragments.get(i));
+            t.setSignatureFragments((signatureFragments.size() <= i || signatureFragments.get(i).isEmpty()) ? emptySignatureFragment : signatureFragments.get(i));
             // Fill empty trunkTransaction
-            this.getTransactions().get(i).setTrunkTransaction(emptyHash);
+            t.setTrunkTransaction(emptyHash);
 
             // Fill empty branchTransaction
-            this.getTransactions().get(i).setBranchTransaction(emptyHash);
+            t.setBranchTransaction(emptyHash);
 
 
-            this.getTransactions().get(i).setAttachmentTimestamp(emptyTimestamp);
-            this.getTransactions().get(i).setAttachmentTimestampLowerBound(emptyTimestamp);
-            this.getTransactions().get(i).setAttachmentTimestampUpperBound(emptyTimestamp);
+            t.setAttachmentTimestamp(emptyTimestamp);
+            t.setAttachmentTimestampLowerBound(emptyTimestamp);
+            t.setAttachmentTimestampUpperBound(emptyTimestamp);
 
             // Fill empty nonce
-            this.getTransactions().get(i).setNonce(StringUtils.rightPad("", 27, "9"));
+            t.setNonce(StringUtils.rightPad("", 27, "9"));
 
         }
     }
