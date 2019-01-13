@@ -1,4 +1,4 @@
-package account.deposits;
+package org.iota.jota.account.deposits;
 
 import static org.junit.Assert.*;
 

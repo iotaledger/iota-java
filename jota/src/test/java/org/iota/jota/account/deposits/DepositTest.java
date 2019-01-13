@@ -1,4 +1,4 @@
-package account.deposits;
+package org.iota.jota.account.deposits;
 
 public abstract class DepositTest {
 
