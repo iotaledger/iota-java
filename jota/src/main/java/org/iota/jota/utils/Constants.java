@@ -75,6 +75,7 @@ public class Constants {
     
     public static final String INVALID_TAG_INPUT_ERROR = "Invalid tag provided.";
     public static final String INVALID_TRYTES_INPUT_ERROR = "Invalid trytes provided.";
+    public static final String INVALID_HASH_INPUT_ERROR = "Invalid hash provided.";
     public static final String INVALID_HASHES_INPUT_ERROR = "Invalid hashes provided.";
     public static final String INVALID_TAIL_HASH_INPUT_ERROR = "Invalid tail hash provided.";
     public static final String INVALID_SEED_INPUT_ERROR = "Invalid seed provided.";

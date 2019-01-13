@@ -42,5 +42,16 @@
             <artifactId>jadler-all</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <!-- Account specific -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.github.kenglxn.qrgen</groupId>
+            <artifactId>javase</artifactId>
+        </dependency>
     </dependencies>
 </project>

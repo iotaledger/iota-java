@@ -1,0 +1,7 @@
+package account.deposits;
+
+public abstract class DepositTest {
+
+    protected static final String depositAddress = 
+            "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZC";
+}

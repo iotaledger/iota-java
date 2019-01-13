@@ -22,7 +22,7 @@ public class IotaAPIUtils {
      * Generates a new address
      *
      * @param seed     The tryte-encoded seed. It should be noted that this seed is not transferred.
-     * @param security The secuirty level of private key / seed.
+     * @param security The security level of private key / seed.
      * @param index    The index to start search from. If the index is provided, the generation of the address is not deterministic.
      * @param checksum The adds 9-tryte address checksum
      * @param curl     The curl instance.

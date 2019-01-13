@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.StringUtils;
 import org.iota.jota.account.AccountState;
+import org.iota.jota.account.AccountStateImpl;
 import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.DepositRequest;
@@ -127,7 +128,7 @@ public class IotaAccount {
     }
     
     private boolean load() {
-        return load(new AccountState());
+        return load(new AccountStateImpl());
     }
     
     private boolean load(AccountState state) {
@@ -220,7 +221,7 @@ public class IotaAccount {
         
         try {
             System.out.println("checkWereAddressSpentFrom: " + address);
-            boolean spent = false;//getApi().checkWereAddressSpentFrom(address);
+            boolean spent = getApi().checkWereAddressSpentFrom(address);
             if (spent) {
                 throw new ArgumentException(Constants.INVALID_ADDRESS_INPUT_ERROR);
             }

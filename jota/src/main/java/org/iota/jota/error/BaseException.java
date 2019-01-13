@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class BaseException extends Exception {
+public class BaseException extends RuntimeException {
 
     /**
      * Serial version UID

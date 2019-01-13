@@ -1,5 +1,7 @@
 package org.iota.jota.account;
 
+import org.iota.jota.account.deposits.methods.DepositFactory;
+import org.iota.jota.account.deposits.methods.QRMethod;
 import org.iota.jota.account.errors.AddressGenerationError;
 import org.iota.jota.account.services.AddressGeneratorService;
 import org.iota.jota.config.options.AccountOptions;
@@ -7,18 +9,21 @@ import org.iota.jota.store.PersistenceAdapter;
 
 public class AccountStateManager {
 
-    private PersistenceAdapter store;
+    private AccountStore store;
     private AccountState state;
     
     private AccountOptions options;
     private AddressGeneratorService addressService;
     
-    public AccountStateManager(AccountState state, AddressGeneratorService addressService, AccountOptions options, PersistenceAdapter store) {
+    
+    public AccountStateManager(AccountState state, AddressGeneratorService addressService, AccountOptions options, AccountStore store) {
         this.state = state;
         this.addressService = addressService;
         
         this.store = store;
         this.options = options;
+        
+        Object magnet = DepositFactory.get().build(null, QRMethod.class);
     }
 
     public AccountState getAccountState() {
@@ -26,7 +31,7 @@ public class AccountStateManager {
     }
 
     public void save() {
-        state.save(store);
+        //state.save(store);
     }
     
     public String nextZeroValueAddress(int secLvl) throws AddressGenerationError {
@@ -48,6 +53,7 @@ public class AccountStateManager {
             
             // Zero value doesn't sign, so no risk of fund loss
             state.addAddress(address, -newIndex);
+            save();
             return address;
         }
     }
