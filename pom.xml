@@ -196,10 +196,10 @@
 
     <profiles>
         <profile>
-            <id>release</id>
+            <id>build</id>
             <activation>
-		          <activeByDefault>true</activeByDefault>
-		    </activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -257,20 +257,31 @@
                         <artifactId>maven-site-plugin</artifactId>
                         <version>${version.maven-site-plugin}</version>
                     </plugin>
-		    <plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-gpg-plugin</artifactId>
-			    <version>1.5</version>
-			    <executions>
-				    <execution>
-					    <id>sign-artifacts</id>
-					    <phase>verify</phase>
-					    <goals>
-						    <goal>sign</goal>
-					    </goals>
-				    </execution>
-			    </executions>
-		    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    
+        <profile>
+            <id>release</id>
+            <activation>
+		          <activeByDefault>false</activeByDefault>
+		    </activation>
+            <build>
+                <plugins>
+				    <plugin>
+					    <groupId>org.apache.maven.plugins</groupId>
+					    <artifactId>maven-gpg-plugin</artifactId>
+					    <version>1.5</version>
+					    <executions>
+						    <execution>
+							    <id>sign-artifacts</id>
+							    <phase>verify</phase>
+							    <goals>
+								    <goal>sign</goal>
+							    </goals>
+						    </execution>
+					    </executions>
+				    </plugin>
                 </plugins>
             </build>
         </profile>
