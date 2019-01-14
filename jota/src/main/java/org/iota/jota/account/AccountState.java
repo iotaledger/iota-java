@@ -9,6 +9,11 @@ import org.iota.jota.account.deposits.DepositRequest;
 
 public class AccountState implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8261579952650062417L;
+
     long keyIndex;
     
     Map<Long, DepositRequest> depositRequests;
@@ -72,14 +77,22 @@ public class AccountState implements Serializable {
     }
     
     @Override
+    public String toString() {
+        return "AccountState [keyIndex=" + keyIndex + ", depositRequests=" + depositRequests + ", pendingTransfers="
+                + pendingTransfers + "]";
+    }
+
+    @Override
     public boolean equals(Object obj) {
+        System.out.println("EQUALS check");
+        System.out.println(obj);
+        System.out.println(this);
+        
         if (!obj.getClass().equals(AccountState.class)) {
             return false;
         }
         
         AccountState as = (AccountState) obj;
-        return as.keyIndex == keyIndex
-                && Objects.equals(as.depositRequests, depositRequests)
-                && Objects.equals(as.pendingTransfers, pendingTransfers);
+        return as.keyIndex == keyIndex;
     }
 }

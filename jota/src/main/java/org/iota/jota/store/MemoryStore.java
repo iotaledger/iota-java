@@ -9,7 +9,7 @@ public class MemoryStore implements Store {
     private Map<String, Serializable> store;
     
     public MemoryStore() {
-        store = new ConcurrentHashMap<String, Serializable>();
+        
     }
     
     public MemoryStore(Map<String, Serializable> store) {
@@ -17,30 +17,34 @@ public class MemoryStore implements Store {
     }
 
     @Override
-    public Serializable get(String key) {
+    public <T extends Serializable> T get(String key) {
         return get(key, null);
     }
 
     @Override
-    public Serializable get(String key, Serializable def) {
-        Serializable ret = store.get(key);
-        return ret != null ? ret : def;
-        
+    public <T extends Serializable> T get(String key, T def) {
+        Serializable prop = store.get(key);
+        return prop != null ? (T) prop : def;
     }
     
     @Override
-    public void load() throws Exception {
-        
+    public <T extends Serializable> T set(String key, T value) {
+        T old = (T) store.put(key, value);
+        return old;
+    }
+    
+    @Override
+    public void load() {
+        store = new ConcurrentHashMap<>();
     }
 
     @Override
-    public void save() throws Exception {
+    public void save() {
         
     }
-
-    @Override
-    public Serializable set(String key, Serializable value) {
-        return store.put(key, value);
+    
+    public Map<String, Serializable> getStore() {
+        return store;
     }
 
     @Override

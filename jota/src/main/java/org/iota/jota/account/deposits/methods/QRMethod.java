@@ -51,7 +51,6 @@ public class QRMethod implements DepositMethod<QRCode>{
             return null;
         }
         
-        System.out.println(conditions);
         byte b[] = Base64.decode(conditions.getBytes()); 
         ByteArrayInputStream bi = new ByteArrayInputStream(b);
         ObjectInputStream si;
@@ -80,6 +79,7 @@ public class QRMethod implements DepositMethod<QRCode>{
             so = new ObjectOutputStream(bo);
             so.writeObject(conditions);
             so.flush();
+            so.close();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
