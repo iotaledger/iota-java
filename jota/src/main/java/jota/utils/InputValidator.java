@@ -26,7 +26,23 @@ public class InputValidator {
      **/
     public static boolean isAddress(String address) {
         return (address.length() == Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM ||
-                address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM) && isTrytes(address);
+                address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM) 
+                && isTrytes(address)
+                && hasTrailingZeroTrit(address);
+    }
+
+    /**
+     * According to the following issue:
+     * https://github.com/iotaledger/trinity-wallet/issues/866
+     * 
+     * This is because Curl addresses always are with a 0 trit on the end
+     * 
+     * @param address The trytes to check
+     * @return <code>true</code> if the specified trytes end with 0, otherwise <code>false</code>.
+     */
+    private static boolean hasTrailingZeroTrit(String address) {
+       int[] trits = Converter.trits(address);
+       return trits[trits.length - 1] == 0;
     }
 
     /**
