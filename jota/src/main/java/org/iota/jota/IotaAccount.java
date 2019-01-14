@@ -15,8 +15,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.StringUtils;
 import org.iota.jota.account.AccountState;
-import org.iota.jota.account.AccountStateImpl;
 import org.iota.jota.account.AccountStateManager;
+import org.iota.jota.account.AccountStore;
+import org.iota.jota.account.AccountStoreImpl;
 import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.errors.AccountLoadError;
@@ -26,6 +27,8 @@ import org.iota.jota.account.event.events.SendTransferEvent;
 import org.iota.jota.account.event.impl.EventManagerImpl;
 import org.iota.jota.account.promoter.PromoterReattacherImpl;
 import org.iota.jota.account.services.AddressGeneratorService;
+import org.iota.jota.account.services.clock.Clock;
+import org.iota.jota.account.services.clock.SystemClock;
 import org.iota.jota.account.transferchecker.IncomingTransferCheckerImpl;
 import org.iota.jota.account.transferchecker.OutgoingTransferCheckerImpl;
 import org.iota.jota.config.AccountConfig;
@@ -128,14 +131,14 @@ public class IotaAccount {
     }
     
     private boolean load() {
-        return load(new AccountStateImpl());
+        return load(new AccountState());
     }
     
     private boolean load(AccountState state) {
         try {
             AddressGeneratorService service = new AddressGeneratorService(options);
             state.load(service, getStore());
-            accountManager = new AccountStateManager(state, service, options, getStore());
+            accountManager = new AccountStateManager(state, service, options, new AccountStoreImpl(getStore()));
             
             addTask(new PromoterReattacherImpl(eventManager, getApi()));
             addTask(new IncomingTransferCheckerImpl(eventManager, getApi()));
@@ -237,7 +240,7 @@ public class IotaAccount {
             Transfer remainder = null;
             if (totalValue.get() > amount) {
                 System.out.println("getInputAddress");
-                remainder = new Transfer(accountManager.getInputAddress(secLvl), totalValue.get() - amount, "", tryteTag);
+                remainder = new Transfer(accountManager.getInputAddress(secLvl).toString(), totalValue.get() - amount, "", tryteTag);
             }
         
             System.out.println("prepare");
@@ -261,8 +264,8 @@ public class IotaAccount {
 
     private List<Input> findInputs(int amount, int securityLevel) {
         List<Input> inputs = new LinkedList<>();
-        inputs.add(new Input(accountManager.getInputAddress(securityLevel), 2, 1, securityLevel));
-        inputs.add(new Input(accountManager.getInputAddress(securityLevel), 3, 1, securityLevel));
+        inputs.add(new Input(accountManager.getInputAddress(securityLevel).toString(), 2, 1, securityLevel));
+        inputs.add(new Input(accountManager.getInputAddress(securityLevel).toString(), 3, 1, securityLevel));
         return inputs;
     }
 
@@ -554,6 +557,8 @@ public class IotaAccount {
         
         private int mwm, depth, securityLevel;
         
+        private Clock clock;
+        
         public Builder(String seed) throws ArgumentException {
             super(log);
             
@@ -601,6 +606,11 @@ public class IotaAccount {
             this.api = api;
             return this;
         }
+        
+        public Builder clock(Clock clock) {
+            this.clock = clock;
+            return this;
+        }
 
         @Override
         protected Builder generate() throws Exception {
@@ -627,6 +637,10 @@ public class IotaAccount {
                     
                     if (null == api) {
                         api(new IotaAPI.Builder().build());
+                    }
+                    
+                    if (null == clock) {
+                        clock(new SystemClock());
                     }
                 }
             }
@@ -667,6 +681,11 @@ public class IotaAccount {
         @Override
         public PersistenceAdapter getStore() {
             return store;
+        }
+
+        @Override
+        public Clock getTime() {
+            return clock;
         }
     }
 }

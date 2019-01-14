@@ -1,11 +1,11 @@
 package org.iota.jota.account;
 
 import org.iota.jota.account.deposits.methods.DepositFactory;
-import org.iota.jota.account.deposits.methods.QRMethod;
 import org.iota.jota.account.errors.AddressGenerationError;
 import org.iota.jota.account.services.AddressGeneratorService;
 import org.iota.jota.config.options.AccountOptions;
 import org.iota.jota.store.PersistenceAdapter;
+import org.iota.jota.types.Address;
 
 public class AccountStateManager {
 
@@ -22,8 +22,6 @@ public class AccountStateManager {
         
         this.store = store;
         this.options = options;
-        
-        Object magnet = DepositFactory.get().build(null, QRMethod.class);
     }
 
     public AccountState getAccountState() {
@@ -34,33 +32,16 @@ public class AccountStateManager {
         //state.save(store);
     }
     
-    public String nextZeroValueAddress(int secLvl) throws AddressGenerationError {
+    public Address nextZeroValueAddress(int secLvl) throws AddressGenerationError {
         synchronized (this) {
-            for (Integer index : state.getIndexes()) {
-                if (index > 0) {
-                    // Spent
-                } else {
-                    // We can use it!
-                    return state.getAddress(index);
-                }
-            }
-            
-            System.out.println(store);
-            System.out.println(options);
-            int newIndex = store.getIndexAndIncrease(options.getSeed());
-            // We have none available, lets make one!
-            String address = addressService.get(newIndex);
-            
-            // Zero value doesn't sign, so no risk of fund loss
-            state.addAddress(address, -newIndex);
-            save();
+            Address address = null;
             return address;
         }
     }
 
     
 
-    public String getInputAddress(int secLvl) {
+    public Address getInputAddress(int secLvl) {
         try {
             return nextZeroValueAddress(secLvl);
         } catch (AddressGenerationError e) {

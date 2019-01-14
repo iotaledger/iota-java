@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.iota.jota.IotaAPI;
 import org.iota.jota.IotaAccount;
+import org.iota.jota.account.services.clock.Clock;
 import org.iota.jota.config.AccountConfig;
 import org.iota.jota.store.PersistenceAdapter;
 
@@ -18,6 +19,8 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
     
     private String seed;
     
+    private Clock clock;
+    
     public AccountOptions(IotaAccount.Builder builder) {
         mwm = builder.getMwm();
         depth = builder.getDept();
@@ -25,6 +28,7 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
         store = builder.getStore();
         api = builder.getApi();
         seed = builder.getSeed();
+        clock = builder.getTime();
     }
     
     @Override
@@ -61,6 +65,11 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
     @Override
     public String toString() {
         return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
+    }
+
+    @Override
+    public Clock getTime() {
+        return clock;
     }
 
 }

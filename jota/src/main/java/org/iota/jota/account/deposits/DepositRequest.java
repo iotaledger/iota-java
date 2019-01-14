@@ -68,4 +68,9 @@ public class DepositRequest {
                 && dr.timeOut.equals(timeOut)
                 && dr.expectedAmount == expectedAmount;
     }
+    
+    @Override
+    public DepositRequest clone() throws CloneNotSupportedException {
+        return (DepositRequest) super.clone();
+    }
 }

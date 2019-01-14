@@ -21,7 +21,7 @@ public class AccountStoreImpl implements AccountStore {
     }
 
     @Override
-    public AccountStateImpl LoadAccount(String id) {
+    public AccountState LoadAccount(String id) {
         // TODO Auto-generated method stub
         return null;
     }
