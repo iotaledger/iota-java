@@ -8,6 +8,7 @@ import jota.pow.ICurl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
@@ -126,6 +127,7 @@ public class IotaAPIUtils {
         for (Transaction tx : bundle.getTransactions()) {
             bundleTrytes.add(tx.toTrytes());
         }
+        Collections.reverse(bundleTrytes);
         return bundleTrytes;
     }
 }
