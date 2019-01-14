@@ -1,6 +1,8 @@
 package org.iota.jota.types;
 
-public class Trits {
+import java.io.Serializable;
+
+public class Trits implements Serializable {
     
     private String trits;
 

@@ -6,7 +6,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.iota.jota.IotaAPI;
-import org.iota.jota.account.AccountStateImpl;
+import org.iota.jota.account.AccountState;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.EventTaskService;
@@ -72,7 +72,7 @@ public class PromoterReattacherImpl implements PromoterReattacher, EventTaskServ
     }
 
     private void doTask(Bundle bundle) {
-        AccountStateImpl state = null;
+        AccountState state = null;
         Bundle pendingBundle;
         while ((pendingBundle = getPendingBundle(state)) != null) {
             Transaction promotableTail = findPromotableTail(pendingBundle);
@@ -109,7 +109,7 @@ public class PromoterReattacherImpl implements PromoterReattacher, EventTaskServ
         return null;
     }
 
-    private Bundle getPendingBundle(AccountStateImpl state) {
+    private Bundle getPendingBundle(AccountState state) {
         return null;
     }
 }

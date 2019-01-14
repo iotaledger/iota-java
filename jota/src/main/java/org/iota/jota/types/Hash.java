@@ -1,10 +1,12 @@
 package org.iota.jota.types;
 
+import java.io.Serializable;
+
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.InputValidator;
 
-public class Hash {
+public class Hash  implements Serializable {
 
     private String hash;
 

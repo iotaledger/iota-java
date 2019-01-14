@@ -4,9 +4,9 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.iota.jota.IotaAPI;
 import org.iota.jota.IotaAccount;
+import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.services.clock.Clock;
 import org.iota.jota.config.AccountConfig;
-import org.iota.jota.store.PersistenceAdapter;
 
 public class AccountOptions implements AccountConfig, AccountBuilderSettings {
 
@@ -14,7 +14,7 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
     private int depth;
     private int securityLevel;
     
-    private PersistenceAdapter store;
+    private AccountStore store;
     private IotaAPI api;
     
     private String seed;
@@ -43,12 +43,11 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
 
     @Override
     public int getSecurityLevel() {
-        // TODO Auto-generated method stub
         return securityLevel;
     }
 
     @Override
-    public PersistenceAdapter getStore() {
+    public AccountStore getStore() {
         return store;
     }
 
@@ -71,5 +70,4 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
     public Clock getTime() {
         return clock;
     }
-
 }

@@ -1,8 +1,11 @@
 package org.iota.jota.account.deposits;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class DepositRequest {
+import org.iota.jota.account.AccountState;
+
+public class DepositRequest  implements Serializable {
     
     Date timeOut;
     

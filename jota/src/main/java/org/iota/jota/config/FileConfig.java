@@ -3,9 +3,10 @@ package org.iota.jota.config;
 import java.io.File;
 import java.util.Optional;
 
+import org.iota.jota.account.AccountStore;
+import org.iota.jota.account.AccountStoreImpl;
 import org.iota.jota.store.FlatFileStore;
 import org.iota.jota.store.IotaFileStore;
-import org.iota.jota.store.PersistenceAdapter;
 import org.iota.jota.store.PropertiesStore;
 
 public class FileConfig extends IotaClientConfig {
@@ -61,8 +62,8 @@ public class FileConfig extends IotaClientConfig {
     }
 
     @Override
-    public PersistenceAdapter getStore() {
-        return new IotaFileStore(stringOrNull(CONFIG_STORE));
+    public AccountStore getStore() {
+        return new AccountStoreImpl(new IotaFileStore(stringOrNull(CONFIG_STORE)));
     }
     
     @Override

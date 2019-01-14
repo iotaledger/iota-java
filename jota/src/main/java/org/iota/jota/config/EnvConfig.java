@@ -1,8 +1,9 @@
 package org.iota.jota.config;
 
+import org.iota.jota.account.AccountStore;
+import org.iota.jota.account.AccountStoreImpl;
 import org.iota.jota.store.EnvironmentStore;
 import org.iota.jota.store.IotaFileStore;
-import org.iota.jota.store.PersistenceAdapter;
 
 public class EnvConfig extends IotaClientConfig {
 
@@ -41,8 +42,8 @@ public class EnvConfig extends IotaClientConfig {
     }
 
     @Override
-    public PersistenceAdapter getStore() {
-        return new IotaFileStore(stringOrNull(ENV_STORE));
+    public AccountStore getStore() {
+        return new AccountStoreImpl(new IotaFileStore(stringOrNull(ENV_STORE)));
     }
     
     @Override

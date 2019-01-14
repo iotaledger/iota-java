@@ -1,6 +1,6 @@
 package org.iota.jota.config;
 
-import org.iota.jota.store.PersistenceAdapter;
+import org.iota.jota.account.AccountStore;
 
 public interface AccountConfig extends Config {
     
@@ -26,5 +26,5 @@ public interface AccountConfig extends Config {
      * The storage method we use for storing indexes and unsend transactions
      * @return
      */
-    PersistenceAdapter getStore();
+    AccountStore getStore();
 }

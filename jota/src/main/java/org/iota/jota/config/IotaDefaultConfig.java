@@ -1,7 +1,8 @@
 package org.iota.jota.config;
 
+import org.iota.jota.account.AccountStore;
+import org.iota.jota.account.AccountStoreImpl;
 import org.iota.jota.store.IotaFileStore;
-import org.iota.jota.store.PersistenceAdapter;
 import org.iota.jota.utils.Constants;
 
 public class IotaDefaultConfig extends IotaClientConfig {
@@ -22,8 +23,8 @@ public class IotaDefaultConfig extends IotaClientConfig {
     }
 
     @Override
-    public PersistenceAdapter getStore() {
-        return new IotaFileStore();
+    public AccountStore getStore() {
+        return new AccountStoreImpl(new IotaFileStore());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.iota.jota.account;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -7,7 +8,7 @@ import java.util.stream.Stream;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trits;
 
-public class PendingTransfer {
+public class PendingTransfer implements Serializable {
     
     /**
      * 
@@ -46,5 +47,16 @@ public class PendingTransfer {
     @Override
     public PendingTransfer clone() throws CloneNotSupportedException {
         return (PendingTransfer) super.clone();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (!obj.getClass().equals(PendingTransfer.class)) {
+            return false;
+        }
+        
+        PendingTransfer pt = (PendingTransfer) obj;
+        return pt.bundle == bundle
+                && pt.tailHashes.equals(tailHashes);
     }
 }

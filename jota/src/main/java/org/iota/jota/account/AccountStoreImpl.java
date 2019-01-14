@@ -14,7 +14,7 @@ public class AccountStoreImpl implements AccountStore {
 
     public AccountStoreImpl(Store store) {
         if (!store.canWrite()) {
-            
+            throw new IllegalArgumentException("Accoutns requires a writeable store");
         }
         
         this.store = store;
@@ -22,8 +22,7 @@ public class AccountStoreImpl implements AccountStore {
 
     @Override
     public AccountState LoadAccount(String id) {
-        // TODO Auto-generated method stub
-        return null;
+        return store.get(id, new AccountState());
     }
 
     @Override

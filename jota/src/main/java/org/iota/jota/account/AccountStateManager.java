@@ -1,10 +1,8 @@
 package org.iota.jota.account;
 
-import org.iota.jota.account.deposits.methods.DepositFactory;
 import org.iota.jota.account.errors.AddressGenerationError;
 import org.iota.jota.account.services.AddressGeneratorService;
 import org.iota.jota.config.options.AccountOptions;
-import org.iota.jota.store.PersistenceAdapter;
 import org.iota.jota.types.Address;
 
 public class AccountStateManager {

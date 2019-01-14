@@ -1,10 +1,14 @@
 package org.iota.jota.store;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Properties;
@@ -13,8 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FlatFileStore implements Store {
-    
-    private static final String KEY_INDEX = "index";
 
     private static final Logger log = LoggerFactory.getLogger(FlatFileStore.class);
     
@@ -32,7 +34,7 @@ public class FlatFileStore implements Store {
     @Override
     public void load() throws Exception {
         properties = new Properties();
-        System.out.println(f.getAbsolutePath());
+        
         if (!f.exists()) {
             f.createNewFile();
             
@@ -81,24 +83,44 @@ public class FlatFileStore implements Store {
     }
 
     @Override
-    public Serializable get(String key) {
-        return properties.getProperty(key);
+    public <T extends Serializable> T get(String key) {
+        return get(key,  null);
     }
 
     @Override
-    public Serializable get(String key, Serializable def) {
+    public <T extends Serializable> T get(String key, T def) {
         String prop = properties.getProperty(key);
-        return prop != null ? prop : def;
-    }
-
-    @Override
-    public Serializable set(String key, Serializable value) {
-        String prop = properties.getProperty(key);
-        properties.setProperty(key, value.toString());
-        
-        if (key.startsWith(KEY_INDEX)) {
-            save();
+        if (null != prop) {
+            ObjectInputStream objIn;
+            try {
+                objIn = new ObjectInputStream(new ByteArrayInputStream(prop.getBytes()));
+                T actual = (T) objIn.readObject();
+                
+                return prop != null ? actual : def;
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+        
+        return def;
+    }
+
+    @Override
+    public <T extends Serializable> T set(String key, T value) {
+        T prop = get(key);
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream objOut;
+        try {
+            objOut = new ObjectOutputStream(out);
+            objOut.writeObject(value);
+            objOut.close();
+            
+            properties.setProperty(key, out.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
         return prop;
     }
     

@@ -35,7 +35,6 @@ import org.iota.jota.config.AccountConfig;
 import org.iota.jota.config.FileConfig;
 import org.iota.jota.config.options.AccountBuilderSettings;
 import org.iota.jota.config.options.AccountOptions;
-import org.iota.jota.store.PersistenceAdapter;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
@@ -102,7 +101,7 @@ public class IotaAccount {
      * @param store The method we use for storing key/value data
      * @throws Exception If the config did not load for whatever reason
      */
-    public IotaAccount(String seed, PersistenceAdapter store) throws Exception {
+    public IotaAccount(String seed, AccountStore store) throws Exception {
         this(new Builder(seed).store(store).generate());
     }
     
@@ -114,7 +113,7 @@ public class IotaAccount {
      * @param config The location of the config
      * @throws Exception If the config did not load for whatever reason
      */
-    public IotaAccount(String seed, PersistenceAdapter store, String config) throws Exception {
+    public IotaAccount(String seed, AccountStore store, String config) throws Exception {
         this(new Builder(seed).store(store).config(new FileConfig(config)).generate());
     }
 
@@ -126,7 +125,7 @@ public class IotaAccount {
      * @param iotaConfig The config we load nodes from
      * @throws Exception If the config did not load for whatever reason
      */
-    public IotaAccount(String seed, PersistenceAdapter store, AccountConfig iotaConfig) throws Exception {
+    public IotaAccount(String seed, AccountStore store, AccountConfig iotaConfig) throws Exception {
         this(new Builder(seed).store(store).config(iotaConfig).generate());
     }
     
@@ -138,7 +137,7 @@ public class IotaAccount {
         try {
             AddressGeneratorService service = new AddressGeneratorService(options);
             state.load(service, getStore());
-            accountManager = new AccountStateManager(state, service, options, new AccountStoreImpl(getStore()));
+            accountManager = new AccountStateManager(state, service, options, getStore());
             
             addTask(new PromoterReattacherImpl(eventManager, getApi()));
             addTask(new IncomingTransferCheckerImpl(eventManager, getApi()));
@@ -516,7 +515,7 @@ public class IotaAccount {
         return options.getSeed();
     }
     
-    public PersistenceAdapter getStore(){
+    public AccountStore getStore(){
         return options.getStore();
     }
     
@@ -550,7 +549,7 @@ public class IotaAccount {
         
         private static final Logger log = LoggerFactory.getLogger(IotaAccount.class);
         
-        private PersistenceAdapter store;
+        private AccountStore store;
         private IotaAPI api;
 
         private String seed;
@@ -597,7 +596,7 @@ public class IotaAccount {
             return this;
         }
         
-        public Builder store(PersistenceAdapter store) {
+        public Builder store(AccountStore store) {
             this.store = store;
             return this;
         }
@@ -679,7 +678,7 @@ public class IotaAccount {
         }
 
         @Override
-        public PersistenceAdapter getStore() {
+        public AccountStore getStore() {
             return store;
         }
 
