@@ -603,6 +603,11 @@ public class IotaAPI extends IotaAPICore {
 
         // Get inputs if we are sending tokens
         if (totalValue != 0) {
+            for (Transfer t : transfers) {
+                if (!InputValidator.hasTrailingZeroTrit(t.getAddress())) {
+                    throw new ArgumentException(Constants.INVALID_ADDRESSES_INPUT_ERROR);
+                }
+            }
 
             //  Case 1: user provided inputs
             //  Validate the inputs by calling getBalances
@@ -1270,7 +1275,12 @@ public class IotaAPI extends IotaAPICore {
 
         // Get inputs if we are sending tokens
         if (totalValue != 0) {
-
+            for (Transfer t : transfers) {
+                if (!InputValidator.hasTrailingZeroTrit(t.getAddress())) {
+                    throw new ArgumentException(Constants.INVALID_ADDRESSES_INPUT_ERROR);
+                }
+            }
+            
             List<String> tipHashes = null;
             if (tips != null) {
                 tipHashes = new ArrayList<>(tips.size());
@@ -1379,8 +1389,12 @@ public class IotaAPI extends IotaAPICore {
 
         //check if send to input
         for (Transaction trx : inputTransactions) {
-            if (trx.getValue() > 0 && inputAddresses.contains(trx.getAddress())) {
-                throw new ArgumentException(Constants.SEND_TO_INPUTS_ERROR);
+            if (trx.getValue() > 0 ) {
+                if (inputAddresses.contains(trx.getAddress())) {
+                    throw new ArgumentException(Constants.SEND_TO_INPUTS_ERROR);
+                } else if (!InputValidator.hasTrailingZeroTrit(trx.getAddress())) {
+                    throw new ArgumentException(Constants.INVALID_ADDRESSES_INPUT_ERROR);
+                }
             }
         }
 
