@@ -27,8 +27,7 @@ public class AccountStoreImpl implements AccountStore {
 
     @Override
     public void RemoveAccount(String id) {
-        // TODO Auto-generated method stub
-
+        store.set(id, null);
     }
 
     @Override

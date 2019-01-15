@@ -7,6 +7,8 @@ import java.util.Objects;
 
 import org.iota.jota.account.deposits.DepositRequest;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class AccountState implements Serializable {
 
     /**
@@ -47,6 +49,14 @@ public class AccountState implements Serializable {
         return depositRequests.size() == 0 && pendingTransfers.size() == 0;
     }
     
+    public Map<Long, DepositRequest> getDepositRequests() {
+        return depositRequests;
+    }
+    
+    public Map<String, PendingTransfer> getPendingTransfers() {
+        return pendingTransfers;
+    }
+    
     @Override
     public AccountState clone() throws CloneNotSupportedException {
         AccountState newState = new AccountState();
@@ -81,10 +91,6 @@ public class AccountState implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        System.out.println("EQUALS check");
-        System.out.println(obj);
-        System.out.println(this);
-        
         if (obj == null || !obj.getClass().equals(AccountState.class)) {
             return false;
         }

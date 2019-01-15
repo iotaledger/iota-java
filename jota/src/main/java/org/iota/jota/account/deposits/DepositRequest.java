@@ -5,14 +5,22 @@ import java.util.Date;
 
 import org.iota.jota.account.AccountState;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class DepositRequest  implements Serializable {
     
+    private static final long serialVersionUID = -1214895100919711824L;
+
     Date timeOut;
     
     boolean multiUse;
     
     long expectedAmount;
 
+    private DepositRequest() {
+        
+    }
+    
     public DepositRequest(Date timeOut, boolean multiUse, long expectedAmount) {
         this.timeOut = timeOut;
         this.multiUse = multiUse;
@@ -26,6 +34,10 @@ public class DepositRequest  implements Serializable {
      */
     public Date getTimeOut() {
         return timeOut;
+    }
+    
+    public boolean getMultiUse() {
+        return multiUse;
     }
 
     /**

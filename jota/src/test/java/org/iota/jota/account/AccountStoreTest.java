@@ -6,7 +6,6 @@ import java.util.Date;
 
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.store.FlatFileStore;
-import org.iota.jota.store.IotaFileStore;
 import org.iota.jota.store.MemoryStore;
 import org.iota.jota.store.Store;
 import org.junit.Before;
@@ -44,7 +43,6 @@ public class AccountStoreTest {
         AccountStore as = new AccountStoreImpl(store);
         AccountState loadedState = as.LoadAccount(addressId);
         
-
         assertEquals(state, loadedState);
     }
 }

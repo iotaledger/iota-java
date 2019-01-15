@@ -8,20 +8,28 @@ import java.util.stream.Stream;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trits;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PendingTransfer implements Serializable {
-    
+
+    private static final long serialVersionUID = 5549430894683695596L;
+
     /**
      * 
      */
-    Trits[] bundle;
+    Trits[] bundleTrits;
 
     /**
      * 
      */
     List<Hash> tailHashes;
     
+    public PendingTransfer() {
+        
+    }
+    
     public PendingTransfer(Trits[] bundle) {
-        this.bundle = bundle;
+        this.bundleTrits = bundle;
     }
     
     /**
@@ -40,8 +48,12 @@ public class PendingTransfer implements Serializable {
      * 
      * @return
      */
-    public Stream<Hash> getHashes(){
+    public Stream<Hash> getTailHashes(){
         return tailHashes.stream();
+    }
+    
+    public Trits[] getBundleTrits() {
+        return bundleTrits;
     }
     
     @Override
@@ -56,7 +68,7 @@ public class PendingTransfer implements Serializable {
         }
         
         PendingTransfer pt = (PendingTransfer) obj;
-        return pt.bundle == bundle
+        return pt.bundleTrits == bundleTrits
                 && pt.tailHashes.equals(tailHashes);
     }
 }
