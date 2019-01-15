@@ -7,8 +7,6 @@ import java.util.Objects;
 
 import org.iota.jota.account.deposits.DepositRequest;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class AccountState implements Serializable {
 
     /**
@@ -36,6 +34,10 @@ public class AccountState implements Serializable {
         depositRequests.put(index, request);
     }
     
+    public void removeDepositRequest(long index) {
+        depositRequests.remove(index);
+    }
+    
     /**
      * 
      * @param hash
@@ -43,6 +45,10 @@ public class AccountState implements Serializable {
      */
     public void addPendingTransfers(String hash, PendingTransfer request){
         pendingTransfers.put(hash, request);
+    }
+    
+    public void removePendingTransfer(String hash) {
+        pendingTransfers.remove(hash);
     }
     
     boolean isNew() {
@@ -55,6 +61,10 @@ public class AccountState implements Serializable {
     
     public Map<String, PendingTransfer> getPendingTransfers() {
         return pendingTransfers;
+    }
+    
+    public PendingTransfer getPendingTransfer(String hash) {
+        return pendingTransfers.get(hash);
     }
     
     @Override
@@ -81,6 +91,10 @@ public class AccountState implements Serializable {
     
     public void setKeyIndex(long keyIndex) {
         this.keyIndex = keyIndex;
+    }
+    
+    public long getKeyIndex() {
+        return this.keyIndex;
     }
     
     @Override

@@ -136,7 +136,7 @@ public class IotaAccount {
     private boolean load(AccountState state) {
         try {
             AddressGeneratorService service = new AddressGeneratorService(options);
-            state.load(service, getStore());
+            
             accountManager = new AccountStateManager(state, service, options, getStore());
             
             addTask(new PromoterReattacherImpl(eventManager, getApi()));
@@ -507,7 +507,8 @@ public class IotaAccount {
             }
             unload();
             load(state);
-            state.save(getStore());
+            
+            this.accountManager.save();
         }
     }
     

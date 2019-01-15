@@ -27,7 +27,7 @@ public class AccountStateManager {
     }
 
     public void save() {
-        //state.save(store);
+        
     }
     
     public Address nextZeroValueAddress(int secLvl) throws AddressGenerationError {

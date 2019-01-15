@@ -13,15 +13,15 @@ public interface AccountStore {
     
     void RemoveAccount(String id);
     
-    int ReadIndex(String id);
+    long ReadIndex(String id);
     
-    void writeIndex(String id, int index);
+    void writeIndex(String id, long index);
     
-    void addDepositRequest(String id, int index, DepositRequest request);
+    void addDepositRequest(String id, long index, DepositRequest request);
     
-    void removeDepositRequest(String id, int index);
+    void removeDepositRequest(String id, long index);
     
-    Map<Integer, DepositRequest> getDepositRequests(String id);
+    Map<Long, DepositRequest> getDepositRequests(String id);
     
     void addPendingTransfer(String id, Hash tailTx, Trytes[] bundleTrytes, int... indices);
     
@@ -29,5 +29,5 @@ public interface AccountStore {
     
     void addTailHash(String id, Hash tailHash, Hash newTailTxHash);
     
-    Map<String, Bundle> getPendingTransfers(String id);
+    Map<String, PendingTransfer> getPendingTransfers(String id);
 }
