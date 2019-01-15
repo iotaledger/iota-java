@@ -14,7 +14,7 @@ public class AccountStoreImpl implements AccountStore {
 
     public AccountStoreImpl(Store store) {
         if (!store.canWrite()) {
-            throw new IllegalArgumentException("Accoutns requires a writeable store");
+            throw new IllegalArgumentException("Accounts requires a writeable store");
         }
         
         this.store = store;

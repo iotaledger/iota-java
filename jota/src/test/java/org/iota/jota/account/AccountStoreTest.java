@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.store.FlatFileStore;
+import org.iota.jota.store.IotaFileStore;
 import org.iota.jota.store.MemoryStore;
 import org.iota.jota.store.Store;
 import org.junit.Before;
@@ -15,13 +16,10 @@ public class AccountStoreTest {
     
     protected static final String addressId = 
             "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZC";
-    
-    private Store store;
 
     @Before
     public void setUp() throws Exception {
-        store = new FlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
-        store.load();
+        
     }
     
     @Test
@@ -36,13 +34,17 @@ public class AccountStoreTest {
     
     @Test
     public void testExistingStore() throws Exception {
+        Store store = new FlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
+        store.load();
+        
         AccountState state = new AccountState();
         state.addDepositRequest(1, new DepositRequest(new Date(0), false, 5));
+        state.setKeyIndex(4);
         
-        AccountStore store = new AccountStoreImpl(this.store);
-        assertEquals(state, store.LoadAccount(addressId));
+        AccountStore as = new AccountStoreImpl(store);
+        AccountState loadedState = as.LoadAccount(addressId);
         
-        this.store.set(addressId, state);
-        this.store.save();
+
+        assertEquals(state, loadedState);
     }
 }

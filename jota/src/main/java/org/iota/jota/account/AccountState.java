@@ -14,14 +14,15 @@ public class AccountState implements Serializable {
      */
     private static final long serialVersionUID = -8261579952650062417L;
 
-    long keyIndex;
+    private long keyIndex;
     
-    Map<Long, DepositRequest> depositRequests;
+    private Map<Long, DepositRequest> depositRequests;
     
-    Map<String, PendingTransfer> pendingTransfers;
+    private Map<String, PendingTransfer> pendingTransfers;
     
     public AccountState() {
-        
+        pendingTransfers = new HashMap<>();
+        depositRequests = new HashMap<>();
     }
     
     /**
@@ -30,10 +31,6 @@ public class AccountState implements Serializable {
      * @param request
      */
     public void addDepositRequest(long index, DepositRequest request){
-        if (null == depositRequests) {
-            depositRequests = new HashMap<>();
-        }
-        
         depositRequests.put(index, request);
     }
     
@@ -43,10 +40,6 @@ public class AccountState implements Serializable {
      * @param request
      */
     public void addPendingTransfers(String hash, PendingTransfer request){
-        if (null == pendingTransfers) {
-            pendingTransfers = new HashMap<>();
-        }
-        
         pendingTransfers.put(hash, request);
     }
     
@@ -76,6 +69,10 @@ public class AccountState implements Serializable {
         return newState;
     }
     
+    public void setKeyIndex(long keyIndex) {
+        this.keyIndex = keyIndex;
+    }
+    
     @Override
     public String toString() {
         return "AccountState [keyIndex=" + keyIndex + ", depositRequests=" + depositRequests + ", pendingTransfers="
@@ -88,11 +85,13 @@ public class AccountState implements Serializable {
         System.out.println(obj);
         System.out.println(this);
         
-        if (!obj.getClass().equals(AccountState.class)) {
+        if (obj == null || !obj.getClass().equals(AccountState.class)) {
             return false;
         }
         
         AccountState as = (AccountState) obj;
-        return as.keyIndex == keyIndex;
+        return as.keyIndex == keyIndex
+                && Objects.equals(depositRequests, as.depositRequests)
+                && Objects.equals(pendingTransfers, as.pendingTransfers);
     }
 }

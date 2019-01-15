@@ -151,6 +151,13 @@
     </distributionManagement>
 
     <build>
+        <resources>
+	      <resource>
+	        <directory>src/main/resources</directory>
+	        <filtering>false</filtering>
+	      </resource>
+	    </resources>
+    
         <plugins>
 		<plugin>
 			<groupId>org.sonatype.plugins</groupId>

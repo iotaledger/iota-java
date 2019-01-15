@@ -35,7 +35,9 @@ public class MemoryStore implements Store {
     
     @Override
     public void load() {
-        store = new ConcurrentHashMap<>();
+        if (this.store == null) {
+            store = new ConcurrentHashMap<>();
+        }
     }
 
     @Override
