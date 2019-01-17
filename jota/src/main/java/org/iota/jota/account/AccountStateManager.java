@@ -1,6 +1,7 @@
 package org.iota.jota.account;
 
 import org.iota.jota.account.errors.AddressGenerationError;
+import org.iota.jota.account.inputselector.InputSelectionStrategy;
 import org.iota.jota.account.services.AddressGeneratorService;
 import org.iota.jota.config.options.AccountOptions;
 import org.iota.jota.types.Address;
@@ -11,10 +12,19 @@ public class AccountStateManager {
     private AccountState state;
     
     private AccountOptions options;
+    
     private AddressGeneratorService addressService;
     
+    private InputSelectionStrategy inputSelector;
     
-    public AccountStateManager(AccountState state, AddressGeneratorService addressService, AccountOptions options, AccountStore store) {
+    
+    public AccountStateManager(InputSelectionStrategy inputSelector, 
+                               AccountState state, 
+                               AddressGeneratorService addressService, 
+                               AccountOptions options, 
+                               AccountStore store) {
+        
+        this.inputSelector = inputSelector;
         this.state = state;
         this.addressService = addressService;
         

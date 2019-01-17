@@ -9,7 +9,7 @@ import org.iota.jota.IotaAPI;
 import org.iota.jota.account.AccountState;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
-import org.iota.jota.account.event.EventTaskService;
+import org.iota.jota.account.event.Plugin;
 import org.iota.jota.account.event.events.PromotionEvent;
 import org.iota.jota.account.event.events.ReattachmentEvent;
 import org.iota.jota.account.event.events.SendTransferEvent;
@@ -19,7 +19,7 @@ import org.iota.jota.model.Transaction;
 
 import org.iota.jota.utils.thread.UnboundScheduledExecutorService;
 
-public class PromoterReattacherImpl implements PromoterReattacher, EventTaskService {
+public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
 
     private static final long PROMOTE_DELAY = 10000;
     

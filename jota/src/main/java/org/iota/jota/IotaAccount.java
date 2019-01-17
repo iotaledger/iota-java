@@ -3,6 +3,9 @@ package org.iota.jota;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -14,17 +17,20 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.util.encoders.Hex;
 import org.iota.jota.account.AccountState;
 import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.AccountStore;
-import org.iota.jota.account.AccountStoreImpl;
 import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.errors.AccountLoadError;
 import org.iota.jota.account.event.EventManager;
-import org.iota.jota.account.event.EventTaskService;
+import org.iota.jota.account.event.Plugin;
 import org.iota.jota.account.event.events.SendTransferEvent;
 import org.iota.jota.account.event.impl.EventManagerImpl;
+import org.iota.jota.account.inputselector.InputSelectionStrategy;
+import org.iota.jota.account.inputselector.InputSelectionStrategyImpl;
 import org.iota.jota.account.promoter.PromoterReattacherImpl;
 import org.iota.jota.account.services.AddressGeneratorService;
 import org.iota.jota.account.services.clock.Clock;
@@ -40,6 +46,7 @@ import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
+import org.iota.jota.types.Recipient;
 import org.iota.jota.utils.AbstractBuilder;
 import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.Constants;
@@ -48,7 +55,7 @@ import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.TrytesConverter;
 
 
-public class IotaAccount {
+public class IotaAccount implements Account {
     
     private static final Logger log = LoggerFactory.getLogger(IotaAccount.class);
     
@@ -56,11 +63,13 @@ public class IotaAccount {
     
     private EventManager eventManager;
     
-    List<EventTaskService> tasks = new ArrayList<>();
+    List<Plugin> tasks = new ArrayList<>();
 
     private AccountStateManager accountManager;
     
     boolean loaded = false;
+    
+    String accountId = null;
     
     /**
      * 
@@ -69,12 +78,24 @@ public class IotaAccount {
     protected IotaAccount(AccountOptions options) {
         this.options = options;
         this.eventManager = new EventManagerImpl();
-        
+
         if (load()) {
             loaded = true;
         } else {
             // Loading went wrong! Log...
         }
+    }
+    
+    private String buildAccountId() {
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+        byte[] hash = digest.digest(getSeed().getBytes(StandardCharsets.UTF_8));
+        String sha256hex = new String(Hex.encode(hash));
+        return sha256hex;
     }
     
     protected IotaAccount(Builder builder) {
@@ -129,42 +150,37 @@ public class IotaAccount {
         this(new Builder(seed).store(store).config(iotaConfig).generate());
     }
     
-    private boolean load() {
-        return load(new AccountState());
+    @Override
+    public void load() {
+        accountId = buildAccountId();
+        load(getStore().LoadAccount(accountId));
     }
-    
-    private boolean load(AccountState state) {
+
+    public void load(AccountState state) {
+        AddressGeneratorService service = new AddressGeneratorService(options);
+        InputSelectionStrategy strategy = new InputSelectionStrategyImpl();
+        
+        accountManager = new AccountStateManager(strategy, state, service, options, getStore());
+        
+        addTask(new PromoterReattacherImpl(eventManager, getApi()));
+        addTask(new IncomingTransferCheckerImpl(eventManager, getApi()));
+        addTask(new OutgoingTransferCheckerImpl(eventManager, getApi()));
+        
+        shutdownHook();
+        
         try {
-            AddressGeneratorService service = new AddressGeneratorService(options);
-            
-            accountManager = new AccountStateManager(state, service, options, getStore());
-            
-            addTask(new PromoterReattacherImpl(eventManager, getApi()));
-            addTask(new IncomingTransferCheckerImpl(eventManager, getApi()));
-            addTask(new OutgoingTransferCheckerImpl(eventManager, getApi()));
-            
-            shutdownHook();
-            
-            try {
-                // Call to nodeInfo to ensure were connected
-                getApi().getNodeInfo();
-            } catch (ArgumentException e) {
-                throw new AccountLoadError(e);
-            }
-            return true;
-        } catch (AccountLoadError e) {
-            e.printStackTrace();
-            return false;
+            // Call to nodeInfo to ensure were connected
+            getApi().getNodeInfo();
+        } catch (ArgumentException e) {
+            throw new AccountLoadError(e);
         }
     }
-    
-    
     
     private void shutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("Shutting down IOTA Accounts, please hold tight...");
             try {
-                unload();
+                unload(true);
             } catch (Exception e) {
                 log.error("Exception occurred shutting down accounts module: ", e);
             }
@@ -175,20 +191,123 @@ public class IotaAccount {
      * Unloads all registered tasks. 
      * Any tasks added during this method execution are ignored and cleared in the end.
      */
-    private void unload() {
-        for (EventTaskService task : tasks.toArray(new EventTaskService[tasks.size()])) {
+    private void unload(boolean clearTasks) {
+        for (Plugin task : tasks.toArray(new Plugin[tasks.size()])) {
             getEventManager().unRegisterListener(task);
             task.shutdown();
         }
-        tasks.clear();
+        
+        if (clearTasks) {
+            tasks.clear();
+        }
     }
 
-    private void addTask(EventTaskService task) {
+    private void addTask(Plugin task) {
         if (task != null) {
             task.load();
             getEventManager().registerListener(task);
             tasks.add(task);
         }
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() throws AccountError {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean start() throws AccountError {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void shutdown() throws AccountError {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void shutdown(boolean skipAwaitingPlugins) throws AccountError {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Future<Bundle> send(Recipient recipient) throws AccountError {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public DepositRequest newDepositRequest() throws AccountError {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public long usableBalance() throws AccountError {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public long totalBalance() throws AccountError {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isNew() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateSettings(AccountOptions newSettings) throws AccountError {
+        // TODO Auto-generated method stub
+        
     }
     
     public Bundle send(String address, int amount, Optional<Integer> securityLevel, 
@@ -505,7 +624,7 @@ public class IotaAccount {
             if (this.accountManager != null) {
                 this.accountManager.save();
             }
-            unload();
+            unload(true);
             load(state);
             
             this.accountManager.save();
