@@ -1,6 +1,12 @@
 package org.iota.jota;
 
-import static org.iota.jota.utils.Constants.*;
+import static org.iota.jota.utils.Constants.ARRAY_NULL_OR_EMPTY;
+import static org.iota.jota.utils.Constants.INVALID_APPROVE_DEPTH_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_ATTACHED_TRYTES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_HASHES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_THRESHOLD_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_TRYTES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.TAG_LENGTH;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -8,13 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.iota.jota.config.ApiConfig;
 import org.iota.jota.config.options.ApiBuilderSettings;
 import org.iota.jota.config.options.ApiOptions;
-
 import org.iota.jota.connection.Connection;
 import org.iota.jota.connection.HttpConnector;
 import org.iota.jota.dto.request.IotaAttachToTangleRequest;
@@ -52,6 +54,8 @@ import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.utils.AbstractBuilder;
 import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.InputValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 

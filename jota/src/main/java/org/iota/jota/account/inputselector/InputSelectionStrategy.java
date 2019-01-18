@@ -2,7 +2,6 @@ package org.iota.jota.account.inputselector;
 
 import java.util.List;
 
-import org.iota.jota.account.AccountState;
 import org.iota.jota.model.Input;
 
 public interface InputSelectionStrategy {

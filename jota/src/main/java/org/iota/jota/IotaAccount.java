@@ -1,8 +1,5 @@
 package org.iota.jota;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -57,6 +54,8 @@ import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.InputValidator;
 import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.TrytesConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class IotaAccount implements Account {

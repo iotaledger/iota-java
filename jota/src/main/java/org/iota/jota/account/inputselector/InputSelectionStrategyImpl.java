@@ -1,24 +1,16 @@
 package org.iota.jota.account.inputselector;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.iota.jota.account.AccountBalanceCache;
-import org.iota.jota.account.AccountState;
-import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.clock.Clock;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.errors.AccountNoBalanceError;
 import org.iota.jota.model.Input;
-import org.iota.jota.types.Address;
 
 public class InputSelectionStrategyImpl implements InputSelectionStrategy {
     
