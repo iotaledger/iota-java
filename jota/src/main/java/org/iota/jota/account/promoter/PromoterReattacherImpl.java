@@ -10,10 +10,10 @@ import org.iota.jota.account.AccountState;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.Plugin;
-import org.iota.jota.account.event.events.PromotionEvent;
-import org.iota.jota.account.event.events.ReattachmentEvent;
-import org.iota.jota.account.event.events.SendTransferEvent;
-import org.iota.jota.account.event.events.TransferConfirmedEvent;
+import org.iota.jota.account.event.events.EventPromotion;
+import org.iota.jota.account.event.events.EventReattachment;
+import org.iota.jota.account.event.events.EventSendingTransfer;
+import org.iota.jota.account.event.events.EventTransferConfirmed;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Transaction;
 
@@ -53,7 +53,7 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     }
     
     @AccountEvent
-    private void onBundleBroadcast(SendTransferEvent event) {
+    private void onBundleBroadcast(EventSendingTransfer event) {
         Runnable r = () -> doTask(event.getBundle());
         unconfirmedBundles.put(
             event.getBundle().getBundleHash(), 
@@ -64,7 +64,7 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     }
     
     @AccountEvent
-    private void onConfirmed(TransferConfirmedEvent event) {
+    private void onConfirmed(EventTransferConfirmed event) {
         ScheduledFuture<?> runnable = unconfirmedBundles.get(event.getBundle().getBundleHash());
         runnable.cancel(true);
         System.out.println("confirmed bundle");
@@ -89,13 +89,13 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     }
     
     private void promote(Bundle pendingBundle, Transaction promotableTail) {
-        PromotionEvent event = new PromotionEvent();
+        EventPromotion event = new EventPromotion();
         eventManager.emit(event);
     }
 
     private void reattach(Bundle pendingBundle) {
         Bundle newBundle = createReattachBundle(pendingBundle);
-        ReattachmentEvent event = new ReattachmentEvent();
+        EventReattachment event = new EventReattachment();
         eventManager.emit(event);
         
         promote(newBundle);

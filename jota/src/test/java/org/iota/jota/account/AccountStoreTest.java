@@ -28,7 +28,7 @@ public class AccountStoreTest {
         
         AccountStoreImpl store = new AccountStoreImpl(mem);
         
-        assertEquals(new AccountState(), store.LoadAccount(addressId));
+        assertEquals(new AccountState(), store.loadAccount(addressId));
     }
     
     @Test
@@ -41,7 +41,7 @@ public class AccountStoreTest {
         state.setKeyIndex(4);
         
         AccountStore as = new AccountStoreImpl(store);
-        AccountState loadedState = as.LoadAccount(addressId);
+        AccountState loadedState = as.loadAccount(addressId);
         
         assertEquals(state, loadedState);
     }

@@ -49,7 +49,7 @@ public class HttpConnector implements Connection {
     private int port;
     private int timeout;
     
-    private IotaAPIHTTPService service;
+    private IotaNodeHTTPService service;
     
     private static final Logger log = LoggerFactory.getLogger(HttpConnector.class);
 
@@ -101,7 +101,7 @@ public class HttpConnector implements Connection {
                 .client(client)
                 .build();
         
-        service = retrofit.create(IotaAPIHTTPService.class);
+        service = retrofit.create(IotaNodeHTTPService.class);
         return true;
     }
     

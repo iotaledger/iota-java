@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.deposits.StoredDepositRequest;
 
 public class AccountState implements Serializable {
 
@@ -14,10 +14,19 @@ public class AccountState implements Serializable {
      */
     private static final long serialVersionUID = -8261579952650062417L;
 
-    private long keyIndex;
+    /**
+     * Current key index
+     */
+    private int keyIndex;
     
-    private Map<Long, DepositRequest> depositRequests;
+    /**
+     * Map of key indexes and their corresponding stored deposit
+     */
+    private Map<Integer, StoredDepositRequest> depositRequests;
     
+    /**
+     * 
+     */
     private Map<String, PendingTransfer> pendingTransfers;
     
     public AccountState() {
@@ -27,14 +36,14 @@ public class AccountState implements Serializable {
     
     /**
      * 
-     * @param index
-     * @param request
+     * @param index keyIndex
+     * @param request request to store
      */
-    public void addDepositRequest(long index, DepositRequest request){
+    public void addDepositRequest(int index, StoredDepositRequest request){
         depositRequests.put(index, request);
     }
     
-    public void removeDepositRequest(long index) {
+    public void removeDepositRequest(int index) {
         depositRequests.remove(index);
     }
     
@@ -51,11 +60,11 @@ public class AccountState implements Serializable {
         pendingTransfers.remove(hash);
     }
     
-    boolean isNew() {
+    public boolean isNew() {
         return depositRequests.size() == 0 && pendingTransfers.size() == 0;
     }
     
-    public Map<Long, DepositRequest> getDepositRequests() {
+    public Map<Integer, StoredDepositRequest> getDepositRequests() {
         return depositRequests;
     }
     
@@ -74,7 +83,7 @@ public class AccountState implements Serializable {
         
         if (null != depositRequests) {
             newState.depositRequests = new HashMap<>();
-            for (Long key : depositRequests.keySet()) {
+            for (int key : depositRequests.keySet()) {
                 newState.depositRequests.put(key, depositRequests.get(key).clone());
             }
         }
@@ -89,11 +98,11 @@ public class AccountState implements Serializable {
         return newState;
     }
     
-    public void setKeyIndex(long keyIndex) {
+    public void setKeyIndex(int keyIndex) {
         this.keyIndex = keyIndex;
     }
     
-    public long getKeyIndex() {
+    public int getKeyIndex() {
         return this.keyIndex;
     }
     

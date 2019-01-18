@@ -39,7 +39,7 @@ import retrofit2.http.POST;
  *
  * @author davassi
  */
-public interface IotaAPIHTTPService {
+public interface IotaNodeHTTPService {
 
     String CONTENT_TYPE_HEADER = "Content-Type: application/json";
     String USER_AGENT_HEADER = "User-Agent: JOTA-API wrapper";

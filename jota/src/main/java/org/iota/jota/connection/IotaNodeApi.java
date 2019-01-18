@@ -30,7 +30,7 @@ import org.iota.jota.dto.response.StoreTransactionsResponse;
 import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
 import org.iota.jota.error.ArgumentException;
 
-public interface IotaApi {
+public interface IotaNodeApi {
     
 
     /**

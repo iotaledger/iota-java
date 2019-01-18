@@ -4,11 +4,11 @@ import org.iota.jota.account.event.AccountEventType;
 import org.iota.jota.account.event.impl.EventImpl;
 import org.iota.jota.model.Bundle;
 
-public class TransferConfirmedEvent extends EventImpl {
+public class EventTransferConfirmed extends EventImpl {
 
     private Bundle bundle;
     
-    public TransferConfirmedEvent(Bundle bundle) {
+    public EventTransferConfirmed(Bundle bundle) {
         super(AccountEventType.TransferConfirmed);
         this.bundle = bundle;
     }

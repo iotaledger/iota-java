@@ -789,6 +789,29 @@ public class IotaAPI extends IotaAPICore {
             return getBalanceAndFormat(res.getAddresses(), tipsList, threshold, start, stopWatch, security);
         }
     }
+    
+    /**
+     * <p>
+     * The returned balance is based on the latest confirmed milestone.
+     * In addition to the balances, it also returns the referencing <tt>tips</tt> (or milestone), 
+     * as well as the index with which the confirmed balance was determined.
+     * The balances are returned as a list in the same order as the addresses were provided as input.
+     * </p>
+     *
+     * @param threshold The confirmation threshold between 0 and 100(inclusive). 
+     *                  Should be set to 100 for getting balance by counting only confirmed transactions.
+     * @param addresse The addresses where we will find the balance for.
+     * @return {@link GetBalancesResponse}
+     * @throws ArgumentException The the request was considered wrong in any way by the node
+     */
+    public long getBalance(int threshold, String address) throws ArgumentException {
+        GetBalancesResponse response = getBalances(threshold, new String[] { address }, null);
+        try {
+            return Long.parseLong(response.getBalances()[0]);
+        } catch (NumberFormatException e) {
+            throw new ArgumentException(e.getMessage());
+        }
+    }
 
     /**
      * Gets the balances and formats the output.

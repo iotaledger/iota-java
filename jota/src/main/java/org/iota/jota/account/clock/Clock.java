@@ -1,4 +1,4 @@
-package org.iota.jota.account.services.clock;
+package org.iota.jota.account.clock;
 
 import java.util.Date;
 

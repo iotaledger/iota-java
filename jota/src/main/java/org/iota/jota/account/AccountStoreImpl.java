@@ -2,7 +2,7 @@ package org.iota.jota.account;
 
 import java.util.Map;
 
-import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.deposits.StoredDepositRequest;
 import org.iota.jota.store.Store;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trits;
@@ -22,7 +22,7 @@ public class AccountStoreImpl implements AccountStore {
     }
 
     @Override
-    public AccountState LoadAccount(String id) {
+    public AccountState loadAccount(String id) {
         AccountState state = store.get(id);
         
         if (state == null) {
@@ -33,6 +33,12 @@ public class AccountStoreImpl implements AccountStore {
         
         return state;
     }
+    
+    @Override
+    public void saveAccount(String id, AccountState state) {
+        store.set(id, state);
+        save();
+    }
 
     @Override
     public void RemoveAccount(String id) {
@@ -40,44 +46,44 @@ public class AccountStoreImpl implements AccountStore {
     }
 
     @Override
-    public long ReadIndex(String id) {
-        AccountState state = LoadAccount(id);
+    public int ReadIndex(String id) {
+        AccountState state = loadAccount(id);
         return state.getKeyIndex();
     }
 
     @Override
-    public void writeIndex(String id, long index) {
-        AccountState state = LoadAccount(id);
+    public void writeIndex(String id, int index) {
+        AccountState state = loadAccount(id);
         state.setKeyIndex(index);
         
         save();
     }
 
     @Override
-    public void addDepositRequest(String id, long index, DepositRequest request) {
-        AccountState state = LoadAccount(id);
+    public void addDepositRequest(String id, int index, StoredDepositRequest request) {
+        AccountState state = loadAccount(id);
         state.addDepositRequest(index, request);
         
         save();
     }
 
     @Override
-    public void removeDepositRequest(String id, long index) {
-        AccountState state = LoadAccount(id);
+    public void removeDepositRequest(String id, int index) {
+        AccountState state = loadAccount(id);
         state.removeDepositRequest(index);
         
         save();
     }
     
     @Override
-    public Map<Long, DepositRequest> getDepositRequests(String id) {
-        AccountState state = LoadAccount(id);
+    public Map<Integer, StoredDepositRequest> getDepositRequests(String id) {
+        AccountState state = loadAccount(id);
         return state.getDepositRequests();
     }
 
     @Override
     public void addPendingTransfer(String id, Hash tailTx, Trytes[] bundleTrytes, int... indices) {
-        AccountState state = LoadAccount(id);
+        AccountState state = loadAccount(id);
         
         Trits[] trits = new Trits[bundleTrytes.length];
         for (int i=0; i<bundleTrytes.length; i++) {
@@ -95,7 +101,7 @@ public class AccountStoreImpl implements AccountStore {
 
     @Override
     public void removePendingTransfer(String id, Hash tailHash) {
-        AccountState state = LoadAccount(id);
+        AccountState state = loadAccount(id);
         state.removePendingTransfer(tailHash.toString());
         
         save();
@@ -103,7 +109,7 @@ public class AccountStoreImpl implements AccountStore {
 
     @Override
     public void addTailHash(String id, Hash tailHash, Hash newTailTxHash) {
-        AccountState state = LoadAccount(id);
+        AccountState state = loadAccount(id);
         PendingTransfer transfer = state.getPendingTransfer(tailHash.toString());
         if (transfer != null) {
             transfer.addTail(newTailTxHash);
@@ -114,7 +120,7 @@ public class AccountStoreImpl implements AccountStore {
 
     @Override
     public Map<String, PendingTransfer> getPendingTransfers(String id) {
-        AccountState state = LoadAccount(id);
+        AccountState state = loadAccount(id);
         return state.getPendingTransfers();
     }
     

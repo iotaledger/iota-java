@@ -1,11 +1,15 @@
-package org.iota.jota;
+package org.iota.jota.account;
 
+import java.util.Date;
 import java.util.concurrent.Future;
 
+import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.config.options.AccountOptions;
 import org.iota.jota.model.Bundle;
+import org.iota.jota.model.Transfer;
+import org.iota.jota.types.Address;
 import org.iota.jota.types.Recipient;
 import org.iota.jota.utils.thread.TaskService;
 
@@ -63,7 +67,8 @@ public interface Account extends TaskService {
      * @return
      * @throws AccountError
      */
-    DepositRequest newDepositRequest() throws AccountError;
+    DepositRequest newDepositRequest(Address depositAddress, int amount, Date timeOut, 
+            ExpireCondition... otherConditions) throws AccountError;
     
     /**
      * Runs the input selection with the CDRs in order to determine the usable balance for funding transfers.

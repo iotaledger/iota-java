@@ -7,5 +7,6 @@ public enum AccountEventType {
     TransferConfirmed, 
     ReceivedDeposit,
     ReceivingDeposit, 
-    ReceivedMessage
+    ReceivedMessage,
+    Shutdown
 }

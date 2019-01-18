@@ -3,10 +3,10 @@ package org.iota.jota.account.event.events;
 import org.iota.jota.account.event.AccountEventType;
 import org.iota.jota.account.event.impl.EventImpl;
 
-public class DepositReceivingEvent extends EventImpl {
+public class EventPromotion extends EventImpl {
 
-    public DepositReceivingEvent() {
-        super(AccountEventType.ReceivingDeposit);
+    public EventPromotion() {
+        super(AccountEventType.Promotion);
     }
 
 }

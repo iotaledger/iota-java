@@ -36,6 +36,14 @@ public class DepositRequest  implements Serializable {
         return timeOut;
     }
     
+    /**
+     * 
+     * @return
+     */
+    public boolean hasTimeOut() {
+        return timeOut != null;
+    }
+    
     public boolean getMultiUse() {
         return multiUse;
     }
@@ -62,6 +70,16 @@ public class DepositRequest  implements Serializable {
      */
     public long getExpectedAmount() {
         return expectedAmount;
+    }
+    
+    /**
+     * 
+     * Checks if we are expecting a specific amount in this request
+     * 
+     * @return <code>true</code> if we expect anything but 0, otherwise <code>false</code>
+     */
+    public boolean hasExpectedAmount() {
+        return getExpectedAmount() != 0;
     }
 
     @Override

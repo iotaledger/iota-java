@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit;
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
-import org.iota.jota.account.event.events.SendTransferEvent;
-import org.iota.jota.account.event.events.TransferConfirmedEvent;
+import org.iota.jota.account.event.events.EventSendingTransfer;
+import org.iota.jota.account.event.events.EventTransferConfirmed;
 import org.iota.jota.dto.response.GetInclusionStateResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
@@ -48,7 +48,7 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
     }
     
     @AccountEvent
-    private void onBundleBroadcast(SendTransferEvent event) {
+    private void onBundleBroadcast(EventSendingTransfer event) {
         Runnable r = () -> doTask(event.getBundle());
         unconfirmedBundles.put(
             event.getBundle().getBundleHash(), 
@@ -65,7 +65,7 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
                 runnable.cancel(true);
                 unconfirmedBundles.remove(bundle.getBundleHash());
                 
-                TransferConfirmedEvent event = new TransferConfirmedEvent(bundle);
+                EventTransferConfirmed event = new EventTransferConfirmed(bundle);
                 eventManager.emit(event);
             } else {
                 // Still unconfirmed...

@@ -435,7 +435,7 @@ public class IotaAPICore {
      * @throws ArgumentException The the request was considered wrong in any way by the node
      * @throws ArgumentException
      */
-    private GetBalancesResponse getBalances(Integer threshold, String[] addresses, String[] tips) throws ArgumentException {
+    public GetBalancesResponse getBalances(Integer threshold, String[] addresses, String[] tips) throws ArgumentException {
         if (threshold < 0 || threshold > 100) {
             throw new ArgumentException(INVALID_THRESHOLD_ERROR);
         }
