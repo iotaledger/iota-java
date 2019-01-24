@@ -1,19 +1,24 @@
 package org.iota.jota.dto.response;
 
+import org.iota.jota.model.Bundle;
+
 /**
  * Response of api request 'replayBundle'.
  **/
 public class ReplayBundleResponse extends AbstractResponse {
 
     private Boolean[] successfully;
+    private Bundle newBundle;
 
     /**
      * Initializes a new instance of the ReplayBundleResponse class.
+     * @param newBundle 
      */
-    public static ReplayBundleResponse create(Boolean[] successfully, long duration) {
+    public static ReplayBundleResponse create(Bundle newBundle, Boolean[] successfully, long duration) {
         ReplayBundleResponse res = new ReplayBundleResponse();
         res.successfully = successfully;
         res.setDuration(duration);
+        res.newBundle = newBundle;
         return res;
     }
 
@@ -35,4 +40,7 @@ public class ReplayBundleResponse extends AbstractResponse {
         this.successfully = successfully;
     }
 
+    public Bundle getNewBundle() {
+        return newBundle;
+    }
 }

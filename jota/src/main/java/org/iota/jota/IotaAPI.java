@@ -1000,17 +1000,63 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException when the bundle is invalid or not found
      * @see #sendTrytes(String[], int, int, String)
      */
-    public ReplayBundleResponse replayBundle(String tailTransactionHash, int depth, int minWeightMagnitude, String reference) throws ArgumentException {
+    public ReplayBundleResponse replayBundle(String tailTransactionHash, int depth, int minWeightMagnitude, 
+            String reference) throws ArgumentException {
+        
         if (!InputValidator.isHash(tailTransactionHash)) {
             throw new ArgumentException(Constants.INVALID_TAIL_HASH_INPUT_ERROR);
         }
 
         StopWatch stopWatch = new StopWatch();
 
-        List<String> bundleTrytes = new ArrayList<>();
-
         GetBundleResponse bundleResponse = getBundle(tailTransactionHash);
         Bundle bundle = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
+        return this.replayBundle(bundle, depth, minWeightMagnitude, reference, stopWatch);
+    }
+    
+    /**
+     * Replays a transfer by doing Proof of Work again.
+     * This will make a new, but identical transaction which now also can be approved.
+     * If any of the replayed transactions gets approved, the others stop getting approved.
+     *
+     * @param bundle              The bundle we wish to replay on the network
+     * @param depth               The depth for getting transactions to approve
+     * @param minWeightMagnitude  The minimum weight magnitude for doing proof of work
+     * @param reference           Hash of transaction to start random-walk from.
+     *                            This is used to make sure the tips returned reference a given transaction in their past.
+     *                            Can be <tt>null</tt>, in that case the latest milestone is used as a reference.
+     * @return {@link ReplayBundleResponse}
+     * @throws ArgumentException when the <tt>tailTransactionHash</tt> is invalid
+     * @throws ArgumentException when the bundle is invalid or not found
+     * @see #sendTrytes(String[], int, int, String)
+     */
+    public ReplayBundleResponse replayBundle(Bundle bundle, int depth, int minWeightMagnitude, 
+            String reference) throws ArgumentException {
+        
+        return this.replayBundle(bundle, depth, minWeightMagnitude, reference, new StopWatch());
+    }
+    
+    /**
+     * Replays a transfer by doing Proof of Work again.
+     * This will make a new, but identical transaction which now also can be approved.
+     * If any of the replayed transactions gets approved, the others stop getting approved.
+     *
+     * @param bundle              The bundle we wish to replay on the network
+     * @param depth               The depth for getting transactions to approve
+     * @param minWeightMagnitude  The minimum weight magnitude for doing proof of work
+     * @param reference           Hash of transaction to start random-walk from.
+     *                            This is used to make sure the tips returned reference a given transaction in their past.
+     *                            Can be <tt>null</tt>, in that case the latest milestone is used as a reference.
+     * @param stopWatch           The stopwatch used for recording this response time.                           
+     * @return {@link ReplayBundleResponse}
+     * @throws ArgumentException when the <tt>tailTransactionHash</tt> is invalid
+     * @throws ArgumentException when the bundle is invalid or not found
+     * @see #sendTrytes(String[], int, int, String)
+     */
+    private ReplayBundleResponse replayBundle(Bundle bundle, int depth, int minWeightMagnitude, String reference, 
+            StopWatch stopWatch) throws ArgumentException {
+
+        List<String> bundleTrytes = new ArrayList<>();
         for (Transaction trx : bundle.getTransactions()) {
 
             bundleTrytes.add(trx.toTrytes());
@@ -1028,8 +1074,8 @@ public class IotaAPI extends IotaAPICore {
 
             successful[i] = response.getHashes().length != 0;
         }
-
-        return ReplayBundleResponse.create(successful, stopWatch.getElapsedTimeMili());
+        
+        return ReplayBundleResponse.create(new Bundle(trxs), successful, stopWatch.getElapsedTimeMili());
     }
 
     /**

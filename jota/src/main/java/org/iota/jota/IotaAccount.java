@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Hex;
@@ -28,8 +29,11 @@ import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.errors.AccountLoadError;
+import org.iota.jota.account.event.AccountEvent;
+import org.iota.jota.account.event.EventListener;
 import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.Plugin;
+import org.iota.jota.account.event.events.EventAccountError;
 import org.iota.jota.account.event.events.EventSendingTransfer;
 import org.iota.jota.account.event.impl.EventManagerImpl;
 import org.iota.jota.account.inputselector.InputSelectionStrategy;
@@ -47,7 +51,9 @@ import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
 import org.iota.jota.types.Address;
+import org.iota.jota.types.Hash;
 import org.iota.jota.types.Recipient;
+import org.iota.jota.types.Trytes;
 import org.iota.jota.utils.AbstractBuilder;
 import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.Constants;
@@ -58,7 +64,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class IotaAccount implements Account {
+public class IotaAccount implements Account, EventListener {
     
     private static final Logger log = LoggerFactory.getLogger(IotaAccount.class);
     
@@ -81,13 +87,14 @@ public class IotaAccount implements Account {
     protected IotaAccount(AccountOptions options) {
         this.options = options;
         this.eventManager = new EventManagerImpl();
+        this.getEventManager().registerListener(this);
 
         load();
         
         if (loaded) {
             start();
         } else {
-            throw new AccountLoadError("Failed to laod accouns. Check the error log");
+            throw new AccountLoadError("Failed to load accounts. Check the error log");
         }
     }
     
@@ -175,7 +182,7 @@ public class IotaAccount implements Account {
         
         accountManager = new AccountStateManager(cache, accountId, strategy, state, service, options, getStore());
         
-        addTask(new PromoterReattacherImpl(eventManager, getApi()));
+        addTask(new PromoterReattacherImpl(eventManager, getApi(), accountManager, options));
         addTask(new IncomingTransferCheckerImpl(eventManager, getApi()));
         addTask(new OutgoingTransferCheckerImpl(eventManager, getApi()));
         
@@ -207,7 +214,7 @@ public class IotaAccount implements Account {
      * Any tasks added during this method execution are ignored and cleared in the end.
      */
     private void unload(boolean clearTasks) {
-        for (Plugin task : tasks.toArray(new Plugin[tasks.size()])) {
+        for (Plugin task : tasks) {
             getEventManager().unRegisterListener(task);
             task.shutdown();
         }
@@ -367,7 +374,6 @@ public class IotaAccount implements Account {
         }
         
         try {
-            System.out.println("checkWereAddressSpentFrom: " + address);
             boolean spent = getApi().checkWereAddressSpentFrom(address);
             if (spent) {
                 throw new ArgumentException(Constants.INVALID_ADDRESS_INPUT_ERROR);
@@ -375,7 +381,6 @@ public class IotaAccount implements Account {
             
             Transfer transfer = new Transfer(address, amount, tryteMsg, tryteTag);
             
-            System.out.println("findInputs");
             List<Input> inputs = accountManager.getInputAddresses(amount);
             
             AtomicLong totalValue = new AtomicLong(0);
@@ -383,18 +388,23 @@ public class IotaAccount implements Account {
             
             Transfer remainder = null;
             if (totalValue.get() > amount) {
-                System.out.println("getInputAddress");
                 Input input = accountManager.createRemainder(totalValue.get() - amount);
                 
                 remainder = new Transfer(input.getAddress(), input.getBalance(), "", tryteTag);
             }
         
-            System.out.println("prepare");
-            List<String> trytes = prepareTransfers(transfer, inputs, remainder);
+            List<Trytes> trytes = prepareTransfers(transfer, inputs, remainder);
             
-            System.out.println("send");
             List<Transaction> transferResponse = getApi().sendTrytes(
-                    trytes.toArray(new String[trytes.size()]), options.getDept(), options.getMwm(), null);
+                    trytes.stream().map(Object::toString).toArray(String[]::new), 
+                    options.getDept(), options.getMwm(), null
+                );
+            
+            accountManager.addPendingTransfer(
+                    new Hash(transferResponse.get(0).getHash()), 
+                    trytes.toArray(new Trytes[trytes.size()]), 
+                    1
+                );
             
             Bundle bundle = new Bundle(transferResponse, transferResponse.size());
             EventSendingTransfer event = new EventSendingTransfer(bundle);
@@ -403,6 +413,8 @@ public class IotaAccount implements Account {
             return new FutureTask<Bundle>(() -> bundle);
         } catch (ArgumentException | IllegalStateException e) {
             // TODO: Throw accounts error
+            EventAccountError event = new EventAccountError(e);
+            eventManager.emit(event);
             
             log.error(e.getMessage());
             return null;
@@ -504,7 +516,7 @@ public class IotaAccount implements Account {
      * @return
      * @see #prepareTransfers(List)
      */
-    private List<String> prepareTransfers(Transfer transfer, List<Input> inputs, Transfer remainder) {
+    private List<Trytes> prepareTransfers(Transfer transfer, List<Input> inputs, Transfer remainder) {
         List<Transfer> transfers = new LinkedList<>();
         
         // Add the actual transfer
@@ -533,7 +545,8 @@ public class IotaAccount implements Account {
             System.out.println("sign");
             List<String> output = IotaAPIUtils.signInputsAndReturn(getSeed(), inputs, bundle, signatureFragments, getApi().getCurl());
             Collections.reverse(output);
-            return output;
+            
+            return output.stream().map(Trytes::new).collect(Collectors.toList());
         } catch (ArgumentException e) {
             // Seed is validated at creation, will not happen under normal circumstances
             return null; 
@@ -674,6 +687,13 @@ public class IotaAccount implements Account {
     
     private AccountStateManager getAccountManager() {
         return accountManager;
+    }
+    
+    @AccountEvent
+    private void onError(EventAccountError error) {
+        log.error(error.getMessage(), error.getCause());
+        
+        error.getException().printStackTrace();
     }
     
     @Override

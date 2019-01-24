@@ -1,6 +1,7 @@
 package org.iota.jota.account;
 
 import java.util.List;
+import java.util.Map;
 
 import org.iota.jota.account.addressgenerator.AddressGeneratorServiceImpl;
 import org.iota.jota.account.deposits.DepositRequest;
@@ -11,9 +12,12 @@ import org.iota.jota.account.inputselector.InputSelectionStrategy;
 import org.iota.jota.config.options.AccountOptions;
 import org.iota.jota.model.Input;
 import org.iota.jota.types.Hash;
+import org.iota.jota.types.Trytes;
 
 public class AccountStateManager {
 
+    private static volatile Object lock = new Object();
+    
     private AccountStore store;
     private AccountState state;
     
@@ -25,7 +29,6 @@ public class AccountStateManager {
 
     private String accountId;
     private AccountBalanceCache cache;
-     
     
     public AccountStateManager(AccountBalanceCache cache,
                                String accountId,
@@ -56,7 +59,7 @@ public class AccountStateManager {
     }
     
     public Hash nextZeroValueAddress() throws AddressGenerationError {
-        synchronized (this) {
+        synchronized (lock) {
             return new Hash(cache.first().getAddress());
         }
     }
@@ -70,10 +73,10 @@ public class AccountStateManager {
      * @return 
      */
     public Input createRemainder(long remainder) {
-        int key;
-        DepositRequest deposit;
-        
-        synchronized (state) {
+        synchronized (lock) {
+            int key;
+            DepositRequest deposit;
+            
             // Editing store will edit the underlying state, and take care of saving
             
             key = state.getKeyIndex();
@@ -81,19 +84,20 @@ public class AccountStateManager {
             
             deposit = new DepositRequest(null, false, remainder);
             
-            store.addDepositRequest(accountId, key, new StoredDepositRequest(deposit, options.getSecurityLevel()));
+            addDepositRequest(key, new StoredDepositRequest(deposit, options.getSecurityLevel()));
+        
+        
+            Input remainderInput = new Input(
+                addressService.get(key).getAddress().getHash(), 
+                remainder, 
+                key, 
+                options.getSecurityLevel()
+            );
+            
+            cache.addBalance(remainderInput, deposit);
+            
+            return remainderInput;
         }
-        
-        Input remainderInput = new Input(
-            addressService.get(key).getAddress().getHash(), 
-            remainder, 
-            key, 
-            options.getSecurityLevel()
-        );
-        
-        cache.addBalance(remainderInput, deposit);
-        
-        return remainderInput;
     }
     
     /**
@@ -104,14 +108,17 @@ public class AccountStateManager {
      * @return
      */
     public List<Input> getInputAddresses(long value) throws AccountError {
-        List<Input> inputs = inputSelector.getInput(value, false);
+        synchronized (lock) {
+            List<Input> inputs = inputSelector.getInput(value, false);
         
-        for (Input i : inputs) {
-            store.removeDepositRequest(accountId, i.getKeyIndex());
-            cache.removeInput(i);
+        
+            for (Input i : inputs) {
+                store.removeDepositRequest(accountId, i.getKeyIndex());
+                cache.removeInput(i);
+            }
+
+            return inputs;
         }
-        
-        return inputs;
     }
     
     public long getTotalBalance() {
@@ -124,5 +131,45 @@ public class AccountStateManager {
 
     public boolean isNew() {
         return state.isNew();
+    }
+    
+    //
+    // Section for store method wrappers over the stored accountId
+    //
+    
+    public int readIndex() {
+        return state.getKeyIndex();
+    }
+    
+    public void writeIndex(int index) {
+        store.writeIndex(accountId, index);
+    }
+    
+    public void addDepositRequest(int index, StoredDepositRequest request) {
+        store.addDepositRequest(accountId, index, request);
+    }
+    
+    public void removeDepositRequest(int index) {
+        store.removeDepositRequest(accountId, index);
+    }
+    
+    public Map<Integer, StoredDepositRequest> getDepositRequests(){
+        return store.getDepositRequests(accountId);
+    }
+    
+    public void addPendingTransfer(Hash tailTx, Trytes[] bundleTrytes, int... indices) {
+        store.addPendingTransfer(accountId, tailTx, bundleTrytes, indices);
+    }
+    
+    public void removePendingTransfer(Hash tailHash ) {
+        store.removePendingTransfer(accountId, tailHash);
+    }
+    
+    public void addTailHash(Hash tailHash, Hash newTailTxHash) {
+        store.addTailHash(accountId, tailHash, newTailTxHash);
+    }
+    
+    public Map<String, PendingTransfer> getPendingTransfers(){
+        return store.getPendingTransfers(accountId);
     }
 }

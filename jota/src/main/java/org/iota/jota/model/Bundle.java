@@ -34,6 +34,15 @@ public class Bundle implements Comparable<Bundle> {
      * Initializes a new instance of the Bundle class.
      * 
      * @param transactions
+     */
+    public Bundle(List<Transaction> transactions) {
+        this(transactions, transactions.size());
+    }
+    
+    /**
+     * Initializes a new instance of the Bundle class.
+     * 
+     * @param transactions
      * @param length
      */
     public Bundle(List<Transaction> transactions, int length) {

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Date;
 
 import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.deposits.StoredDepositRequest;
 import org.iota.jota.store.FlatFileStore;
 import org.iota.jota.store.MemoryStore;
 import org.iota.jota.store.Store;
@@ -37,7 +38,7 @@ public class AccountStoreTest {
         store.load();
         
         AccountState state = new AccountState();
-        state.addDepositRequest(1, new DepositRequest(new Date(0), false, 5));
+        state.addDepositRequest(1, new StoredDepositRequest(new DepositRequest(new Date(0), false, 5), 1));
         state.setKeyIndex(4);
         
         AccountStore as = new AccountStoreImpl(store);

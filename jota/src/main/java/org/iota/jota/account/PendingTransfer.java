@@ -2,13 +2,12 @@ package org.iota.jota.account;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trits;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PendingTransfer implements Serializable {
 
@@ -60,15 +59,32 @@ public class PendingTransfer implements Serializable {
     public PendingTransfer clone() throws CloneNotSupportedException {
         return (PendingTransfer) super.clone();
     }
-    
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(bundleTrits);
+        result = prime * result + ((tailHashes == null) ? 0 : tailHashes.hashCode());
+        return result;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if (!obj.getClass().equals(PendingTransfer.class)) {
+        if (this == obj)
+            return true;
+        if (obj == null)
             return false;
-        }
-        
-        PendingTransfer pt = (PendingTransfer) obj;
-        return pt.bundleTrits == bundleTrits
-                && pt.tailHashes.equals(tailHashes);
+        if (getClass() != obj.getClass())
+            return false;
+        PendingTransfer other = (PendingTransfer) obj;
+        if (!Arrays.equals(bundleTrits, other.bundleTrits))
+            return false;
+        if (tailHashes == null) {
+            if (other.tailHashes != null)
+                return false;
+        } else if (!tailHashes.equals(other.tailHashes))
+            return false;
+        return true;
     }
 }

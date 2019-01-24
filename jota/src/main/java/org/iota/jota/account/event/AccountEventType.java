@@ -8,5 +8,6 @@ public enum AccountEventType {
     ReceivedDeposit,
     ReceivingDeposit, 
     ReceivedMessage,
-    Shutdown
+    Shutdown,
+    Error
 }

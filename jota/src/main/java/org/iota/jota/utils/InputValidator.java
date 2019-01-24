@@ -74,6 +74,16 @@ public class InputValidator {
      * Determines whether the specified string contains only characters from the trytes alphabet (see <see cref="Constants.TryteAlphabet"/>).
      *
      * @param trytes The trytes to validate.
+     * @return <code>true</code> if the specified trytes are trytes otherwise, <code>false</code>.
+     **/
+    public static boolean isTrytes(String trytes) {
+        return isTrytes(trytes, trytes.length());
+    }
+    
+    /**
+     * Determines whether the specified string contains only characters from the trytes alphabet (see <see cref="Constants.TryteAlphabet"/>).
+     *
+     * @param trytes The trytes to validate.
      * @param length The length.
      * @return <code>true</code> if the specified trytes are trytes otherwise, <code>false</code>.
      **/
