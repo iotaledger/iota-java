@@ -276,6 +276,13 @@ public class IotaAPICore {
 
         return service.findTransactions(findTransRequest);
     }
+    
+    public IotaCustomResponse callIxi(String module, String... args) throws ArgumentException {
+        final IotaCustomRequest findTransRequest = IotaCustomRequest.createCustomRequest(module, args);
+
+        final Call<IotaCustomResponse> res = service.customRequest(findTransRequest);
+        return wrapCheckedException(res).body();
+    }
 
     /**
      * Find the transactions by addresses with checksum

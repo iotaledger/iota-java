@@ -206,4 +206,14 @@ public interface IotaAPIService {
     @Headers({CONTENT_TYPE_HEADER, USER_AGENT_HEADER})
     @POST("./")
     Call<WereAddressesSpentFromResponse> wereAddressesSpentFrom(@Body IotaWereAddressesSpentFromRequest request);
+    
+    /**
+    * Check if a list of addresses was ever spent from, in the current epoch, or in previous epochs.
+    * <p>
+    * {@code curl http://localhost:14265 -X POST -H 'X-IOTA-API-Version: 1.4.1' -H 'Content-Type: application/json'}
+    * {@code -d '{"command": "wereAddressesSpentFrom", "addresses": ["9LVHGEZGOGTXXEKX9QPKPOSHANFCAJOSMOGAHFGOVSDEIHQKIWGXOIGR9EHMDWRSLOCAUUYYSZNPBOJMX"]}'}
+    */
+   @Headers({CONTENT_TYPE_HEADER, USER_AGENT_HEADER})
+   @POST("./")
+    Call<IotaCustomResponse> customRequest(@Body IotaCustomRequest findTransRequest);
 }
