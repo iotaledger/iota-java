@@ -8,6 +8,10 @@ import jota.model.Bundle;
 import jota.model.Input;
 import jota.model.Transaction;
 import jota.model.Transfer;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Interceptor.Chain;
 
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
@@ -17,9 +21,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -94,6 +100,35 @@ public class IotaAPITest {
 
         iotaAPI = new IotaAPI.Builder().protocol("https").build();
         assertThat(iotaAPI.getProtocol(), Is.is("https"));
+        
+        OkHttpClient client = createClient();
+        iotaAPI = new IotaAPI.Builder().client(client).build();
+        assertThat(iotaAPI.getClient(), Is.is(client));
+    }
+    
+    /**
+     * 
+     * @return OkHttpClient
+     */
+
+    private OkHttpClient createClient() {
+        final OkHttpClient client = new OkHttpClient.Builder().readTimeout(5000, TimeUnit.SECONDS)
+            .addInterceptor(new Interceptor() {
+                @Override
+                public okhttp3.Response intercept(Chain chain) throws IOException {
+                    Request request = chain.request();
+                    Request newRequest;
+
+                    newRequest = request.newBuilder()
+                        .addHeader("X-IOTA-API-Version", "1")
+                        .build();
+
+                    return chain.proceed(newRequest);
+                }
+            })
+            .connectTimeout(5000, TimeUnit.SECONDS)
+            .build();
+        return client;
     }
 
     @Test
