@@ -20,7 +20,7 @@ public class Transfer {
      * Initializes a new instance of the Transfer class.
      * 
      * @param timestamp
-     * @param address
+     * @param address, must contain checksums
      * @param hash
      * @param persistence
      * @param value
@@ -41,7 +41,7 @@ public class Transfer {
     /**
      * Initializes a new instance of the Transfer class.
      * 
-     * @param address
+     * @param address, must contain checksums
      * @param value
      */
     public Transfer(String address, long value) {
@@ -54,7 +54,7 @@ public class Transfer {
     /**
      * Initializes a new instance of the Transfer class.
      * 
-     * @param address
+     * @param address, must contain checksums
      * @param value
      * @param message
      * @param tag
@@ -77,7 +77,7 @@ public class Transfer {
     }
 
     /**
-     * Get the address.
+     * Get the addresswith checksum.
      *
      * @return The address.
      */
@@ -86,7 +86,7 @@ public class Transfer {
     }
 
     /**
-     * Set the address.
+     * Set the address, must contain checksums
      *
      * @param address The address.
      */

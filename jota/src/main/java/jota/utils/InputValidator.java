@@ -17,20 +17,41 @@ import static jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
  *
  */
 public class InputValidator {
+    
+    /**
+     * Determines whether the specified string is a isSeed.
+     *
+     * @param seed The seed to validate.
+     * @return <code>true</code> if the specified string is a seed; otherwise, <code>false</code>.
+     **/
+    public static boolean isSeed(String seed) {
+        return seed.length() <= Constants.SEED_LENGTH && isTrytes(seed);
+    }
 
     /**
-     * Determines whether the specified string is an address.
+     * Determines whether the specified string is an address. 
+     * Address must contain a checksum to be valid
      *
      * @param address The address to validate.
      * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
      **/
     public static boolean isAddress(String address) {
-        return (address.length() == Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM ||
-                address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM) && isTrytes(address);
+        return address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM && isTrytes(address);
+    }
+    
+    /**
+     * Determines whether the specified string is an address without checksum. 
+     *
+     * @param address The address to validate.
+     * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
+     **/
+    public static boolean isAddressWithoutChecksum(String address) {
+        return isTrytesOfExactLength(address, Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM);
     }
 
     /**
      * Determines whether the specified addresses are valid.
+     * Addresses must contain a checksum to be valid.
      *
      * @param addresses The address list to validate.
      * @return <code>true</code> if the specified addresses are valid; otherwise, <code>false</code>.
@@ -46,6 +67,7 @@ public class InputValidator {
     
     /**
      * Determines whether the specified addresses are valid.
+     * Addresses must contain a checksum to be valid.
      *
      * @param addresses The address array to validate.
      * @return <code>true</code> if the specified addresses are valid; otherwise, <code>false</code>.
@@ -61,13 +83,29 @@ public class InputValidator {
 
     /**
      * Checks whether the specified address is an address and throws and exception if the address is invalid.
-     *
+     * Addresses must contain a checksum to be valid.
+     * 
      * @param address The address to validate.
      * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
      * @throws ArgumentException when the specified input is not valid.
      **/
     public static boolean checkAddress(String address) throws ArgumentException {
         if (!isAddress(address)) {
+            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
+        }
+        return true;
+    }
+    
+    /**
+     * Checks whether the specified address is an address without checksum 
+     * and throws and exception if the address is invalid.
+     * 
+     * @param address The address to validate.
+     * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
+     * @throws ArgumentException when the specified input is not valid.
+     **/
+    public static boolean checkAddressWithoutChecksum(String address) throws ArgumentException {
+        if (!isTrytesOfExactLength(address, Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM)) {
             throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
         }
         return true;
@@ -263,6 +301,16 @@ public class InputValidator {
      * @param inputs The inputs to validate.
      * @return <code>true</code> if the specified inputs are valid; otherwise, <code>false</code>.
      **/
+    public static boolean areValidInputsList(List<Input> inputs){
+        return areValidInputs(inputs.toArray(new Input[inputs.size()]));
+    }
+    
+    /**
+     * Checks if the inputs are valid. 
+     *
+     * @param inputs The inputs to validate.
+     * @return <code>true</code> if the specified inputs are valid; otherwise, <code>false</code>.
+     **/
     public static boolean areValidInputs(Input... inputs){
         // Input validation of input objects
         if (inputs == null || inputs.length == 0) {
@@ -306,7 +354,7 @@ public class InputValidator {
      * @return <code>true</code> if the specified input is valid; otherwise, <code>false</code>.
      **/
     public static boolean isValidSeed(String seed) {
-        if (seed.length() > Constants.SEED_LENGTH_MAX) {
+        if (seed.length() > Constants.SEED_LENGTH) {
             return false;
         }
         

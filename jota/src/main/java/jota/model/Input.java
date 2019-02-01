@@ -17,7 +17,7 @@ public class Input {
     /**
      * Initializes a new instance of the Input class.
      * 
-     * @param address
+     * @param address with checksum
      * @param balance
      * @param keyIndex
      * @param security
@@ -41,7 +41,7 @@ public class Input {
     }
 
     /**
-     * Get the address.
+     * Get the address with checksum
      *
      * @return The address.
      */
@@ -50,7 +50,7 @@ public class Input {
     }
 
     /**
-     * Get the address.
+     * Set the address with checksum.
      *
      * @param address The address.
      */

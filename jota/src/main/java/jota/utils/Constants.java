@@ -17,9 +17,9 @@ public class Constants {
     public static final String TRYTE_ALPHABET = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     /**
-     * The maximum seed length
+     * The length of an IOTA seed
      */
-    public static final int SEED_LENGTH_MAX = 81;
+    public static final int SEED_LENGTH = 81;
     
     /**
      * The length of a hash in trits
@@ -30,7 +30,7 @@ public class Constants {
      * The length of an address without checksum in trytes
      */
     public static int ADDRESS_LENGTH_WITHOUT_CHECKSUM = 81;
-
+    
     /**
      * The length of an address with checksum in trytes
      */
