@@ -4,12 +4,13 @@ import com.google.gson.Gson;
 import jota.category.IntegrationTest;
 import jota.dto.response.*;
 import jota.error.ArgumentException;
+import jota.utils.Checksum;
+
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.assertFalse;
@@ -18,15 +19,16 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 
-/**
- * @author Adrian
- */
 public class IotaCoreApiTest {
 
     private static final String TEST_BUNDLE = "XZKJUUMQOYUQFKMWQZNTFMSS9FKJLOEV9DXXXWPMQRTNCOUSUQNTBIJTVORLOQPLYZOTMLFRHYKMTGZZU";
-    private static final String TEST_ADDRESS_UNSPENT = "D9UZTBEAT9DMZKMCPEKSBEOWPAUFWKOXWPO9LOHZVTE9HAVTAKHWAIXCJKDJFGUOBOULUFTJZKWTEKCHD";
-    private static final String TEST_ADDRESS_SPENT = "9SEGQNQHFHCAI9QXTVGBGTIZQDV9RSCGCGPQSPLNCNN9DSENFMLTD9SETUSYZCYG9JYPIAMXFHNT9YRFZ";
+    private static final String TEST_ADDRESS_UNSPENT = "D9UZTBEAT9DMZKMCPEKSBEOWPAUFWKOXWPO9LOHZVTE9HAVTAKHWAIXCJKDJFGUOBOULUFTJZKWTEKCHDAPJEJXEDD";
+    private static final String TEST_ADDRESS_SPENT = "9SEGQNQHFHCAI9QXTVGBGTIZQDV9RSCGCGPQSPLNCNN9DSENFMLTD9SETUSYZCYG9JYPIAMXFHNT9YRFZMMRCMESPB";
+    
+    
+    private static final String TEST_ADDRESS_WITHOUT_CHECKSUM = "YJNQ9EQWSXUMLFCIUZDCAJZSAXUQNZSY9AKKVYKKFBAAHRSTKSHUOCCFTQVPPASPGGC9YGNLDQNOUWCAW";
     private static final String TEST_ADDRESS_WITH_CHECKSUM = "YJNQ9EQWSXUMLFCIUZDCAJZSAXUQNZSY9AKKVYKKFBAAHRSTKSHUOCCFTQVPPASPGGC9YGNLDQNOUWCAWGWIJNRJMX";
+    
     private static final String TEST_HASH = "OOAARHCXXCPMNZPUEYOOUIUCTWZSQGKNIECIKRBNUUJEVMLJAWGCXREXEQGNJUJKUXXQAWWAZYKB99999";
     private static IotaAPICore proxy;
 
@@ -138,7 +140,10 @@ public class IotaCoreApiTest {
     @Test
     @Category(IntegrationTest.class)
     public void shouldGetInclusionStates() throws ArgumentException {
-        GetInclusionStateResponse res = proxy.getInclusionStates(new String[]{TEST_HASH}, new String[]{proxy.getNodeInfo().getLatestSolidSubtangleMilestone()});
+        System.out.println(proxy.getNodeInfo().getLatestSolidSubtangleMilestone());
+        GetInclusionStateResponse res = proxy.getInclusionStates(
+                new String[]{TEST_HASH}, 
+                new String[]{proxy.getNodeInfo().getLatestSolidSubtangleMilestone()});
         assertThat(res.getStates(), IsNull.notNullValue());
     }
 
@@ -166,7 +171,7 @@ public class IotaCoreApiTest {
     @Category(IntegrationTest.class)
     public void shouldFindTransactions() throws ArgumentException {
         String test = TEST_BUNDLE;
-        FindTransactionResponse resp = proxy.findTransactions(new String[]{test}, new String[]{test}, new String[]{test}, new String[]{test});
+        FindTransactionResponse resp = proxy.findTransactions(new String[]{Checksum.addChecksum(test)}, new String[]{test}, new String[]{test}, new String[]{test});
         System.out.println(new Gson().toJson(resp));
     }
 
@@ -184,8 +189,8 @@ public class IotaCoreApiTest {
     @Category(IntegrationTest.class)
     public void invalidAddressSpentFrom() throws ArgumentException {
         try {
-            //Addresses with checksum aren't allowed, remove last 9 characters!
-            proxy.wereAddressesSpentFrom(TEST_ADDRESS_WITH_CHECKSUM);
+            //Addresses without checksum aren't allowed!
+            proxy.wereAddressesSpentFrom(TEST_ADDRESS_WITHOUT_CHECKSUM);
             fail("failed to throw error on wrong address hash");
         } catch (ArgumentException e) {
           //TODO verify correct error
