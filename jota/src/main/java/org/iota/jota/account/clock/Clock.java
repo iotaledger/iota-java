@@ -8,5 +8,5 @@ public interface Clock {
      * Returns the time on this current clock
      * @return
      */
-    Date now();
+    Date time();
 }

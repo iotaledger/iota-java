@@ -5,7 +5,7 @@ import java.util.Date;
 public class SystemClock implements Clock {
 
     @Override
-    public Date now() {
+    public Date time() {
         return new Date();
     }
 
