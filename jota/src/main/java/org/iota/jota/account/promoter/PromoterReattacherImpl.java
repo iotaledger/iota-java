@@ -29,8 +29,6 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
 
     private static final long PROMOTE_DELAY = 10000;
     
-    
-    
     private EventManager eventManager;
 
     private IotaAPI api;
@@ -146,5 +144,10 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
                 pendingBundle.getTransactions().get(0).getHash());
         
         return ret.getNewBundle();
+    }
+
+    @Override
+    public String name() {
+        return "PromoterReattacherImpl";
     }
 }

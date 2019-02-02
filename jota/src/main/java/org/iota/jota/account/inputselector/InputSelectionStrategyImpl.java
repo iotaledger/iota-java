@@ -62,7 +62,7 @@ public class InputSelectionStrategyImpl implements InputSelectionStrategy {
     private boolean isUsable(Input input, DepositRequest request) {
         if (!request.hasTimeOut()) {
             return true;
-        } else if (request.getTimeOut().after(clock.now())) {
+        } else if (request.getTimeOut().after(clock.time())) {
             // TODO: Check for persist after timeout
             
             if (request.isMultiUse()) {

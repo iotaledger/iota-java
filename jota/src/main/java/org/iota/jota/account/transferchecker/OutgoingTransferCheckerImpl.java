@@ -74,4 +74,9 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
             e.printStackTrace();
         }
     }
+
+    @Override
+    public String name() {
+        return "OutgoingTransferChecker";
+    }
 }

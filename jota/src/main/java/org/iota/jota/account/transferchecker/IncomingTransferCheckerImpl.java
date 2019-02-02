@@ -31,4 +31,9 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
         
     }
 
+    @Override
+    public String name() {
+        return "IncomingTransferChecker";
+    }
+
 }
