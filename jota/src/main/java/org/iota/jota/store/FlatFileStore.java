@@ -10,13 +10,10 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import org.iota.jota.account.AccountState;
+import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 public class FlatFileStore implements Store {
 
@@ -27,9 +24,7 @@ public class FlatFileStore implements Store {
     private InputStream inputStream;
     private OutputStream outputStream;
     
-    private MemoryStore memoryStore = null;
-    
-    ObjectMapper objectMapper = new ObjectMapper();
+    protected MemoryStore memoryStore = null;
     
     public FlatFileStore(InputStream inputStream, OutputStream outputStream) {
         this.inputStream = inputStream;
@@ -58,19 +53,33 @@ public class FlatFileStore implements Store {
             if (!file.canRead() || !file.canWrite()) {
                 log.debug("node_config.properties not found. Rolling back for another solution...");
             }   
-            
+            System.out.println(file.getName());
             inputStream = new FileInputStream(file);
         }
         
-        Map<String, Serializable> store;
-        try {
-            store = objectMapper.readValue(inputStream, new TypeReference<Map<String, AccountState>>(){});
-        } catch (MismatchedInputException e) {
-            store = new HashMap<String, Serializable>();
-        }
+        Map<String, Serializable> store = loadFromInputStream(inputStream);
         
         memoryStore = new MemoryStore(store);
         memoryStore.load();
+    }
+    
+    protected Map<String, Serializable> loadFromInputStream(InputStream stream){
+        Map<String, Serializable> store = new HashMap<String, Serializable>();
+        try {
+            Properties properties = new Properties();
+            properties.load(stream);
+            properties.putAll(store);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return store;
+    }
+    
+    protected void writeToOutputStream(OutputStream stream, Map<String, Serializable> store) throws IOException {
+        Properties properties = new Properties();
+        properties.putAll(store);
+
+        properties.store(stream, null);
     }
 
     @Override
@@ -81,13 +90,12 @@ public class FlatFileStore implements Store {
                 outputStream = new FileOutputStream(file);
             }
             
-            objectMapper.writeValue(outputStream, memoryStore.getStore());
+            writeToOutputStream(outputStream, memoryStore.getStore());
         } catch (IOException e) {
             log.warn("Failed to save config to disk! " + e.getMessage());
         } finally {
             
         }
-        
     }
 
     @Override

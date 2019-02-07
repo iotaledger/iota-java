@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trits;
@@ -47,8 +46,8 @@ public class PendingTransfer implements Serializable {
      * 
      * @return
      */
-    public Stream<Hash> getTailHashes(){
-        return tailHashes.stream();
+    public Hash[] getTailHashes(){
+        return tailHashes.toArray(new Hash[tailHashes.size()]);
     }
     
     public Trits[] getBundleTrits() {

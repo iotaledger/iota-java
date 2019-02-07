@@ -3,9 +3,12 @@
       "keyIndex":4,
       "depositRequests":{
          "1":{
-            "timeOut":0,
-            "multiUse":false,
-            "expectedAmount":5
+            "securityLevel": 1,
+            "request": {
+               "timeOut":0,
+               "multiUse":false,
+               "expectedAmount":5
+            }
          }
       },
       "pendingTransfers":{

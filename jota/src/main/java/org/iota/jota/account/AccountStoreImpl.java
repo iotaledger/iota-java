@@ -24,7 +24,7 @@ public class AccountStoreImpl implements AccountStore {
     @Override
     public AccountState loadAccount(String id) {
         AccountState state = store.get(id);
-        
+        System.out.println(state);
         if (state == null) {
             state = new AccountState();
             store.set(id, state);
@@ -88,7 +88,7 @@ public class AccountStoreImpl implements AccountStore {
         Trits[] trits = new Trits[bundleTrytes.length];
         for (int i=0; i<bundleTrytes.length; i++) {
             Trytes t = bundleTrytes[i];
-            Converter.trits(t.toString());
+            trits[i] = new Trits(Converter.trits(t.toString()));
         }
         
         PendingTransfer transfer = new PendingTransfer(trits);

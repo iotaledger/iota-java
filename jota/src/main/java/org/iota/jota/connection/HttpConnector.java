@@ -47,9 +47,12 @@ public class HttpConnector implements Connection {
     private String protocol;
     private String host;
     private int port;
-    private int timeout;
+    
+    //Default to 20 if someone passes a null client
+    private int timeout = 20;
     
     private IotaNodeHTTPService service;
+    private OkHttpClient client;
     
     private static final Logger log = LoggerFactory.getLogger(HttpConnector.class);
 
@@ -59,6 +62,14 @@ public class HttpConnector implements Connection {
         this.port = port;
         
         this.timeout = timeout;
+    }
+    
+    public HttpConnector(OkHttpClient client, String protocol, String host, int port) {
+        this.protocol = protocol;
+        this.host = host;
+        this.port = port;
+        
+        this.client = client;
     }
     
     @Override
@@ -75,7 +86,9 @@ public class HttpConnector implements Connection {
         final String nodeUrl = protocol + "://" + host + ":" + port;
 
         // Create OkHttpBuilder
-        OkHttpClient client = new OkHttpClient.Builder()
+        OkHttpClient client = this.client;
+        if (null == client){
+            client = new OkHttpClient.Builder()
                 .connectTimeout(timeout, TimeUnit.SECONDS)
                 .writeTimeout(timeout, TimeUnit.SECONDS)
                 .readTimeout(timeout, TimeUnit.SECONDS)
@@ -93,6 +106,7 @@ public class HttpConnector implements Connection {
                     }
                 })
                 .build();
+        }
         
         // use client to create Retrofit service
         Retrofit retrofit = new Retrofit.Builder()

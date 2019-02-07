@@ -22,11 +22,14 @@ public class AccountBalanceCache {
 
     private long totalBalance;
     
-    public AccountBalanceCache( AddressGeneratorService addressGenerator, AccountState state) {
+    public AccountBalanceCache( AddressGeneratorService addressGenerator, AccountState state, IotaAPI api) {
         this.addressGenerator = addressGenerator;
         this.state = state;
         
         totalBalance = 0;
+        
+
+        recalcluate(api);
     }
     
     public void recalcluate(IotaAPI api) {

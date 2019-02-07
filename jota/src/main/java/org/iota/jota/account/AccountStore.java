@@ -24,6 +24,15 @@ public interface AccountStore {
     
     Map<Integer, StoredDepositRequest> getDepositRequests(String id);
     
+    /**
+     * Adds transaction as pending
+     * Automatically adds a tail to this pending as well.
+     * 
+     * @param id
+     * @param tailTx
+     * @param bundleTrytes
+     * @param indices indexes to remove for this transfer, currently unused since we remove when we ask for inputs
+     */
     void addPendingTransfer(String id, Hash tailTx, Trytes[] bundleTrytes, int... indices);
     
     void removePendingTransfer(String id, Hash tailHash );

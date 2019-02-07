@@ -1,22 +1,23 @@
 package org.iota.jota.types;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class Trits implements Serializable {
     
-    private String trits;
+    private int[] trits;
 
-    public Trits(String trits) {
+    public Trits(int[] trits) {
         this.trits = trits;
     }
 
-    public String getTrits() {
+    public int[] getTrits() {
         return trits;
     }
     
     @Override
     public String toString() {
-        return new String(trits);
+        return new String(Arrays.toString(trits));
     }
     
     @Override

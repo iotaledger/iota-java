@@ -34,7 +34,7 @@ public abstract class AbstractBuilder<T, E, F extends Config> {
         } catch (Exception e) {
             //You must know that the message comes from creating/building here, so we just log the error
             log.error(e.getMessage());
-            
+            e.printStackTrace();
             return null;
         }
         return compile();
@@ -66,7 +66,6 @@ public abstract class AbstractBuilder<T, E, F extends Config> {
     
     protected List<F> getConfigs() throws Exception{
         EnvConfig env = new EnvConfig();
-        
         if (getConfig() == null) {
             String configName = env.getConfigName();
             

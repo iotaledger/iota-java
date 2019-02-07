@@ -3,7 +3,7 @@ package org.iota.jota.account;
 import java.util.List;
 import java.util.Map;
 
-import org.iota.jota.account.addressgenerator.AddressGeneratorServiceImpl;
+import org.iota.jota.account.addressgenerator.AddressGeneratorService;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.StoredDepositRequest;
 import org.iota.jota.account.errors.AccountError;
@@ -23,7 +23,7 @@ public class AccountStateManager {
     
     private AccountOptions options;
     
-    private AddressGeneratorServiceImpl addressService;
+    private AddressGeneratorService addressService;
     
     private InputSelectionStrategy inputSelector;
 
@@ -34,7 +34,7 @@ public class AccountStateManager {
                                String accountId,
                                InputSelectionStrategy inputSelector, 
                                AccountState state, 
-                               AddressGeneratorServiceImpl addressService, 
+                               AddressGeneratorService addressService, 
                                AccountOptions options, 
                                AccountStore store) {
         this.cache = cache;

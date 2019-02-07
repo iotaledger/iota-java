@@ -710,7 +710,7 @@ public class IotaAPICore {
         String protocol, host;
         int port;
         
-        int timeout;
+        int timeout = 0;
         
         // If this is null, no local PoW is done, therefor no default value
         IotaLocalPoW localPoW;

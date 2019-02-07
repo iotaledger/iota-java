@@ -6,7 +6,7 @@ import java.util.Date;
 
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.StoredDepositRequest;
-import org.iota.jota.store.FlatFileStore;
+import org.iota.jota.store.JsonFlatFileStore;
 import org.iota.jota.store.MemoryStore;
 import org.iota.jota.store.Store;
 import org.junit.Before;
@@ -34,7 +34,7 @@ public class AccountStoreTest {
     
     @Test
     public void testExistingStore() throws Exception {
-        Store store = new FlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
+        Store store = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
         store.load();
         
         AccountState state = new AccountState();

@@ -58,6 +58,8 @@ public class Bundle implements Comparable<Bundle> {
     public List<Transaction> getTransactions() {
         return transactions;
     }
+    
+    
 
     /**
      * Gets the length of the bundle
@@ -81,6 +83,14 @@ public class Bundle implements Comparable<Bundle> {
         if (getLength() == 0) return EMPTY_HASH;
         return transactions.get(0).getBundle();
         
+    }
+    
+    public void addTransaction(Transaction transaction) {
+        if (getTransactions() == null) {
+            transactions = new ArrayList<>(getTransactions());
+        }
+        
+        transactions.add(transaction);
     }
 
     /**

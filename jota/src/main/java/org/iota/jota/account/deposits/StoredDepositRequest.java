@@ -7,6 +7,10 @@ public class StoredDepositRequest {
     private DepositRequest request;
     
     private int securityLevel;
+    
+    private StoredDepositRequest() {
+        
+    }
 
     public StoredDepositRequest(DepositRequest request, int securityLevel) {
         this.request = request;

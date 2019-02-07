@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -57,6 +58,7 @@ import org.iota.jota.types.Trytes;
 import org.iota.jota.utils.AbstractBuilder;
 import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.Constants;
+import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.InputValidator;
 import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.TrytesConverter;
@@ -174,17 +176,17 @@ public class IotaAccount implements Account, EventListener {
         this.accountId = accountId;
         AddressGeneratorServiceImpl service = new AddressGeneratorServiceImpl(options);
         
-        AccountBalanceCache cache = new AccountBalanceCache(service, state);
-        cache.recalcluate(getApi());
+        AccountBalanceCache cache = new AccountBalanceCache(service, state, getApi());
         
         InputSelectionStrategy strategy = new InputSelectionStrategyImpl(cache, options.getTime());
         
         
         accountManager = new AccountStateManager(cache, accountId, strategy, state, service, options, getStore());
         
+        //All plugins do their startup tasks on load();
         addTask(new PromoterReattacherImpl(eventManager, getApi(), accountManager, options));
-        addTask(new IncomingTransferCheckerImpl(eventManager, getApi()));
-        addTask(new OutgoingTransferCheckerImpl(eventManager, getApi()));
+        addTask(new IncomingTransferCheckerImpl(eventManager, getApi(), accountManager));
+        addTask(new OutgoingTransferCheckerImpl(eventManager, getApi(), accountManager));
         
         shutdownHook();
         
@@ -229,6 +231,7 @@ public class IotaAccount implements Account, EventListener {
             task.load();
             getEventManager().registerListener(task);
             tasks.add(task);
+            log.debug("Loaded plugin " + task.name());
         }
     }
     
@@ -344,21 +347,11 @@ public class IotaAccount implements Account, EventListener {
     }
     
     public Future<Bundle> send(String address, long amount, Optional<String> message, 
-                               Optional<String> tag) throws ArgumentException{
-        
+                               Optional<String> tag) throws ArgumentException {
+       
         if (!loaded) {
             return null;
         }
-        
-        int secLvl = options.getSecurityLevel();
-        /*if (securityLevel.isPresent()) {
-            if (InputValidator.isValidSecurityLevel(securityLevel.get())) {
-                secLvl = securityLevel.get();
-            } else {
-                throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
-            }
-        }*/
-        System.out.println(secLvl);
         
         String tryteTag = tag.orElse("");
         tryteTag = StringUtils.rightPad(tryteTag, Constants.TAG_LENGTH, '9');
@@ -394,15 +387,18 @@ public class IotaAccount implements Account, EventListener {
             }
         
             List<Trytes> trytes = prepareTransfers(transfer, inputs, remainder);
-            
+            System.out.println(Arrays.toString(trytes.toArray()));
             List<Transaction> transferResponse = getApi().sendTrytes(
-                    trytes.stream().map(Object::toString).toArray(String[]::new), 
+                    trytes.stream().map(Trytes::toString).toArray(String[]::new), 
                     options.getDept(), options.getMwm(), null
                 );
             
             accountManager.addPendingTransfer(
                     new Hash(transferResponse.get(0).getHash()), 
-                    trytes.toArray(new Trytes[trytes.size()]), 
+                    transferResponse.stream()
+                        .map(Transaction::toTrytes)
+                        .map(Trytes::new)
+                        .toArray(Trytes[]::new),
                     1
                 );
             
