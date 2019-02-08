@@ -3,11 +3,23 @@ package org.iota.jota.types;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.utils.Constants;
+import org.iota.jota.utils.InputValidator;
+
 public class Trits implements Serializable {
     
     private int[] trits;
+    
+    private Trits() {
+        
+    }
 
     public Trits(int[] trits) {
+        if (!InputValidator.isTrits(trits)){
+            throw new ArgumentException(Constants.INVALID_TRITS_INPUT_ERROR);
+        }
+        
         this.trits = trits;
     }
 

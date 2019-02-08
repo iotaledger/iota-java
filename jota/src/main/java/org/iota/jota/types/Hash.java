@@ -9,6 +9,10 @@ import org.iota.jota.utils.InputValidator;
 public class Hash  implements Serializable {
 
     private String hash;
+    
+    private Hash() {
+        
+    }
 
     public Hash(String hash) throws ArgumentException {
         if (!InputValidator.isHash(hash)){

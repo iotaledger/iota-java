@@ -387,7 +387,6 @@ public class IotaAccount implements Account, EventListener {
             }
         
             List<Trytes> trytes = prepareTransfers(transfer, inputs, remainder);
-            System.out.println(Arrays.toString(trytes.toArray()));
             List<Transaction> transferResponse = getApi().sendTrytes(
                     trytes.stream().map(Trytes::toString).toArray(String[]::new), 
                     options.getDept(), options.getMwm(), null

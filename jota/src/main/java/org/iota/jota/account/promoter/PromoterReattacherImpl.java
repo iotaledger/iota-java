@@ -101,7 +101,9 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     @AccountEvent
     private void onConfirmed(EventTransferConfirmed event) {
         ScheduledFuture<?> runnable = unconfirmedBundles.get(event.getBundle().getBundleHash());
-        runnable.cancel(false); // No interrupt, we check on task completion
+        if (null != runnable) {
+            runnable.cancel(true); 
+        }
         
         unconfirmedBundles.remove(event.getBundle().getBundleHash());
         bundleTails.remove(new Hash(event.getBundle().getBundleHash()));

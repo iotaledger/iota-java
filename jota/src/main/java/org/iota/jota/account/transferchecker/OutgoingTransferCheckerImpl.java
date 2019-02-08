@@ -87,8 +87,12 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
             String hash = bundle.getTransactions().get(0).getHash();
             GetInclusionStateResponse check = api.getLatestInclusion(hash);
             if (check.getStates()[0]) {
-                ScheduledFuture<?> runnable = unconfirmedBundles.get(hash);
-                runnable.cancel(true);
+                // Restart might not have a runnable
+                ScheduledFuture<?> runnable = unconfirmedBundles.get(bundle.getBundleHash());
+                if (null != runnable) {
+                    runnable.cancel(true);
+                }
+                
                 unconfirmedBundles.remove(bundle.getBundleHash());
                 
                 accountManager.removePendingTransfer(new Hash(hash));

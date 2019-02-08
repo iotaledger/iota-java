@@ -1,5 +1,6 @@
 package org.iota.jota.utils;
 
+import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transfer;
@@ -7,7 +8,10 @@ import org.iota.jota.model.Transfer;
 import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.IntPredicate;
+import java.util.function.Predicate;
 
 /**
  * 
@@ -316,5 +320,16 @@ public class InputValidator {
      */
     public static boolean isValidSecurityLevel(int level) {
        return level >= Constants.MIN_SECURITY_LEVEL && level <= Constants.MAX_SECURITY_LEVEL;
+    }
+
+    public static boolean isTrits(int[] trits) {
+        Range<Integer> myRange = Range.between(-1, 1);
+        IntPredicate contains = myRange::contains;
+        
+        long min = Arrays.stream(trits)
+                .filter(contains.negate())
+                .count(); 
+
+        return min == 0;
     }
 }
