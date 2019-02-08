@@ -277,7 +277,7 @@ public class IotaAPI extends IotaAPICore {
 
         GetNewAddressResponse gnr = getNewAddress(seed, security, start, false, end, true);
         if (gnr != null && gnr.getAddresses() != null) {
-            Bundle[] bundles = bundlesFromAddresses(gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]), inclusionStates);
+            Bundle[] bundles = bundlesFromAddresses(inclusionStates, gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]));
             return GetTransferResponse.create(bundles, stopWatch.getElapsedTimeMili());
         }
         return GetTransferResponse.create(new Bundle[]{}, stopWatch.getElapsedTimeMili());
@@ -292,7 +292,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException When the addresses are invalid
      * @throws IllegalStateException When inclusion state/confirmed could not be determined (<tt>null</tt> returned)
      */
-    public Bundle[] bundlesFromAddresses(String[] addresses, Boolean inclusionStates) throws ArgumentException {
+    public Bundle[] bundlesFromAddresses(Boolean inclusionStates, String... addresses) throws ArgumentException {
 
         List<Transaction> trxs = findTransactionObjectsByAddresses(addresses);
         // set of tail transactions
@@ -442,7 +442,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException if hashes is not a valid array of hashes
      * @see #getTrytes(String...)
      **/
-    public List<Transaction> findTransactionsObjectsByHashes(String[] hashes) throws ArgumentException {
+    public List<Transaction> findTransactionsObjectsByHashes(String... hashes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfHashes(hashes)) {
             throw new IllegalStateException(Constants.INVALID_HASHES_INPUT_ERROR);
@@ -467,7 +467,7 @@ public class IotaAPI extends IotaAPICore {
      * @see #findTransactionsByAddresses(String...)
      * @see #findTransactionsObjectsByHashes
      **/
-    public List<Transaction> findTransactionObjectsByAddresses(String[] addresses) throws ArgumentException {
+    public List<Transaction> findTransactionObjectsByAddresses(String... addresses) throws ArgumentException {
         List<String> addressesWithoutChecksum = new ArrayList<>();
 
         for (String address : addresses) {
@@ -490,7 +490,7 @@ public class IotaAPI extends IotaAPICore {
      * @param tags The tags the transactions we search for have
      * @return Transactions.
      **/
-    public List<Transaction> findTransactionObjectsByTag(String[] tags) throws ArgumentException {
+    public List<Transaction> findTransactionObjectsByTag(String... tags) throws ArgumentException {
         FindTransactionResponse ftr = findTransactionsByTags(tags);
         if (ftr == null || ftr.getHashes() == null) {
             return new ArrayList<>();
@@ -508,7 +508,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException if addresses is not a valid array of hashes
      * @see #findTransactionsByApprovees
      **/
-    public List<Transaction> findTransactionObjectsByApprovees(String[] approvees) throws ArgumentException {
+    public List<Transaction> findTransactionObjectsByApprovees(String... approvees) throws ArgumentException {
         FindTransactionResponse ftr = findTransactionsByApprovees(approvees);
         if (ftr == null || ftr.getHashes() == null) {
             return new ArrayList<>();
@@ -526,7 +526,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException if addresses is not a valid array of hashes
      * @see #findTransactionsByBundles
      **/
-    public List<Transaction> findTransactionObjectsByBundle(String[] bundles) throws ArgumentException {
+    public List<Transaction> findTransactionObjectsByBundle(String... bundles) throws ArgumentException {
         FindTransactionResponse ftr = findTransactionsByBundles(bundles);
         if (ftr == null || ftr.getHashes() == null) {
             return new ArrayList<>();

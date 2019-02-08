@@ -27,11 +27,16 @@ public class AccountBalanceCache {
         this.state = state;
         
         totalBalance = 0;
-        
 
         recalcluate(api);
     }
     
+    /**
+     * Calculates the balance currently available using the stored deposits.
+     * Any added Inputs using the {@link #addBalance(Input, DepositRequest)}, but not stored will be discarded.
+     * 
+     * @param api
+     */
     public void recalcluate(IotaAPI api) {
         cachedIndexMap = new ConcurrentHashMap<>();
         

@@ -37,7 +37,7 @@ import org.iota.jota.account.event.EventListener;
 import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.Plugin;
 import org.iota.jota.account.event.events.EventAccountError;
-import org.iota.jota.account.event.events.EventSendingTransfer;
+import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.event.impl.EventManagerImpl;
 import org.iota.jota.account.inputselector.InputSelectionStrategy;
 import org.iota.jota.account.inputselector.InputSelectionStrategyImpl;
@@ -187,7 +187,7 @@ public class IotaAccount implements Account, EventListener {
         
         //All plugins do their startup tasks on load();
         addTask(new PromoterReattacherImpl(eventManager, getApi(), accountManager, options));
-        addTask(new IncomingTransferCheckerImpl(eventManager, getApi(), accountManager));
+        addTask(new IncomingTransferCheckerImpl(eventManager, getApi(), accountManager, service));
         addTask(new OutgoingTransferCheckerImpl(eventManager, getApi(), accountManager));
         
         shutdownHook();
@@ -355,6 +355,8 @@ public class IotaAccount implements Account, EventListener {
             }
         
             List<Trytes> trytes = prepareTransfers(transfer, inputs, remainder);
+            
+
             List<Transaction> transferResponse = getApi().sendTrytes(
                     trytes.stream().map(Trytes::toString).toArray(String[]::new), 
                     options.getDept(), options.getMwm(), null
@@ -370,7 +372,7 @@ public class IotaAccount implements Account, EventListener {
                 );
             
             Bundle bundle = new Bundle(transferResponse, transferResponse.size());
-            EventSendingTransfer event = new EventSendingTransfer(bundle);
+            EventSentTransfer event = new EventSentTransfer(bundle);
             eventManager.emit(event);
             
             return new FutureTask<Bundle>(() -> bundle);
@@ -482,7 +484,7 @@ public class IotaAccount implements Account, EventListener {
                     trytes.toArray(new String[trytes.size()]), options.getDept(), options.getMwm(), null);
             
             Bundle bundle = new Bundle(transferResponse, transferResponse.size());
-            EventSendingTransfer event = new EventSendingTransfer(bundle);
+            EventSentTransfer event = new EventSentTransfer(bundle);
             eventManager.emit(event);
             
             return new FutureTask<Bundle>(() -> bundle);

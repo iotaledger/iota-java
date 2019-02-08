@@ -17,7 +17,7 @@ import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.Plugin;
 import org.iota.jota.account.event.events.EventPromotion;
 import org.iota.jota.account.event.events.EventReattachment;
-import org.iota.jota.account.event.events.EventSendingTransfer;
+import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.event.events.EventTransferConfirmed;
 import org.iota.jota.config.options.AccountOptions;
 import org.iota.jota.dto.response.GetTrytesResponse;
@@ -68,9 +68,6 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
                 bundle.addTransaction( new Transaction(Converter.trytes(trits.getTrits())));
             }
             
-            // Adding it immediately has delay, so also do it right now.
-            // This will also get tail tx transactions
-            doTask(bundle);
             addUnconfirmedBundle(bundle);
         }
     }
@@ -86,7 +83,7 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     }
     
     @AccountEvent
-    private void onBundleBroadcast(EventSendingTransfer event) {
+    private void onBundleBroadcast(EventSentTransfer event) {
         addUnconfirmedBundle(event.getBundle());
     }
 
@@ -94,7 +91,7 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
         Runnable r = () -> doTask(bundle);
         unconfirmedBundles.put(
             bundle.getBundleHash(), 
-            service.scheduleAtFixedRate(r, PROMOTE_DELAY, PROMOTE_DELAY, TimeUnit.MILLISECONDS)
+            service.scheduleAtFixedRate(r, 0, PROMOTE_DELAY, TimeUnit.MILLISECONDS)
         );
     }
     

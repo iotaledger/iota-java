@@ -11,7 +11,7 @@ import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.PendingTransfer;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
-import org.iota.jota.account.event.events.EventSendingTransfer;
+import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.event.events.EventTransferConfirmed;
 import org.iota.jota.dto.response.GetInclusionStateResponse;
 import org.iota.jota.error.ArgumentException;
@@ -45,22 +45,18 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
     public void load() {
         unconfirmedBundles = new ConcurrentHashMap<>();
         service = new UnboundScheduledExecutorService();
-        
+    }
+
+    @Override
+    public boolean start() {
         for (Entry<String, PendingTransfer> entry : accountManager.getPendingTransfers().entrySet()) {
             Bundle bundle = new Bundle();
             for (Trits trits : entry.getValue().getBundleTrits()){
                 bundle.addTransaction( new Transaction(Converter.trytes(trits.getTrits())));
             }
             
-            // Adding it immediately has delay, so also do it right now.
-            // This will also get tail tx transactions
-            doTask(bundle);
             addUnconfirmedBundle(bundle);
         }
-    }
-
-    @Override
-    public boolean start() {
         return true;
     }
 
@@ -70,7 +66,7 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
     }
     
     @AccountEvent
-    private void onBundleBroadcast(EventSendingTransfer event) {
+    private void onBundleBroadcast(EventSentTransfer event) {
         addUnconfirmedBundle(event.getBundle());
     }
     
@@ -78,7 +74,7 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
         Runnable r = () -> doTask(bundle);
         unconfirmedBundles.put(
             bundle.getBundleHash(), 
-            service.scheduleAtFixedRate(r, CHECK_CONFIRMED_DELAY, CHECK_CONFIRMED_DELAY, TimeUnit.MILLISECONDS)
+            service.scheduleAtFixedRate(r, 0, CHECK_CONFIRMED_DELAY, TimeUnit.MILLISECONDS)
         );
     }
 
