@@ -27,7 +27,9 @@ import org.iota.jota.account.addressgenerator.AddressGeneratorServiceImpl;
 import org.iota.jota.account.clock.Clock;
 import org.iota.jota.account.clock.SystemClock;
 import org.iota.jota.account.condition.ExpireCondition;
+import org.iota.jota.account.deposits.DepositConditions;
 import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.deposits.StoredDepositRequest;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.errors.AccountLoadError;
 import org.iota.jota.account.event.AccountEvent;
@@ -277,40 +279,6 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
-    public Future<Bundle> send(Recipient recipient) throws AccountError {
-        if (recipient.getAddresses().length == 1) {
-            return recipient.getValue() == 0 
-                    ? sendZeroValue(recipient.getMessage(), recipient.getTag(), recipient.getAddresses()[0]) 
-                    : send(recipient.getAddresses()[0], 
-                            recipient.getValue(),  
-                            Optional.of(recipient.getMessage()), 
-                            Optional.of(recipient.getTag()));
-        } else {
-            return sendMulti(
-                    recipient.getAddresses(), 
-                    recipient.getValue(), 
-                    Optional.of(recipient.getMessage()), 
-                    Optional.of(recipient.getTag()));
-        }
-        
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public DepositRequest newDepositRequest(Address depositAddress, int amount, Date timeOut, 
-            ExpireCondition... otherConditions) throws AccountError {
-        
-        return null;
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
     public long usableBalance() throws AccountError {
         return accountManager.getUsableBalance();
     }
@@ -415,6 +383,46 @@ public class IotaAccount implements Account, EventListener {
             return null;
         }
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Future<DepositConditions> newDepositRequest(Date timeOut, boolean multiUse, long expectedAmount,
+            ExpireCondition... otherConditions) throws AccountError {
+        return newDepositRequest(new DepositRequest(timeOut, multiUse, expectedAmount), otherConditions);
+    }
+    
+    public Future<DepositConditions> newDepositRequest(DepositRequest request, ExpireCondition... otherConditions) throws AccountError {
+        Address address = accountManager.getNextAddress();
+        StoredDepositRequest storedRequest = new StoredDepositRequest(request, options.getSecurityLevel());
+        accountManager.addDepositRequest(address.getIndex(), storedRequest);
+        return new FutureTask<DepositConditions>(() -> new DepositConditions(request, address.getAddress()));
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Future<Bundle> send(Recipient recipient) throws AccountError {
+        if (recipient.getAddresses().length == 1) {
+            return recipient.getValue() == 0 
+                    ? sendZeroValue(recipient.getMessage(), recipient.getTag(), recipient.getAddresses()[0]) 
+                    : send(recipient.getAddresses()[0], 
+                            recipient.getValue(),  
+                            Optional.of(recipient.getMessage()), 
+                            Optional.of(recipient.getTag()));
+        } else {
+            return sendMulti(
+                    recipient.getAddresses(), 
+                    recipient.getValue(), 
+                    Optional.of(recipient.getMessage()), 
+                    Optional.of(recipient.getTag()));
+        }
+        
+    }
 
     /**
      * 
@@ -488,16 +496,6 @@ public class IotaAccount implements Account, EventListener {
         if (!loaded) {
             return null;
         }
-        
-        return null;
-    }
-    
-    public Future<DepositRequest> requestDeposit(String depositAddress, long amount, Date timeOut, ExpireCondition... otherConditions){
-        if (!loaded) {
-            return null;
-        }
-        
-        
         
         return null;
     }

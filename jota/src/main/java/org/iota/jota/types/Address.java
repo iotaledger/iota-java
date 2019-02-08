@@ -4,7 +4,7 @@ public class Address {
     
     Hash address;
     
-    long index;
+    int index;
     
     int securityLevel;
 
@@ -14,7 +14,7 @@ public class Address {
      * @param index
      * @param securityLevel
      */
-    public Address(Hash address, long index, int securityLevel) {
+    public Address(Hash address, int index, int securityLevel) {
         this.address = address;
         this.index = index;
         this.securityLevel = securityLevel;
@@ -24,7 +24,7 @@ public class Address {
         return address;
     }
 
-    public long getIndex() {
+    public int getIndex() {
         return index;
     }
 

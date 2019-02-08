@@ -11,6 +11,7 @@ import org.iota.jota.account.errors.AddressGenerationError;
 import org.iota.jota.account.inputselector.InputSelectionStrategy;
 import org.iota.jota.config.options.AccountOptions;
 import org.iota.jota.model.Input;
+import org.iota.jota.types.Address;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trytes;
 
@@ -64,6 +65,12 @@ public class AccountStateManager {
         }
     }
     
+    public Address getNextAddress() {
+        synchronized (lock) {
+            return addressService.get(getIndexAndIncrease());
+        }
+    }
+    
     /**
      * Creates a remainder input.
      * This remainder is added to the store, the store is saved.
@@ -79,8 +86,7 @@ public class AccountStateManager {
             
             // Editing store will edit the underlying state, and take care of saving
             
-            key = state.getKeyIndex();
-            store.writeIndex(accountId, key+1);
+            key = getIndexAndIncrease();
             
             deposit = new DepositRequest(null, false, remainder);
             
@@ -98,6 +104,12 @@ public class AccountStateManager {
             
             return remainderInput;
         }
+    }
+
+    private int getIndexAndIncrease() {
+        int key = state.getKeyIndex();
+        store.writeIndex(accountId, key+1);
+        return key;
     }
     
     /**

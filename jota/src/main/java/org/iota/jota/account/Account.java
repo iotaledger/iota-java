@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.concurrent.Future;
 
 import org.iota.jota.account.condition.ExpireCondition;
+import org.iota.jota.account.deposits.DepositConditions;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.config.options.AccountOptions;
@@ -67,7 +68,7 @@ public interface Account extends TaskService {
      * @return
      * @throws AccountError
      */
-    DepositRequest newDepositRequest(Address depositAddress, int amount, Date timeOut, 
+    Future<DepositConditions> newDepositRequest(Date timeOut, boolean multiUse, long expectedAmount,
             ExpireCondition... otherConditions) throws AccountError;
     
     /**
