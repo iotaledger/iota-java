@@ -39,7 +39,7 @@ public class CheckIncomingTask implements Runnable {
                 continue;
             } else if (!isValid(bundle)) {
                 continue;
-            }
+            }       
             
             if (isConsistent(bundle)) {
                 

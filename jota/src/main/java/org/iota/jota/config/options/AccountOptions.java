@@ -6,6 +6,7 @@ import org.iota.jota.IotaAPI;
 import org.iota.jota.IotaAccount;
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.clock.Clock;
+import org.iota.jota.account.seedprovider.SeedProvider;
 import org.iota.jota.config.AccountConfig;
 
 public class AccountOptions implements AccountConfig, AccountBuilderSettings {
@@ -17,7 +18,7 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
     private AccountStore store;
     private IotaAPI api;
     
-    private String seed;
+    private SeedProvider seed;
     
     private Clock clock;
     
@@ -57,7 +58,7 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
     }
 
     @Override
-    public String getSeed() {
+    public SeedProvider getSeed() {
         return seed;
     }
     

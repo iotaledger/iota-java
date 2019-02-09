@@ -43,6 +43,8 @@ import org.iota.jota.account.event.impl.EventManagerImpl;
 import org.iota.jota.account.inputselector.InputSelectionStrategy;
 import org.iota.jota.account.inputselector.InputSelectionStrategyImpl;
 import org.iota.jota.account.promoter.PromoterReattacherImpl;
+import org.iota.jota.account.seedprovider.SeedProvider;
+import org.iota.jota.account.seedprovider.SeedProviderImpl;
 import org.iota.jota.account.transferchecker.IncomingTransferCheckerImpl;
 import org.iota.jota.account.transferchecker.OutgoingTransferCheckerImpl;
 import org.iota.jota.config.AccountConfig;
@@ -110,7 +112,7 @@ public class IotaAccount implements Account, EventListener {
         } catch (NoSuchAlgorithmException e) {
             return null;
         }
-        byte[] hash = digest.digest(getSeed().getBytes(StandardCharsets.UTF_8));
+        byte[] hash = digest.digest(getSeed().getSeed().getTrytesString().getBytes(StandardCharsets.UTF_8));
         String sha256hex = new String(Hex.encode(hash));
         return sha256hex;
     }
@@ -542,7 +544,7 @@ public class IotaAccount implements Account, EventListener {
         
         try {
             System.out.println("sign");
-            List<String> output = IotaAPIUtils.signInputsAndReturn(getSeed(), inputs, bundle, signatureFragments, getApi().getCurl());
+            List<String> output = IotaAPIUtils.signInputsAndReturn(getSeed().getSeed().getTrytesString(), inputs, bundle, signatureFragments, getApi().getCurl());
             Collections.reverse(output);
             
             return output.stream().map(Trytes::new).collect(Collectors.toList());
@@ -668,7 +670,7 @@ public class IotaAccount implements Account, EventListener {
         }
     }
     
-    public String getSeed(){
+    public SeedProvider getSeed(){
         return options.getSeed();
     }
     
@@ -716,7 +718,7 @@ public class IotaAccount implements Account, EventListener {
         private AccountStore store;
         private IotaAPI api;
 
-        private String seed;
+        private SeedProvider seed;
         
         private int mwm, depth, securityLevel;
         
@@ -729,6 +731,11 @@ public class IotaAccount implements Account, EventListener {
                 throw new ArgumentException(Constants.INVALID_SEED_INPUT_ERROR);
             }
             
+            this.seed = new SeedProviderImpl(seed);
+        }
+        
+        public Builder(SeedProvider seed) throws ArgumentException {
+            super(log);
             this.seed = seed;
         }
         
@@ -817,7 +824,7 @@ public class IotaAccount implements Account, EventListener {
         }
         
         @Override
-        public String getSeed() {
+        public SeedProvider getSeed() {
             return seed;
         }
 

@@ -18,7 +18,7 @@ public class AddressGeneratorServiceImpl implements AddressGeneratorService {
     public Address get(int index) throws AddressGenerationError {
         try {
             return new Address(
-                new Hash(IotaAPIUtils.newAddress(options.getSeed(), 
+                new Hash(IotaAPIUtils.newAddress(options.getSeed().getSeed().getTrytesString(), 
                                                  options.getSecurityLevel(), 
                                                  index, false,
                                                  options.getApi().getCurl())),
