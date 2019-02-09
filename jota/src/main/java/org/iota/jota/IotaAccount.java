@@ -37,6 +37,7 @@ import org.iota.jota.account.event.EventListener;
 import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.Plugin;
 import org.iota.jota.account.event.events.EventAccountError;
+import org.iota.jota.account.event.events.EventNewInput;
 import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.event.impl.EventManagerImpl;
 import org.iota.jota.account.inputselector.InputSelectionStrategy;
@@ -400,6 +401,9 @@ public class IotaAccount implements Account, EventListener {
         Address address = accountManager.getNextAddress();
         StoredDepositRequest storedRequest = new StoredDepositRequest(request, options.getSecurityLevel());
         accountManager.addDepositRequest(address.getIndex(), storedRequest);
+        
+        EventNewInput event = new EventNewInput(address, request);
+        eventManager.emit(event);
         return new FutureTask<DepositConditions>(() -> new DepositConditions(request, address.getAddress()));
     }
     

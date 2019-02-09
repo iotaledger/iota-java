@@ -11,6 +11,7 @@ import org.iota.jota.account.addressgenerator.AddressGeneratorService;
 import org.iota.jota.account.deposits.StoredDepositRequest;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
+import org.iota.jota.account.event.events.EventNewInput;
 import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.transferchecker.tasks.CheckIncomingTask;
 import org.iota.jota.model.Transaction;
@@ -82,18 +83,8 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
     }
     
     @AccountEvent
-    public void addressGenerated() {
-        //?
-    }
-    
-    @AccountEvent
-    public void depositGenerated() {
-        //?
-    }
-    
-    @AccountEvent
-    public void inputAddressRequested() {
-        //?
+    public void inputAddressRequested(EventNewInput newInput) {
+        addUnconfirmedBundle(newInput.getAddress());
     }
 
     @Override

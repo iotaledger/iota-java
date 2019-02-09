@@ -5,9 +5,13 @@ import java.util.List;
 
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.event.EventManager;
+import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.types.Address;
+import org.iota.jota.utils.BundleValidator;
+import org.iota.jota.utils.Constants;
+import org.iota.jota.utils.InputValidator;
 
 public class CheckIncomingTask implements Runnable {
 
@@ -31,11 +35,9 @@ public class CheckIncomingTask implements Runnable {
         Bundle[] bundles = api.bundlesFromAddresses(true, addrHash);
         
         for (Bundle bundle : bundles) {
-            if (!isValid(bundle)) {
-                
-            }
-            
             if (receivedBefore(bundle)) {
+                continue;
+            } else if (!isValid(bundle)) {
                 continue;
             }
             
@@ -50,8 +52,7 @@ public class CheckIncomingTask implements Runnable {
     }
 
     private boolean isValid(Bundle bundle) {
-        // TODO Auto-generated method stub
-        return false;
+        return BundleValidator.isBundle(bundle);
     }
 
     private boolean isConsistent(Bundle bundle) {
