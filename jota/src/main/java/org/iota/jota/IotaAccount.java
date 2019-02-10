@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -63,7 +62,6 @@ import org.iota.jota.types.Trytes;
 import org.iota.jota.utils.AbstractBuilder;
 import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.Constants;
-import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.InputValidator;
 import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.TrytesConverter;
@@ -103,18 +101,6 @@ public class IotaAccount implements Account, EventListener {
         } else {
             throw new AccountLoadError("Failed to load accounts. Check the error log");
         }
-    }
-    
-    private String buildAccountId() {
-        MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            return null;
-        }
-        byte[] hash = digest.digest(getSeed().getSeed().getTrytesString().getBytes(StandardCharsets.UTF_8));
-        String sha256hex = new String(Hex.encode(hash));
-        return sha256hex;
     }
     
     protected IotaAccount(Builder builder) {
@@ -173,6 +159,21 @@ public class IotaAccount implements Account, EventListener {
     public void load() {
         String accountId = buildAccountId();
         load(accountId, getStore().loadAccount(accountId));
+    }
+    
+    private String buildAccountId() {
+        return IotaAPIUtils.newAddress(getSeed().getSeed().toString(), 2, 0, false, getApi().getCurl());
+        /*
+        // Sha256 impl of account id, might be used later over the sec-2 address
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+        byte[] hash = digest.digest(getSeed().getSeed().getTrytesString().getBytes(StandardCharsets.UTF_8));
+        String sha256hex = new String(Hex.encode(hash));
+        return sha256hex;*/
     }
 
     public void load(String accountId, AccountState state) {
