@@ -19,7 +19,7 @@ public class SeedRandomGenerator {
         char[] chars = Constants.TRYTE_ALPHABET.toCharArray();
         StringBuilder builder = new StringBuilder();
         SecureRandom random = new SecureRandom();
-        for (int i = 0; i < Constants.SEED_LENGTH_MAX; i++) {
+        for (int i = 0; i < Constants.SEED_LENGTH; i++) {
             char c = chars[random.nextInt(chars.length)];
             builder.append(c);
         }

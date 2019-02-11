@@ -65,6 +65,14 @@ public class IotaAPIUtils {
                                                                 List<String> signatureFragments, 
                                                                 ICurl curl) throws ArgumentException {
 
+        if ((!InputValidator.isValidSeed(seed))) {
+            throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
+        }
+        
+        if (!InputValidator.areValidInputsList(inputs)) {
+            throw new ArgumentException(Constants.INVALID_INPUT_ERROR);
+        }
+        
         bundle.finalize(curl);
         bundle.addTrytes(signatureFragments);
 
@@ -81,7 +89,7 @@ public class IotaAPIUtils {
                 int keyIndex = 0;
                 int keySecurity = 0;
                 for (Input input : inputs) {
-                    if (input.getAddress().equals(thisAddress)) {
+                    if (Checksum.removeChecksum(input.getAddress()).equals(thisAddress)) {
                         keyIndex = input.getKeyIndex();
                         keySecurity = input.getSecurity();
                     }

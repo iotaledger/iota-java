@@ -9,8 +9,6 @@ import static jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
 
 /**
  * This class defines utility methods to add/remove the checksum to/from an address.
- *
- * @author pinpong
  */
 public class Checksum {
 
@@ -19,10 +17,10 @@ public class Checksum {
      *
      * @param address The address without checksum.
      * @return The address with the appended checksum.
-     * @throws ArgumentException is thrown when the specified address is not an valid address.
+     * @throws ArgumentException is thrown when the specified address is not a valid address, or already has a checksum.
      **/
     public static String addChecksum(String address) throws ArgumentException {
-        InputValidator.checkAddress(address);
+        InputValidator.checkAddressWithoutChecksum(address);
         String addressWithChecksum = address;
         addressWithChecksum += calculateChecksum(address);
         return addressWithChecksum;
@@ -69,7 +67,7 @@ public class Checksum {
      * @throws ArgumentException is thrown when the specified address is not an valid address.
      **/
     public static boolean isAddressWithChecksum(String address) throws ArgumentException {
-        return InputValidator.checkAddress(address) && address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM;
+        return InputValidator.checkAddress(address);
     }
 
     /**
@@ -80,7 +78,7 @@ public class Checksum {
      * @throws ArgumentException is thrown when the specified address is not an valid address.
      **/
     public static boolean isAddressWithoutChecksum(String address) throws ArgumentException {
-        return InputValidator.checkAddress(address) && address.length() == Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM;
+        return InputValidator.checkAddressWithoutChecksum(address);
     }
 
     private static String calculateChecksum(String address) {
