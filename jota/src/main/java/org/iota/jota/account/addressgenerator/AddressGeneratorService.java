@@ -14,4 +14,13 @@ public interface AddressGeneratorService {
      * @throws AddressGenerationError
      */
     Address get(int index) throws AddressGenerationError;
+    
+    /**
+     * 
+     * @param index
+     * @param securityLevel
+     * @return
+     * @throws AddressGenerationError
+     */
+    Address get(int index, int securityLevel) throws AddressGenerationError;
 }
