@@ -5,13 +5,10 @@ import java.util.List;
 
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.event.EventManager;
-import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.types.Address;
 import org.iota.jota.utils.BundleValidator;
-import org.iota.jota.utils.Constants;
-import org.iota.jota.utils.InputValidator;
 
 public class CheckIncomingTask implements Runnable {
 

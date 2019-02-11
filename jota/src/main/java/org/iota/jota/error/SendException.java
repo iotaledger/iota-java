@@ -1,4 +1,4 @@
-package org.iota.jota;
+package org.iota.jota.error;
 
 import org.iota.jota.account.errors.AccountError;
 

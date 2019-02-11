@@ -111,4 +111,46 @@ public class Input {
     public void setSecurity(int security) {
         this.security = security;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((address == null) ? 0 : address.hashCode());
+        result = prime * result + (int) (balance ^ (balance >>> 32));
+        result = prime * result + keyIndex;
+        result = prime * result + security;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Input other = (Input) obj;
+        if (address == null) {
+            if (other.address != null) {
+                return false;
+            }
+        } else if (!address.equals(other.address)) {
+            return false;
+        }
+        if (balance != other.balance) {
+            return false;
+        }
+        if (keyIndex != other.keyIndex) {
+            return false;
+        }
+        if (security != other.security) {
+            return false;
+        }
+        return true;
+    }
 }

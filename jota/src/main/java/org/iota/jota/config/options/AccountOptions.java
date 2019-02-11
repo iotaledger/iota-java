@@ -3,10 +3,11 @@ package org.iota.jota.config.options;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.iota.jota.IotaAPI;
-import org.iota.jota.IotaAccount;
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.clock.Clock;
 import org.iota.jota.account.seedprovider.SeedProvider;
+import org.iota.jota.builder.AccountBuilder;
+import org.iota.jota.builder.AccountBuilderSettings;
 import org.iota.jota.config.AccountConfig;
 
 public class AccountOptions implements AccountConfig, AccountBuilderSettings {
@@ -22,7 +23,7 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
     
     private Clock clock;
     
-    public AccountOptions(IotaAccount.Builder builder) {
+    public AccountOptions(AccountBuilder builder) {
         mwm = builder.getMwm();
         depth = builder.getDept();
         securityLevel = builder.getSecurityLevel();

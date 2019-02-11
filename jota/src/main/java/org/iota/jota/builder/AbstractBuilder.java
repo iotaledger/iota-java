@@ -1,4 +1,4 @@
-package org.iota.jota.utils;
+package org.iota.jota.builder;
 
 import java.util.ArrayList;
 import java.util.List;

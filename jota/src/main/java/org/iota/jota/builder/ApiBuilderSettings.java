@@ -1,4 +1,4 @@
-package org.iota.jota.config.options;
+package org.iota.jota.builder;
 
 import org.iota.jota.IotaLocalPoW;
 import org.iota.jota.pow.ICurl;

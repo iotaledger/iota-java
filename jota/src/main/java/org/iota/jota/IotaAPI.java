@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.iota.jota.builder.ApiBuilder;
 import org.iota.jota.config.options.ApiOptions;
 import org.iota.jota.dto.response.BroadcastTransactionsResponse;
 import org.iota.jota.dto.response.CheckConsistencyResponse;
@@ -1688,7 +1689,7 @@ public class IotaAPI extends IotaAPICore {
         return Arrays.stream(res.getTrytes()).map(trytes -> new Transaction(trytes, getCurl())).collect(Collectors.toList());
     }
     
-    public static class Builder extends IotaAPICore.Builder<IotaAPI.Builder, IotaAPI> {
+    public static class Builder extends ApiBuilder<Builder, IotaAPI> {
         
         @Override
         protected IotaAPI compile() {

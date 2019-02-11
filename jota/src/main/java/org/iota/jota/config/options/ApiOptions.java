@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.iota.jota.IotaAPI;
 import org.iota.jota.IotaLocalPoW;
+import org.iota.jota.builder.ApiBuilderSettings;
 import org.iota.jota.config.ApiConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.pow.ICurl;

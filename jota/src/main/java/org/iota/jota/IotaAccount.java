@@ -1,8 +1,5 @@
 package org.iota.jota;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -16,15 +13,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.util.encoders.Hex;
+import org.iota.jota.IotaAPI.Builder;
 import org.iota.jota.account.Account;
 import org.iota.jota.account.AccountBalanceCache;
 import org.iota.jota.account.AccountState;
 import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.addressgenerator.AddressGeneratorServiceImpl;
-import org.iota.jota.account.clock.Clock;
-import org.iota.jota.account.clock.SystemClock;
 import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.DepositConditions;
 import org.iota.jota.account.deposits.DepositRequest;
@@ -43,14 +38,15 @@ import org.iota.jota.account.inputselector.InputSelectionStrategy;
 import org.iota.jota.account.inputselector.InputSelectionStrategyImpl;
 import org.iota.jota.account.promoter.PromoterReattacherImpl;
 import org.iota.jota.account.seedprovider.SeedProvider;
-import org.iota.jota.account.seedprovider.SeedProviderImpl;
 import org.iota.jota.account.transferchecker.IncomingTransferCheckerImpl;
 import org.iota.jota.account.transferchecker.OutgoingTransferCheckerImpl;
+import org.iota.jota.builder.AccountBuilder;
+import org.iota.jota.builder.ApiBuilder;
 import org.iota.jota.config.AccountConfig;
 import org.iota.jota.config.FileConfig;
-import org.iota.jota.config.options.AccountBuilderSettings;
 import org.iota.jota.config.options.AccountOptions;
 import org.iota.jota.error.ArgumentException;
+import org.iota.jota.error.SendException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
@@ -59,7 +55,6 @@ import org.iota.jota.types.Address;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Recipient;
 import org.iota.jota.types.Trytes;
-import org.iota.jota.utils.AbstractBuilder;
 import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.InputValidator;
@@ -89,12 +84,17 @@ public class IotaAccount implements Account, EventListener {
      * 
      * @param builder
      */
-    protected IotaAccount(AccountOptions options) {
+    public IotaAccount(AccountOptions options) {
         this.options = options;
         this.eventManager = new EventManagerImpl();
         this.getEventManager().registerListener(this);
 
-        load();
+        try {
+            load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         
         if (loaded) {
             start();
@@ -103,7 +103,7 @@ public class IotaAccount implements Account, EventListener {
         }
     }
     
-    protected IotaAccount(Builder builder) {
+    protected IotaAccount(AccountBuilder builder) {
         this(new AccountOptions(builder));
     }
     
@@ -116,7 +116,7 @@ public class IotaAccount implements Account, EventListener {
      * @throws Exception If the config did not load for whatever reason
      */
     public IotaAccount(String seed) throws Exception {
-        this(new Builder(seed).generate());
+        this(new AccountBuilder(seed).generate());
     }
     
     /**
@@ -128,7 +128,7 @@ public class IotaAccount implements Account, EventListener {
      * @throws Exception If the config did not load for whatever reason
      */
     public IotaAccount(String seed, AccountStore store) throws Exception {
-        this(new Builder(seed).store(store).generate());
+        this(new AccountBuilder(seed).store(store).generate());
     }
     
     /**
@@ -140,7 +140,7 @@ public class IotaAccount implements Account, EventListener {
      * @throws Exception If the config did not load for whatever reason
      */
     public IotaAccount(String seed, AccountStore store, String config) throws Exception {
-        this(new Builder(seed).store(store).config(new FileConfig(config)).generate());
+        this(new AccountBuilder(seed).store(store).config(new FileConfig(config)).generate());
     }
 
     /**
@@ -152,7 +152,7 @@ public class IotaAccount implements Account, EventListener {
      * @throws Exception If the config did not load for whatever reason
      */
     public IotaAccount(String seed, AccountStore store, AccountConfig iotaConfig) throws Exception {
-        this(new Builder(seed).store(store).config(iotaConfig).generate());
+        this(new AccountBuilder(seed).store(store).config(iotaConfig).generate());
     }
     
     @Override
@@ -712,151 +712,15 @@ public class IotaAccount implements Account, EventListener {
         return builder.toString();
     }
     
-    public static class Builder extends AbstractBuilder<Builder, IotaAccount, AccountConfig> implements AccountConfig, AccountBuilderSettings {
-        
-        private static final Logger log = LoggerFactory.getLogger(IotaAccount.class);
-        
-        private AccountStore store;
-        private IotaAPI api;
-
-        private SeedProvider seed;
-        
-        private int mwm, depth, securityLevel;
-        
-        private Clock clock;
-        
-        public Builder(String seed) throws ArgumentException {
-            super(log);
-            
-            if (!InputValidator.isValidSeed(seed)) {
-                throw new ArgumentException(Constants.INVALID_SEED_INPUT_ERROR);
-            }
-            
-            this.seed = new SeedProviderImpl(seed);
-        }
+    // Builder here for easy access
+    public static class Builder extends AccountBuilder {
         
         public Builder(SeedProvider seed) throws ArgumentException {
-            super(log);
-            this.seed = seed;
+            super(seed);
         }
         
-        public Builder mwm(int mwm) {
-            if (mwm > 0) {
-                this.mwm = mwm;
-            } else {
-                log.warn(Constants.INVALID_INPUT_ERROR);
-            }
-            return this;
-        }
-        
-        public Builder depth(int depth) {
-            if (depth > 0) {
-                this.depth = depth;
-            } else {
-                log.warn(Constants.INVALID_INPUT_ERROR);
-            }
-            return this;
-        }
-        
-        public Builder securityLevel(int securityLevel) {
-            if (InputValidator.isValidSecurityLevel(securityLevel)) {
-                this.securityLevel = securityLevel;
-            } else {
-                log.warn(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
-            }
-            
-            return this;
-        }
-        
-        public Builder store(AccountStore store) {
-            this.store = store;
-            return this;
-        }
-        
-        public Builder api(IotaAPI api) {
-            this.api = api;
-            return this;
-        }
-        
-        public Builder clock(Clock clock) {
-            this.clock = clock;
-            return this;
-        }
-
-        @Override
-        protected Builder generate() throws Exception {
-            //If a config is specified through ENV, that one will be in the stream, otherwise default config is used
-            for (AccountConfig config : getConfigs()) {
-                if (config != null) {
-                    //calculate Account specific values
-                    
-                    if (0 == getMwm()) {
-                        mwm(config.getMwm());
-                    }
-                    
-                    if (0 == getDept()) {
-                        depth(config.getDept());
-                    }
-                    
-                    if (0 == getSecurityLevel()) {
-                        securityLevel(config.getSecurityLevel());
-                    }
-                    
-                    if (null == store) {
-                        store(config.getStore());
-                    }
-                    
-                    if (null == api) {
-                        api(new IotaAPI.Builder().build());
-                    }
-                    
-                    if (null == clock) {
-                        clock(new SystemClock());
-                    }
-                }
-            }
-            
-            return this;
-        }
-        
-        @Override
-        protected IotaAccount compile(){
-            return new IotaAccount(new AccountOptions(this));
-        }
-        
-        @Override
-        public SeedProvider getSeed() {
-            return seed;
-        }
-
-        @Override
-        public IotaAPI getApi() {
-            return api;
-        }
-
-        @Override
-        public int getMwm() {
-            return mwm;
-        }
-
-        @Override
-        public int getDept() {
-            return depth;
-        }
-
-        @Override
-        public int getSecurityLevel() {
-            return securityLevel;
-        }
-
-        @Override
-        public AccountStore getStore() {
-            return store;
-        }
-
-        @Override
-        public Clock getTime() {
-            return clock;
+        public Builder(String seed) throws ArgumentException {
+            super(seed);
         }
     }
 }
