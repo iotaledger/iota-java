@@ -152,6 +152,11 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
     public ICurl getCustomCurl() {
         return customCurl;
     }
+    
+    public T addNode(Connection c) {
+        nodes.add(c);
+        return (T) this;
+    }
 
     public List<Connection> getNodes() {
         return nodes;

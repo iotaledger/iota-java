@@ -12,6 +12,7 @@ import org.iota.jota.account.deposits.StoredDepositRequest;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Input;
 import org.iota.jota.types.Address;
+import org.iota.jota.types.Hash;
 
 public class AccountBalanceCache {
     
@@ -65,6 +66,14 @@ public class AccountBalanceCache {
                 System.out.println("Failed to find balance for index " + entry.getKey() + ", ignoring..");
             }
         }
+    }
+    
+    public Entry<Input, DepositRequest> getByAddress(Address address){
+        return getByHash(address.getAddress());
+    }
+    
+    public Entry<Input, DepositRequest> getByHash(Hash hash){
+        return getByHash(hash.getHash());
     }
     
     public Entry<Input, DepositRequest> getByHash(String hash){

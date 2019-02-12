@@ -191,7 +191,7 @@ public class IotaAccount implements Account, EventListener {
         
         //All plugins do their startup tasks on load();
         addTask(new PromoterReattacherImpl(eventManager, getApi(), accountManager, options));
-        addTask(new IncomingTransferCheckerImpl(eventManager, getApi(), accountManager, service));
+        addTask(new IncomingTransferCheckerImpl(eventManager, getApi(), accountManager, service, cache));
         addTask(new OutgoingTransferCheckerImpl(eventManager, getApi(), accountManager));
         
         shutdownHook();

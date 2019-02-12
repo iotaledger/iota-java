@@ -3,6 +3,7 @@ package org.iota.jota.connection;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.iota.jota.config.IotaDefaultConfig;
 import org.iota.jota.dto.request.IotaAttachToTangleRequest;
 import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
 import org.iota.jota.dto.request.IotaCheckConsistencyRequest;
@@ -56,6 +57,10 @@ public class HttpConnector implements Connection {
     
     private static final Logger log = LoggerFactory.getLogger(HttpConnector.class);
 
+    public HttpConnector(String protocol, String host, int port) {
+        this(protocol, host, port, IotaDefaultConfig.Defaults.CONNECTION_TIMEOUT);
+    }
+    
     public HttpConnector(String protocol, String host, int port, int timeout) {
         this.protocol = protocol;
         this.host = host;

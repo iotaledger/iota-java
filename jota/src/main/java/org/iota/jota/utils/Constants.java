@@ -42,15 +42,14 @@ public class Constants {
     public static final int TRANSACTION_LENGTH = 2673;
     
     /**
-     * Max number represented in 27 trits
+     * Maximum number represented in 27 trits
      */
     public static final long TRANSACTION_UPPER_BOUND_MAX = 3_812_798_742_493L;
 
     /**
      * The length of an tag in trytes
      */
-    public static final int TAG_LENGTH = 27;
-    
+    public static final int TAG_LENGTH = 27;    
     
     /**
      * Maximum security level of an address

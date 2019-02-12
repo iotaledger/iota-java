@@ -6,14 +6,18 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.iota.jota.IotaAPI;
+import org.iota.jota.account.AccountBalanceCache;
 import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.addressgenerator.AddressGeneratorService;
+import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.StoredDepositRequest;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.events.EventNewInput;
+import org.iota.jota.account.event.events.EventReceivedDeposit;
 import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.transferchecker.tasks.CheckIncomingTask;
+import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.types.Address;
 import org.iota.jota.utils.thread.UnboundScheduledExecutorService;
@@ -31,13 +35,25 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
 
     private AddressGeneratorService addressGen;
 
+    private boolean skipFirst;
+
+    private AccountBalanceCache cache;
+
     public IncomingTransferCheckerImpl(EventManager eventManager, IotaAPI api, AccountStateManager accountManager, 
-            AddressGeneratorService addressGen) {
+            AddressGeneratorService addressGen, AccountBalanceCache cache) {
+        this(eventManager, api, accountManager, addressGen, cache, false);
+    }
+    
+    public IncomingTransferCheckerImpl(EventManager eventManager, IotaAPI api, AccountStateManager accountManager, 
+            AddressGeneratorService addressGen, AccountBalanceCache cache, boolean skipFirst) {
         
         this.addressGen = addressGen;
         this.eventManager = eventManager;
         this.api = api;
         this.accountManager = accountManager;
+        this.cache = cache;
+        
+        this.skipFirst = skipFirst;
     }
 
     @Override
@@ -57,14 +73,32 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
             
             addUnconfirmedBundle(address);
         }
+        
+        //Only optionally skip first for those we loaded, not the new ones
+        skipFirst = false;
+        
         return true;
     }
     
     private void addUnconfirmedBundle(Address address) {
         unconfirmedBundles.put(
             address.getAddress().getHash(), 
-            service.scheduleAtFixedRate(new CheckIncomingTask(address, api, eventManager), 0, CHECK_INCOMING_DELAY, TimeUnit.MILLISECONDS)
+            service.scheduleAtFixedRate(new CheckIncomingTask(address, api, eventManager, skipFirst), 
+                                        0, CHECK_INCOMING_DELAY, TimeUnit.MILLISECONDS)
         );
+    }
+    
+    @AccountEvent
+    public void onReceivedDeposit(EventReceivedDeposit receivedEvent) {
+        Entry<Input, DepositRequest> res = cache.getByAddress(receivedEvent.getAddress());
+        
+        if (null == res) {
+            // Received unknown deposit!!, create, SAVE and mark
+            cache.addBalance(null, null);
+        }
+        
+        //Update balance
+        res.getKey().setBalance(res.getKey().getBalance() + receivedEvent.getAmount());
     }
 
     @AccountEvent

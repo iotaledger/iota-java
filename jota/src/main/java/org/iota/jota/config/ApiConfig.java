@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.iota.jota.connection.Connection;
 
-public interface ApiConfig extends Config{
+public interface ApiConfig extends Config {
 
+    //TODO
+    // getLocalPoW -> null?
+    
     /**
      * 
      * @return

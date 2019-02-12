@@ -114,6 +114,7 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
                 }
                 
                 if (null == clock) {
+                    // TODO: Configify
                     clock(new SystemClock());
                 }
             }

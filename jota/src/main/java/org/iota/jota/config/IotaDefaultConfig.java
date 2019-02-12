@@ -9,41 +9,54 @@ public class IotaDefaultConfig extends IotaClientConfig {
 
     @Override
     public int getLegacyPort() {
-        return 14265;
+        return Defaults.LEGACY_PORT;
     }
 
     @Override
     public String getLegacyProtocol() {
-        return "http";
+        return Defaults.LEGACY_PROTOCOL;
     }
 
     @Override
     public String getLegacyHost() {
-        return "localhost";
+        return Defaults.LEGACY_HOST;
     }
 
     @Override
     public AccountStore getStore() {
-        return new AccountStoreImpl(new IotaFileStore());
+        return Defaults.STORE; 
     }
 
     @Override
     public int getMwm() {
-        return 14;
+        return Defaults.MWM;
     }
 
     @Override
     public int getDept() {
-        return 3;
+        return Defaults.DEPT;
     }
 
     @Override
     public int getSecurityLevel() {
-        return Constants.MIN_SECURITY_LEVEL;
+        return Defaults.SECURITY_LEVEL;
     }
 
     @Override
     public int getConnectionTimeout() {
-        return 500;
+        return Defaults.CONNECTION_TIMEOUT;
+    }
+    
+    public static class Defaults {
+        public static final AccountStore STORE = new AccountStoreImpl(new IotaFileStore());
+        
+        public static final int CONNECTION_TIMEOUT = 500;
+        public static final int SECURITY_LEVEL = Constants.MIN_SECURITY_LEVEL;
+        public static final int DEPT = 3;
+        public static final int MWM = 14;
+        
+        public static final int LEGACY_PORT = 14265;
+        public static final String LEGACY_PROTOCOL = "http";
+        public static final String LEGACY_HOST = "localhost";
     }
 }
