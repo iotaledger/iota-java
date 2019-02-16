@@ -2,6 +2,7 @@ package org.iota.jota.account;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.iota.jota.account.addressgenerator.AddressGeneratorService;
 import org.iota.jota.account.deposits.DepositRequest;
@@ -183,5 +184,16 @@ public class AccountStateManager {
     
     public Map<String, PendingTransfer> getPendingTransfers(){
         return store.getPendingTransfers(accountId);
+    }
+
+    public boolean isOwnAddress(String hash) {
+        for (Entry<Integer, StoredDepositRequest> entry : getDepositRequests().entrySet()) {
+            if (addressService.get(entry.getKey(), entry.getValue().getSecurityLevel())
+                    .getAddress().getHash().equals(hash)) {
+                
+                return true;
+            }
+        }
+        return false;
     }
 }

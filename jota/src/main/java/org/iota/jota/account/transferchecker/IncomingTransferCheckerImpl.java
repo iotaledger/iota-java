@@ -83,7 +83,7 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
     private void addUnconfirmedBundle(Address address) {
         unconfirmedBundles.put(
             address.getAddress().getHash(), 
-            service.scheduleAtFixedRate(new CheckIncomingTask(address, api, eventManager, skipFirst), 
+            service.scheduleAtFixedRate(new CheckIncomingTask(address, api, eventManager, skipFirst, accountManager), 
                                         0, CHECK_INCOMING_DELAY, TimeUnit.MILLISECONDS)
         );
     }
@@ -94,6 +94,7 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
         
         if (null == res) {
             // Received unknown deposit!!, create, SAVE and mark
+            // How did we get here though? Should not check any other addresses then the ones we have made
             cache.addBalance(null, null);
         }
         

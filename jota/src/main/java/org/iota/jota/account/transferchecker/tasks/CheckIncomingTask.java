@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iota.jota.IotaAPI;
+import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.event.Event;
 import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.events.EventReceievedMessage;
@@ -25,8 +26,12 @@ public class CheckIncomingTask implements Runnable {
     
     private boolean skipFirst;
     private EventManager eventManager;
+    
+    private AccountStateManager accountManager;
 
-    public CheckIncomingTask(Address address, IotaAPI api, EventManager eventManager, boolean skipFirst) {
+    public CheckIncomingTask(Address address, IotaAPI api, EventManager eventManager, boolean skipFirst, 
+            AccountStateManager accountManager) {
+        
         this.address = address;
         this.api = api;
         this.eventManager = eventManager;
@@ -34,6 +39,7 @@ public class CheckIncomingTask implements Runnable {
         this.skipFirst = skipFirst;
         
         this.receivedBundles = new ArrayList<>();
+        this.accountManager = accountManager;
     }
 
     @Override
@@ -48,11 +54,23 @@ public class CheckIncomingTask implements Runnable {
                 continue;
             } 
             
-            //A transaction we send using inputs
+            //A transaction we send using inputs (Sweep for example)
             boolean isSpendFromOwnAddr = false;
+            boolean isTransferToOwnRemainderAddr = false;
             
-            // A remainder transfer
-            boolean isTransferToOwnRemainderAddr = false; 
+            //TODO: Optimize this, very intensive call since it checks all our addresses
+            for (Transaction t : bundle.getTransactions()) {
+                if (t.getValue() > 0) {
+                    isTransferToOwnRemainderAddr = accountManager.isOwnAddress(t.getAddress());
+                } else if (t.getValue() < 0) {
+                    isSpendFromOwnAddr = accountManager.isOwnAddress(t.getAddress());
+                }
+            }
+            
+            if (isTransferToOwnRemainderAddr || isSpendFromOwnAddr) {
+                receivedBundles.add(bundle.getBundleHash());
+                continue;
+            }
             
             // Value, only value messages are approved ('messages' are 0)
             if (isValue(bundle)) {
@@ -72,6 +90,21 @@ public class CheckIncomingTask implements Runnable {
                 emit(new EventReceievedMessage());
             }
         }
+    }
+
+    private boolean isTransferToRemainderAddr(Bundle bundle) {
+        for (Transaction t : bundle.getTransactions()) {
+            if (t.getValue() > 0 && accountManager.isOwnAddress(t.getAddress())) return true;
+        }
+        
+        return false;
+    }
+
+    private boolean isSpendFromOwnAddr(Bundle bundle) {
+        for (Transaction t : bundle.getTransactions()) {
+            if (t.getValue() < 0 && accountManager.isOwnAddress(t.getAddress())) return true;
+        }
+        return false;
     }
 
     private boolean isValid(Bundle bundle) {
