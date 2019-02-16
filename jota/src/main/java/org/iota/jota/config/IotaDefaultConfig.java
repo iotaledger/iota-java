@@ -33,8 +33,8 @@ public class IotaDefaultConfig extends IotaClientConfig {
     }
 
     @Override
-    public int getDept() {
-        return Defaults.DEPT;
+    public int getDepth() {
+        return Defaults.DEPTH;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class IotaDefaultConfig extends IotaClientConfig {
         
         public static final int CONNECTION_TIMEOUT = 500;
         public static final int SECURITY_LEVEL = Constants.MIN_SECURITY_LEVEL;
-        public static final int DEPT = 3;
+        public static final int DEPTH = 3;
         public static final int MWM = 14;
         
         public static final int LEGACY_PORT = 14265;

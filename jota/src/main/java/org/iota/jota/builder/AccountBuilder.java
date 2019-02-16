@@ -97,8 +97,8 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
                     mwm(config.getMwm());
                 }
                 
-                if (0 == getDept()) {
-                    depth(config.getDept());
+                if (0 == getDepth()) {
+                    depth(config.getDepth());
                 }
                 
                 if (0 == getSecurityLevel()) {
@@ -144,7 +144,7 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     }
 
     @Override
-    public int getDept() {
+    public int getDepth() {
         return depth;
     }
 

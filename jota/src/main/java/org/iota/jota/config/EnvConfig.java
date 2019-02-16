@@ -52,7 +52,7 @@ public class EnvConfig extends IotaClientConfig {
     }
 
     @Override
-    public int getDept() {
+    public int getDepth() {
         return intOrNull(ENV_DEPTH);
     }
 

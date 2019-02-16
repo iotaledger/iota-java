@@ -25,7 +25,7 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
     
     public AccountOptions(AccountBuilder builder) {
         mwm = builder.getMwm();
-        depth = builder.getDept();
+        depth = builder.getDepth();
         securityLevel = builder.getSecurityLevel();
         store = builder.getStore();
         api = builder.getApi();
@@ -39,7 +39,7 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
     }
 
     @Override
-    public int getDept() {
+    public int getDepth() {
         return depth;
     }
 

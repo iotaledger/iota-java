@@ -14,7 +14,7 @@ public interface AccountConfig extends Config {
      * 
      * @return
      */
-    int getDept();
+    int getDepth();
     
     /**
      * 

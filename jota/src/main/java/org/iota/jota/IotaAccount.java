@@ -363,7 +363,7 @@ public class IotaAccount implements Account, EventListener {
 
             List<Transaction> transferResponse = getApi().sendTrytes(
                     trytes.stream().map(Trytes::toString).toArray(String[]::new), 
-                    options.getDept(), options.getMwm(), null
+                    options.getDepth(), options.getMwm(), null
                 );
             
             accountManager.addPendingTransfer(
@@ -488,7 +488,7 @@ public class IotaAccount implements Account, EventListener {
             //Trytes of one bundle
             List<String> trytes = prepareTransfers(transfers);
             List<Transaction> transferResponse = getApi().sendTrytes(
-                    trytes.toArray(new String[trytes.size()]), options.getDept(), options.getMwm(), null);
+                    trytes.toArray(new String[trytes.size()]), options.getDepth(), options.getMwm(), null);
             
             Bundle bundle = new Bundle(transferResponse, transferResponse.size());
             EventSentTransfer event = new EventSentTransfer(bundle);

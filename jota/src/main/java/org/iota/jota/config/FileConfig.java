@@ -72,7 +72,7 @@ public class FileConfig extends IotaClientConfig {
     }
 
     @Override
-    public int getDept() {
+    public int getDepth() {
         return intOrNull(CONFIG_DEPTH);
     }
 

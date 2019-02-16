@@ -193,7 +193,7 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     
     public void promote(Bundle pendingBundle, Hash promotableTail) {
         List<Transaction> res = api.promoteTransaction(
-                promotableTail.getHash(), options.getDept(), options.getMwm(), pendingBundle);
+                promotableTail.getHash(), options.getDepth(), options.getMwm(), pendingBundle);
         
         Bundle promotedBundle = new Bundle(res);
         
@@ -215,7 +215,7 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     }
     
     private Bundle createReattachBundle(Bundle pendingBundle) {
-        ReplayBundleResponse ret = api.replayBundle(pendingBundle, options.getDept(), options.getMwm(), 
+        ReplayBundleResponse ret = api.replayBundle(pendingBundle, options.getDepth(), options.getMwm(), 
                 pendingBundle.getTransactions().get(0).getHash());
         
         return ret.getNewBundle();
