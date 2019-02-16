@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.iota.jota.IotaAPI.Builder;
 import org.iota.jota.account.Account;
 import org.iota.jota.account.AccountBalanceCache;
 import org.iota.jota.account.AccountState;
@@ -33,6 +32,7 @@ import org.iota.jota.account.event.Plugin;
 import org.iota.jota.account.event.events.EventAccountError;
 import org.iota.jota.account.event.events.EventNewInput;
 import org.iota.jota.account.event.events.EventSentTransfer;
+import org.iota.jota.account.event.events.EventShutdown;
 import org.iota.jota.account.event.impl.EventManagerImpl;
 import org.iota.jota.account.inputselector.InputSelectionStrategy;
 import org.iota.jota.account.inputselector.InputSelectionStrategyImpl;
@@ -41,7 +41,6 @@ import org.iota.jota.account.seedprovider.SeedProvider;
 import org.iota.jota.account.transferchecker.IncomingTransferCheckerImpl;
 import org.iota.jota.account.transferchecker.OutgoingTransferCheckerImpl;
 import org.iota.jota.builder.AccountBuilder;
-import org.iota.jota.builder.ApiBuilder;
 import org.iota.jota.config.AccountConfig;
 import org.iota.jota.config.FileConfig;
 import org.iota.jota.config.options.AccountOptions;
@@ -210,7 +209,7 @@ public class IotaAccount implements Account, EventListener {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("Shutting down IOTA Accounts, please hold tight...");
             try {
-                unload(true);
+                shutdown();
             } catch (Exception e) {
                 log.error("Exception occurred shutting down accounts module: ", e);
             }
@@ -219,25 +218,28 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * Unloads all registered tasks. 
-     * Any tasks added during this method execution are ignored and cleared in the end.
      */
     private void unload(boolean clearTasks) {
-        for (Plugin task : tasks) {
-            getEventManager().unRegisterListener(task);
-            task.shutdown();
-        }
-        
-        if (clearTasks) {
-            tasks.clear();
+        synchronized (tasks) {
+            for (Plugin task : tasks) {
+                getEventManager().unRegisterListener(task);
+                task.shutdown();
+            }
+            
+            if (clearTasks) {
+                tasks.clear();
+            }
         }
     }
 
     private void addTask(Plugin task) {
-        if (task != null) {
-            task.load();
-            getEventManager().registerListener(task);
-            tasks.add(task);
-            log.debug("Loaded plugin " + task.name());
+        synchronized (tasks) {
+            if (task != null) {
+                task.load();
+                getEventManager().registerListener(task);
+                tasks.add(task);
+                log.debug("Loaded plugin " + task.name());
+            }
         }
     }
     
@@ -266,16 +268,10 @@ public class IotaAccount implements Account, EventListener {
      */
     @Override
     public void shutdown() throws AccountError {
-        shutdown(true);
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public void shutdown(boolean skipAwaitingPlugins) throws AccountError {
-        // TODO: Clear inner task loop or swap shutdown and unload
+        Date now = options.getTime().time();
+        unload(true);
+        
+        eventManager.emit(new EventShutdown(now));
     }
 
     /**

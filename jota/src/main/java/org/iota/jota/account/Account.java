@@ -47,14 +47,6 @@ public interface Account extends TaskService {
     void shutdown() throws AccountError;
     
     /**
-     * Shutdowns the account’s inner event loop and shutdowns all plugins. 
-     * Optionally skips awaiting all plugins to gracefully shutdown.
-     *
-     * @param skipAwaitingPlugins if set to <code>true</code>, we will not wait for plugins
-     */
-    void shutdown(boolean skipAwaitingPlugins) throws AccountError;
-    
-    /**
      * Sends the specified amounts to the given recipients.
      * 
      * @param recipient
