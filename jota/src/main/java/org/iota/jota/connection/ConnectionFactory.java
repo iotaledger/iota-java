@@ -12,6 +12,8 @@ public class ConnectionFactory {
     private static final String KEY_NAME = "name";
     private static final String KEY_HOST = "host";
     
+    private static final String KEY_URL = "url";
+    
     //Others
     private static final String KEY_PORT = "port";
     private static final String KEY_PROTOCOL = "protocol";
@@ -66,10 +68,11 @@ public class ConnectionFactory {
     
     private static boolean preRequirements(Properties configValues) {
         return !configValues.isEmpty() 
-                && configValues.containsKey(KEY_TYPE) 
-                && configValues.containsKey(KEY_NAME)
-                && configValues.containsKey(KEY_HOST);
-    }
+                && ((configValues.containsKey(KEY_TYPE) 
+                    && configValues.containsKey(KEY_NAME)
+                    && configValues.containsKey(KEY_HOST)) 
+                    || configValues.contains(KEY_URL));
+}
     
     private ConnectionFactory() {}
 }

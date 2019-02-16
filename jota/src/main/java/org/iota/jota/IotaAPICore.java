@@ -59,11 +59,13 @@ import org.slf4j.LoggerFactory;
 public class IotaAPICore {
     private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
 
-    ApiOptions options;
+    // Legacy, remove soon
+    private Connection service = null;
+    
+    protected ApiOptions options;
     
     protected List<Connection> nodes = new ArrayList<>();
     
-    private Connection service = null;
     
     protected IotaAPICore(ApiOptions options) {
         this.options = options;
@@ -88,27 +90,44 @@ public class IotaAPICore {
     
     public boolean addNode(Connection n) {
         try {
-            for (Connection c : nodes) {
-                if (c.toString().equals(n.toString())) {
-                    log.warn("Tried to add a node we allready have: " + n);
-                    return true;
+            synchronized (nodes) {
+                for (Connection c : nodes) {
+                    if (c.equals(n)) {
+                        log.warn("Tried to add a node we allready have: " + n);
+                        return true;
+                    }
                 }
+                
+                boolean started = n.start();
+                if (started) {
+                
+                    //Huray! Lets add it
+                    nodes.add(n);
+                    log.debug("Added node: " + n.toString());
+                    //Legacy wants a node in service for getting ports etc
+                    if (null == service) service = n;
+                }
+
+                return started;
             }
-            
-            boolean started = n.start();
-            if (started) {
-            
-                //Huray! Lets add it
-                nodes.add(n);
-                log.debug("Added node: " + n.toString());
-                //Legacy wants a node in service for getting ports etc
-                if (null == service) service = n;
-            }
-            return started;
         } catch (Exception e) {
             log.warn("Failed to add node connection to pool due to " + e.getMessage());
             return false;
         }
+    }
+    
+    public boolean removeNode(Connection n) {
+        synchronized (nodes) {
+            for (int i = 0; i < nodes.size(); i++) {
+                Connection c = nodes.get(i);
+                if (c.equals(n)) {
+                    c.stop();
+                    nodes.remove(i);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     /**
@@ -651,7 +670,7 @@ public class IotaAPICore {
     public String getProtocol() {
         //Should be carefull, its still possible to not display the protocol if url doesn't contain :
         //Will never break because a split on not found character returns the entire string in [0]
-        return service.url().split(":")[0];
+        return service.url().getProtocol();
     }
 
     /**
@@ -661,7 +680,7 @@ public class IotaAPICore {
      */
     @Deprecated
     public String getHost() {
-        return service.url().split("://")[1];
+        return service.url().getHost();
     }
 
     /**
@@ -671,7 +690,7 @@ public class IotaAPICore {
      */
     @Deprecated
     public String getPort() {
-        return service.port() + "";
+        return service.url().getPort() + "";
     }
     
     @Override

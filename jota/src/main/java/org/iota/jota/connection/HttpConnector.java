@@ -1,6 +1,9 @@
 package org.iota.jota.connection;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.iota.jota.config.IotaDefaultConfig;
@@ -45,55 +48,70 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HttpConnector implements Connection {
-    private String protocol;
-    private String host;
-    private int port;
     
-    //Default to 20 if someone passes a null client
-    private int timeout = 20;
+    private static final int DEFAULT_PORT = 1;
+    
+    private URL url;
     
     private IotaNodeHTTPService service;
     private OkHttpClient client;
     
     private static final Logger log = LoggerFactory.getLogger(HttpConnector.class);
 
-    public HttpConnector(String protocol, String host, int port) {
-        this(protocol, host, port, IotaDefaultConfig.Defaults.CONNECTION_TIMEOUT);
+    /**
+     * Creates an HTTP connector using the default timeout by creating an {@link OkHttpClient}
+     * 
+     * @param url The URL we connect to
+     */
+    public HttpConnector(URL url) {
+        this(url, IotaDefaultConfig.Defaults.CONNECTION_TIMEOUT);
     }
     
-    public HttpConnector(String protocol, String host, int port, int timeout) {
-        this.protocol = protocol;
-        this.host = host;
-        this.port = port;
-        
-        this.timeout = timeout;
+    /**
+     * Creates an HTTP connector using the default port by creating an {@link OkHttpClient}
+     * 
+     * @param protocol The protocol we use
+     * @param host The host we use (Domain and optional subdomain)
+     * @throws MalformedURLException if this is an invalid URL
+     */
+    public HttpConnector(String protocol, String host) throws MalformedURLException {
+        this(new URL(protocol, host, DEFAULT_PORT, ""));
     }
     
-    public HttpConnector(OkHttpClient client, String protocol, String host, int port) {
-        this.protocol = protocol;
-        this.host = host;
-        this.port = port;
-        
-        this.client = client;
+    /**
+     * Creates an HTTP connector using the default timeout by creating an {@link OkHttpClient}
+     * 
+     * @param protocol The protocol we use
+     * @param host The host we use (Domain and optional subdomain)
+     * @param port The port we use
+     * @throws MalformedURLException if this is an invalid URL
+     */
+    public HttpConnector(String protocol, String host, int port) throws MalformedURLException {
+        this(new URL(protocol, host, port, ""));
     }
     
-    @Override
-    public int port() {
-        return port;
+    /**
+     * Creates an HTTP connector by creating an {@link OkHttpClient}
+     * 
+     * @param protocol The protocol we use
+     * @param host The host we use (Domain and optional subdomain)
+     * @param port The port we use
+     * @param timeout the connection timeout after a request is sent
+     * @throws MalformedURLException if this is an invalid URL
+     */
+    public HttpConnector(String protocol, String host, int port, int timeout) throws MalformedURLException {
+        this(new URL(protocol, host, port, ""), timeout);
     }
     
-    @Override
-    public String url() {
-        return protocol + "://" + host;
-    }
-    
-    public boolean start() {
-        final String nodeUrl = protocol + "://" + host + ":" + port;
-
-        // Create OkHttpBuilder
-        OkHttpClient client = this.client;
-        if (null == client){
-            client = new OkHttpClient.Builder()
+    /**
+     * Creates an HTTP connector by creating an {@link OkHttpClient}
+     * 
+     * @param url The URL we connect to
+     * @param timeout the connection timeout after a request is sent
+     */
+    public HttpConnector(URL url, int timeout) {
+        Objects.requireNonNull(url, "URL cannot be null");
+        client = new OkHttpClient.Builder()
                 .connectTimeout(timeout, TimeUnit.SECONDS)
                 .writeTimeout(timeout, TimeUnit.SECONDS)
                 .readTimeout(timeout, TimeUnit.SECONDS)
@@ -111,11 +129,56 @@ public class HttpConnector implements Connection {
                     }
                 })
                 .build();
-        }
-        
+        this.url = url;
+    }
+    
+    /**
+     * Creates an HTTP connector using the provided HTTP client, with the default port
+     * 
+     * @param client The client we use to send/receive/intercept
+     * @param protocol The protocol we use
+     * @param host The host we use (Domain and optional subdomain)
+     * @throws MalformedURLException if this is an invalid URL
+     */
+    public HttpConnector(OkHttpClient client, String protocol, String host) throws MalformedURLException {
+        this(client, new URL(protocol, host, DEFAULT_PORT, ""));
+    }
+    
+    /**
+     * Creates an HTTP connector using the provided HTTP client
+     * 
+     * @param client The client we use to send/receive/intercept
+     * @param protocol The protocol we use
+     * @param host The host we use (Domain and optional subdomain)
+     * @param port The port we use
+     * @throws MalformedURLException if this is an invalid URL
+     */
+    public HttpConnector(OkHttpClient client, String protocol, String host, int port) throws MalformedURLException {
+        this(client, new URL(protocol, host, port, ""));
+    }
+    
+    /**
+     * Creates an HTTP connector using the provided HTTP client
+     * 
+     * @param client The client we use to send/receive/intercept
+     * @param url The URL we connect to
+     */
+    public HttpConnector(OkHttpClient client, URL url) {
+        Objects.requireNonNull(client, "Client cannot be null");
+        Objects.requireNonNull(url, "URL cannot be null");
+        this.url = url;
+        this.client = client;
+    }
+    
+    @Override
+    public URL url() {
+        return url;
+    }
+    
+    public boolean start() {
         // use client to create Retrofit service
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(nodeUrl)
+                .baseUrl(url.toExternalForm())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -128,6 +191,46 @@ public class HttpConnector implements Connection {
         //does nothing
     }
     
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        HttpConnector other = (HttpConnector) obj;
+        if (url == null) {
+            if (other.url != null) {
+                return false;
+            }
+        } else if (!url.equals(other.url)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isConnectedToSameNode(Connection other) {
+        return other.url() != null && other.url().equals(url());
+    }
+    
+    @Override
+    public String toString() {
+        return "HttpConnector [url=" + url + "]";
+    }
+
     protected static <T> Response<T> wrapCheckedException(final Call<T> call) throws ArgumentException, IllegalStateException, IllegalAccessError {
         try {
             final Response<T> res = call.execute();
@@ -155,11 +258,6 @@ public class HttpConnector implements Connection {
             log.error("Execution of the API call raised exception. IOTA Node not reachable?", e);
             throw new IllegalStateException(e.getMessage());
         }
-    }
-    
-    @Override
-    public String toString() {
-        return protocol + "://" + host + ":" + port;
     }
 
     @Override
@@ -257,5 +355,4 @@ public class HttpConnector implements Connection {
         final Call<WereAddressesSpentFromResponse> res = service.wereAddressesSpentFrom(request);
         return wrapCheckedException(res).body();
     }
-
 }
