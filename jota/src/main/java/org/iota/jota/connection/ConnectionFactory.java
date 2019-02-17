@@ -27,7 +27,7 @@ public class ConnectionFactory {
             return null;
         }
         
-        ConnectionType type = ConnectionType.valueOf(propGetString(properties, KEY_TYPE));
+        ConnectionType type = ConnectionType.byType(propGetString(properties, KEY_TYPE));
         if (type == null) {
             log.error("Found unknown connection type. " + 
                     KEY_TYPE + ", " + KEY_NAME + " and " + KEY_HOST);
@@ -39,7 +39,7 @@ public class ConnectionFactory {
         try {
             switch (type) {
             case HTTP:
-                int port = Integer.parseInt(KEY_PORT);
+                int port = Integer.parseInt(propGetString(properties,KEY_PORT));
                 return new HttpConnector(
                         propGetString(properties, KEY_PROTOCOL), 
                         host, port,
@@ -69,7 +69,6 @@ public class ConnectionFactory {
     private static boolean preRequirements(Properties configValues) {
         return !configValues.isEmpty() 
                 && ((configValues.containsKey(KEY_TYPE) 
-                    && configValues.containsKey(KEY_NAME)
                     && configValues.containsKey(KEY_HOST)) 
                     || configValues.contains(KEY_URL));
 }

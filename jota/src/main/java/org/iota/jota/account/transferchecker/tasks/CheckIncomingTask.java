@@ -92,21 +92,6 @@ public class CheckIncomingTask implements Runnable {
         }
     }
 
-    private boolean isTransferToRemainderAddr(Bundle bundle) {
-        for (Transaction t : bundle.getTransactions()) {
-            if (t.getValue() > 0 && accountManager.isOwnAddress(t.getAddress())) return true;
-        }
-        
-        return false;
-    }
-
-    private boolean isSpendFromOwnAddr(Bundle bundle) {
-        for (Transaction t : bundle.getTransactions()) {
-            if (t.getValue() < 0 && accountManager.isOwnAddress(t.getAddress())) return true;
-        }
-        return false;
-    }
-
     private boolean isValid(Bundle bundle) {
         return BundleValidator.isBundle(bundle);
     }

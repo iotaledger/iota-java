@@ -18,4 +18,10 @@ public enum ConnectionType {
         return type;
     }
     
+    public static ConnectionType byType(String name) {
+        for (ConnectionType t : values()) {
+            if (t.getType().equals(name)) return t;
+        }
+        return null;
+    }
 }

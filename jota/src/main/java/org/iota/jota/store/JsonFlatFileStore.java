@@ -52,7 +52,6 @@ public class JsonFlatFileStore extends FlatFileStore {
         try {
             store = objectMapper.readValue(stream, new TypeReference<Map<String, AccountState>>(){});
         } catch (IOException e) {
-            e.printStackTrace();
             store = new HashMap<String, Serializable>();
         }
         return store;

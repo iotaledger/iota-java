@@ -1,6 +1,7 @@
 package org.iota.jota.store;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  *
@@ -28,7 +29,7 @@ public interface Store {
      * @param key
      * @return
      */
-    <T extends Serializable> T get(String key);
+    Serializable get(String key);
     
     /**
      * 
@@ -45,6 +46,13 @@ public interface Store {
      * @return
      */
     <T extends Serializable> T set(String key, T value);
+    
+    /**
+     * Returns all the values in this store
+     * 
+     * @return
+     */
+    Map<String, Serializable> getAll();
     
     /**
      * 

@@ -1,7 +1,13 @@
 package org.iota.jota.config;
 
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.AccountStoreImpl;
+import org.iota.jota.connection.Connection;
+import org.iota.jota.connection.HttpConnector;
 import org.iota.jota.store.IotaFileStore;
 import org.iota.jota.utils.Constants;
 
@@ -58,5 +64,16 @@ public class IotaDefaultConfig extends IotaClientConfig {
         public static final int LEGACY_PORT = 14265;
         public static final String LEGACY_PROTOCOL = "http";
         public static final String LEGACY_HOST = "localhost";
+    }
+
+    @Override
+    public List<Connection> getNodes() {
+        List<Connection> list =  new ArrayList<>();
+        try {
+            list.add(new HttpConnector(getLegacyProtocol(), getLegacyHost(), getLegacyPort(), getConnectionTimeout()));
+        } catch (MalformedURLException e) {
+            // Default should have unit tests to prevent  this
+        }
+        return list;
     }
 }

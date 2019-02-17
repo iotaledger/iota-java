@@ -1,10 +1,17 @@
 package org.iota.jota.config;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.iota.jota.connection.Connection;
+import org.iota.jota.connection.ConnectionFactory;
 import org.iota.jota.store.Store;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -16,6 +23,8 @@ import org.iota.jota.store.Store;
  *
  */
 public abstract class IotaClientConfig implements IotaConfig {
+    
+    private static final Logger log = LoggerFactory.getLogger(IotaClientConfig.class);
     
     protected Store store;
     
@@ -38,9 +47,45 @@ public abstract class IotaClientConfig implements IotaConfig {
         this.store.load();
     }
 
-    @Override
-    public List<Connection> getNodes() {
-        return null;
+    /**
+     * Loads nodes from a properties file based on a key.
+     * key gets a number starting at 1 appended and checks for the existing data.
+     * Once no key + number data is found, we return the loaded data.
+     * 
+     * @param key
+     * @return
+     */
+    public List<Connection> loadNodes(String key) {
+        int start = 1;
+        List<Connection> connections = new LinkedList<>();
+        
+        Map<String, String> options;
+        do {
+            options = new HashMap<>();
+            String optionKey = key + start;
+            for (Entry<String, Serializable> entry : store.getAll().entrySet()) {
+                if (entry.getKey().startsWith(optionKey)) {
+                    options.put(
+                        // Remove the key segment, cannot do based on . since the value might have a .
+                        entry.getKey().substring(key.length() + 1 + ((int)(Math.log10(start)+1))), 
+                        entry.getValue().toString());
+                }
+            }
+            
+            if (options.size() > 0) {
+                try {
+                    Connection c = ConnectionFactory.createConnection(options, getConnectionTimeout());
+                    if (c != null) {
+                        connections.add(c);
+                    }
+                } catch (Exception e) {
+                    log.warn(e.getMessage());
+                }
+            }
+            start++;
+        } while (options.size() > 0);
+        
+        return connections;
     }
     
     @Override

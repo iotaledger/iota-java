@@ -1,7 +1,10 @@
 package org.iota.jota.config;
 
+import java.util.List;
+
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.AccountStoreImpl;
+import org.iota.jota.connection.Connection;
 import org.iota.jota.store.EnvironmentStore;
 import org.iota.jota.store.IotaFileStore;
 
@@ -64,5 +67,11 @@ public class EnvConfig extends IotaClientConfig {
     @Override
     public int getConnectionTimeout() {
         return intOrNull(ENV_TIMEOUT);
+    }
+
+    @Override
+    public List<Connection> getNodes() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

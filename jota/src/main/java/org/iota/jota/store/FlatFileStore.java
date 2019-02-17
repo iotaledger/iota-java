@@ -51,12 +51,10 @@ public class FlatFileStore implements Store {
             } 
             
             if (!file.canRead() || !file.canWrite()) {
-                log.debug("node_config.properties not found. Rolling back for another solution...");
+                log.debug(file.getName() + " not found. Rolling back for another solution...");
             }   
-            System.out.println(file.getName());
             inputStream = new FileInputStream(file);
         }
-        
         Map<String, Serializable> store = loadFromInputStream(inputStream);
         
         memoryStore = new MemoryStore(store);
@@ -68,7 +66,8 @@ public class FlatFileStore implements Store {
         try {
             Properties properties = new Properties();
             properties.load(stream);
-            properties.putAll(store);
+            
+            return (Map) properties;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -90,7 +89,7 @@ public class FlatFileStore implements Store {
                 outputStream = new FileOutputStream(file);
             }
             
-            writeToOutputStream(outputStream, memoryStore.getStore());
+            writeToOutputStream(outputStream, memoryStore.getAll());
         } catch (IOException e) {
             log.warn("Failed to save config to disk! " + e.getMessage());
         } finally {
@@ -99,7 +98,7 @@ public class FlatFileStore implements Store {
     }
 
     @Override
-    public <T extends Serializable> T get(String key) {
+    public Serializable get(String key) {
         return memoryStore.get(key, null);
     }
 
@@ -114,6 +113,11 @@ public class FlatFileStore implements Store {
     }
     
     @Override
+    public Map<String, Serializable> getAll() {
+        return memoryStore.getAll();
+    }
+    
+    @Override
     public boolean canWrite() {
         return true;
     }
@@ -122,4 +126,6 @@ public class FlatFileStore implements Store {
     public String toString() {
         return file.getName();
     }
+
+    
 }

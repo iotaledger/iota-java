@@ -23,7 +23,7 @@ public class AccountStoreImpl implements AccountStore {
 
     @Override
     public AccountState loadAccount(String id) {
-        AccountState state = store.get(id);
+        AccountState state = (AccountState) store.get(id);
         System.out.println(state);
         if (state == null) {
             state = new AccountState();
@@ -130,5 +130,40 @@ public class AccountStoreImpl implements AccountStore {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((store == null) ? 0 : store.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        AccountStoreImpl other = (AccountStoreImpl) obj;
+        if (store == null) {
+            if (other.store != null) {
+                return false;
+            }
+        } else if (!store.equals(other.store)) {
+            return false;
+        }
+        return true;
+    }
+    
+    @Override
+    public String toString() {
+        return store.toString();
     }
 }

@@ -17,7 +17,7 @@ public class MemoryStore implements Store {
     }
 
     @Override
-    public <T extends Serializable> T get(String key) {
+    public Serializable get(String key) {
         return get(key, null);
     }
 
@@ -45,7 +45,8 @@ public class MemoryStore implements Store {
         
     }
     
-    public Map<String, Serializable> getStore() {
+    @Override
+    public Map<String, Serializable> getAll() {
         return store;
     }
 

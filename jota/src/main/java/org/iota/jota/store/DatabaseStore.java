@@ -1,6 +1,7 @@
 package org.iota.jota.store;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class DatabaseStore implements Store {
 
@@ -37,6 +38,12 @@ public class DatabaseStore implements Store {
     @Override
     public boolean canWrite() {
         return true;
+    }
+
+    @Override
+    public Map<String, Serializable> getAll() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

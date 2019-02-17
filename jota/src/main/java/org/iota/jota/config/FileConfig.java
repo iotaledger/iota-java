@@ -1,10 +1,12 @@
 package org.iota.jota.config;
 
 import java.io.File;
+import java.util.List;
 import java.util.Optional;
 
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.AccountStoreImpl;
+import org.iota.jota.connection.Connection;
 import org.iota.jota.store.FlatFileStore;
 import org.iota.jota.store.IotaFileStore;
 import org.iota.jota.store.PropertiesStore;
@@ -13,12 +15,13 @@ public class FileConfig extends IotaClientConfig {
 
     private static final String DEFAULT_CONFIG_NAME = ".." + File.separator + "node_config.properties";
     
-    private static final String CONFIG_PROT = "iota.node.protocol";
-    private static final String CONFIG_HOST = "iota.node.host";
-    private static final String CONFIG_PORT = "iota.node.port";
+    private static final String CONFIG_NODE_PRE = "iota.node";
+    private static final String CONFIG_PROT = CONFIG_NODE_PRE + ".protocol";
+    private static final String CONFIG_HOST = CONFIG_NODE_PRE + ".host";
+    private static final String CONFIG_PORT = CONFIG_NODE_PRE + ".port";
     private static final String CONFIG_TIMEOUT = "connection.timeout";
     
-    private static final String CONFIG_STORE = "storage.url";
+    private static final String CONFIG_STORE = "accounts.storage.url";
     
     private static final String CONFIG_MWM = "accounts.mwm";
     private static final String CONFIG_DEPTH = "accounts.depth";
@@ -44,8 +47,7 @@ public class FileConfig extends IotaClientConfig {
     protected FileConfig(PropertiesStore store) throws Exception {
         super(store);
     }
-    @Deprecated
-
+    
     @Override
     public int getLegacyPort() {
         return intOrNull(CONFIG_PORT);
@@ -84,5 +86,10 @@ public class FileConfig extends IotaClientConfig {
     @Override
     public int getConnectionTimeout() {
         return intOrNull(CONFIG_TIMEOUT);
+    }
+
+    @Override
+    public List<Connection> getNodes() {
+        return loadNodes(CONFIG_NODE_PRE);
     }
 }

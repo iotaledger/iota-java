@@ -1,6 +1,7 @@
 package org.iota.jota.store;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class EnvironmentStore implements Store {
 
@@ -20,15 +21,14 @@ public class EnvironmentStore implements Store {
     }
 
     @Override
-    public Serializable get(String key, Serializable def) {
-        String value = System.getenv(key);;
+    public <T extends Serializable> T get(String key, T def) {
+        T value = (T) System.getenv(key);
         return value != null ? value : def;
     }
 
     @Override
-    public Serializable set(String key, Serializable value) {
+    public <T extends Serializable> T set(String key, T value) {
         throw new IllegalArgumentException("Environment store does not allow setting values");
-        //throw new NotAllowedException("Environment store does not allow setting values");
     }
 
     @Override
@@ -39,5 +39,11 @@ public class EnvironmentStore implements Store {
     @Override
     public String toString() {
         return "Environment variables";
+    }
+
+    @Override
+    public Map<String, Serializable> getAll() {
+        //TODO: Make nicer
+        return (Map<String, Serializable>)((Map)System.getenv());
     }
 }
