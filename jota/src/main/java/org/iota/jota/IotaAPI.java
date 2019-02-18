@@ -541,6 +541,7 @@ public class IotaAPI extends IotaAPICore {
      * Prepares transfer by generating bundle, finding and signing inputs.
      *
      * @param seed           The tryte-encoded seed. It should be noted that this seed is not transferred.
+     *                       Only required when we are preparing a value transfer
      * @param security       Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param transfers      List of transfer objects.
      *                       If the total value of the transfers is 0, no signing is performed.
@@ -562,11 +563,6 @@ public class IotaAPI extends IotaAPICore {
                                          List<Input> inputs, 
                                          List<Transaction> tips, 
                                          boolean validateInputs) throws ArgumentException {
-
-        // validate seed
-        if ((!InputValidator.isValidSeed(seed))) {
-            throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
-        }
 
         if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
@@ -643,7 +639,11 @@ public class IotaAPI extends IotaAPICore {
 
         // Get inputs if we are sending tokens
         if (totalValue != 0) {
-
+            // validate seed
+            if ((!InputValidator.isValidSeed(seed))) {
+                throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
+            }
+            
             //  Case 1: user provided inputs
             //  Validate the inputs by calling getBalances
             if (inputs != null && !inputs.isEmpty()) {
