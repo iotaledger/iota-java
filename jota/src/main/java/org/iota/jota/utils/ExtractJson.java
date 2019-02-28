@@ -7,9 +7,6 @@ import com.google.gson.JsonObject;
 public class ExtractJson {
     public static JsonObject fromBundle(Bundle bundle) {
         JsonObject json = new JsonObject();
-        
-        
-        
         return json;
     }
 }

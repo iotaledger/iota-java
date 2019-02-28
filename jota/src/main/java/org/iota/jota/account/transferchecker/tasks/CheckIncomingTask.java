@@ -98,7 +98,9 @@ public class CheckIncomingTask implements Runnable {
 
     private boolean isConsistent(Bundle bundle) {
         for (Transaction t : bundle.getTransactions()) {
-            if (!t.getPersistence()) return false;
+            if (!t.getPersistence()) {
+                return false;
+            }
         }
         return true;
     }
@@ -113,7 +115,9 @@ public class CheckIncomingTask implements Runnable {
 
     private boolean isValue(Bundle bundle) {
         for (Transaction t : bundle.getTransactions()) {
-            if (t.getValue() != 0) return true;
+            if (t.getValue() != 0) {
+                return true;
+            }
         }
         return false;
     }

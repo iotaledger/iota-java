@@ -80,7 +80,10 @@ public class Bundle implements Comparable<Bundle> {
     }
     
     public String getBundleHash() {
-        if (getLength() == 0) return EMPTY_HASH;
+        if (getLength() == 0) {
+            return EMPTY_HASH;
+        }
+        
         return transactions.get(0).getBundle();
         
     }

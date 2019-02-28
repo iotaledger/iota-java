@@ -6,6 +6,7 @@ import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
 import org.iota.jota.pow.SpongeFactory;
+import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.Multisig;
 import org.iota.jota.utils.Signing;
@@ -18,15 +19,12 @@ import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by Adrian on 18.02.2017.
- */
 public class IotaMultisigTest {
 
     private static final String TEST_SEED1 = "ABCDFG";
     private static final String TEST_SEED2 = "FDSAG";
     private static final String REMAINDER_ADDRESS = "NZRALDYNVGJWUVLKDWFKJVNYLWQGCWYCURJIIZRLJIKSAIVZSGEYKTZRDBGJLOA9AWYJQB9IPWRAKUC9FBDRZJZXZG";
-    private static final String RECEIVE_ADDRESS = "ZGHXPZYDKXPEOSQTAQOIXEEI9K9YKFKCWKYYTYAUWXK9QZAVMJXWAIZABOXHHNNBJIEBEUQRTBWGLYMTX";
+    private static final String RECEIVE_ADDRESS = "ZGHXPZYDKXPEOSQTAQOIXEEI9K9YKFKCWKYYTYAUWXK9QZAVMJXWAIZABOXHHNNBJIEBEUQRTBWGLYMTXPENVCJZBX";
     private static final String TEST_TAG = "JOTASPAM9999999999999999999";
 
     private IotaAPI iotaClient;
@@ -66,7 +64,7 @@ public class IotaMultisigTest {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new Transfer(RECEIVE_ADDRESS, 999, "", TEST_TAG));
 
-        List<Transaction> trxs = iotaClient.initiateTransfer(6, multiSigAddress, REMAINDER_ADDRESS, transfers, null, true);
+        List<Transaction> trxs = iotaClient.initiateTransfer(6, Checksum.addChecksum(multiSigAddress), REMAINDER_ADDRESS, transfers, null, true);
 
         Bundle bundle = new Bundle(trxs, trxs.size());
 
@@ -77,6 +75,7 @@ public class IotaMultisigTest {
 
         Signing sgn = new Signing(SpongeFactory.create(SpongeFactory.Mode.KERL));
 
+        System.out.println(bundle.getTransactions().get(0).getBundle());
         boolean isValidSignature = sgn.validateSignatures(bundle, multiSigAddress);
         assertTrue("MultiSignature not valid", isValidSignature);
         System.out.println("Result of multi-signature validation is " + isValidSignature);

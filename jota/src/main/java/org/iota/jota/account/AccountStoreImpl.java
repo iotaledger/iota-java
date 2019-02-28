@@ -41,12 +41,12 @@ public class AccountStoreImpl implements AccountStore {
     }
 
     @Override
-    public void RemoveAccount(String id) {
+    public void removeAccount(String id) {
         store.set(id, null);
     }
 
     @Override
-    public int ReadIndex(String id) {
+    public int readIndex(String id) {
         AccountState state = loadAccount(id);
         return state.getKeyIndex();
     }

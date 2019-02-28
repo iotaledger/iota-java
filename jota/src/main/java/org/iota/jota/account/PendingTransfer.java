@@ -70,20 +70,26 @@ public class PendingTransfer implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         PendingTransfer other = (PendingTransfer) obj;
-        if (!Arrays.equals(bundleTrits, other.bundleTrits))
+        if (!Arrays.equals(bundleTrits, other.bundleTrits)) {
             return false;
+        }
         if (tailHashes == null) {
-            if (other.tailHashes != null)
+            if (other.tailHashes != null) {
                 return false;
-        } else if (!tailHashes.equals(other.tailHashes))
+            }
+        } else if (!tailHashes.equals(other.tailHashes)) {
             return false;
+        }
         return true;
     }
 }

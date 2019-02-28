@@ -12,9 +12,9 @@ public interface AccountStore {
     
     void saveAccount(String id, AccountState state);
     
-    void RemoveAccount(String id);
+    void removeAccount(String id);
     
-    int ReadIndex(String id);
+    int readIndex(String id);
     
     void writeIndex(String id, int index);
     

@@ -12,7 +12,7 @@ public class Constants {
     public static final String TRYTE_ALPHABET = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     /**
-     * The maximum seed length
+     * The length of an IOTA seed
      */
     public static final int SEED_LENGTH_MAX = 81;
 

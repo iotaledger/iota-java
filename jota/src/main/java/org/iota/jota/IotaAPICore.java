@@ -1,12 +1,6 @@
 package org.iota.jota;
 
-import static org.iota.jota.utils.Constants.ARRAY_NULL_OR_EMPTY;
-import static org.iota.jota.utils.Constants.INVALID_APPROVE_DEPTH_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_ATTACHED_TRYTES_INPUT_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_HASHES_INPUT_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_THRESHOLD_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_TRYTES_INPUT_ERROR;
-import static org.iota.jota.utils.Constants.TAG_LENGTH;
+import static org.iota.jota.utils.Constants.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +74,10 @@ public class IotaAPICore {
     }
     
     public Connection getRandomNode() {
-        if (!hasNodes()) return null;
+        if (!hasNodes()) {
+            return null;
+        }
+        
         return nodes.get(new Random().nextInt(nodes.size()));
     }
     
@@ -105,7 +102,9 @@ public class IotaAPICore {
                     nodes.add(n);
                     log.debug("Added node: " + n.toString());
                     //Legacy wants a node in service for getting ports etc
-                    if (null == service) service = n;
+                    if (null == service) {
+                        service = n;
+                    }
                 }
 
                 return started;
@@ -225,7 +224,7 @@ public class IotaAPICore {
      * Using multiple of these input fields returns the intersection of the values.
      * Can error if the node found more transactions than the max transactions send amount
      *
-     * @param addresses Array of hashes from addresses
+     * @param addresses Array of hashes from addresses, must contain checksums
      * @param tags Array of tags
      * @param approvees Array of transaction hashes
      * @param bundles Array of bundle hashes
@@ -233,18 +232,19 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public FindTransactionResponse findTransactions(String[] addresses, String[] tags, String[] approvees, String[] bundles) throws ArgumentException {
-        String[] addressesWithoutChecksum = null;
-        if (null != addresses) {
-            addressesWithoutChecksum = new String[addresses.length];
+        if (null != addresses && addresses.length > 0 ) {
+            if (!InputValidator.isAddressesArrayValid(addresses)) {
+                throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
+            }
+            
             for (int i = 0; i < addresses.length; i++) {
-                String addressO = Checksum.removeChecksum(addresses[i]);
-                addressesWithoutChecksum[i] = addressO;
+                addresses[i] = Checksum.removeChecksum(addresses[i]);
             }
         }
         
         final IotaFindTransactionsRequest findTransRequest = IotaFindTransactionsRequest
                 .createFindTransactionRequest()
-                .byAddresses(addressesWithoutChecksum)
+                .byAddresses(addresses)
                 .byTags(tags)
                 .byApprovees(approvees)
                 .byBundles(bundles);
@@ -253,9 +253,9 @@ public class IotaAPICore {
     }
 
     /**
-     * Find the transactions by addresses
+     * Find the transactions by addresses with checksum
      *
-     * @param addresses An array of addresses.
+     * @param addresses An array of addresses, must contain checksums
      * @return {@link FindTransactionResponse}
      * @throws ArgumentException 
      */
@@ -267,7 +267,6 @@ public class IotaAPICore {
         if (!InputValidator.isAddressesArrayValid(addresses)) {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
-        
         return findTransactions(addresses, null, null, null);
     }
 
@@ -445,7 +444,7 @@ public class IotaAPICore {
      *
      * @param threshold The confirmation threshold between 0 and 100(inclusive). 
      *                  Should be set to 100 for getting balance by counting only confirmed transactions.
-     * @param addresses The addresses where we will find the balance for.
+     * @param addresses The addresses where we will find the balance for. Must contain the checksum.
      * @param tips The optional tips to find the balance through.
      * @return {@link GetBalancesResponse}
      * @throws ArgumentException The the request was considered wrong in any way by the node
@@ -460,12 +459,15 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
         
-        String[] addressesWithoutChecksum = new String[addresses.length];
-        for (int i = 0; i < addresses.length; i++) {
-            addressesWithoutChecksum[i] = Checksum.removeChecksum(addresses[0]);
+        if (null == addresses || addresses.length == 0 || !InputValidator.isAddressesArrayValid(addresses)) {
+            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
         }
         
-        return service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addressesWithoutChecksum, tips));
+        for (int i = 0; i < addresses.length; i++) {
+            addresses[i] = Checksum.removeChecksum(addresses[i]);
+        }
+        
+        return service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses, tips));
     }
 
     /**
@@ -480,14 +482,16 @@ public class IotaAPICore {
      *
      * @param threshold The confirmation threshold between 0 and 100(inclusive). 
      *                  Should be set to 100 for getting balance by counting only confirmed transactions.
-     * @param addresses The addresses where we will find the balance for.
+     * @param addresses The addresses where we will find the balance for. Must contain the checksum.
      * @param tips The tips to find the balance through. Can be <tt>null</tt>
      * @return {@link GetBalancesResponse}
      * @throws ArgumentException The the request was considered wrong in any way by the node
      */
     public GetBalancesResponse getBalances(Integer threshold, List<String> addresses, List<String> tips) throws ArgumentException {
         String[] tipsArray = tips != null ? tips.toArray(new String[tips.size()]) : null;
-        return getBalances(threshold, addresses.toArray(new String[addresses.size()]), tipsArray);
+        String[] addressesArray = addresses != null ? addresses.toArray(new String[addresses.size()]) : null;
+        
+        return getBalances(threshold, addressesArray, tipsArray);
     }
     
     /**
@@ -499,7 +503,7 @@ public class IotaAPICore {
      * </p>
      *
      * @param threshold The confirmation threshold, should be set to 100.
-     * @param addresses The list of addresses you want to get the confirmed balance from.
+     * @param addresses The list of addresses you want to get the confirmed balance from. Must contain the checksum.
      * @return {@link GetBalancesResponse}
      * @throws ArgumentException
      */
@@ -510,14 +514,18 @@ public class IotaAPICore {
     /**
      * Check if a list of addresses was ever spent from, in the current epoch, or in previous epochs.
      *
-     * @param addresses List of addresses to check if they were ever spent from.
+     * @param addresses List of addresses to check if they were ever spent from. Must contain the checksum.
      * @return {@link WereAddressesSpentFromResponse}
      * @throws ArgumentException when an address is invalid
      * @throws ArgumentException
      */
     public WereAddressesSpentFromResponse wereAddressesSpentFrom(String... addresses) throws ArgumentException {
-        if (!InputValidator.isAddressesArrayValid(addresses)) {
+        if (null == addresses || addresses.length == 0 || !InputValidator.isAddressesArrayValid(addresses)) {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
+        }
+        
+        for (int i = 0; i < addresses.length; i++) {
+            addresses[i] = Checksum.removeChecksum(addresses[i]);
         }
 
         return service.wereAddressesSpentFrom(IotaWereAddressesSpentFromRequest.create(addresses));

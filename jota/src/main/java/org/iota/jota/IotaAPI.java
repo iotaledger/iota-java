@@ -46,8 +46,6 @@ import org.iota.jota.utils.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * IotaAPI Builder. Usage:
  * <p>
@@ -82,7 +80,7 @@ public class IotaAPI extends IotaAPICore {
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param index     Key index to start search from. If the index is provided, the generation of the address is not deterministic.
-     * @param checksum  Adds 9-tryte address checksum.
+     * @param checksum  Adds 9-tryte address checksum. Checksums are required for all API calls.
      * @param total     Total number of addresses to generate.
      * @param returnAll If <code>true</code>, it returns all addresses which were deterministically generated (until findTransactions returns null).
      * @return {@link GetNewAddressResponse}
@@ -106,7 +104,7 @@ public class IotaAPI extends IotaAPICore {
      * 
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
-     * @param checksum  Adds 9-tryte address checksum.
+     * @param checksum  Adds 9-tryte address checksum. Checksums are required for all API calls.
      * @return {@link GetNewAddressResponse}
      * @throws ArgumentException When the seed is invalid
      * @throws ArgumentException When the security level is wrong.
@@ -120,7 +118,7 @@ public class IotaAPI extends IotaAPICore {
      * 
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
-     * @param checksum  Adds 9-tryte address checksum.
+     * @param checksum  Adds 9-tryte address checksum. Checksums are required for all API calls.
      * @param index     Key index to start search from.
      * @return {@link GetNewAddressResponse}
      * @throws ArgumentException When the seed is invalid
@@ -136,7 +134,7 @@ public class IotaAPI extends IotaAPICore {
      * 
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
-     * @param checksum  Adds 9-tryte address checksum.
+     * @param checksum  Adds 9-tryte address checksum. Checksums are required for all API calls.
      * @param amount    Total number of addresses to generate.
      * @return {@link GetNewAddressResponse}
      * @throws ArgumentException When the seed is invalid
@@ -153,7 +151,7 @@ public class IotaAPI extends IotaAPICore {
      * 
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
-     * @param checksum  Adds 9-tryte address checksum.
+     * @param checksum  Adds 9-tryte address checksum. Checksums are required for all API calls.
      * @param index     Key index to start search from.
      * @param amount    Total number of addresses to generate.
      * @return {@link GetNewAddressResponse}
@@ -171,7 +169,7 @@ public class IotaAPI extends IotaAPICore {
      * 
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
-     * @param checksum  Adds 9-tryte address checksum.
+     * @param checksum  Adds 9-tryte address checksum. Checksums are required for all API calls.
      * @param index     Key index to start search from.
      * @param amount    Total number of addresses to generate.
      *                  If this is set to 0, we will generate until the first unspent address is found, and stop.
@@ -182,7 +180,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException When the security level is wrong.
      * @throws ArgumentException When index plus the amount are below 0
      */
-    public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int index, int amount, boolean addSpendAddresses) throws ArgumentException {
+    public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int index, long amount, boolean addSpendAddresses) throws ArgumentException {
         if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
         }
@@ -201,7 +199,8 @@ public class IotaAPI extends IotaAPICore {
         for (int i = index, numUnspentFound=0; numUnspentFound < amount; i++) {
 
             final String newAddress = IotaAPIUtils.newAddress(seed, security, i, checksum, getCurl());
-            final FindTransactionResponse response = findTransactionsByAddresses(newAddress);
+            final FindTransactionResponse response = findTransactionsByAddresses(
+                    checksum ? newAddress : Checksum.addChecksum(newAddress));
 
             
             if (response.getHashes().length == 0) {
@@ -276,7 +275,7 @@ public class IotaAPI extends IotaAPICore {
 
         StopWatch stopWatch = new StopWatch();
 
-        GetNewAddressResponse gnr = getNewAddress(seed, security, start, false, end, true);
+        GetNewAddressResponse gnr = getNewAddress(seed, security, start, true, end, true);
         if (gnr != null && gnr.getAddresses() != null) {
             Bundle[] bundles = bundlesFromAddresses(inclusionStates, gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]));
             return GetTransferResponse.create(bundles, stopWatch.getElapsedTimeMili());
@@ -462,21 +461,14 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Wrapper function: Finds transactions, gets trytes and turns it into {@link Transaction} objects.
      *
-     * @param addresses The addresses we should get the transactions for
+     * @param addresses The addresses we should get the transactions for, must contain checksums
      * @return {@link Transaction} objects.
      * @throws ArgumentException if addresses is not a valid array of hashes
      * @see #findTransactionsByAddresses(String...)
      * @see #findTransactionsObjectsByHashes
      **/
-    public List<Transaction> findTransactionObjectsByAddresses(String... addresses) throws ArgumentException {
-        List<String> addressesWithoutChecksum = new ArrayList<>();
-
-        for (String address : addresses) {
-            String addressO = Checksum.removeChecksum(address);
-            addressesWithoutChecksum.add(addressO);
-        }
-
-        FindTransactionResponse ftr = findTransactionsByAddresses(addressesWithoutChecksum.toArray(new String[]{}));
+    public List<Transaction> findTransactionObjectsByAddresses(String[] addresses) throws ArgumentException {
+        FindTransactionResponse ftr = findTransactionsByAddresses(addresses);
         if (ftr == null || ftr.getHashes() == null) {
             return new ArrayList<>();
         }
@@ -567,10 +559,18 @@ public class IotaAPI extends IotaAPICore {
         if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
+        
+        if (remainder != null && !InputValidator.checkAddress(remainder)) {
+            throw new ArgumentException(Constants.INVALID_ADDRESSES_INPUT_ERROR);
+        }
 
         // Input validation of transfers object
         if (!InputValidator.isTransfersCollectionValid(transfers)) {
             throw new ArgumentException(Constants.INVALID_TRANSFERS_INPUT_ERROR);
+        }
+        
+        if (inputs != null && !InputValidator.areValidInputsList(inputs)) {
+            throw new ArgumentException(Constants.INVALID_ADDRESSES_INPUT_ERROR);
         }
 
         // Create a new bundle
@@ -583,10 +583,8 @@ public class IotaAPI extends IotaAPICore {
         //  and prepare the signatureFragments, message and tag
         for (final Transfer transfer : transfers) {
 
-            // remove the checksum of the address if provided
-            if (Checksum.isValidChecksum(transfer.getAddress())) {
-                transfer.setAddress(Checksum.removeChecksum(transfer.getAddress()));
-            }
+            // remove the checksum of the address
+           transfer.setAddress(Checksum.removeChecksum(transfer.getAddress()));
 
             int signatureMessageLength = 1;
 
@@ -644,6 +642,12 @@ public class IotaAPI extends IotaAPICore {
                 throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
             }
             
+            for (Transfer t : transfers) {
+                if (!InputValidator.hasTrailingZeroTrit(t.getAddress())) {
+                    throw new ArgumentException(Constants.INVALID_ADDRESSES_INPUT_ERROR);
+                }
+            }
+
             //  Case 1: user provided inputs
             //  Validate the inputs by calling getBalances
             if (inputs != null && !inputs.isEmpty()) {
@@ -651,6 +655,7 @@ public class IotaAPI extends IotaAPICore {
                 if (!validateInputs) {
                     return addRemainder(seed, security, inputs, bundle, tag, totalValue, remainder, signatureFragments);
                 }
+                
                 // Get list if addresses of the provided inputs
                 List<String> inputsAddresses = new ArrayList<>();
                 for (final Input i : inputs) {
@@ -771,7 +776,6 @@ public class IotaAPI extends IotaAPICore {
             List<String> allAddresses = new ArrayList<>();
 
             for (int i = start; i < end; i++) {
-
                 String address = IotaAPIUtils.newAddress(seed, security, i, false, getCurl());
                 allAddresses.add(address);
             }
@@ -784,7 +788,7 @@ public class IotaAPI extends IotaAPICore {
         //  Calls getNewAddress and deterministically generates and returns all addresses
         //  We then do getBalance, format the output and return it
         else {
-            final GetNewAddressResponse res =  generateNewAddresses(seed, security, false, start, 0, true);
+            final GetNewAddressResponse res =  generateNewAddresses(seed, security, true, start, threshold, true);
             return getBalanceAndFormat(res.getAddresses(), tipsList, threshold, start, stopWatch, security);
         }
     }
@@ -831,7 +835,6 @@ public class IotaAPI extends IotaAPICore {
                                                             StopWatch stopWatch, 
                                                             int security) throws ArgumentException, 
                                                                                  IllegalStateException {
-        
         if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
@@ -911,7 +914,7 @@ public class IotaAPI extends IotaAPICore {
      * @param seed            Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security        Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param index           Key index to start search from. If the index is provided, the generation of the address is not deterministic.
-     * @param checksum        Adds 9-tryte address checksum.
+     * @param checksum        Adds 9-tryte address checksum. Checksum is required for all API calls.
      * @param total           Total number of addresses to generate.
      * @param returnAll       If <code>true</code>, it returns all addresses which were deterministically generated (until findTransactions returns null).
      * @param start           Starting key index, must be at least 0.
@@ -923,7 +926,9 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException when <tt>start</tt> and <tt>end</tt> are invalid
      * @see #getTransfers(String, int, Integer, Integer, Boolean)
      */
-    public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, boolean returnAll, int start, int end, boolean inclusionStates, long threshold) throws ArgumentException {
+    public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, 
+            boolean returnAll, int start, int end, boolean inclusionStates, long threshold) throws ArgumentException {
+        
         if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
@@ -943,37 +948,21 @@ public class IotaAPI extends IotaAPICore {
     
     /**
      * Check if a list of addresses was ever spent from, in the current epoch, or in previous epochs.
-     * If the address has a checksum, it is automatically removed
+     * Addresses must have a checksum.
      * 
      * @param addresses the addresses to check
      * @return list of address boolean checks
      * @throws ArgumentException when an address is invalid
      */
     public boolean[] checkWereAddressSpentFrom(String... addresses) throws ArgumentException {
-        List<String> rawAddresses=new ArrayList<>();
-        for(String address: addresses) {
-            String rawAddress=null;
-            try {
-                if (Checksum.isAddressWithChecksum(address)) {
-                    rawAddress=Checksum.removeChecksum(address);
-                }
-            } catch (ArgumentException e) {}
-            if(rawAddress==null) {
-                rawAddresses.add(address);
-            } else {
-                rawAddresses.add(rawAddress);
-            }
-        }
-        String[] spentAddresses = new String[rawAddresses.size()];
-        spentAddresses = rawAddresses.toArray(spentAddresses);
-        WereAddressesSpentFromResponse response = wereAddressesSpentFrom(spentAddresses);
+        WereAddressesSpentFromResponse response = wereAddressesSpentFrom(addresses);
         return response.getStates();
 
     }
     
     /**
      * Check if an addresses was ever spent from, in the current epoch, or in previous epochs.
-     * If the address has a checksum, it is removed
+     * Address must have a checksum.
      * 
      * @param address the address to check
      * @return <tt>true</tt> if it was spent, otherwise <tt>false</tt>
@@ -1276,10 +1265,10 @@ public class IotaAPI extends IotaAPICore {
      * Does not contain signatures.
      *
      * @param securitySum      The sum of security levels used by all co-signers.
-     * @param inputAddress     Array of input addresses as well as the securitySum.
+     * @param inputAddress     Input address with checksum
      * @param remainderAddress Has to be generated by the cosigners before initiating the transfer, can be null if fully spent.
-     * @param transfers        List of {@link Transfer} we want to make using the unputAddresses
-     * @param tips             The starting points for checking if the balances of the input addresses contain enough to make this transfer.
+     * @param transfers        List of {@link Transfer} we want to make using the inputAddress
+     * @param tips             The starting points for checking if the balance of the input address contains enough to make this transfer.
      *                         This can be <tt>null</tt>
      * @param testMode         If were running unit tests, set to true to bypass total value check
      * @return All the {@link Transaction} objects in this newly created transfer
@@ -1323,10 +1312,8 @@ public class IotaAPI extends IotaAPICore {
         //  and prepare the signatureFragments, message and tag
         for (final Transfer transfer : transfers) {
 
-            // remove the checksum of the address if provided
-            if (Checksum.isValidChecksum(transfer.getAddress())) {
-                transfer.setAddress(Checksum.removeChecksum(transfer.getAddress()));
-            }
+            // remove the checksum of the address
+            transfer.setAddress(Checksum.removeChecksum(transfer.getAddress()));
 
             int signatureMessageLength = 1;
 
@@ -1382,7 +1369,12 @@ public class IotaAPI extends IotaAPICore {
 
         // Get inputs if we are sending tokens
         if (totalValue != 0) {
-
+            for (Transfer t : transfers) {
+                if (!InputValidator.hasTrailingZeroTrit(t.getAddress())) {
+                    throw new ArgumentException(Constants.INVALID_ADDRESSES_INPUT_ERROR);
+                }
+            }
+            
             List<String> tipHashes = null;
             if (tips != null) {
                 tipHashes = new ArrayList<>(tips.size());
@@ -1418,7 +1410,7 @@ public class IotaAPI extends IotaAPICore {
 
                 // Add input as bundle entry
                 // Only a single entry, signatures will be added later
-                bundle.addEntry(securitySum, inputAddress, toSubtract, tag, timestamp);
+                bundle.addEntry(securitySum, Checksum.removeChecksum(inputAddress), toSubtract, tag, timestamp);
             }
             // Return not enough balance error
             if (totalValue > totalBalance) {
@@ -1452,11 +1444,11 @@ public class IotaAPI extends IotaAPICore {
     /**
      * <p>
      * Validates the supplied transactions with seed and security.
-     * This will check for correct input/output and key reuse 
+     * This will check for correct input/output and key reuse
      * </p>
      * <p>
      * In order to do this we will generate all addresses for this seed which are currently in use.
-     * Transactions for these addresses will be looked up, making this an expensive method call.
+     * Address checksums will be regenerated and these addresses will be looked up, making this an expensive method call.
      * </p>
      * If no error is thrown, the transaction trytes are using correct addresses. 
      * This will not validate transaction fields.
@@ -1476,23 +1468,27 @@ public class IotaAPI extends IotaAPICore {
 
         for (String trx : trytes) {
             Transaction transaction = new Transaction(trx, getCurl());
-            addresses.add(transaction.getAddress());
+            addresses.add(Checksum.addChecksum(transaction.getAddress()));
             inputTransactions.add(transaction);
         }
 
         String[] hashes = findTransactionsByAddresses(addresses.toArray(new String[addresses.size()])).getHashes();
         List<Transaction> transactions = findTransactionsObjectsByHashes(hashes);
-        GetNewAddressResponse gna = generateNewAddresses(seed, security, false, 0, 0, false);
+        GetNewAddressResponse gna = generateNewAddresses(seed, security, true, 0, 0, false);
         GetBalancesAndFormatResponse gbr = getInputs(seed, security, 0, 0, 0);
 
         for (Input input : gbr.getInputs()) {
-            inputAddresses.add(input.getAddress());
+            inputAddresses.add(Checksum.addChecksum(input.getAddress()));
         }
 
         //check if send to input
         for (Transaction trx : inputTransactions) {
-            if (trx.getValue() > 0 && inputAddresses.contains(trx.getAddress())) {
-                throw new ArgumentException(Constants.SEND_TO_INPUTS_ERROR);
+            if (trx.getValue() > 0 ) {
+                if (inputAddresses.contains(trx.getAddress())) {
+                    throw new ArgumentException(Constants.SEND_TO_INPUTS_ERROR);
+                } else if (!InputValidator.hasTrailingZeroTrit(trx.getAddress())) {
+                    throw new ArgumentException(Constants.INVALID_ADDRESSES_INPUT_ERROR);
+                }
             }
         }
 
@@ -1535,8 +1531,22 @@ public class IotaAPI extends IotaAPICore {
     public List<String> addRemainder(String seed, int security, List<Input> inputs, Bundle bundle, 
                                      String tag, long totalValue, String remainderAddress,
                                      List<String> signatureFragments) throws ArgumentException {
-        //TODO: replace 2187 with {@value Constants#MESSAGE_LENGTH}. 
-        // https://bugs.eclipse.org/bugs/show_bug.cgi?id=490247
+        // validate seed
+        if ((!InputValidator.isValidSeed(seed))) {
+            throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
+        }
+        
+        if (remainderAddress != null && !InputValidator.checkAddress(remainderAddress)) {
+            throw new ArgumentException(Constants.INVALID_ADDRESSES_INPUT_ERROR);
+        }
+
+        if (!InputValidator.isValidSecurityLevel(security)) {
+            throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
+        }
+        if (!InputValidator.areValidInputsList(inputs)) {
+            throw new ArgumentException(Constants.INVALID_INPUT_ERROR);
+        }
+        
         long totalTransferValue = totalValue;
         for (int i = 0; i < inputs.size(); i++) {
             long thisBalance = inputs.get(i).getBalance();
@@ -1544,7 +1554,7 @@ public class IotaAPI extends IotaAPICore {
             long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
 
             // Add input as bundle entry
-            bundle.addEntry(security, inputs.get(i).getAddress(), toSubtract, tag, timestamp);
+            bundle.addEntry(security, Checksum.removeChecksum(inputs.get(i).getAddress()), toSubtract, tag, timestamp);
             // If there is a remainder value
             // Add extra output to send remaining funds to
 
@@ -1555,7 +1565,7 @@ public class IotaAPI extends IotaAPICore {
                 // Use it to send remaining funds to
                 if (remainder > 0 && remainderAddress != null) {
                     // Remainder bundle entry
-                    bundle.addEntry(1, remainderAddress, remainder, tag, timestamp);
+                    bundle.addEntry(1, Checksum.removeChecksum(remainderAddress), remainder, tag, timestamp);
                     // Final function for signing inputs
                     return IotaAPIUtils.signInputsAndReturn(seed, inputs, bundle, signatureFragments, getCurl());
                 } else if (remainder > 0) {

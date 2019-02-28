@@ -36,7 +36,9 @@ public class InputSelectionStrategyImpl implements InputSelectionStrategy {
             remaining -= i.getBalance();
             usedInputs.add(i);
             
-            if (remaining <= 0) break;
+            if (remaining <= 0) {
+                break;
+            }
         }
         
         if (remaining > 0) {

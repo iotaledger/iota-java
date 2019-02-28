@@ -3,6 +3,7 @@ package org.iota.jota.utils;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.iota.jota.error.ArgumentException;
+import org.iota.jota.model.Input;
 import org.iota.jota.model.Transfer;
 
 import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
@@ -18,20 +19,56 @@ import java.util.function.Predicate;
  * This class provides methods to validate the parameters of different iota API methods
  */
 public class InputValidator {
+    
+    /**
+     * Determines whether the specified string is a isSeed.
+     *
+     * @param seed The seed to validate.
+     * @return <code>true</code> if the specified string is a seed; otherwise, <code>false</code>.
+     **/
+    public static boolean isSeed(String seed) {
+        return seed.length() <= Constants.SEED_LENGTH_MAX && isTrytes(seed);
+    }
 
     /**
-     * Determines whether the specified string is an address.
+     * Determines whether the specified string is an address. 
+     * Address must contain a checksum to be valid
      *
      * @param address The address to validate.
      * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
      **/
     public static boolean isAddress(String address) {
-        return (address.length() == Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM ||
-                address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM) && isTrytes(address, address.length());
+        return address.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM && isTrytes(address);
+    }
+    
+    /**
+     * Determines whether the specified string is an address without checksum. 
+     *
+     * @param address The address to validate.
+     * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
+     **/
+    public static boolean isAddressWithoutChecksum(String address) {
+        return isTrytes(address, Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM);
+    }
+
+    /**
+     * According to the following issue:
+     * https://github.com/iotaledger/trinity-wallet/issues/866
+     * 
+     * This is because Curl addresses always are with a 0 trit on the end.
+     * So we validate if we actually send to a proper address, to prevent having to double spent
+     * 
+     * @param address The trytes to check
+     * @return <code>true</code> if the specified trytes end with 0, otherwise <code>false</code>.
+     */
+    public static boolean hasTrailingZeroTrit(String trytes) {
+       int[] trits = Converter.trits(trytes);
+       return trits[trits.length - 1] == 0;
     }
 
     /**
      * Determines whether the specified addresses are valid.
+     * Addresses must contain a checksum to be valid.
      *
      * @param addresses The address list to validate.
      * @return <code>true</code> if the specified addresses are valid; otherwise, <code>false</code>.
@@ -47,6 +84,7 @@ public class InputValidator {
     
     /**
      * Determines whether the specified addresses are valid.
+     * Addresses must contain a checksum to be valid.
      *
      * @param addresses The address array to validate.
      * @return <code>true</code> if the specified addresses are valid; otherwise, <code>false</code>.
@@ -62,13 +100,29 @@ public class InputValidator {
 
     /**
      * Checks whether the specified address is an address and throws and exception if the address is invalid.
-     *
+     * Addresses must contain a checksum to be valid.
+     * 
      * @param address The address to validate.
      * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
      * @throws ArgumentException is thrown when the specified input is not valid.
      **/
     public static boolean checkAddress(String address) throws ArgumentException {
         if (!isAddress(address)) {
+            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
+        }
+        return true;
+    }
+    
+    /**
+     * Checks whether the specified address is an address without checksum 
+     * and throws and exception if the address is invalid.
+     * 
+     * @param address The address to validate.
+     * @return <code>true</code> if the specified string is an address; otherwise, <code>false</code>.
+     * @throws ArgumentException when the specified input is not valid.
+     **/
+    public static boolean checkAddressWithoutChecksum(String address) throws ArgumentException {
+        if (!isTrytes(address, Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM)) {
             throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
         }
         return true;
@@ -91,8 +145,20 @@ public class InputValidator {
      * @param length The length.
      * @return <code>true</code> if the specified trytes are trytes otherwise, <code>false</code>.
      **/
-    public static boolean isTrytes(String trytes, int length) {
+    public static boolean isTrytesOfExactLength(String trytes, int length) {
         return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
+    }
+    
+    /**
+     * Determines whether the specified string contains only characters from the trytes alphabet (see <see cref="Constants.TryteAlphabet"/>).
+     * Alias of {@link #isTrytesOfExactLength(String, int)}
+     *
+     * @param trytes The trytes to validate.
+     * @param length The length.
+     * @return <code>true</code> if the specified trytes are trytes otherwise, <code>false</code>.
+     **/
+    public static boolean isTrytes(String trytes, int length) {
+        return isTrytesOfExactLength(trytes, length);
     }
 
     /**
@@ -160,8 +226,9 @@ public class InputValidator {
      * @return <code>true</code> the specified array contains only valid hashes; otherwise, <code>false</code>.
      **/
     public static boolean isArrayOfHashes(String[] hashes) {
-        if (hashes == null)
+        if (hashes == null) {
             return false;
+        }
 
         for (String hash : hashes) {
             // Check if address with checksum
@@ -239,13 +306,76 @@ public class InputValidator {
     }
     
     /**
-     * Checks if the seed is valid.
+     * Checks if the tag is valid.
+     * Alias of {@link #isValidTag(String)}
      * 
      * @param tag The tag to validate.
      * @return <code>true</code> if the specified tag is valid; otherwise, <code>false</code>.
      */
     public static boolean isTag(String tag) {
-        return tag != null & isTrytes(tag, tag.length()) && tag.length() <= Constants.TAG_LENGTH;
+        return isValidTag(tag);
+    }
+    
+    /**
+     * Checks if the tag is valid.
+     * 
+     * @param tag The tag to validate.
+     * @return <code>true</code> if the specified tag is valid; otherwise, <code>false</code>.
+     */
+    public static boolean isValidTag(String tag) {
+        return tag != null && tag.length() <= Constants.TAG_LENGTH && isTrytes(tag);
+    }
+    
+    /**
+     * Checks if the inputs are valid. 
+     *
+     * @param inputs The inputs to validate.
+     * @return <code>true</code> if the specified inputs are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean areValidInputsList(List<Input> inputs){
+        return areValidInputs(inputs.toArray(new Input[inputs.size()]));
+    }
+    
+    /**
+     * Checks if the inputs are valid. 
+     *
+     * @param inputs The inputs to validate.
+     * @return <code>true</code> if the specified inputs are valid; otherwise, <code>false</code>.
+     **/
+    public static boolean areValidInputs(Input... inputs){
+        // Input validation of input objects
+        if (inputs == null || inputs.length == 0) {
+            return false;
+        }
+
+        for (final Input input : inputs) {
+            if (!isValidInput(input)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Checks if the input is valid. 
+     *
+     * @param input The input to validate.
+     * @return <code>true</code> if the specified input is valid; otherwise, <code>false</code>.
+     **/
+    public static boolean isValidInput(Input input){
+        if (input == null) {
+            return false;
+        }
+
+        if (!isAddress(input.getAddress())) {
+            return false;
+        }
+
+        if (input.getKeyIndex() < 0) {
+            return false;
+        }
+        
+        return isValidSecurityLevel(input.getSecurity());
     }
 
     /**
@@ -255,7 +385,11 @@ public class InputValidator {
      * @return <code>true</code> if the specified seed is valid; otherwise, <code>false</code>.
      **/
     public static boolean isValidSeed(String seed) {
-        return isTrytes(seed, Constants.SEED_LENGTH_MAX);
+        if (seed.length() > Constants.SEED_LENGTH_MAX) {
+            return false;
+        }
+        
+        return isTrytes(seed);
     }
 
     /**

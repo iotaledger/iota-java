@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +29,9 @@ public class EventManagerImpl implements EventManager {
     @Override
     public void emit(Event event) {
         List<Pair<EventListener, Method>> listeners = getListeners(event.getClass());
-        if (listeners == null || listeners.size() == 0) return;
+        if (listeners == null || listeners.size() == 0) {
+            return;
+        }
         
         for (Pair<EventListener, Method> listener : listeners) {
             try {
