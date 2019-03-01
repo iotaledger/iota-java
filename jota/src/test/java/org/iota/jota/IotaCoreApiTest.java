@@ -100,7 +100,7 @@ public class IotaCoreApiTest {
     @Test
     @Category(IntegrationTest.class)
     public void shouldFindTransactionsByApprovees() throws ArgumentException {
-        FindTransactionResponse trans = proxy.findTransactionsByApprovees(TEST_ADDRESS_WITH_CHECKSUM);
+        FindTransactionResponse trans = proxy.findTransactionsByApprovees(TEST_ADDRESS_WITHOUT_CHECKSUM);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
@@ -114,7 +114,7 @@ public class IotaCoreApiTest {
     @Test
     @Category(IntegrationTest.class)
     public void shouldFindTransactionsByDigests() throws ArgumentException {
-        FindTransactionResponse trans = proxy.findTransactionsByTags(TEST_TAG);
+        FindTransactionResponse trans = proxy.findTransactionsByTags(TEST_HASH);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 

@@ -1,7 +1,8 @@
 package org.iota.jota;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -104,8 +105,8 @@ public class IotaAPITest {
 
     @Test
     public void shouldRetainValuesFromBuilder() {
-        iotaAPI = new IotaAPI.Builder().host("somewhere_over_the_rainbow").build();
-        assertThat(iotaAPI.getHost(), Is.is("somewhere_over_the_rainbow"));
+        iotaAPI = new IotaAPI.Builder().host("iota.org").build();
+        assertThat(iotaAPI.getHost(), Is.is("iota.org"));
 
         iotaAPI = new IotaAPI.Builder().port(15515).build();
         assertThat(iotaAPI.getPort(), Is.is("15515"));

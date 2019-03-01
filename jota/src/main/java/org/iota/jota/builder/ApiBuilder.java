@@ -48,9 +48,9 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
     protected T generate() throws Exception {
         for (ApiConfig config : getConfigs()) {
             if (config != null) {
-                
-                // If were at default config and still dont have any legacy, we fall back to nodes list
-                if (!(config instanceof IotaDefaultConfig)) {
+             // Defaults have the node in the nodes list
+                // Only load legacy defaults when we used a legacy value
+                if (!(config instanceof IotaDefaultConfig) || hasLegacyOptions()) {
                     if (null == protocol) {
                         protocol = config.getLegacyProtocol();
                     }
@@ -61,55 +61,34 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
     
                     if (0 == port) {
                         port = config.getLegacyPort();
-                    }
+                    } 
                 }
-                
+
                 if (0 == timeout) {
                     timeout = config.getConnectionTimeout();
                 }
                 
-                // Once we have found a full pair, add it and reset
-                if (null != host && null != protocol && 0 != port) {
-                    nodes.add(new HttpConnector(protocol, host, port, timeout));
-                    host = protocol = null;
-                    port = 0;
-                }
-                
                 // Now if we had a legacy config node, we wont take the default node
                 // BUt if nothing was configured, we add the legacy node from default config
-                if (config.hasNodes() && (!hasNodes() || !(config instanceof IotaDefaultConfig))) {
+                if (config.hasNodes() && (!(config instanceof IotaDefaultConfig) || !hasLegacyOptions())) {
                     for (Connection c : config.getNodes()) {
                         nodes.add(c);
                     }
                 }
             }
-        };
-        
-        if (!hasNodes()) {
-            //Either we have a legacy node defined in the builder, or in the config.
-            if (null != host && null != protocol && 0 != port) {
-                nodes.add(new HttpConnector(protocol, host, port, timeout));
-            } else {
-              //Fallback on legacy option from config
-                for (ApiConfig config : getConfigs()) {
-                    if (config.getLegacyHost() != null
-                            && config.getLegacyProtocol() != null
-                            && config.getLegacyPort() != 0) {
-                        nodes.add(new HttpConnector(
-                                config.getLegacyProtocol(), 
-                                config.getLegacyHost(), 
-                                config.getLegacyPort(),
-                                timeout)
-                        );
-                        
-                        break; //If we define one in config, dont check rest, Otherwise we end up using custom & default
-                    }
-                }
-            }
         }
+        
+        if (hasLegacyOptions()) {
+            nodes.add(new HttpConnector(protocol, host, port, timeout));
+        }
+        
         return (T) this;
     }
     
+    private boolean hasLegacyOptions() {
+        return null != host || null != protocol || 0 != port;
+    }
+
     public T withCustomCurl(ICurl curl) {
         customCurl = curl;
         return (T) this;

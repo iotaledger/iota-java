@@ -776,7 +776,7 @@ public class IotaAPI extends IotaAPICore {
             List<String> allAddresses = new ArrayList<>();
 
             for (int i = start; i < end; i++) {
-                String address = IotaAPIUtils.newAddress(seed, security, i, false, getCurl());
+                String address = IotaAPIUtils.newAddress(seed, security, i, true, getCurl());
                 allAddresses.add(address);
             }
 

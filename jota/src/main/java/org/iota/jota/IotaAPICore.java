@@ -446,7 +446,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_THRESHOLD_ERROR);
         }
         
-        if (!InputValidator.isArrayOfHashes(tips)) {
+        if (null != tips && !InputValidator.isArrayOfHashes(tips)) {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
         
