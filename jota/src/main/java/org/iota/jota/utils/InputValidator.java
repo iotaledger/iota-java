@@ -218,32 +218,6 @@ public class InputValidator {
         }
         return true;
     }
-
-    /**
-     * Determines whether the specified array contains only valid hashes.
-     *
-     * @param hashes The hashes array to validate.
-     * @return <code>true</code> the specified array contains only valid hashes; otherwise, <code>false</code>.
-     **/
-    public static boolean isArrayOfHashes(String[] hashes) {
-        if (hashes == null) {
-            return false;
-        }
-
-        for (String hash : hashes) {
-            // Check if address with checksum
-            if (hash.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM) {
-                if (!isTrytes(hash, Constants.ADDRESS_LENGTH_WITH_CHECKSUM)) {
-                    return false;
-                }
-            } else {
-                if (!isTrytes(hash, Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
     
     /**
      * Checks if the array is not null and not empty
@@ -391,14 +365,37 @@ public class InputValidator {
         
         return isTrytes(seed);
     }
+    
+    /**
+     * Determines whether the specified array contains only valid hashes.
+     *
+     * @param hashes The hashes array to validate.
+     * @return <code>true</code> the specified array contains only valid hashes; otherwise, <code>false</code>.
+     **/
+    public static boolean isArrayOfHashes(String[] hashes) {
+        if (hashes == null) {
+            return false;
+        }
+
+        for (String hash : hashes) {
+            if (!isHash(hash)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
-     * Checks if input is correct hashes.
+     * Determines whether the specified array contains only valid hashes.
      *
      * @param hashes The hashes list to validate.
      * @return <code>true</code> if the specified hashes are valid; otherwise, <code>false</code>.
      **/
     public static boolean isHashes(List<String> hashes) {
+        if (null == hashes) {
+            return false;
+        }
+        
         for (String hash : hashes) {
             if (!isHash(hash)) {
                 return false;
@@ -414,8 +411,14 @@ public class InputValidator {
      * @return <code>true</code> if the specified hash are valid; otherwise, <code>false</code>.
      **/
     public static boolean isHash(String hash) {
-        if (!isTrytes(hash, Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM)) {
-            return false;
+        if (hash.length() == Constants.ADDRESS_LENGTH_WITH_CHECKSUM) {
+            if (!isTrytes(hash, Constants.ADDRESS_LENGTH_WITH_CHECKSUM)) {
+                return false;
+            }
+        } else {
+            if (!isTrytes(hash, Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM)) {
+                return false;
+            }
         }
         return true;
     }

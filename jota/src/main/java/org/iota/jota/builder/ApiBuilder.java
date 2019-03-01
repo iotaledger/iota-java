@@ -8,6 +8,7 @@ import java.util.List;
 import org.iota.jota.IotaAPICore;
 import org.iota.jota.IotaLocalPoW;
 import org.iota.jota.config.ApiConfig;
+import org.iota.jota.config.IotaDefaultConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.connection.HttpConnector;
 import org.iota.jota.pow.ICurl;
@@ -47,23 +48,36 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
     protected T generate() throws Exception {
         for (ApiConfig config : getConfigs()) {
             if (config != null) {
-                if (null == protocol) {
-                    protocol = config.getLegacyProtocol();
-                }
-
-                if (null == host) {
-                    host = config.getLegacyHost();
-                }
-
-                if (0 == port) {
-                    port = config.getLegacyPort();
+                
+                // If were at default config and still dont have any legacy, we fall back to nodes list
+                if (!(config instanceof IotaDefaultConfig)) {
+                    if (null == protocol) {
+                        protocol = config.getLegacyProtocol();
+                    }
+    
+                    if (null == host) {
+                        host = config.getLegacyHost();
+                    }
+    
+                    if (0 == port) {
+                        port = config.getLegacyPort();
+                    }
                 }
                 
                 if (0 == timeout) {
                     timeout = config.getConnectionTimeout();
                 }
                 
-                if (config.hasNodes()) {
+                // Once we have found a full pair, add it and reset
+                if (null != host && null != protocol && 0 != port) {
+                    nodes.add(new HttpConnector(protocol, host, port, timeout));
+                    host = protocol = null;
+                    port = 0;
+                }
+                
+                // Now if we had a legacy config node, we wont take the default node
+                // BUt if nothing was configured, we add the legacy node from default config
+                if (config.hasNodes() && (!hasNodes() || !(config instanceof IotaDefaultConfig))) {
                     for (Connection c : config.getNodes()) {
                         nodes.add(c);
                     }

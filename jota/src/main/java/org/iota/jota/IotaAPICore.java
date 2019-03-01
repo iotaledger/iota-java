@@ -242,6 +242,24 @@ public class IotaAPICore {
             }
         }
         
+        if (null != tags && tags.length > 0 ) {
+            if (!InputValidator.isStringArrayValid(tags)) {
+                throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
+            }
+            
+            if (!InputValidator.isArrayOfHashes(tags)) {
+                throw new ArgumentException(INVALID_TAG_INPUT_ERROR);
+            }
+        }
+        
+        if (null != bundles && bundles.length > 0  && !InputValidator.isStringArrayValid(bundles)) {
+            throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
+        }
+        
+        if (null != approvees && approvees.length > 0  && !InputValidator.isStringArrayValid(approvees)) {
+            throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
+        }
+        
         final IotaFindTransactionsRequest findTransRequest = IotaFindTransactionsRequest
                 .createFindTransactionRequest()
                 .byAddresses(addresses)
@@ -278,15 +296,6 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public FindTransactionResponse findTransactionsByBundles(String... bundles) throws ArgumentException {
-        if (!InputValidator.isStringArrayValid(bundles)) {
-            throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
-        }
-        
-        if (!InputValidator.isAddressesArrayValid(bundles)) {
-            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
-        }
-        
-        
         return findTransactions(null, null, null, bundles);
     }
 
@@ -298,48 +307,30 @@ public class IotaAPICore {
      * @throws ArgumentException 
      */
     public FindTransactionResponse findTransactionsByApprovees(String... approvees) throws ArgumentException {
-        if (!InputValidator.isStringArrayValid(approvees)) {
-            throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
-        }
-        
-        if (!InputValidator.isAddressesArrayValid(approvees)) {
-            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
-        }
-        
         return findTransactions(null, null, approvees, null);
     }
 
     /**
      * Find the transactions by digests
-     * Deprecated, Use findTransactionsByTag
      * 
-     * @param digests A List of digests. Each should be 27 trytes.
+     * @param digests A List of digests. Must be hashed tags (digest)
      * @return The transaction hashes which are returned depend on the input.
      * @throws ArgumentException 
      */
-    @Deprecated
     public FindTransactionResponse findTransactionsByDigests(String... digests) throws ArgumentException {
-        return findTransactionsByTags(digests);
+        return findTransactions(null, digests, null, null);
     }
     
 
     /**
      * Find the transactions by tags
      *
-     * @param tags A List of tags.
+     * @param tags A List of tags. Must be hashed tags (digest)
      * @return {@link FindTransactionResponse}
      * @throws ArgumentException 
      */
     public FindTransactionResponse findTransactionsByTags(String... tags) throws ArgumentException {
-        if (!InputValidator.isStringArrayValid(tags)) {
-            throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
-        }
-        
-        if (!InputValidator.isArrayOfTrytes(tags, TAG_LENGTH)) {
-            throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
-        }
-        
-        return findTransactions(null, tags, null, null);
+        return findTransactionsByDigests(tags);
     }
 
 
@@ -455,7 +446,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_THRESHOLD_ERROR);
         }
         
-        if (!InputValidator.isArrayOfHashes(addresses)) {
+        if (!InputValidator.isArrayOfHashes(tips)) {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
         

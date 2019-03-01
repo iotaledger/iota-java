@@ -29,6 +29,8 @@ public class IotaCoreApiTest {
     private static final String TEST_ADDRESS_WITH_CHECKSUM = "YJNQ9EQWSXUMLFCIUZDCAJZSAXUQNZSY9AKKVYKKFBAAHRSTKSHUOCCFTQVPPASPGGC9YGNLDQNOUWCAWGWIJNRJMX";
     
     private static final String TEST_HASH = "OOAARHCXXCPMNZPUEYOOUIUCTWZSQGKNIECIKRBNUUJEVMLJAWGCXREXEQGNJUJKUXXQAWWAZYKB99999";
+    private static final String TEST_TAG = "IOTA9TEST999999999999999999";
+    
     private static IotaAPICore proxy;
 
     @Before
@@ -98,7 +100,7 @@ public class IotaCoreApiTest {
     @Test
     @Category(IntegrationTest.class)
     public void shouldFindTransactionsByApprovees() throws ArgumentException {
-        FindTransactionResponse trans = proxy.findTransactionsByApprovees(TEST_HASH);
+        FindTransactionResponse trans = proxy.findTransactionsByApprovees(TEST_ADDRESS_WITH_CHECKSUM);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
@@ -112,7 +114,7 @@ public class IotaCoreApiTest {
     @Test
     @Category(IntegrationTest.class)
     public void shouldFindTransactionsByDigests() throws ArgumentException {
-        FindTransactionResponse trans = proxy.findTransactionsByTags(TEST_HASH);
+        FindTransactionResponse trans = proxy.findTransactionsByTags(TEST_TAG);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
@@ -192,6 +194,7 @@ public class IotaCoreApiTest {
             proxy.wereAddressesSpentFrom(TEST_ADDRESS_WITHOUT_CHECKSUM);
             fail("failed to throw error on wrong address hash");
         } catch (ArgumentException e) {
+            
           //TODO verify correct error
             //Success
         }
