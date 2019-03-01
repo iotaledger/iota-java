@@ -3,15 +3,26 @@ package org.iota.jota.account.deposits.methods;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
 import org.bouncycastle.util.encoders.Base64;
+import org.iota.jota.account.AccountState;
 import org.iota.jota.account.deposits.DepositConditions;
 
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
@@ -24,68 +35,70 @@ import net.glxn.qrgen.javase.QRCode;
 
 public class QRMethod implements DepositMethod<QRCode>{
 
+    private ObjectMapper objectMapper;
+
     public QRMethod() {
-        // TODO Auto-generated constructor stub
+        objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
+        objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
     }
 
     @Override
     public DepositConditions parse(QRCode method) {
         ByteArrayOutputStream baos = method.stream();
-        BufferedImage bufferedImage;
+        
+        String conditions;
         try {
-            bufferedImage = ImageIO.read(new ByteArrayInputStream( baos.toByteArray()));
-        } catch (IOException e) {
+            conditions = readQRCode(new ByteArrayInputStream( baos.toByteArray()));
+        } catch (NotFoundException | IOException e) {
             e.printStackTrace();
             return null;
+        } finally {
+            try {
+                baos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         
-        LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
-        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-        
-        String conditions = null;
-        try {
-            Result result = new MultiFormatReader().decode(bitmap);
-            conditions = result.getText();
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-        
-        byte b[] = Base64.decode(conditions.getBytes()); 
-        ByteArrayInputStream bi = new ByteArrayInputStream(b);
-        ObjectInputStream si;
-        try {
-            si = new ObjectInputStream(bi);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        
-        DepositConditions depositConditions;
-        try {
-            depositConditions = (DepositConditions) si.readObject();
-        } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        DepositConditions depositConditions = loadFromInputStream((Base64.decode(conditions)));
         return depositConditions;
     }
+    
+    public static String readQRCode(InputStream stream) throws IOException, NotFoundException {
+          BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(
+              new BufferedImageLuminanceSource(
+                  ImageIO.read(stream))));
+          Result qrCodeResult = new MultiFormatReader().decode(binaryBitmap);
+          return qrCodeResult.getText();
+        }
 
     @Override
     public QRCode build(DepositConditions conditions) {
         ByteArrayOutputStream bo = new ByteArrayOutputStream();
-        ObjectOutputStream so = null;
         try {
-            so = new ObjectOutputStream(bo);
-            so.writeObject(conditions);
-            so.flush();
-            so.close();
-        } catch (Exception e) {
+            writeToOutputStream(bo, conditions);
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
         
         return QRCode.from(new String(Base64.encode(bo.toByteArray())));
+    }
+    
+    protected DepositConditions loadFromInputStream(byte[] stream){
+        DepositConditions conditions;
+        try {
+            conditions = objectMapper.readValue(stream, new TypeReference<DepositConditions>(){});
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return conditions;
+    }
+    
+    protected void writeToOutputStream(OutputStream stream, DepositConditions store) throws IOException {
+        objectMapper.writeValue(stream, store);
     }
 
 }

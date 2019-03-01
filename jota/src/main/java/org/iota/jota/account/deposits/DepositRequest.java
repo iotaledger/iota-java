@@ -7,7 +7,7 @@ import org.iota.jota.account.AccountState;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class DepositRequest  implements Serializable {
+public class DepositRequest implements Serializable {
     
     private static final long serialVersionUID = -1214895100919711824L;
 

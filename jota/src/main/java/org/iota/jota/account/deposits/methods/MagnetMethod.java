@@ -47,7 +47,7 @@ public class MagnetMethod implements DepositMethod<String> {
             throw new IllegalArgumentException("Invalid scheme: " + uri.getScheme());
         }
 
-        String address = uri.toString().substring(SCHEME.length() + 3, SCHEME.length() + 3 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM);
+        String address = uri.toString().substring(SCHEME.length() + 3, SCHEME.length() + 3 + Constants.ADDRESS_LENGTH_WITH_CHECKSUM);
         if (!InputValidator.checkAddress(address)) {
             throw new IllegalArgumentException("Invalid Address: " + address);
         }
@@ -77,7 +77,7 @@ public class MagnetMethod implements DepositMethod<String> {
 
         // iota://address/, so getSchemeSpecificPart removes iota:
         String[] params = uri.getSchemeSpecificPart()
-                .substring(Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM + 4)
+                .substring(Constants.ADDRESS_LENGTH_WITH_CHECKSUM + 4)
                 .split("&");
         for (String param : params) {
             String[] parts = param.split("=");
@@ -106,7 +106,7 @@ public class MagnetMethod implements DepositMethod<String> {
     @Override
     public String build(DepositConditions conditions) {
         return String.format(magnetUrl, 
-                conditions.getDepositAddress().getHash(),
+                conditions.getDepositAddress().getWithChecksum(),
                 conditions.getRequest().getTimeOut().getTime(),
                 conditions.getRequest().isMultiUse(),
                 conditions.getRequest().getExpectedAmount());

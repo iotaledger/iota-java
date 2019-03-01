@@ -1,12 +1,18 @@
 package org.iota.jota.account.deposits;
 
+import java.io.Serializable;
+
 import org.iota.jota.types.Hash;
 
-public class DepositConditions {
+public class DepositConditions implements Serializable {
 
     DepositRequest request;
     
     Hash depositAddress;
+    
+    private DepositConditions() {
+        
+    }
 
     public DepositConditions(DepositRequest request, Hash depositAddress) {
         this.request = request;
