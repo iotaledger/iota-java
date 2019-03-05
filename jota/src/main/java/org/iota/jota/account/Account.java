@@ -4,13 +4,10 @@ import java.util.Date;
 import java.util.concurrent.Future;
 
 import org.iota.jota.account.condition.ExpireCondition;
-import org.iota.jota.account.deposits.DepositConditions;
-import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.config.options.AccountOptions;
 import org.iota.jota.model.Bundle;
-import org.iota.jota.model.Transfer;
-import org.iota.jota.types.Address;
 import org.iota.jota.types.Recipient;
 import org.iota.jota.utils.thread.TaskService;
 
@@ -55,16 +52,16 @@ public interface Account extends TaskService {
     Future<Bundle> send(Recipient recipient) throws AccountError;
     
     /**
-     * Allocates a new CDR in the underlying store.
+     * Allocates a new CDA in the underlying store.
      * 
      * @return
      * @throws AccountError
      */
-    Future<DepositConditions> newDepositRequest(Date timeOut, boolean multiUse, long expectedAmount,
+    Future<ConditionalDepositAddress> newDepositAddress(Date timeOut, boolean multiUse, long expectedAmount,
             ExpireCondition... otherConditions) throws AccountError;
     
     /**
-     * Runs the input selection with the CDRs in order to determine the usable balance for funding transfers.
+     * Runs the input selection with the CDAs in order to determine the usable balance for funding transfers.
      * 
      * @return
      * @throws AccountError
@@ -72,7 +69,7 @@ public interface Account extends TaskService {
     long usableBalance() throws AccountError;
     
     /**
-     * Uses all stored CDRs to determine the current total balance.
+     * Uses all stored CDAs to determine the current total balance.
      * 
      * @return
      * @throws AccountError

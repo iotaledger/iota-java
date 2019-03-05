@@ -20,7 +20,7 @@ import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.addressgenerator.AddressGeneratorServiceImpl;
 import org.iota.jota.account.condition.ExpireCondition;
-import org.iota.jota.account.deposits.DepositConditions;
+import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.StoredDepositRequest;
 import org.iota.jota.account.errors.AccountError;
@@ -391,19 +391,19 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
-    public Future<DepositConditions> newDepositRequest(Date timeOut, boolean multiUse, long expectedAmount,
+    public Future<ConditionalDepositAddress> newDepositAddress(Date timeOut, boolean multiUse, long expectedAmount,
             ExpireCondition... otherConditions) throws AccountError {
         return newDepositRequest(new DepositRequest(timeOut, multiUse, expectedAmount), otherConditions);
     }
     
-    public Future<DepositConditions> newDepositRequest(DepositRequest request, ExpireCondition... otherConditions) throws AccountError {
+    public Future<ConditionalDepositAddress> newDepositRequest(DepositRequest request, ExpireCondition... otherConditions) throws AccountError {
         Address address = accountManager.getNextAddress();
         StoredDepositRequest storedRequest = new StoredDepositRequest(request, options.getSecurityLevel());
         accountManager.addDepositRequest(address.getIndex(), storedRequest);
         
         EventNewInput event = new EventNewInput(address, request);
         eventManager.emit(event);
-        return new FutureTask<DepositConditions>(() -> new DepositConditions(request, address.getAddress()));
+        return new FutureTask<ConditionalDepositAddress>(() -> new ConditionalDepositAddress(request, address.getAddress()));
     }
     
     /**
@@ -472,7 +472,7 @@ public class IotaAccount implements Account, EventListener {
         String tryteTag = tag.orElse("");
         tryteTag = StringUtils.rightPad(tryteTag, Constants.TAG_LENGTH, '9');
         
-        //Set a mesage, or use default. We use this to keep track which transfer is the outbound.
+        //Set a message, or use default. We use this to keep track which transfer is the outbound.
         String asciiMessage = message.orElse(Constants.ACCOUNT_MESSAGE);
         String tryteMsg = TrytesConverter.asciiToTrytes( asciiMessage);
         

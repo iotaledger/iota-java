@@ -17,7 +17,7 @@ import javax.imageio.ImageIO;
 
 import org.bouncycastle.util.encoders.Base64;
 import org.iota.jota.account.AccountState;
-import org.iota.jota.account.deposits.DepositConditions;
+import org.iota.jota.account.deposits.ConditionalDepositAddress;
 
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -44,7 +44,7 @@ public class QRMethod implements DepositMethod<QRCode>{
     }
 
     @Override
-    public DepositConditions parse(QRCode method) {
+    public ConditionalDepositAddress parse(QRCode method) {
         ByteArrayOutputStream baos = method.stream();
         
         String conditions;
@@ -61,7 +61,7 @@ public class QRMethod implements DepositMethod<QRCode>{
             }
         }
         
-        DepositConditions depositConditions = loadFromInputStream((Base64.decode(conditions)));
+        ConditionalDepositAddress depositConditions = loadFromInputStream((Base64.decode(conditions)));
         return depositConditions;
     }
     
@@ -74,7 +74,7 @@ public class QRMethod implements DepositMethod<QRCode>{
         }
 
     @Override
-    public QRCode build(DepositConditions conditions) {
+    public QRCode build(ConditionalDepositAddress conditions) {
         ByteArrayOutputStream bo = new ByteArrayOutputStream();
         try {
             writeToOutputStream(bo, conditions);
@@ -86,10 +86,10 @@ public class QRMethod implements DepositMethod<QRCode>{
         return QRCode.from(new String(Base64.encode(bo.toByteArray())));
     }
     
-    protected DepositConditions loadFromInputStream(byte[] stream){
-        DepositConditions conditions;
+    protected ConditionalDepositAddress loadFromInputStream(byte[] stream){
+        ConditionalDepositAddress conditions;
         try {
-            conditions = objectMapper.readValue(stream, new TypeReference<DepositConditions>(){});
+            conditions = objectMapper.readValue(stream, new TypeReference<ConditionalDepositAddress>(){});
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -97,7 +97,7 @@ public class QRMethod implements DepositMethod<QRCode>{
         return conditions;
     }
     
-    protected void writeToOutputStream(OutputStream stream, DepositConditions store) throws IOException {
+    protected void writeToOutputStream(OutputStream stream, ConditionalDepositAddress store) throws IOException {
         objectMapper.writeValue(stream, store);
     }
 

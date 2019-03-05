@@ -1,4 +1,4 @@
-package jota;
+package org.iota.jota.utils;
 
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transfer;
@@ -45,7 +45,7 @@ public class InputValidatorTest {
 
     @Test
     public void shouldIsArrayOfTrytes() {
-        assertEquals(InputValidator.isArrayOfTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}), true);
+        assertEquals(InputValidator.isArrayOfRawTransactionTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}), true);
     }
 
     @Test

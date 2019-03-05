@@ -14,13 +14,13 @@ import org.junit.Test;
 
 public class DepositFactoryTest extends DepositTest {
     
-    private static DepositConditions deposit;
+    private static ConditionalDepositAddress deposit;
     
     DepositFactory factory;
     
     @BeforeClass
     public static void setUp() {
-        deposit = new DepositConditions(
+        deposit = new ConditionalDepositAddress(
                 new DepositRequest(new Date(0), false, 1), 
                 new Hash(depositAddress));
     }

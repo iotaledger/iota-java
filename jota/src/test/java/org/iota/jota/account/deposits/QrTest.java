@@ -4,10 +4,9 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
 
-import org.iota.jota.account.deposits.DepositConditions;
+import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.methods.QRMethod;
 import org.iota.jota.types.Hash;
@@ -60,20 +59,20 @@ public class QrTest extends DepositTest {
 
     
     QRMethod qrMethod = null;
-    DepositConditions conditions = null;
+    ConditionalDepositAddress conditions = null;
     
     @Before
     public void setUp() throws Exception {
         qrMethod = new QRMethod();
         
         DepositRequest request = new DepositRequest(new Date(0), false, 5);
-        conditions = new DepositConditions(request, new Hash(depositAddress));
+        conditions = new ConditionalDepositAddress(request, new Hash(depositAddress));
     }
 
     @Test
     public void qrFromString() {
         QRCode code = qrMethod.build(conditions);
-        DepositConditions deposit = qrMethod.parse(code);
+        ConditionalDepositAddress deposit = qrMethod.parse(code);
         assertEquals(conditions, deposit);
     }
 
@@ -81,7 +80,7 @@ public class QrTest extends DepositTest {
     public void qrFromDeposit() throws IOException {
         QRCode code = qrMethod.build(conditions);
         ByteArrayOutputStream stream = code.stream();
-        //System.out.println(Arrays.toString(code.stream().toByteArray()));
+        System.out.println(java.util.Arrays.toString(code.stream().toByteArray()));
         
         assertArrayEquals(qrBytes, code.stream().toByteArray());
         stream.close();

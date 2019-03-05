@@ -4,17 +4,17 @@ import java.io.Serializable;
 
 import org.iota.jota.types.Hash;
 
-public class DepositConditions implements Serializable {
+public class ConditionalDepositAddress implements Serializable {
 
     DepositRequest request;
     
     Hash depositAddress;
     
-    private DepositConditions() {
+    private ConditionalDepositAddress() {
         
     }
 
-    public DepositConditions(DepositRequest request, Hash depositAddress) {
+    public ConditionalDepositAddress(DepositRequest request, Hash depositAddress) {
         this.request = request;
         this.depositAddress = depositAddress;
     }
@@ -43,11 +43,11 @@ public class DepositConditions implements Serializable {
     
     @Override
     public boolean equals(Object obj) {
-        if (!obj.getClass().equals(DepositConditions.class)) {
+        if (!obj.getClass().equals(ConditionalDepositAddress.class)) {
             return false;
         }
         
-        DepositConditions dc = (DepositConditions) obj;
+        ConditionalDepositAddress dc = (ConditionalDepositAddress) obj;
         return dc.depositAddress.equals(depositAddress)
                 && dc.request.equals(request);
     }

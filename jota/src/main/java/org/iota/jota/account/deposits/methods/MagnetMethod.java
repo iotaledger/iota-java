@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.iota.jota.account.deposits.DepositConditions;
+import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.types.Hash;
 import org.iota.jota.utils.Constants;
@@ -33,7 +33,7 @@ public class MagnetMethod implements DepositMethod<String> {
     }
 
     @Override
-    public DepositConditions parse(String method) {
+    public ConditionalDepositAddress parse(String method) {
         try {
             return parse(new URI(method));
         } catch (URISyntaxException e) {
@@ -42,7 +42,7 @@ public class MagnetMethod implements DepositMethod<String> {
         }
     }
 
-    private DepositConditions parse(URI uri) {
+    private ConditionalDepositAddress parse(URI uri) {
         if (!SCHEME.equals(uri.getScheme())) {
             throw new IllegalArgumentException("Invalid scheme: " + uri.getScheme());
         }
@@ -59,7 +59,7 @@ public class MagnetMethod implements DepositMethod<String> {
         long expectedAmount = parseLong(getParam(CONDITION_AMOUNT, paramsMap));
         
         DepositRequest request = new DepositRequest(new Date(timeOut), multiUse, expectedAmount);
-        DepositConditions conditions = new DepositConditions(request, new Hash(address));
+        ConditionalDepositAddress conditions = new ConditionalDepositAddress(request, new Hash(address));
         
         return conditions;
     }
@@ -104,7 +104,7 @@ public class MagnetMethod implements DepositMethod<String> {
     }
 
     @Override
-    public String build(DepositConditions conditions) {
+    public String build(ConditionalDepositAddress conditions) {
         return String.format(magnetUrl, 
                 conditions.getDepositAddress().getWithChecksum(),
                 conditions.getRequest().getTimeOut().getTime(),

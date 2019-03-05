@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Date;
 
-import org.iota.jota.account.deposits.DepositConditions;
+import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.methods.MagnetMethod;
 import org.iota.jota.types.Hash;
@@ -24,14 +24,14 @@ public class MagnetTest extends DepositTest {
     
     private MagnetMethod method;
     
-    private DepositConditions conditions;
+    private ConditionalDepositAddress conditions;
 
     @Before
     public void setUp() throws Exception {
         method = new MagnetMethod();
         
         DepositRequest request = new DepositRequest(new Date(TIME), MULTI, AMOUNT);
-        conditions = new DepositConditions(request, new Hash(DepositTest.depositAddress));
+        conditions = new ConditionalDepositAddress(request, new Hash(DepositTest.depositAddress));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class MagnetTest extends DepositTest {
     
     @Test
     public void readMagnet() {
-        DepositConditions request = method.parse(MAGNET);
+        ConditionalDepositAddress request = method.parse(MAGNET);
         assertEquals(conditions, request);
     }
 

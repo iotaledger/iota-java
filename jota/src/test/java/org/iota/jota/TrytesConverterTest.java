@@ -1,6 +1,5 @@
 package org.iota.jota;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.utils.TrytesConverter;
 import org.junit.Test;
@@ -8,9 +7,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author pinpong
- */
+import org.apache.commons.lang.RandomStringUtils;
+
 public class TrytesConverterTest {
 
     @Test

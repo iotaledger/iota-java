@@ -3,7 +3,7 @@ package org.iota.jota.account.deposits.methods;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.iota.jota.account.deposits.DepositConditions;
+import org.iota.jota.account.deposits.ConditionalDepositAddress;
 
 public class DepositFactory {
     
@@ -33,7 +33,7 @@ public class DepositFactory {
      * @param methodType
      * @return
      */
-    public <T extends DepositMethod> Object build(DepositConditions conditions, Class<T> methodType) {
+    public <T extends DepositMethod> Object build(ConditionalDepositAddress conditions, Class<T> methodType) {
         T method = getMethod(methodType);
         if (method == null) {
             return null;
@@ -49,7 +49,7 @@ public class DepositFactory {
      * @param methodType
      * @return
      */
-    public <T extends DepositMethod> DepositConditions parse(Object conditions, Class<T> methodType) {
+    public <T extends DepositMethod> ConditionalDepositAddress parse(Object conditions, Class<T> methodType) {
         T method = getMethod(methodType);
         if (method == null) {
             return null;

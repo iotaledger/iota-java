@@ -1,6 +1,6 @@
 package org.iota.jota.account.deposits.methods;
 
-import org.iota.jota.account.deposits.DepositConditions;
+import org.iota.jota.account.deposits.ConditionalDepositAddress;
 
 public interface DepositMethod<T> {
 
@@ -9,12 +9,12 @@ public interface DepositMethod<T> {
      * @param method
      * @return
      */
-    DepositConditions parse(T method);
+    ConditionalDepositAddress parse(T method);
 
     /**
      * 
      * @param conditions
      * @return
      */
-    T build(DepositConditions conditions);
+    T build(ConditionalDepositAddress conditions);
 }
