@@ -70,6 +70,9 @@
         
         <version.maven-site-plugin>3.7.1</version.maven-site-plugin>
         
+        <version.junit5.vintage>5.4.0</version.junit5.vintage>
+        <version.junit5>5.4.0</version.junit5>
+        
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
     </properties>
 
@@ -142,16 +145,23 @@
             <dependency>
 		        <groupId>org.junit.jupiter</groupId>
 		        <artifactId>junit-jupiter-api</artifactId>
-		        <version>5.4.0</version>
+		        <version>${version.junit5}</version>
 		        <scope>test</scope>
 		    </dependency>
 		    
 		    <dependency>
 		        <groupId>org.junit.jupiter</groupId>
 		        <artifactId>junit-jupiter-engine</artifactId>
-		        <version>5.4.0</version>
+		        <version>${version.junit5}</version>
 		        <scope>test</scope>
 		    </dependency>
+		    
+		    <dependency>
+			    <groupId>org.junit.vintage</groupId>
+			    <artifactId>junit-vintage-engine</artifactId>
+			    <version>${version.junit5.vintage}</version>
+			    <scope>test</scope>
+			</dependency>
 		    
             <dependency>
                 <groupId>net.jadler</groupId>
@@ -178,6 +188,12 @@
 			    <artifactId>jackson-databind</artifactId>
 			    <version>2.9.4</version>
 			</dependency>
+			
+		    <dependency>
+		        <groupId>org.mongodb</groupId>
+		        <artifactId>mongodb-driver</artifactId>
+		        <version>3.4.3</version>
+		    </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -2,6 +2,7 @@ package org.iota.jota.account.deposits;
 
 import java.io.Serializable;
 
+import org.iota.jota.types.Address;
 import org.iota.jota.types.Hash;
 
 public class ConditionalDepositAddress implements Serializable {

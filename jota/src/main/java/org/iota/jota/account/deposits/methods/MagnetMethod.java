@@ -11,11 +11,18 @@ import java.util.Map;
 
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.pow.ICurl;
+import org.iota.jota.pow.JCurl;
+import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.types.Hash;
+import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.Constants;
+import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.InputValidator;
 
 public class MagnetMethod implements DepositMethod<String> {
+    
+    private ICurl curl;
     
     private static final String SCHEME = "iota";
     
@@ -29,7 +36,11 @@ public class MagnetMethod implements DepositMethod<String> {
             + CONDITION_AMOUNT + "=%d";
 
     public MagnetMethod() {
-        
+        this.curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
+    }
+    
+    public void setCurl(ICurl curl) {
+        this.curl = curl;
     }
 
     @Override
@@ -105,11 +116,60 @@ public class MagnetMethod implements DepositMethod<String> {
 
     @Override
     public String build(ConditionalDepositAddress conditions) {
+        String address = conditions.getDepositAddress().getHash();
+        System.out.println(address.length());
+        String magnetChecksum = magnetChecksum(address,
+                conditions.getRequest().getTimeOut().getTime(),
+                conditions.getRequest().isMultiUse(),
+                conditions.getRequest().getExpectedAmount());
+        
         return String.format(magnetUrl, 
-                conditions.getDepositAddress().getWithChecksum(),
+                address + magnetChecksum,
                 conditions.getRequest().getTimeOut().getTime(),
                 conditions.getRequest().isMultiUse(),
                 conditions.getRequest().getExpectedAmount());
     }
 
+    //Package private for testing
+    String magnetChecksum(String address, long timeout, boolean multiUse, long amount) {
+        //Get checksum trits for address
+        int[] addressTrits = calculateChecksum(Converter.trits(address));
+        
+        //Get trits non-bool for fields
+        int[] timeoutTrits = Converter.trits(timeout);
+        int[] amountTrits = Converter.trits(amount);
+        
+        //trit input for checksum of magnet
+        int[] totalTrits = new int[Constants.HASH_LENGTH_TRITS];
+
+        //timeout (27) + multi_use (1) + amount (81) = 109
+        int addressRest = Constants.HASH_LENGTH_TRITS - 109;
+        //Copy part of address checksum into magnet checksum trits
+        System.arraycopy(addressTrits, 0, totalTrits, 0, addressRest);
+        
+        //Add fields to trits input
+        System.arraycopy(timeoutTrits, 0, totalTrits, addressRest + 27 - timeoutTrits.length, timeoutTrits.length);
+        totalTrits[addressRest + 27] = multiUse ? 1 : 0;
+        System.arraycopy(amountTrits, 0, totalTrits, addressRest + 27 + 1 + 81 - amountTrits.length, amountTrits.length);
+
+        //Make checksum trits
+        int[] checksumTrits = calculateChecksum(totalTrits);
+        String checksum = Converter.trytes(checksumTrits);
+        
+        //Return only the checksum, last 9 trytes
+        return checksum.substring(72, 81);
+    }
+    
+    /**
+     * Takes input trits and makes hash length output trits
+     * @param trits
+     * @return
+     */
+    private int[] calculateChecksum(int[] trits) {
+        curl.reset();
+        curl.absorb(trits);
+        int[] checksumTrits = new int[JCurl.HASH_LENGTH];
+        curl.squeeze(checksumTrits);
+        return checksumTrits;
+    }
 }

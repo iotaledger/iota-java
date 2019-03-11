@@ -22,7 +22,7 @@ public class DepositFactoryTest extends DepositTest {
     public static void setUp() {
         deposit = new ConditionalDepositAddress(
                 new DepositRequest(new Date(0), false, 1), 
-                new Hash(depositAddress));
+                depositAddress);
     }
     
     @Before

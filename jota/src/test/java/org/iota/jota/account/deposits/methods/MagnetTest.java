@@ -1,4 +1,4 @@
-package org.iota.jota.account.deposits;
+package org.iota.jota.account.deposits.methods;
 
 import static org.junit.Assert.*;
 
@@ -6,8 +6,8 @@ import java.util.Date;
 
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.deposits.DepositTest;
 import org.iota.jota.account.deposits.methods.MagnetMethod;
-import org.iota.jota.types.Hash;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,7 +17,9 @@ public class MagnetTest extends DepositTest {
     private static final boolean MULTI = false;
     private static final long AMOUNT = 5;
     
-    private static final String MAGNET = "iota://" + DepositTest.depositAddress + "/?"
+    private static final String MAGNET_CHECKSUM = "QC9AIWMMD";
+    
+    private static final String MAGNET = "iota://" + DepositTest.depositAddress.getHash() + MAGNET_CHECKSUM + "/?"
             + "t=" + TIME + "&"
             + "m=" + MULTI + "&"
             + "am=" + AMOUNT;
@@ -31,7 +33,7 @@ public class MagnetTest extends DepositTest {
         method = new MagnetMethod();
         
         DepositRequest request = new DepositRequest(new Date(TIME), MULTI, AMOUNT);
-        conditions = new ConditionalDepositAddress(request, new Hash(DepositTest.depositAddress));
+        conditions = new ConditionalDepositAddress(request, DepositTest.depositAddress);
     }
 
     @Test
@@ -47,4 +49,10 @@ public class MagnetTest extends DepositTest {
         assertEquals(conditions, request);
     }
 
+    @Test
+    public void magnetChecksum() {
+        String s = method.magnetChecksum(DepositTest.depositAddress.getHash(), 
+                TIME, MULTI, AMOUNT);
+        assertEquals("Checksum should be equal to the pregenerated one", MAGNET_CHECKSUM, s);
+    }
 }

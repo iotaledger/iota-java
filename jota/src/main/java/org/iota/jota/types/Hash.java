@@ -19,11 +19,12 @@ public class Hash implements Serializable {
     public Hash(String hash) throws ArgumentException {
         if (InputValidator.isAddress(hash)) {
             hashCheckSum = hash;
-            hash = hash.substring(0, 81);
+            this.hash = hash.substring(0, 81);
         } else if (!InputValidator.isHash(hash)){
             throw new ArgumentException(Constants.INVALID_HASH_INPUT_ERROR);
+        } else {
+            this.hash = hash;
         }
-        this.hash = hash;
     }
 
     public String getHash() {

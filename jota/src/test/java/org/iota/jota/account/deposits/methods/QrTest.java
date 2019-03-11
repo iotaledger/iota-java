@@ -1,4 +1,4 @@
-package org.iota.jota.account.deposits;
+package org.iota.jota.account.deposits.methods;
 
 import static org.junit.Assert.*;
 
@@ -8,6 +8,7 @@ import java.util.Date;
 
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.deposits.DepositTest;
 import org.iota.jota.account.deposits.methods.QRMethod;
 import org.iota.jota.types.Hash;
 import org.junit.Before;
@@ -66,7 +67,7 @@ public class QrTest extends DepositTest {
         qrMethod = new QRMethod();
         
         DepositRequest request = new DepositRequest(new Date(0), false, 5);
-        conditions = new ConditionalDepositAddress(request, new Hash(depositAddress));
+        conditions = new ConditionalDepositAddress(request, depositAddress);
     }
 
     @Test
