@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.errors.MagnetError;
 import org.iota.jota.pow.ICurl;
 import org.iota.jota.pow.JCurl;
 import org.iota.jota.pow.SpongeFactory;
@@ -44,30 +45,34 @@ public class MagnetMethod implements DepositMethod<String> {
     }
 
     @Override
-    public ConditionalDepositAddress parse(String method) {
+    public ConditionalDepositAddress parse(String method) throws MagnetError {
         try {
             return parse(new URI(method));
         } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return null;
+            throw new MagnetError(e);
         }
     }
 
-    private ConditionalDepositAddress parse(URI uri) {
+    private ConditionalDepositAddress parse(URI uri) throws MagnetError {
         if (!SCHEME.equals(uri.getScheme())) {
-            throw new IllegalArgumentException("Invalid scheme: " + uri.getScheme());
+            throw new MagnetError("Invalid scheme: " + uri.getScheme());
         }
 
         String address = uri.toString().substring(SCHEME.length() + 3, SCHEME.length() + 3 + Constants.ADDRESS_LENGTH_WITH_CHECKSUM);
         if (!InputValidator.checkAddress(address)) {
-            throw new IllegalArgumentException("Invalid Address: " + address);
+            throw new MagnetError("Invalid Address: " + address);
         }
         
         Map<String, List<String>> paramsMap = collectParams(uri);
 
-        long timeOut = parseLong(getParam(CONDITION_EXPIRES, paramsMap));
-        boolean multiUse = Boolean.getBoolean(getParam(CONDITION_MULTI_USE, paramsMap));
-        long expectedAmount = parseLong(getParam(CONDITION_AMOUNT, paramsMap));
+        long timeOut = parseLong(getParam(CONDITION_EXPIRES, paramsMap, "0"));
+        boolean multiUse = Boolean.getBoolean(getParam(CONDITION_MULTI_USE, paramsMap, "false"));
+        long expectedAmount = parseLong(getParam(CONDITION_AMOUNT, paramsMap, "0"));
+        
+        if (!magnetChecksum(address.substring(0, 81), timeOut, multiUse, expectedAmount)
+                .equals(address.substring(81, 90))) {
+            throw new MagnetError("Magnet checksum does not match fields");
+        }
         
         DepositRequest request = new DepositRequest(new Date(timeOut), multiUse, expectedAmount);
         ConditionalDepositAddress conditions = new ConditionalDepositAddress(request, new Hash(address));
@@ -105,10 +110,12 @@ public class MagnetMethod implements DepositMethod<String> {
         return paramsMap;
     }
     
-    private String getParam(String condition, Map<String, List<String>> paramsMap) {
+    private String getParam(String condition, Map<String, List<String>> paramsMap, String defaultValue) {
         List<String> map = paramsMap.getOrDefault(condition, Collections.emptyList());
-        if (map.size() != 1) {
+        if (map.size() > 1) {
             throw new IllegalArgumentException("Only one value is allowed for: " + condition);
+        } else if (map.size() == 0) {
+            return defaultValue;
         }
         
         return map.get(0);
@@ -117,7 +124,6 @@ public class MagnetMethod implements DepositMethod<String> {
     @Override
     public String build(ConditionalDepositAddress conditions) {
         String address = conditions.getDepositAddress().getHash();
-        System.out.println(address.length());
         String magnetChecksum = magnetChecksum(address,
                 conditions.getRequest().getTimeOut().getTime(),
                 conditions.getRequest().isMultiUse(),

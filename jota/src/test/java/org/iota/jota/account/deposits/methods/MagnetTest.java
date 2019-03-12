@@ -8,6 +8,7 @@ import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.DepositTest;
 import org.iota.jota.account.deposits.methods.MagnetMethod;
+import org.iota.jota.account.errors.MagnetError;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,8 +52,15 @@ public class MagnetTest extends DepositTest {
 
     @Test
     public void magnetChecksum() {
-        String s = method.magnetChecksum(DepositTest.depositAddress.getHash(), 
+        String checksum = method.magnetChecksum(DepositTest.depositAddress.getHash(), 
                 TIME, MULTI, AMOUNT);
-        assertEquals("Checksum should be equal to the pregenerated one", MAGNET_CHECKSUM, s);
+        assertEquals("Checksum should be equal to the pregenerated one", MAGNET_CHECKSUM, checksum);
+    }
+    
+    @Test(expected = MagnetError.class)
+    public void invalidMagnetTest() {
+        // Remove amount, defaulting to 0 -> wrong checksum
+        method.parse(MAGNET.substring(0, MAGNET.length()-4));
+        fail("Invalid magnet should throw exception");
     }
 }
