@@ -11,7 +11,7 @@ public class EnvironmentStore implements Store {
     }
 
     @Override
-    public void save() throws Exception {
+    public void save(boolean closeResources) throws Exception {
         throw new Exception("Environment store does not allow saving");
     }
 

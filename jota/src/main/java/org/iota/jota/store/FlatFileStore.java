@@ -59,6 +59,8 @@ public class FlatFileStore implements Store {
         
         memoryStore = new MemoryStore(store);
         memoryStore.load();
+        
+        inputStream.close();
     }
     
     protected Map<String, Serializable> loadFromInputStream(InputStream stream){
@@ -82,8 +84,8 @@ public class FlatFileStore implements Store {
     }
 
     @Override
-    public void save() {
-        memoryStore.save();
+    public void save(boolean closeResources) {
+        memoryStore.save(closeResources);
         try {
             if (file != null) {
                 outputStream = new FileOutputStream(file);
@@ -93,7 +95,12 @@ public class FlatFileStore implements Store {
         } catch (IOException e) {
             log.warn("Failed to save config to disk! " + e.getMessage());
         } finally {
-            
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                //TODO Throw account error
+                e.printStackTrace();
+            }
         }
     }
 

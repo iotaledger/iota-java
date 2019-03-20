@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonFlatFileStore extends FlatFileStore {
     
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
     
     public JsonFlatFileStore(File file) {
         super(file);

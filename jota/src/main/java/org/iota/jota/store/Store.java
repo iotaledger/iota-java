@@ -20,9 +20,10 @@ public interface Store {
     /**
      * Saves this store onto its storage method.
      * 
+     * @param closeResources if we want to clean up (final safe before exit)
      * @throws Exception
      */
-    void save() throws Exception;
+    void save(boolean closeResources) throws Exception;
 
     /**
      * 
@@ -43,7 +44,7 @@ public interface Store {
      * 
      * @param key
      * @param value
-     * @return
+     * @return The old value, or <code>null</code> if there was none
      */
     <T extends Serializable> T set(String key, T value);
     

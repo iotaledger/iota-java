@@ -162,7 +162,7 @@ public class MagnetMethod implements DepositMethod<String> {
         int[] checksumTrits = calculateChecksum(totalTrits);
         String checksum = Converter.trytes(checksumTrits);
         
-        //Return only the checksum, last 9 trytes
+        //Return only the "checksum", last 9 trytes
         return checksum.substring(72, 81);
     }
     

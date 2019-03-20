@@ -1,49 +1,15 @@
 package org.iota.jota.store;
 
-import java.io.Serializable;
-import java.util.Map;
+public abstract class DatabaseStore implements Store {
 
-public class DatabaseStore implements Store {
-
-    @Override
-    public void load() throws Exception {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void save() throws Exception {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public Serializable get(String key) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Serializable get(String key, Serializable def) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Serializable set(String key, Serializable value) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+    protected static final String accountsTableName = "accounts";
+    
     @Override
     public boolean canWrite() {
         return true;
     }
-
-    @Override
-    public Map<String, Serializable> getAll() {
-        // TODO Auto-generated method stub
-        return null;
+    
+    public String getTableName() {
+        return accountsTableName;
     }
-
 }

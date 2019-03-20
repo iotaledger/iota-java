@@ -31,8 +31,8 @@ public abstract class IotaClientStore implements Store {
     }
 
     @Override
-    public void save() throws Exception {
-        store.save();
+    public void save(boolean closeResources) throws Exception {
+        store.save(closeResources);
     }
 
     @Override

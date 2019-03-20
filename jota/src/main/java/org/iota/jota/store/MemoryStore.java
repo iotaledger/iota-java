@@ -41,7 +41,7 @@ public class MemoryStore implements Store {
     }
 
     @Override
-    public void save() {
+    public void save(boolean closeResources) {
         
     }
     

@@ -126,7 +126,7 @@ public class AccountStoreImpl implements AccountStore {
     
     private void save() {
         try {
-            store.save();
+            store.save(false);
         } catch (Exception e) {
             e.printStackTrace();
         }
