@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import org.iota.jota.config.IotaDefaultConfig;
+import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.dto.request.IotaAttachToTangleRequest;
 import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
 import org.iota.jota.dto.request.IotaCheckConsistencyRequest;

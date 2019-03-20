@@ -3,8 +3,8 @@ package org.iota.jota.account.addressgenerator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.iota.jota.account.AccountOptions;
 import org.iota.jota.account.errors.AddressGenerationError;
-import org.iota.jota.config.options.AccountOptions;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.types.Address;
 import org.iota.jota.types.Hash;

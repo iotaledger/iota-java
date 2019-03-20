@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.iota.jota.account.Account;
 import org.iota.jota.account.AccountBalanceCache;
+import org.iota.jota.account.AccountOptions;
 import org.iota.jota.account.AccountState;
 import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.AccountStore;
@@ -41,9 +42,8 @@ import org.iota.jota.account.seedprovider.SeedProvider;
 import org.iota.jota.account.transferchecker.IncomingTransferCheckerImpl;
 import org.iota.jota.account.transferchecker.OutgoingTransferCheckerImpl;
 import org.iota.jota.builder.AccountBuilder;
-import org.iota.jota.config.AccountConfig;
-import org.iota.jota.config.FileConfig;
-import org.iota.jota.config.options.AccountOptions;
+import org.iota.jota.config.options.AccountConfig;
+import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.error.SendException;
 import org.iota.jota.model.Bundle;
@@ -108,7 +108,7 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * Constructs a IotaAccount with a config based on environment variables or default values.
-     * If no environment variable is defined, will use {@value org.iota.jota.config.FileConfig#DEFAULT_CONFIG_NAME}
+     * If no environment variable is defined, will use {@value org.iota.jota.config.types.FileConfig#DEFAULT_CONFIG_NAME}
      * The default storage will be at {@value jota.config.IotaFileStore#DEFAULT_STORE}
      * 
      * @param seed
@@ -120,7 +120,7 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * Constructs a IotaAccount with a config based on environment variables or default values.
-     * If no environment variable is defined, will use {@value org.iota.jota.config.FileConfig#DEFAULT_CONFIG_NAME}
+     * If no environment variable is defined, will use {@value org.iota.jota.config.types.FileConfig#DEFAULT_CONFIG_NAME}
      * 
      * @param seed
      * @param store The method we use for storing key/value data

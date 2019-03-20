@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.iota.jota.config.IotaDefaultConfig;
 import org.iota.jota.config.Config;
-import org.iota.jota.config.EnvConfig;
-import org.iota.jota.config.FileConfig;
-import org.iota.jota.config.PropertiesConfig;
+import org.iota.jota.config.types.EnvConfig;
+import org.iota.jota.config.types.FileConfig;
+import org.iota.jota.config.types.IotaDefaultConfig;
+import org.iota.jota.config.types.PropertiesConfig;
 import org.iota.jota.store.PropertiesStore;
 
 import org.slf4j.Logger;

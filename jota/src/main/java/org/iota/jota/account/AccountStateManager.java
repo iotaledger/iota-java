@@ -10,7 +10,6 @@ import org.iota.jota.account.deposits.StoredDepositRequest;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.errors.AddressGenerationError;
 import org.iota.jota.account.inputselector.InputSelectionStrategy;
-import org.iota.jota.config.options.AccountOptions;
 import org.iota.jota.model.Input;
 import org.iota.jota.types.Address;
 import org.iota.jota.types.Hash;

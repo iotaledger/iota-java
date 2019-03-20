@@ -1,4 +1,4 @@
-package org.iota.jota.config;
+package org.iota.jota.config.types;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.AccountStoreImpl;
+import org.iota.jota.config.IotaClientConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.connection.HttpConnector;
 import org.iota.jota.store.IotaFileStore;
@@ -53,6 +54,16 @@ public class IotaDefaultConfig extends IotaClientConfig {
         return Defaults.CONNECTION_TIMEOUT;
     }
     
+    @Override
+    public String getTable() {
+        return Defaults.TABLE_NAME;
+    }
+
+    @Override
+    public String getDatabase() {
+        return Defaults.DATABASE_NAME;
+    }
+    
     public static class Defaults {
         public static final AccountStore STORE = new AccountStoreImpl(new IotaFileStore());
         
@@ -64,6 +75,9 @@ public class IotaDefaultConfig extends IotaClientConfig {
         public static final int LEGACY_PORT = 14265;
         public static final String LEGACY_PROTOCOL = "http";
         public static final String LEGACY_HOST = "localhost";
+
+        public static final String DATABASE_NAME = "iota_account";
+        public static final String TABLE_NAME = "accounts";
     }
 
     @Override

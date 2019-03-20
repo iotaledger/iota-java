@@ -1,4 +1,4 @@
-package org.iota.jota.config;
+package org.iota.jota.config.types;
 
 import java.io.File;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.AccountStoreImpl;
+import org.iota.jota.config.IotaClientConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.store.FlatFileStore;
 import org.iota.jota.store.IotaFileStore;
@@ -26,6 +27,10 @@ public class FileConfig extends IotaClientConfig {
     private static final String CONFIG_MWM = "accounts.mwm";
     private static final String CONFIG_DEPTH = "accounts.depth";
     private static final String CONFIG_SECURITY = "accounts.security";
+    
+
+    private static final String DATABASE_NAME = "accounts.database.name";
+    private static final String TABLE_NAME = "accounts.database.table";
     
     public FileConfig() throws Exception {
         super(new FlatFileStore(DEFAULT_CONFIG_NAME));
@@ -91,5 +96,15 @@ public class FileConfig extends IotaClientConfig {
     @Override
     public List<Connection> getNodes() {
         return loadNodes(CONFIG_NODE_PRE);
+    }
+
+    @Override
+    public String getTable() {
+        return stringOrNull(TABLE_NAME);
+    }
+
+    @Override
+    public String getDatabase() {
+        return stringOrNull(DATABASE_NAME);
     }
 }

@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.iota.jota.builder.ApiBuilder;
-import org.iota.jota.config.options.ApiOptions;
 import org.iota.jota.dto.response.BroadcastTransactionsResponse;
 import org.iota.jota.dto.response.CheckConsistencyResponse;
 import org.iota.jota.dto.response.FindTransactionResponse;

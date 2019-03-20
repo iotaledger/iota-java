@@ -1,16 +1,14 @@
-package org.iota.jota.config.options;
+package org.iota.jota.account;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.iota.jota.IotaAPI;
-import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.clock.Clock;
 import org.iota.jota.account.seedprovider.SeedProvider;
 import org.iota.jota.builder.AccountBuilder;
-import org.iota.jota.builder.AccountBuilderSettings;
-import org.iota.jota.config.AccountConfig;
+import org.iota.jota.config.options.AccountSettings;
 
-public class AccountOptions implements AccountConfig, AccountBuilderSettings {
+public class AccountOptions implements AccountSettings {
 
     private int mwm;
     private int depth;
@@ -22,6 +20,8 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
     private SeedProvider seed;
     
     private Clock clock;
+    private String databaseName;
+    private String tableName;
     
     public AccountOptions(AccountBuilder builder) {
         mwm = builder.getMwm();
@@ -71,5 +71,15 @@ public class AccountOptions implements AccountConfig, AccountBuilderSettings {
     @Override
     public Clock getTime() {
         return clock;
+    }
+
+    @Override
+    public String getTable() {
+        return tableName;
+    }
+
+    @Override
+    public String getDatabase() {
+        return databaseName;
     }
 }

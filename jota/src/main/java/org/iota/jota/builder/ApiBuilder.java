@@ -7,8 +7,9 @@ import java.util.List;
 
 import org.iota.jota.IotaAPICore;
 import org.iota.jota.IotaLocalPoW;
-import org.iota.jota.config.ApiConfig;
-import org.iota.jota.config.IotaDefaultConfig;
+import org.iota.jota.config.options.ApiConfig;
+import org.iota.jota.config.options.ApiSettings;
+import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.connection.HttpConnector;
 import org.iota.jota.pow.ICurl;
@@ -16,12 +17,10 @@ import org.iota.jota.pow.SpongeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//All casts are to T, and are okay unless you do really weird things.
-//Warnings are annoying
 @SuppressWarnings("unchecked")
 public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICore> 
         extends AbstractBuilder<T, E, ApiConfig> 
-        implements ApiConfig, ApiBuilderSettings {
+        implements ApiSettings {
     
     private static final Logger log = LoggerFactory.getLogger(ApiBuilder.class);
     
@@ -32,7 +31,7 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
     
     int timeout = 0;
     
-    // If this is null, no local PoW is done, therefor no default value
+    // If this is null, no local PoW is done, therefore no default value
     IotaLocalPoW localPoW;
     ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
     

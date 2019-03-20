@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.iota.jota.config.types.EnvConfig;
+import org.iota.jota.config.types.FileConfig;
+import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.connection.ConnectionFactory;
 import org.iota.jota.store.Store;

@@ -6,7 +6,6 @@ import java.util.concurrent.Future;
 import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.errors.AccountError;
-import org.iota.jota.config.options.AccountOptions;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.types.Recipient;
 import org.iota.jota.utils.thread.TaskService;

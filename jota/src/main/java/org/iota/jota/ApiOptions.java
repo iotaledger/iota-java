@@ -1,13 +1,11 @@
-package org.iota.jota.config.options;
+package org.iota.jota;
 
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.iota.jota.IotaAPI;
-import org.iota.jota.IotaLocalPoW;
 import org.iota.jota.builder.ApiBuilderSettings;
-import org.iota.jota.config.ApiConfig;
+import org.iota.jota.config.options.ApiConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.pow.ICurl;
 

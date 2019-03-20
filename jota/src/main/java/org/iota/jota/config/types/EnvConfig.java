@@ -1,9 +1,10 @@
-package org.iota.jota.config;
+package org.iota.jota.config.types;
 
 import java.util.List;
 
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.AccountStoreImpl;
+import org.iota.jota.config.IotaClientConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.store.EnvironmentStore;
 import org.iota.jota.store.IotaFileStore;
@@ -21,6 +22,10 @@ public class EnvConfig extends IotaClientConfig {
     private static final String ENV_MWM = "IOTA_ACCOUNT_MWM";
     private static final String ENV_DEPTH = "IOTA_ACCOUNT_DEPTH";
     private static final String ENV_SECURITY = "IOTA_ACCOUNT_SECURITY";
+    
+    private static final String DATABASE_NAME = "DATABASE_NAME";
+    private static final String TABLE_NAME = "TABLE_NAME";
+    
     public EnvConfig() throws Exception {
         super(new EnvironmentStore());
     }
@@ -71,7 +76,16 @@ public class EnvConfig extends IotaClientConfig {
 
     @Override
     public List<Connection> getNodes() {
-        // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public String getTable() {
+        return stringOrNull(TABLE_NAME);
+    }
+
+    @Override
+    public String getDatabase() {
+        return stringOrNull(DATABASE_NAME);
     }
 }

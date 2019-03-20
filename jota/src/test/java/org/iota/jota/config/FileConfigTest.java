@@ -2,6 +2,7 @@ package org.iota.jota.config;
 
 import static org.junit.Assert.*;
 
+import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.store.FlatFileStore;
 import org.junit.Before;
 import org.junit.Test;

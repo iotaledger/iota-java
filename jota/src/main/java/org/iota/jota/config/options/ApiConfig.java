@@ -1,7 +1,8 @@
-package org.iota.jota.config;
+package org.iota.jota.config.options;
 
 import java.util.List;
 
+import org.iota.jota.config.Config;
 import org.iota.jota.connection.Connection;
 
 public interface ApiConfig extends Config {

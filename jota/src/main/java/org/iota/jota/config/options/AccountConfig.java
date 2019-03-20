@@ -1,8 +1,9 @@
-package org.iota.jota.config;
+package org.iota.jota.config.options;
 
 import org.iota.jota.account.AccountStore;
+import org.iota.jota.config.Config;
 
-public interface AccountConfig extends Config {
+public interface AccountConfig extends DatabaseConfig, Config {
     
     /**
      * 

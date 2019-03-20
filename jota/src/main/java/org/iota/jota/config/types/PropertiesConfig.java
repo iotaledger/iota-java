@@ -1,4 +1,4 @@
-package org.iota.jota.config;
+package org.iota.jota.config.types;
 
 import org.iota.jota.store.PropertiesStore;
 

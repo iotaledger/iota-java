@@ -2,20 +2,35 @@ package org.iota.jota.builder;
 
 import org.iota.jota.IotaAPI;
 import org.iota.jota.IotaAccount;
+import org.iota.jota.account.AccountOptions;
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.clock.Clock;
 import org.iota.jota.account.clock.SystemClock;
 import org.iota.jota.account.seedprovider.SeedProvider;
 import org.iota.jota.account.seedprovider.SeedProviderImpl;
-import org.iota.jota.config.AccountConfig;
-import org.iota.jota.config.options.AccountOptions;
+import org.iota.jota.config.options.AccountConfig;
+import org.iota.jota.config.options.AccountSettings;
+import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.InputValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount, AccountConfig> implements AccountConfig, AccountBuilderSettings {
+/**
+ * 
+ * Builder for the account module.
+ * Note: Every option added to {@link AccountSettings} must add the following:
+ * <ul>
+ * <li>A setter, with the same name the option (excluding get), camelcase. Should be equal to the field</li>
+ * <li>A check in the {@link #generate()} method to assign</li>
+ * <li>A default option in {@link IotaDefaultConfig}</li>
+ * </ul>
+ * 
+ * TODO: Make a reflection unit test for this
+ */
+public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount, AccountConfig> 
+    implements AccountSettings {
     
     private static final Logger log = LoggerFactory.getLogger(AccountBuilder.class);
     
@@ -27,7 +42,15 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     private int mwm, depth, securityLevel;
     
     private Clock clock;
+
+    private String databaseName, tableName;
     
+    /**
+     * Start of the builder. Every Account needs to be started with at least a seed.
+     * 
+     * @param seed The seed which we load the account for
+     * @throws ArgumentException When an invalid seed is provided
+     */
     public AccountBuilder(String seed) throws ArgumentException {
         super(log);
         
@@ -38,7 +61,12 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
         this.seed = new SeedProviderImpl(seed);
     }
     
-    public AccountBuilder(SeedProvider seed) throws ArgumentException {
+    /**
+     * Start of the builder. Every Account needs to be started with at least a seed.
+     * 
+     * @param seed A custom seed provider for maintaining your seed securely elsewhere
+     */
+    public AccountBuilder(SeedProvider seed) {
         super(log);
         this.seed = seed;
     }
@@ -85,6 +113,15 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
         this.clock = clock;
         return this;
     }
+    
+    public AccountBuilder tableName(String tableName) {
+        this.tableName = tableName;
+        return this;
+    }
+    public AccountBuilder databaseName(String databaseName) {
+        this.databaseName = databaseName;
+        return this;
+    }
 
     @Override
     public AccountBuilder generate() throws Exception {
@@ -111,6 +148,14 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
                 
                 if (null == api) {
                     api(new IotaAPI.Builder().build());
+                }
+                
+                if (null == databaseName) {
+                    databaseName(config.getDatabase());
+                }
+                
+                if (null == tableName) {
+                    tableName(config.getTable());
                 }
                 
                 if (null == clock) {
@@ -161,5 +206,15 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     @Override
     public Clock getTime() {
         return clock;
+    }
+
+    @Override
+    public String getTable() {
+        return tableName;
+    }
+
+    @Override
+    public String getDatabase() {
+        return databaseName;
     }
 }

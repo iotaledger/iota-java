@@ -24,7 +24,6 @@ public class AccountStoreImpl implements AccountStore {
     @Override
     public AccountState loadAccount(String id) {
         AccountState state = (AccountState) store.get(id);
-        System.out.println(state);
         if (state == null) {
             state = new AccountState();
             store.set(id, state);
