@@ -9,11 +9,6 @@ public abstract class IotaClientStore implements Store {
     
     public IotaClientStore(Store store) {
         this.store = store;
-        try {
-            store.load();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
     
     public boolean canWrite() {
