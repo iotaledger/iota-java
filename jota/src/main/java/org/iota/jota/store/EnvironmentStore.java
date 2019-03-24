@@ -46,4 +46,9 @@ public class EnvironmentStore implements Store {
         //TODO: Make nicer
         return (Map<String, Serializable>)((Map)System.getenv());
     }
+
+    @Override
+    public Serializable delete(String key) {
+        throw new IllegalArgumentException("Environment store does not allow deleting");
+    }
 }

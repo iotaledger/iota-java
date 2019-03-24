@@ -55,4 +55,8 @@ public class MemoryStore implements Store {
         return true;
     }
 
+    @Override
+    public Serializable delete(String key) {
+        return store.remove(key);
+    }
 }

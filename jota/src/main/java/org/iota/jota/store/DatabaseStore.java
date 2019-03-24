@@ -2,8 +2,13 @@ package org.iota.jota.store;
 
 public abstract class DatabaseStore implements Store {
 
-    private static final String tableName = "accounts";
-    private static final String databaseName = "iota_account";
+    private final String tableName;
+    private final String databaseName;
+
+    public DatabaseStore(String databaseName, String tableName) {
+        this.tableName = tableName;
+        this.databaseName = databaseName;
+    }
     
     @Override
     public boolean canWrite() {

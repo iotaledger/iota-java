@@ -134,5 +134,8 @@ public class FlatFileStore implements Store {
         return file.getName();
     }
 
-    
+    @Override
+    public Serializable delete(String key) {
+        return memoryStore.delete(key);
+    }
 }

@@ -49,4 +49,9 @@ public abstract class IotaClientStore implements Store {
     public Map<String, Serializable> getAll() {
         return store.getAll();
     }
+    
+    @Override
+    public Serializable delete(String key) {
+        return store.delete(key);
+    }
 }
