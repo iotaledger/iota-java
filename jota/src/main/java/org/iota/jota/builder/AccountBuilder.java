@@ -42,8 +42,6 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     private int mwm, depth, securityLevel;
     
     private Clock clock;
-
-    private String databaseName, tableName;
     
     /**
      * Start of the builder. Every Account needs to be started with at least a seed.
@@ -113,15 +111,6 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
         this.clock = clock;
         return this;
     }
-    
-    public AccountBuilder tableName(String tableName) {
-        this.tableName = tableName;
-        return this;
-    }
-    public AccountBuilder databaseName(String databaseName) {
-        this.databaseName = databaseName;
-        return this;
-    }
 
     @Override
     public AccountBuilder generate() throws Exception {
@@ -148,14 +137,6 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
                 
                 if (null == api) {
                     api(new IotaAPI.Builder().build());
-                }
-                
-                if (null == databaseName) {
-                    databaseName(config.getDatabase());
-                }
-                
-                if (null == tableName) {
-                    tableName(config.getTable());
                 }
                 
                 if (null == clock) {
@@ -206,15 +187,5 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     @Override
     public Clock getTime() {
         return clock;
-    }
-
-    @Override
-    public String getTable() {
-        return tableName;
-    }
-
-    @Override
-    public String getDatabase() {
-        return databaseName;
     }
 }

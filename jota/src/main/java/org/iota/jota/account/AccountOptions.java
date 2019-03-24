@@ -20,8 +20,6 @@ public class AccountOptions implements AccountSettings {
     private SeedProvider seed;
     
     private Clock clock;
-    private String databaseName;
-    private String tableName;
     
     public AccountOptions(AccountBuilder builder) {
         mwm = builder.getMwm();
@@ -71,15 +69,5 @@ public class AccountOptions implements AccountSettings {
     @Override
     public Clock getTime() {
         return clock;
-    }
-
-    @Override
-    public String getTable() {
-        return tableName;
-    }
-
-    @Override
-    public String getDatabase() {
-        return databaseName;
     }
 }

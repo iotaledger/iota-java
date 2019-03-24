@@ -22,9 +22,6 @@ public class EnvConfig extends IotaClientConfig {
     private static final String ENV_DEPTH = "IOTA_ACCOUNT_DEPTH";
     private static final String ENV_SECURITY = "IOTA_ACCOUNT_SECURITY";
     
-    private static final String DATABASE_NAME = "DATABASE_NAME";
-    private static final String TABLE_NAME = "TABLE_NAME";
-    
     public EnvConfig() throws Exception {
         super(new EnvironmentStore());
     }
@@ -72,15 +69,5 @@ public class EnvConfig extends IotaClientConfig {
     @Override
     public List<Connection> getNodes() {
         return null;
-    }
-
-    @Override
-    public String getTable() {
-        return stringOrNull(TABLE_NAME);
-    }
-
-    @Override
-    public String getDatabase() {
-        return stringOrNull(DATABASE_NAME);
     }
 }

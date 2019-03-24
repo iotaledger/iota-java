@@ -54,16 +54,6 @@ public class IotaDefaultConfig extends IotaClientConfig {
         return Defaults.CONNECTION_TIMEOUT;
     }
     
-    @Override
-    public String getTable() {
-        return Defaults.TABLE_NAME;
-    }
-
-    @Override
-    public String getDatabase() {
-        return Defaults.DATABASE_NAME;
-    }
-    
     public static class Defaults {
         public static final AccountStore STORE = new AccountStoreImpl(new IotaFileStore());
         

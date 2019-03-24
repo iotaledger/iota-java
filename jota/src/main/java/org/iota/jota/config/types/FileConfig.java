@@ -28,10 +28,6 @@ public class FileConfig extends IotaClientConfig {
     private static final String CONFIG_DEPTH = "accounts.depth";
     private static final String CONFIG_SECURITY = "accounts.security";
     
-
-    private static final String DATABASE_NAME = "accounts.database.name";
-    private static final String TABLE_NAME = "accounts.database.table";
-    
     public FileConfig() throws Exception {
         super(new FlatFileStore(DEFAULT_CONFIG_NAME));
     }
@@ -96,15 +92,5 @@ public class FileConfig extends IotaClientConfig {
     @Override
     public List<Connection> getNodes() {
         return loadNodes(CONFIG_NODE_PRE);
-    }
-
-    @Override
-    public String getTable() {
-        return stringOrNull(TABLE_NAME);
-    }
-
-    @Override
-    public String getDatabase() {
-        return stringOrNull(DATABASE_NAME);
     }
 }
