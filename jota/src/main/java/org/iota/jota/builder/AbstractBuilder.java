@@ -66,18 +66,9 @@ public abstract class AbstractBuilder<T, E, F extends Config> {
     
     protected List<F> getConfigs() throws Exception{
         EnvConfig env = new EnvConfig();
-        if (getConfig() == null) {
-            String configName = env.getConfigName();
-            
-            if (configName != null) {
-                setConfig(new FileConfig(configName));
-            } else {
-                setConfig(new FileConfig());
-            }
-        }
         ArrayList<F> array = new ArrayList<>();
-        array.add((F) getConfig());
         array.add((F)env);
+        if (config != null) array.add((F) config);
         array.add((F) new IotaDefaultConfig());
         
         return array;
