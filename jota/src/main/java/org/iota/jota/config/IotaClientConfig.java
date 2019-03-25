@@ -65,12 +65,12 @@ public abstract class IotaClientConfig implements IotaConfig {
         do {
             options = new HashMap<>();
             String optionKey = key + start;
-            for (Entry<String, Serializable> entry : store.getAll().entrySet()) {
+            for (Entry<String, String> entry : store.getAll().entrySet()) {
                 if (entry.getKey().startsWith(optionKey)) {
                     options.put(
                         // Remove the key segment, cannot do based on . since the value might have a .
                         entry.getKey().substring(key.length() + 1 + ((int)(Math.log10(start)+1))), 
-                        entry.getValue().toString());
+                        entry.getValue());
                 }
             }
             

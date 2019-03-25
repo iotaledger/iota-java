@@ -55,7 +55,7 @@ public class FlatFileStore implements Store {
             }   
             inputStream = new FileInputStream(file);
         }
-        Map<String, Serializable> store = loadFromInputStream(inputStream);
+        Map<String, String> store = loadFromInputStream(inputStream);
         
         memoryStore = new MemoryStore(store);
         memoryStore.load();
@@ -63,8 +63,8 @@ public class FlatFileStore implements Store {
         inputStream.close();
     }
     
-    protected Map<String, Serializable> loadFromInputStream(InputStream stream){
-        Map<String, Serializable> store = new HashMap<String, Serializable>();
+    protected Map<String, String> loadFromInputStream(InputStream stream){
+        Map<String, String> store = new HashMap<String, String>();
         try {
             Properties properties = new Properties();
             properties.load(stream);
@@ -76,7 +76,7 @@ public class FlatFileStore implements Store {
         return store;
     }
     
-    protected void writeToOutputStream(OutputStream stream, Map<String, Serializable> store) throws IOException {
+    protected void writeToOutputStream(OutputStream stream, Map<String, String> store) throws IOException {
         Properties properties = new Properties();
         properties.putAll(store);
 
@@ -105,22 +105,22 @@ public class FlatFileStore implements Store {
     }
 
     @Override
-    public Serializable get(String key) {
+    public String get(String key) {
         return memoryStore.get(key, null);
     }
 
     @Override
-    public <T extends Serializable> T get(String key, T def) {
+    public String get(String key, String def) {
         return memoryStore.get(key, def);
     }
 
     @Override
-    public <T extends Serializable> T set(String key, T value) {
+    public String set(String key, String value) {
         return memoryStore.set(key, value);
     }
     
     @Override
-    public Map<String, Serializable> getAll() {
+    public Map<String, String> getAll() {
         return memoryStore.getAll();
     }
     
@@ -135,7 +135,7 @@ public class FlatFileStore implements Store {
     }
 
     @Override
-    public Serializable delete(String key) {
+    public String delete(String key) {
         return memoryStore.delete(key);
     }
 }

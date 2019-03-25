@@ -135,12 +135,12 @@ public class MongoDBStore extends DatabaseStore {
     }
 
     @Override
-    public <T extends Serializable> T get(String key) {
+    public String get(String key) {
         return get(key, null);
     }
 
     @Override
-    public <T extends Serializable> T get(String key, T def) {
+    public String get(String key, String def) {
         Document doc = collection.find(Filters.eq("_id", key))
                 .projection(Projections.excludeId())
                 .first();
@@ -148,26 +148,13 @@ public class MongoDBStore extends DatabaseStore {
         if (null == doc) {
             return def;
         } else {
-            try {
-                
-                TypeReference<T> t = new TypeReference<T>(){};
-                JavaType type = jsonParser.getTypeFactory().constructType(t);
-                
-                String json = doc.toJson();
-                Object res = jsonParser.parsJson(json, type);
-                
-                return (T) res;
-            } catch (IOException e) {
-                // TODO Log account error
-                e.printStackTrace();
-                return def;
-            }
+            return doc.toJson();
         }
     }
     
     @Override
-    public Serializable delete(String key) {
-        Serializable old = get(key);
+    public String delete(String key) {
+        String old = get(key);
         DeleteResult res = collection.deleteOne(Filters.eq("_id", key));
         
         if (old != null && res.getDeletedCount() == 0) {
@@ -178,7 +165,7 @@ public class MongoDBStore extends DatabaseStore {
     }
 
     @Override
-    public <T extends Serializable> T set(String key, T value) {
+    public String set(String key, String value) {
         try {
             String json = jsonParser.toJson(value);
             UpdateResult result = collection.replaceOne(
@@ -198,8 +185,8 @@ public class MongoDBStore extends DatabaseStore {
     }
 
     @Override
-    public Map<String, Serializable> getAll() {
-        Map<String, Serializable> all = new HashMap<String, Serializable>();
+    public Map<String, String> getAll() {
+        Map<String, String> all = new HashMap<String, String>();
         
         MongoCursor<Document> cursor = collection.find().iterator();
         try {
