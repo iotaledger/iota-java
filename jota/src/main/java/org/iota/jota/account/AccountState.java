@@ -34,6 +34,17 @@ public class AccountState implements Serializable {
         depositRequests = new HashMap<>();
     }
     
+    
+    
+    public AccountState(int keyIndex, Map<Integer, StoredDepositRequest> depositRequests,
+            Map<String, PendingTransfer> pendingTransfers) {
+        this.keyIndex = keyIndex;
+        this.depositRequests = depositRequests;
+        this.pendingTransfers = pendingTransfers;
+    }
+
+
+
     /**
      * 
      * @param index keyIndex

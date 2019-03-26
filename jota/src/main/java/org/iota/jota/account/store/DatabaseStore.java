@@ -1,6 +1,6 @@
-package org.iota.jota.store;
+package org.iota.jota.account.store;
 
-public abstract class DatabaseStore implements Store {
+public abstract class DatabaseStore extends AccountStoreImpl {
 
     private final String tableName;
     private final String databaseName;
@@ -10,11 +10,6 @@ public abstract class DatabaseStore implements Store {
         this.databaseName = databaseName;
     }
     
-    @Override
-    public boolean canWrite() {
-        return true;
-    }
-    
     protected String getTableName() {
         return tableName;
     }
@@ -22,4 +17,5 @@ public abstract class DatabaseStore implements Store {
     protected String getDatabaseName() {
         return databaseName;
     }
+    
 }

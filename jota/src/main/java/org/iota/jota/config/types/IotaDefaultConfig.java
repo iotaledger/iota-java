@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iota.jota.account.AccountStore;
-import org.iota.jota.account.AccountStoreImpl;
+import org.iota.jota.account.store.AccountFileStore;
+import org.iota.jota.account.store.AccountStoreImpl;
 import org.iota.jota.config.IotaClientConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.connection.HttpConnector;
@@ -55,7 +56,7 @@ public class IotaDefaultConfig extends IotaClientConfig {
     }
     
     public static class Defaults {
-        public static final AccountStore STORE = new AccountStoreImpl(new IotaFileStore());
+        public static final AccountStore STORE = new AccountFileStore();
         
         public static final int CONNECTION_TIMEOUT = 500;
         public static final int SECURITY_LEVEL = Constants.MIN_SECURITY_LEVEL;

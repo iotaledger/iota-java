@@ -9,6 +9,8 @@ import org.iota.jota.utils.InputValidator;
 
 public class Hash implements Serializable {
 
+    private static final long serialVersionUID = -5040410304130966841L;
+    
     private String hash;
     private String hashCheckSum;
     
@@ -38,7 +40,7 @@ public class Hash implements Serializable {
     
     @Override
     public boolean equals(Object obj) {
-        return obj.getClass().equals(Hash.class) && obj.toString().equals(toString());
+        return obj != null && obj.getClass().equals(Hash.class) && toString().equals(obj.toString());
     }
     
     public String getWithChecksum() {

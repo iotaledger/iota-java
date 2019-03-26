@@ -6,30 +6,30 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MemoryStore implements Store {
     
-    private Map<String, String> store;
+    private Map<String, Serializable> store;
     
     public MemoryStore() {
         
     }
     
-    public MemoryStore(Map<String, String> store) {
+    public MemoryStore(Map<String, Serializable> store) {
         this.store = store;
     }
 
     @Override
-    public String get(String key) {
+    public Serializable get(String key) {
         return get(key, null);
     }
 
     @Override
-    public String get(String key, String def) {
-        String prop = store.get(key);
+    public <T extends Serializable> T get(String key, T def) {
+        T prop = (T) store.get(key);
         return prop != null ? prop : def;
     }
     
     @Override
-    public String set(String key, String value) {
-        String old = store.put(key, value);
+    public <T extends Serializable> T set(String key, T value) {
+        T old = (T) store.put(key, value);
         return old;
     }
     
@@ -46,7 +46,7 @@ public class MemoryStore implements Store {
     }
     
     @Override
-    public Map<String, String> getAll() {
+    public Map<String, Serializable> getAll() {
         return store;
     }
 
@@ -56,7 +56,7 @@ public class MemoryStore implements Store {
     }
 
     @Override
-    public String delete(String key) {
+    public Serializable delete(String key) {
         return store.remove(key);
     }
 }

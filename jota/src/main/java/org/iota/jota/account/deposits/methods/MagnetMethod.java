@@ -58,7 +58,9 @@ public class MagnetMethod implements DepositMethod<String> {
             throw new MagnetError("Invalid scheme: " + uri.getScheme());
         }
 
-        String address = uri.toString().substring(SCHEME.length() + 3, SCHEME.length() + 3 + Constants.ADDRESS_LENGTH_WITH_CHECKSUM);
+        String address = uri.toString().substring(
+                SCHEME.length() + 3, SCHEME.length() + 3 + Constants.ADDRESS_LENGTH_WITH_CHECKSUM);
+        
         if (!InputValidator.checkAddress(address)) {
             throw new MagnetError("Invalid Address: " + address);
         }
@@ -75,7 +77,9 @@ public class MagnetMethod implements DepositMethod<String> {
         }
         
         DepositRequest request = new DepositRequest(new Date(timeOut), multiUse, expectedAmount);
-        ConditionalDepositAddress conditions = new ConditionalDepositAddress(request, new Hash(address));
+        ConditionalDepositAddress conditions = new ConditionalDepositAddress(
+                request, 
+                new Hash(address.substring(0, 81)));
         
         return conditions;
     }

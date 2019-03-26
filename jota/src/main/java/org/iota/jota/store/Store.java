@@ -1,5 +1,6 @@
 package org.iota.jota.store;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -29,7 +30,7 @@ public interface Store {
      * @param key
      * @return
      */
-    String get(String key);
+    Serializable get(String key);
     
     /**
      * Gets a value from the store
@@ -38,7 +39,7 @@ public interface Store {
      * @param def The object to return when the key doesn't have a field
      * @return the requested value, or the default when the key didn't exist
      */
-    String get(String key, String def);
+    <T extends Serializable> T get(String key, T def);
     
     /**
      * Sets a value in the store
@@ -47,14 +48,14 @@ public interface Store {
      * @param value The value to set
      * @return The old value, or <code>null</code> if there was none
      */
-    String set(String key, String value);
+    <T extends Serializable> T set(String key, T value);
     
     /**
      * Returns all the values in this store
      * 
      * @return Map of values
      */
-    Map<String, String> getAll();
+    Map<String, Serializable> getAll();
     
     /**
      * Some stores like environment variables can't write.
@@ -70,5 +71,5 @@ public interface Store {
      * @param key the key we want to delete
      * @return The deleted value, or <code>null</code> if there was none
      */
-    String delete(String key);
+    Serializable delete(String key);
 }

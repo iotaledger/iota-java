@@ -21,13 +21,13 @@ public class EnvironmentStore implements Store {
     }
 
     @Override
-    public String get(String key, String def) {
-        String value = System.getenv(key);
+    public <T extends Serializable> T  get(String key, T def) {
+        T value = (T) System.getenv(key);
         return value != null ? value : def;
     }
 
     @Override
-    public String set(String key, String value) {
+    public <T extends Serializable> T  set(String key, T value) {
         throw new IllegalArgumentException("Environment store does not allow setting values");
     }
 
@@ -42,9 +42,9 @@ public class EnvironmentStore implements Store {
     }
 
     @Override
-    public Map<String, String> getAll() {
+    public Map<String, Serializable> getAll() {
         //TODO: Make nicer
-        return (Map<String, String>)((Map)System.getenv());
+        return (Map<String, Serializable>)((Map)System.getenv());
     }
 
     @Override

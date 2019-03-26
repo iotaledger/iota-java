@@ -40,4 +40,8 @@ public interface AccountStore {
     void addTailHash(String id, Hash tailHash, Hash newTailTxHash);
     
     Map<String, PendingTransfer> getPendingTransfers(String id);
+    
+    void importAccount(ExportedAccountState state);
+
+    ExportedAccountState exportAccount(String id);
 }

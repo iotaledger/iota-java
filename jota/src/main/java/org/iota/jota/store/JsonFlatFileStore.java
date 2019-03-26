@@ -47,18 +47,18 @@ public class JsonFlatFileStore extends FlatFileStore {
     }
 
     @Override
-    protected Map<String, String> loadFromInputStream(InputStream stream){
-        Map<String, String> store;
+    protected Map<String, Serializable> loadFromInputStream(InputStream stream){
+        Map<String, Serializable> store;
         try {
             store = objectMapper.readValue(stream, new TypeReference<Map<String, AccountState>>(){});
         } catch (IOException e) {
-            store = new HashMap<String, String>();
+            store = new HashMap<String, Serializable>();
         }
         return store;
     }
     
     @Override
-    protected void writeToOutputStream(OutputStream stream, Map<String, String> store) throws IOException {
+    protected void writeToOutputStream(OutputStream stream, Map<String, Serializable> store) throws IOException {
         objectMapper.writeValue(stream, store);
     }
 }

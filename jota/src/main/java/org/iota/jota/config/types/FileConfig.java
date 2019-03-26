@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.iota.jota.account.AccountStore;
-import org.iota.jota.account.AccountStoreImpl;
+import org.iota.jota.account.store.AccountFileStore;
+import org.iota.jota.account.store.AccountStoreImpl;
 import org.iota.jota.config.IotaClientConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.store.FlatFileStore;
@@ -66,7 +67,7 @@ public class FileConfig extends IotaClientConfig {
 
     @Override
     public AccountStore getStore() {
-        return new AccountStoreImpl(new IotaFileStore(stringOrNull(CONFIG_STORE)));
+        return new AccountFileStore(stringOrNull(CONFIG_STORE));
     }
     
     @Override

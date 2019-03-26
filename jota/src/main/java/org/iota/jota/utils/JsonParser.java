@@ -11,16 +11,25 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class JsonParser {
 
-    private ObjectMapper objectMapper;
+    private static ObjectMapper objectMapper;
 
-    public JsonParser() {
+    private JsonParser() {
         objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         objectMapper.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
         objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+    }
+    
+    public static ObjectMapper getObjectMapper() {
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+        }
+        return objectMapper;
     }
     
     public <T> T parsJson(String data) throws JsonParseException, JsonMappingException, IOException {

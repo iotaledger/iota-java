@@ -55,7 +55,7 @@ public class FlatFileStore implements Store {
             }   
             inputStream = new FileInputStream(file);
         }
-        Map<String, String> store = loadFromInputStream(inputStream);
+        Map<String, Serializable> store = loadFromInputStream(inputStream);
         
         memoryStore = new MemoryStore(store);
         memoryStore.load();
@@ -63,8 +63,8 @@ public class FlatFileStore implements Store {
         inputStream.close();
     }
     
-    protected Map<String, String> loadFromInputStream(InputStream stream){
-        Map<String, String> store = new HashMap<String, String>();
+    protected Map<String, Serializable> loadFromInputStream(InputStream stream){
+        Map<String, Serializable> store = new HashMap<String, Serializable>();
         try {
             Properties properties = new Properties();
             properties.load(stream);
@@ -76,7 +76,7 @@ public class FlatFileStore implements Store {
         return store;
     }
     
-    protected void writeToOutputStream(OutputStream stream, Map<String, String> store) throws IOException {
+    protected void writeToOutputStream(OutputStream stream, Map<String, Serializable> store) throws IOException {
         Properties properties = new Properties();
         properties.putAll(store);
 
@@ -87,7 +87,7 @@ public class FlatFileStore implements Store {
     public void save(boolean closeResources) {
         memoryStore.save(closeResources);
         try {
-            if (file != null) {
+            if (file != null && outputStream == null) {
                 outputStream = new FileOutputStream(file);
             }
             
@@ -95,32 +95,34 @@ public class FlatFileStore implements Store {
         } catch (IOException e) {
             log.warn("Failed to save config to disk! " + e.getMessage());
         } finally {
-            try {
-                outputStream.close();
-            } catch (IOException e) {
-                //TODO Throw account error
-                e.printStackTrace();
+            if (closeResources) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    //TODO Throw account error
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     @Override
-    public String get(String key) {
+    public Serializable get(String key) {
         return memoryStore.get(key, null);
     }
 
     @Override
-    public String get(String key, String def) {
+    public <T extends Serializable> T get(String key, T def) {
         return memoryStore.get(key, def);
     }
 
     @Override
-    public String set(String key, String value) {
+    public <T extends Serializable> T set(String key, T value) {
         return memoryStore.set(key, value);
     }
     
     @Override
-    public Map<String, String> getAll() {
+    public Map<String, Serializable> getAll() {
         return memoryStore.getAll();
     }
     
@@ -135,7 +137,7 @@ public class FlatFileStore implements Store {
     }
 
     @Override
-    public String delete(String key) {
+    public Serializable delete(String key) {
         return memoryStore.delete(key);
     }
 }

@@ -47,7 +47,9 @@ public class MagnetTest extends DepositTest {
     @Test
     public void readMagnet() {
         ConditionalDepositAddress request = method.parse(MAGNET);
+        
         assertEquals(conditions, request);
+        assertEquals(conditions.getDepositAddress().getWithChecksum(), DepositTest.depositAddress.getWithChecksum());
     }
 
     @Test

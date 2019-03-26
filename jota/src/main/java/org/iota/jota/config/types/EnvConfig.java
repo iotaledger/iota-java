@@ -3,7 +3,8 @@ package org.iota.jota.config.types;
 import java.util.List;
 
 import org.iota.jota.account.AccountStore;
-import org.iota.jota.account.AccountStoreImpl;
+import org.iota.jota.account.store.AccountFileStore;
+import org.iota.jota.account.store.AccountStoreImpl;
 import org.iota.jota.config.IotaClientConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.store.EnvironmentStore;
@@ -43,7 +44,7 @@ public class EnvConfig extends IotaClientConfig {
 
     @Override
     public AccountStore getStore() {
-        return new AccountStoreImpl(new IotaFileStore(stringOrNull(ENV_STORE)));
+        return new AccountFileStore(stringOrNull(ENV_STORE));
     }
     
     @Override

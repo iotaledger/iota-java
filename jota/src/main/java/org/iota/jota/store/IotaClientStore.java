@@ -31,27 +31,27 @@ public abstract class IotaClientStore implements Store {
     }
 
     @Override
-    public String get(String key) {
+    public Serializable get(String key) {
         return store.get(key);
     }
 
     @Override
-    public String get(String key, String def) {
+    public <T extends Serializable> T get(String key, T def) {
         return store.get(key, def);
     }
 
     @Override
-    public String set(String key, String value) {
+    public <T extends Serializable> T set(String key, T value) {
         return store.set(key, value);
     }
     
     @Override
-    public Map<String, String> getAll() {
+    public Map<String, Serializable> getAll() {
         return store.getAll();
     }
     
     @Override
-    public String delete(String key) {
+    public Serializable delete(String key) {
         return store.delete(key);
     }
 }
