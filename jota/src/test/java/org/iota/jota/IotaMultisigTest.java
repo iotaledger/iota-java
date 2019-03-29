@@ -1,6 +1,7 @@
 package org.iota.jota;
 
 import org.iota.jota.category.IntegrationTest;
+import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Transaction;
@@ -30,8 +31,8 @@ public class IotaMultisigTest {
     private IotaAPI iotaClient;
 
     @Before
-    public void createApiClientInstance() {
-        iotaClient = new IotaAPI.Builder().build();
+    public void createApiClientInstance() throws Exception {
+        iotaClient = new IotaAPI.Builder().config(new FileConfig()).build();
     }
 
     @Test

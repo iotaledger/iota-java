@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 public abstract class AbstractBuilder<T, E, F extends Config> {
     
     private Logger log;
-    private FileConfig config;
+    private Config config;
     
     public AbstractBuilder(Logger log) {
         this.log = log;
@@ -45,7 +45,12 @@ public abstract class AbstractBuilder<T, E, F extends Config> {
     protected abstract T generate() throws Exception;
     
     public T config(F config) {
-        
+        try {
+            setConfig(config);
+        } catch (Exception e) {
+            // Huh? This can't happen since properties should already be loaded
+            log.error(e.getMessage());
+        }
         return (T) this;
     }
 
@@ -74,11 +79,11 @@ public abstract class AbstractBuilder<T, E, F extends Config> {
         return array;
     }
 
-    public FileConfig getConfig() {
+    public Config getConfig() {
         return config;
     }
 
-    public void setConfig(FileConfig config) {
+    public void setConfig(Config config) {
         this.config = config;
     }
     

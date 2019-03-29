@@ -2,8 +2,11 @@ package org.iota.jota;
 
 import com.google.gson.Gson;
 
-import org.hamcrest.core.IsNull;
+import org.hamcrest.core.IsNull;import org.iota.jota.account.AccountStore;
 import org.iota.jota.category.IntegrationTest;
+import org.iota.jota.config.IotaClientConfig;
+import org.iota.jota.config.types.FileConfig;
+import org.iota.jota.connection.Connection;
 import org.iota.jota.dto.response.*;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.utils.Checksum;
@@ -12,6 +15,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -33,8 +37,8 @@ public class IotaCoreApiTest {
     private static IotaAPICore proxy;
 
     @Before
-    public void createProxyInstance() {
-        proxy = new IotaAPI.Builder().build();
+    public void createProxyInstance() throws Exception {
+        proxy = new IotaAPI.Builder().config(new FileConfig()).build();
     }
 
     @Test

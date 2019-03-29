@@ -10,6 +10,7 @@ import org.iota.jota.account.PendingTransfer;
 import org.iota.jota.account.deposits.StoredDepositRequest;
 import org.iota.jota.store.FlatFileStore;
 import org.iota.jota.store.IotaFileStore;
+import org.iota.jota.store.JsonFlatFileStore;
 import org.iota.jota.store.Store;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trytes;
@@ -29,10 +30,10 @@ public class AccountFileStore extends AccountStoreImpl {
     }
     
     public AccountFileStore(File file) {
-        this.store = new FlatFileStore(file);
+        this.store = new JsonFlatFileStore(file);
     }
 
-    public AccountFileStore(FlatFileStore iotaFileStore) {
+    public AccountFileStore(JsonFlatFileStore iotaFileStore) {
         this.store = iotaFileStore;
     }
 
@@ -41,8 +42,8 @@ public class AccountFileStore extends AccountStoreImpl {
     }
 
     @Override
-    public void load() {
-        
+    public void load() throws Exception {
+        this.store.load();
     }
 
     @Override
@@ -160,5 +161,10 @@ public class AccountFileStore extends AccountStoreImpl {
             // TODO log account error
             e.printStackTrace();
         }
+    }
+    
+    @Override
+    public String toString() {
+        return store.toString();
     }
 }

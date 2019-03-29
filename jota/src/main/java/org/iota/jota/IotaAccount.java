@@ -235,10 +235,15 @@ public class IotaAccount implements Account, EventListener {
     private void addTask(Plugin task) {
         synchronized (tasks) {
             if (task != null) {
-                task.load();
-                getEventManager().registerListener(task);
-                tasks.add(task);
-                log.debug("Loaded plugin " + task.name());
+                try {
+                    task.load();
+                    getEventManager().registerListener(task);
+                    tasks.add(task);
+                    log.debug("Loaded plugin " + task.name());
+                } catch (Exception e) {
+                    //TODO: Print account error
+                }
+                
             }
         }
     }

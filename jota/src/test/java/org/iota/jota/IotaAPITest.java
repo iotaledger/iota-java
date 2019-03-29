@@ -13,6 +13,8 @@ import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.iota.jota.IotaAPI;
 import org.iota.jota.category.IntegrationTest;
+import org.iota.jota.config.types.FileConfig;
+import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.dto.response.CheckConsistencyResponse;
 import org.iota.jota.dto.response.GetAccountDataResponse;
 import org.iota.jota.dto.response.GetBalancesAndFormatResponse;
@@ -89,8 +91,8 @@ public class IotaAPITest {
     private IotaAPI iotaAPI;
 
     @Before
-    public void createApiClientInstance() {
-        iotaAPI = new IotaAPI.Builder().build();
+    public void createApiClientInstance() throws Exception {
+        iotaAPI = new IotaAPI.Builder().config(new FileConfig()).build();
         Assert.assertNotNull(iotaAPI);
     }
 
@@ -98,9 +100,9 @@ public class IotaAPITest {
     public void shouldCreateIotaApiProxyInstanceWithDefaultValues() {
         iotaAPI = new IotaAPI.Builder().build();
         assertThat(iotaAPI, IsNull.notNullValue());
-        assertThat(iotaAPI.getHost(), Is.is("nodes.devnet.iota.org"));
-        assertThat(iotaAPI.getPort(), Is.is("443"));
-        assertThat(iotaAPI.getProtocol(), Is.is("https"));
+        assertThat(iotaAPI.getHost(), Is.is(IotaDefaultConfig.Defaults.LEGACY_HOST));
+        assertThat(iotaAPI.getPort(), Is.is(IotaDefaultConfig.Defaults.LEGACY_PORT + ""));
+        assertThat(iotaAPI.getProtocol(), Is.is(IotaDefaultConfig.Defaults.LEGACY_PROTOCOL));
     }
 
     @Test
@@ -202,7 +204,7 @@ public class IotaAPITest {
         assertThat(trytes.isEmpty(), Is.is(false));
     }
     
-    //seed contains 0 balance
+    //seed contains 0 balance -> found the state automatic
     @Test(expected = IllegalStateException.class)
     @Category(IntegrationTest.class)
     public void shouldFailTransfer() throws ArgumentException {
@@ -215,7 +217,7 @@ public class IotaAPITest {
         assertThat(trytes.isEmpty(), Is.is(false));
     }
 
-    //seed contains 0 balance
+    //seed contains 0 balance -> wrong input fields as inputs arent valid
     @Test(expected = ArgumentException.class)
     @Category(IntegrationTest.class)
     public void shouldFailTransferWithInputs() throws ArgumentException {
@@ -225,7 +227,7 @@ public class IotaAPITest {
         GetBalancesAndFormatResponse rsp = iotaAPI.getInputs(TEST_SEED2, 2, 0, 10, 0);
         
         inputlist.addAll(rsp.getInputs());
-
+        System.out.println(Arrays.toString(rsp.getInputs().toArray()));
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
         List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED2, 2, transfers, null, inputlist, null,true);
 

@@ -38,22 +38,22 @@ public class AccountFileStoreTest {
     }
     
     @Test
-    public void testNewNewAccount() throws CloneNotSupportedException {
+    public void testNewNewAccount() throws Exception {
         store = new AccountFileStore(file);
-        
+        store.load();
         assertEquals(new AccountState(), store.loadAccount(addressId));
     }
     
     @Test
     public void testExistingStore() throws Exception {
-        FlatFileStore store = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
-        store.load();
+        JsonFlatFileStore store = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
         
         AccountState state = new AccountState();
         state.addDepositRequest(1, new StoredDepositRequest(new DepositRequest(new Date(0), false, 5), 1));
         state.setKeyIndex(4);
         
         this.store = new AccountFileStore(store);
+        store.load();
         AccountState loadedState = this.store.loadAccount(addressId);
         
         assertEquals(state, loadedState);

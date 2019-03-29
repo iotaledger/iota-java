@@ -2,7 +2,7 @@ package org.iota.jota.utils.thread;
 
 public interface TaskService {
 
-    void load();
+    void load() throws Exception ;
     
     boolean start();
     
