@@ -12,7 +12,6 @@ import static org.iota.jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.IntPredicate;
-import java.util.function.Predicate;
 
 /**
  * 

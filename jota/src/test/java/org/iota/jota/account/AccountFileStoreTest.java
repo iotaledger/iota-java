@@ -11,7 +11,6 @@ import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.StoredDepositRequest;
 import org.iota.jota.account.store.AccountFileStore;
 import org.iota.jota.account.store.AccountStoreImpl;
-import org.iota.jota.store.FlatFileStore;
 import org.iota.jota.store.JsonFlatFileStore;
 import org.junit.After;
 import org.junit.Before;

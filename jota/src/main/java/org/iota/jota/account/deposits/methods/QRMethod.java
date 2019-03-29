@@ -1,22 +1,13 @@
 package org.iota.jota.account.deposits.methods;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.imageio.ImageIO;
 
 import org.bouncycastle.util.encoders.Base64;
-import org.iota.jota.account.AccountState;
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -24,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.BinaryBitmap;
-import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;

@@ -2,14 +2,15 @@ package org.iota.jota.account.deposits;
 
 import java.io.Serializable;
 
-import org.iota.jota.types.Address;
 import org.iota.jota.types.Hash;
 
 public class ConditionalDepositAddress implements Serializable {
 
-    DepositRequest request;
+    private static final long serialVersionUID = 929568249598178836L;
+
+    private DepositRequest request;
     
-    Hash depositAddress;
+    private Hash depositAddress;
     
     private ConditionalDepositAddress() {
         

@@ -6,11 +6,9 @@ import java.util.List;
 
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.store.AccountFileStore;
-import org.iota.jota.account.store.AccountStoreImpl;
 import org.iota.jota.config.IotaClientConfig;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.connection.HttpConnector;
-import org.iota.jota.store.IotaFileStore;
 import org.iota.jota.utils.Constants;
 
 public class IotaDefaultConfig extends IotaClientConfig {

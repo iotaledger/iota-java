@@ -11,6 +11,11 @@ import org.iota.jota.utils.InputValidator;
 
 public class Trits implements Serializable {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2929622764168608194L;
+    
     //Mongodb bson parsing doesnt support arrays...
     private List<Integer> trits;
     

@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 
 import org.bson.BsonDocument;
 import org.bson.Document;
-import org.bson.codecs.ValueCodecProvider;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.ClassModelBuilder;

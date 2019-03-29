@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class DepositFactory {
     
     private static DepositFactory instance = null;

@@ -6,7 +6,6 @@ import java.util.Properties;
 
 import org.iota.jota.config.Config;
 import org.iota.jota.config.types.EnvConfig;
-import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.config.types.PropertiesConfig;
 import org.iota.jota.store.PropertiesStore;

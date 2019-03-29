@@ -3,10 +3,6 @@ package org.iota.jota.account.deposits;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.iota.jota.account.AccountState;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class DepositRequest implements Serializable {
     
     private static final long serialVersionUID = -1214895100919711824L;

@@ -64,21 +64,22 @@ public class JsonParser {
         return fromObjectMapper.readValue(snakeJson, clazz);
     }
     
-    //Jackson unly uses the propertyNamingStrategy SNAKE for serializing...
+    //Jackson only uses the propertyNamingStrategy SNAKE for serializing, but that doesnt work in deserialising
+    @SuppressWarnings("serial")
     private class RevertSnakeStrategy extends PropertyNamingStrategy {
         @Override
-        public String nameForField(MapperConfig config, AnnotatedField field, String defaultName) {
+        public String nameForField(MapperConfig<?> config, AnnotatedField field, String defaultName) {
             return convert(defaultName);
 
         }
 
         @Override
-        public String nameForGetterMethod(MapperConfig config, AnnotatedMethod method, String defaultName) {
+        public String nameForGetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
             return convert(defaultName);
         }
 
         @Override
-        public String nameForSetterMethod(MapperConfig config, AnnotatedMethod method, String defaultName) {
+        public String nameForSetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
             String a = convert(defaultName);
             return a;
         }

@@ -6,7 +6,7 @@ import org.iota.jota.utils.InputValidator;
 
 public class Trytes {
 
-    String trytesString;
+    private String trytesString;
     
     public Trytes(String trytes) {
         if (!InputValidator.isTrytes(trytes)){

@@ -2,7 +2,6 @@ package org.iota.jota.account;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.iota.jota.types.Hash;

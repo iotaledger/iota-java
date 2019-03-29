@@ -13,7 +13,6 @@ public class Kerl extends JCurl {
     private static final int BYTE_HASH_LENGTH = BIT_HASH_LENGTH / 8;
 
     private static final int RADIX = 3;
-    private static final int MAX_TRIT_VALUE = (RADIX - 1) / 2, MIN_TRIT_VALUE = -MAX_TRIT_VALUE;
     private final Keccak.Digest384 keccak;
     private byte[] byte_state;
     private int[] trit_state;

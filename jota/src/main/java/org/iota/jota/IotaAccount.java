@@ -464,7 +464,7 @@ public class IotaAccount implements Account, EventListener {
             throw new ArgumentException(Constants.INVALID_TAG_INPUT_ERROR);
         }
         
-        String addressHash = Bundle.EMPTY_HASH;
+        String addressHash = Constants.NULL_HASH;
         // remove the checksum of the address if provided
         if (address.isPresent()) {
             if (InputValidator.isAddress(address.get())) {

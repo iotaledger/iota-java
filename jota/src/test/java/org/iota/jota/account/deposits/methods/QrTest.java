@@ -10,7 +10,6 @@ import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.DepositTest;
 import org.iota.jota.account.deposits.methods.QRMethod;
-import org.iota.jota.types.Hash;
 import org.junit.Before;
 import org.junit.Test;
 

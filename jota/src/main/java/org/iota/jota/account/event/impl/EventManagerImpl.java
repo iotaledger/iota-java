@@ -35,7 +35,9 @@ public class EventManagerImpl implements EventManager {
         
         for (Pair<EventListener, Method> listener : listeners) {
             try {
+                //TODO: Create and use fields in annotation
                 AccountEvent annotInstance = listener.hi.getAnnotation(AccountEvent.class);
+                
                 boolean accessible = listener.hi.isAccessible();
                 if (!accessible) {
                     listener.hi.setAccessible(true);

@@ -2,11 +2,11 @@ package org.iota.jota.types;
 
 public class Address {
     
-    Hash address;
+    private Hash address;
     
-    int index;
+    private int index;
     
-    int securityLevel;
+    private int securityLevel;
 
     /**
      * 

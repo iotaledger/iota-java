@@ -16,7 +16,6 @@ import org.iota.jota.pow.ICurl;
 import org.iota.jota.pow.JCurl;
 import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.types.Hash;
-import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.InputValidator;

@@ -1,12 +1,8 @@
 package org.iota.jota;
 
-import com.google.gson.Gson;
-
-import org.hamcrest.core.IsNull;import org.iota.jota.account.AccountStore;
+import org.hamcrest.core.IsNull;
 import org.iota.jota.category.IntegrationTest;
-import org.iota.jota.config.IotaClientConfig;
 import org.iota.jota.config.types.FileConfig;
-import org.iota.jota.connection.Connection;
 import org.iota.jota.dto.response.*;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.utils.Checksum;
@@ -15,8 +11,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.util.Collections;
-import java.util.List;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -45,7 +39,6 @@ public class IotaCoreApiTest {
     @Category(IntegrationTest.class)
     public void shouldGetNodeInfo() throws ArgumentException {
         GetNodeInfoResponse nodeInfo = proxy.getNodeInfo();
-        System.out.println(new Gson().toJson(nodeInfo));
         assertThat(nodeInfo.getAppVersion(), IsNull.notNullValue());
         assertThat(nodeInfo.getAppName(), IsNull.notNullValue());
         assertThat(nodeInfo.getJreVersion(), IsNull.notNullValue());
@@ -175,8 +168,11 @@ public class IotaCoreApiTest {
     @Category(IntegrationTest.class)
     public void shouldFindTransactions() throws ArgumentException {
         String test = TEST_BUNDLE;
-        FindTransactionResponse resp = proxy.findTransactions(new String[]{Checksum.addChecksum(test)}, new String[]{test}, new String[]{test}, new String[]{test});
-        System.out.println(new Gson().toJson(resp));
+        FindTransactionResponse resp = proxy.findTransactions(
+                new String[]{Checksum.addChecksum(test)}, 
+                new String[]{test}, 
+                new String[]{test}, 
+                new String[]{test});
     }
 
     @Test

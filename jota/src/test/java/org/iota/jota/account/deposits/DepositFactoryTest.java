@@ -7,7 +7,6 @@ import java.util.Date;
 import org.iota.jota.account.deposits.methods.DepositFactory;
 import org.iota.jota.account.deposits.methods.MagnetMethod;
 import org.iota.jota.account.deposits.methods.QRMethod;
-import org.iota.jota.types.Hash;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

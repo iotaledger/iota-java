@@ -251,7 +251,7 @@ public class IotaAPICore {
             }
         }
         
-        if (null != bundles && bundles.length > 0  && !InputValidator.isStringArrayValid(bundles)) {
+        if (null != bundles && bundles.length > 0  && !InputValidator.isArrayOfHashes(bundles)) {
             throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
         }
         

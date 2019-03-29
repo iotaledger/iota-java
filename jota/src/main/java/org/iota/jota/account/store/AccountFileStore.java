@@ -8,7 +8,6 @@ import org.iota.jota.account.AccountState;
 import org.iota.jota.account.ExportedAccountState;
 import org.iota.jota.account.PendingTransfer;
 import org.iota.jota.account.deposits.StoredDepositRequest;
-import org.iota.jota.store.FlatFileStore;
 import org.iota.jota.store.IotaFileStore;
 import org.iota.jota.store.JsonFlatFileStore;
 import org.iota.jota.store.Store;
@@ -33,8 +32,12 @@ public class AccountFileStore extends AccountStoreImpl {
         this.store = new JsonFlatFileStore(file);
     }
 
-    public AccountFileStore(JsonFlatFileStore iotaFileStore) {
-        this.store = iotaFileStore;
+    /**
+     * Takes any store, but make sure the store allows saving of POJOs, and not just key/value Strings
+     * @param fileStore Storage we use for reading/writing our account data
+     */
+    public AccountFileStore(Store fileStore) {
+        this.store = fileStore;
     }
 
     public AccountFileStore(String file) {
