@@ -15,18 +15,18 @@ public class PendingTransfer implements Serializable {
     /**
      * 
      */
-    Trits[] bundleTrits;
+    List<Trits> bundleTrits;
 
     /**
      * 
      */
     List<Hash> tailHashes;
     
-    public PendingTransfer() {
+    private PendingTransfer() {
         
     }
     
-    public PendingTransfer(Trits[] bundle) {
+    public PendingTransfer(List<Trits> bundle) {
         this.bundleTrits = bundle;
     }
     
@@ -42,15 +42,11 @@ public class PendingTransfer implements Serializable {
         tailHashes.add(tailHash);
     }
     
-    /**
-     * 
-     * @return
-     */
-    public Hash[] getTailHashes(){
-        return tailHashes.toArray(new Hash[tailHashes.size()]);
+    public List<Hash> getTailHashes() {
+        return tailHashes;
     }
     
-    public Trits[] getBundleTrits() {
+    public List<Trits> getBundleTrits() {
         return bundleTrits;
     }
     
@@ -63,7 +59,7 @@ public class PendingTransfer implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(bundleTrits);
+        result = prime * result + ((bundleTrits == null) ? 0 : bundleTrits.hashCode());
         result = prime * result + ((tailHashes == null) ? 0 : tailHashes.hashCode());
         return result;
     }
@@ -80,7 +76,11 @@ public class PendingTransfer implements Serializable {
             return false;
         }
         PendingTransfer other = (PendingTransfer) obj;
-        if (!Arrays.equals(bundleTrits, other.bundleTrits)) {
+        if (bundleTrits == null) {
+            if (other.bundleTrits != null) {
+                return false;
+            }
+        } else if (!bundleTrits.equals(other.bundleTrits)) {
             return false;
         }
         if (tailHashes == null) {
@@ -92,4 +92,11 @@ public class PendingTransfer implements Serializable {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "PendingTransfer [bundleTrits=" + bundleTrits + ", tailHashes=" + tailHashes + "]";
+    }
+    
+    
 }

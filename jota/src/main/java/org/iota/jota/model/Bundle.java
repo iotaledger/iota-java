@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.iota.jota.pow.ICurl;
 import org.iota.jota.pow.SpongeFactory;
+import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.Signing;
 
@@ -18,7 +19,12 @@ import org.iota.jota.utils.Signing;
  **/
 public class Bundle implements Comparable<Bundle> {
 
-    public static final String EMPTY_HASH = "999999999999999999999999999999999999999999999999999999999999999999999999999999999";
+    /**
+     * Use {@link Constants#NULL_HASH } instead
+     */
+    @Deprecated
+    public static final String EMPTY_HASH = Constants.NULL_HASH;
+    
     private List<Transaction> transactions;
     private int length;
 

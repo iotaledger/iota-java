@@ -33,6 +33,13 @@ public class Hash implements Serializable {
         return hash;
     }
     
+    public String getHashCheckSum() {
+        if (null != hashCheckSum) {
+            return hashCheckSum;
+        }
+        return hashCheckSum = Checksum.addChecksum(hash);
+    }
+    
     @Override
     public String toString() {
         return hash;
@@ -41,12 +48,5 @@ public class Hash implements Serializable {
     @Override
     public boolean equals(Object obj) {
         return obj != null && obj.getClass().equals(Hash.class) && toString().equals(obj.toString());
-    }
-    
-    public String getWithChecksum() {
-        if (null != hashCheckSum) {
-            return hashCheckSum;
-        }
-        return hashCheckSum = Checksum.addChecksum(hash);
     }
 }

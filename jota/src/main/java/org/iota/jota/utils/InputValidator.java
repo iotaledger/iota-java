@@ -469,4 +469,15 @@ public class InputValidator {
 
         return min == 0;
     }
+    
+    public static boolean isTrits(List<Integer> trits) {
+        Range<Integer> myRange = Range.between(-1, 1);
+        IntPredicate contains = myRange::contains;
+        
+        long min = trits.stream()
+                .filter(integer -> contains.negate().test(integer))
+                .count(); 
+
+        return min == 0;
+    }
 }

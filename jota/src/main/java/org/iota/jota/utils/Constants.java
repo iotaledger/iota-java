@@ -7,6 +7,11 @@ package org.iota.jota.utils;
 public class Constants {
 
     /**
+     * Empty hash, same as TVM.NULL_HASH in IRI
+     */
+    public static final String NULL_HASH = "999999999999999999999999999999999999999999999999999999999999999999999999999999999";
+    
+    /**
      * This String contains all possible characters of the tryte alphabet
      */
     public static final String TRYTE_ALPHABET = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";

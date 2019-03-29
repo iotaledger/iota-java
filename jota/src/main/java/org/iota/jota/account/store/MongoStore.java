@@ -1,12 +1,24 @@
 package org.iota.jota.account.store;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.bson.BsonDocument;
 import org.bson.Document;
+import org.bson.codecs.ValueCodecProvider;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.ClassModelBuilder;
+import org.bson.codecs.pojo.Convention;
+import org.bson.codecs.pojo.Conventions;
+import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.codecs.pojo.PropertyModelBuilder;
+import org.bson.json.JsonWriterSettings;
 import org.iota.jota.account.AccountState;
 import org.iota.jota.account.ExportedAccountState;
 import org.iota.jota.account.PendingTransfer;
@@ -14,8 +26,8 @@ import org.iota.jota.account.deposits.StoredDepositRequest;
 import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trytes;
+import org.iota.jota.utils.JsonParser;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
@@ -35,6 +47,12 @@ public class MongoStore extends DatabaseStore {
     private static final String DEPOSIT = "deposit_requests";
     private static final String INDEX = "key_index";
     private static final String TAILS = "tail_hashes";
+    
+    //Used to deserialize mongodb bson to jackson accepted json
+    private static final JsonWriterSettings settings = JsonWriterSettings.builder()
+            .int64Converter((value, writer) -> writer.writeNumber(value.toString()))
+            .dateTimeConverter((value, writer) -> writer.writeString(value + ""))
+            .build();
     
     private MongoClientOptions options;
     
@@ -76,7 +94,24 @@ public class MongoStore extends DatabaseStore {
         
         this.updateOptions = new UpdateOptions().upsert(true);
         
-        this.options = MongoClientOptions.builder().build();
+        List<Convention> conventions = new LinkedList<>(Conventions.DEFAULT_CONVENTIONS);
+        conventions.add(new SnakeConvention());
+        
+        PojoCodecProvider.Builder builder = PojoCodecProvider.builder();
+        builder.register(StringAccountState.class);
+        builder.conventions(conventions);
+        
+        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
+                MongoClient.getDefaultCodecRegistry(),
+                CodecRegistries.fromProviders(PojoCodecProvider.builder()
+                        .conventions(conventions)
+                        .automatic(true)
+                        .build())
+        );
+        
+        this.options = MongoClientOptions.builder()
+                .codecRegistry(codecRegistry)
+                .build();
     }
     
     /**
@@ -96,7 +131,7 @@ public class MongoStore extends DatabaseStore {
         
         credentials.add(
                 MongoCredential.createCredential(userName, database, password.toCharArray())
-                );
+            );
     }
     
     public void setOptions(MongoClientOptions options) {
@@ -116,10 +151,10 @@ public class MongoStore extends DatabaseStore {
             client = new MongoClient(address, options);
         }
         database = client.getDatabase(getDatabaseName());
-
         try {
             collection = database.getCollection(getTableName());
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
             try {
                 database.createCollection(getTableName());
                 collection = database.getCollection(getTableName());
@@ -136,26 +171,32 @@ public class MongoStore extends DatabaseStore {
     public void shutdown() {
         collection = null;
         database = null;
-        client.close();
+        
+        if (client != null) {
+            client.close();
+        }
     }
     
     @Override
     public AccountState loadAccount(String id) {
-        AccountState state = collection.find(Filters.eq("_id", id), AccountState.class)
+        StringAccountState state = collection.find(Filters.eq("_id", id), StringAccountState.class)
                 .projection(Projections.excludeId())
                 .first();
         
+        AccountState accState;
         if (null == state) {
-            state = new AccountState();
-            saveAccount(id, state);
+            accState = new AccountState();
+            saveAccount(id, accState);
+        } else {
+            accState = state.toAccountState();
         }
 
-        return state;
+        return accState;
     }
 
     @Override
     public void saveAccount(String id, AccountState state) {
-        Document doc = new Document(id, state);
+        Document doc = new Document(id, new StringAccountState(state));
         
         UpdateResult result = collection.replaceOne(
                 Filters.eq("_id", id), 
@@ -178,17 +219,18 @@ public class MongoStore extends DatabaseStore {
 
     @Override
     public int readIndex(String id) {
-        Integer index = collection.find(Filters.eq("_id", id), Integer.class)
+        Document index = collection.find(Filters.eq("_id", id))
             .projection(Projections.fields(Projections.include(INDEX)))
             .first();
-        return index;
+        return index != null && index.containsKey(INDEX) ? index.getInteger(INDEX) : -1;
     }
 
     @Override
     public void writeIndex(String id, int index) {
         UpdateResult result = collection.updateOne(
                 Filters.eq("_id", id), 
-                new Document(INDEX, index));
+                new Document("$set", new Document(INDEX, index)),
+                updateOptions);
         if (result.isModifiedCountAvailable() && result.getModifiedCount() == 0) {
             // TODO Log account error
         }
@@ -196,9 +238,10 @@ public class MongoStore extends DatabaseStore {
 
     @Override
     public void addDepositRequest(String id, int index, StoredDepositRequest request) {
-        Document result = collection.findOneAndUpdate(
+        UpdateResult result = collection.updateOne(
                 Filters.eq("_id", id), 
-                new Document(DEPOSIT, new BasicDBObject(index + "", request)));
+                new Document("$set", new Document(DEPOSIT, new Document(index + "", request))), 
+                updateOptions);
         if (result == null) {
             // TODO Log account error
         }
@@ -206,9 +249,10 @@ public class MongoStore extends DatabaseStore {
 
     @Override
     public void removeDepositRequest(String id, int index) {
-        Document result = collection.findOneAndUpdate(
+        UpdateResult result = collection.updateOne(
                 Filters.eq("_id", id), 
-                new Document(DEPOSIT, new BasicDBObject(index + "", null)));
+                new Document("$unset", new Document(DEPOSIT, new Document(index + "", ""))),
+                updateOptions);
         if (result == null) {
             // TODO Log account error
         }
@@ -220,18 +264,46 @@ public class MongoStore extends DatabaseStore {
                 Filters.eq("_id", id))
                 .projection(Projections.fields(Projections.include(DEPOSIT)))
                 .first();
-        return requests != null ? requests.get(DEPOSIT, Map.class) : null;
+        
+        Map<Integer, StoredDepositRequest> deposits = null;
+        if (requests != null) {
+            Map<String, Document> strDeposits = requests.get(DEPOSIT, Map.class);
+
+            deposits = new java.util.HashMap<>();
+            if (strDeposits  != null) {
+                for (Entry<String, Document> entry : strDeposits.entrySet()) {
+    
+                    BsonDocument store = entry.getValue().toBsonDocument(StoredDepositRequest.class, collection.getCodecRegistry());
+                    try {
+                        // Get custom Reverse snake parser, read Document as bson using custom builder
+                        StoredDepositRequest dep = JsonParser.get().getObjectMapper().readValue(
+                                store.toJson(settings), 
+                                StoredDepositRequest.class);
+                        
+                        deposits.put(Integer.valueOf(entry.getKey()), dep);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    
+                }
+            }
+        }
+        
+        return deposits;
     }
 
     @Override
     public void addPendingTransfer(String id, Hash tailTx, Trytes[] bundleTrytes, int... indices) {
         PendingTransfer transfer = new PendingTransfer(super.trytesToTrits(bundleTrytes));
         transfer.addTail(tailTx);
-        
+
         UpdateResult result = collection.updateOne(
                 Filters.eq("_id", id), 
-                new Document(PENDING, 
-                        new BasicDBObject(tailTx.getHash(), transfer)));
+                new Document("$set", 
+                        new Document(PENDING, 
+                        new Document(tailTx.getHash(), transfer))),
+                updateOptions);
         
         if (result.isModifiedCountAvailable() && result.getModifiedCount() == 0) {
             // TODO Log account error
@@ -240,9 +312,12 @@ public class MongoStore extends DatabaseStore {
 
     @Override
     public void removePendingTransfer(String id, Hash tailHash) {
-        Document result = collection.findOneAndUpdate(
+        UpdateResult result = collection.updateOne(
                 Filters.eq("_id", id), 
-                new Document(PENDING, new BasicDBObject(tailHash.getHash(), null)));
+                new Document("$unset", 
+                        new Document(PENDING, 
+                                new Document(tailHash.getHash(), ""))),
+                updateOptions);
         if (result == null) {
             // TODO Log account error
         }
@@ -250,10 +325,11 @@ public class MongoStore extends DatabaseStore {
 
     @Override
     public void addTailHash(String id, Hash tailHash, Hash newTailTxHash) {
-        Document result = collection.findOneAndUpdate(
+        UpdateResult result = collection.updateOne(
                 Filters.eq("_id", id), 
-                new Document(PENDING + "." + tailHash.getHash(), 
-                        new BasicDBObject(TAILS, newTailTxHash)));
+                new Document("$push", 
+                        new Document(PENDING + "." + tailHash.getHash() + "." + TAILS, newTailTxHash)),
+                updateOptions);
         if (result == null) {
             // TODO Log account error
         }
@@ -265,7 +341,28 @@ public class MongoStore extends DatabaseStore {
                 Filters.eq("_id", id))
                 .projection(Projections.fields(Projections.include(PENDING)))
                 .first();
-        return requests != null ? requests.get(PENDING, Map.class) : null;
+        
+        Map<String, Document> requestsMap = requests.get(PENDING, Map.class);
+        Map<String, PendingTransfer> pendingTransfers = new java.util.HashMap<>();
+        if (requestsMap != null) {
+            for (Entry<String, Document> entry : requestsMap.entrySet()) {
+
+                BsonDocument store = entry.getValue().toBsonDocument(PendingTransfer.class, collection.getCodecRegistry());
+                try {
+                    // Get custom Reverse snake parser, read Document as bson using custom builder
+                    PendingTransfer dep = JsonParser.get().getObjectMapper().readValue(
+                            store.toJson(settings), 
+                            PendingTransfer.class);
+                    
+                    pendingTransfers.put(entry.getKey(), dep);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                
+            }
+        }
+        return pendingTransfers;
     }
 
     @Override
@@ -277,5 +374,50 @@ public class MongoStore extends DatabaseStore {
     public ExportedAccountState exportAccount(String id) {
         AccountState state = loadAccount(id);
         return new ExportedAccountState(new Date(), id, state);
+    }
+    
+    public MongoCollection<Document> getCollection() {
+        return collection;
+    }
+    
+    private class SnakeConvention implements Convention {
+        @Override
+        public void apply(ClassModelBuilder<?> classModelBuilder) {
+            
+            for (PropertyModelBuilder<?> fieldModelBuilder : classModelBuilder.getPropertyModelBuilders()) {
+                fieldModelBuilder.discriminatorEnabled(false);
+                fieldModelBuilder.readName(
+                        fieldModelBuilder.getName()
+                                .replaceAll("([^_A-Z])([A-Z])", "$1_$2").toLowerCase());
+                fieldModelBuilder.writeName(
+                        fieldModelBuilder.getName()
+                                .replaceAll("([^_A-Z])([A-Z])", "$1_$2").toLowerCase());
+            }
+        }
+    }
+          
+    private class StringAccountState {
+        int keyIndex;
+        Map<String, PendingTransfer> pendingTransfers;
+        Map<String, StoredDepositRequest> depositRequests;
+        
+        public StringAccountState(AccountState state) {
+            keyIndex = state.getKeyIndex();
+            pendingTransfers = state.getPendingTransfers();
+            
+            depositRequests = new java.util.HashMap<>();
+            for (Entry<Integer, StoredDepositRequest> entry : state.getDepositRequests().entrySet()) {
+                depositRequests.put(entry.getKey() + "", entry.getValue());
+            }
+        }
+        
+        public AccountState toAccountState() {
+            Map<Integer, StoredDepositRequest> depositRequests = new java.util.HashMap<>();
+            for (Entry<String, StoredDepositRequest> entry : this.depositRequests.entrySet()) {
+                depositRequests.put(Integer.valueOf(entry.getKey()), entry.getValue());
+            }
+            
+            return new AccountState(keyIndex, depositRequests, pendingTransfers);
+        }
     }
 }

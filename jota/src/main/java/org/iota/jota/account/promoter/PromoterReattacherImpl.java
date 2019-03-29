@@ -133,8 +133,8 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     }
     
     private Hash findPromotableTail(PendingTransfer pendingBundle, Hash bundleHash) {
-        for (int i =  pendingBundle.getTailHashes().length - 1; i >= 0; i--) {
-            Hash tail = pendingBundle.getTailHashes()[i];
+        for (int i =  pendingBundle.getTailHashes().size() - 1; i >= 0; i--) {
+            Hash tail = pendingBundle.getTailHashes().get(i);
             Transaction tailTransaction = getBundleTail(bundleHash, tail);
             
             if (null == tailTransaction) {

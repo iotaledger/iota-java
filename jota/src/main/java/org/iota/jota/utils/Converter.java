@@ -218,9 +218,36 @@ public class Converter {
         }
         return trytes.toString();
     }
+    
+    /**
+     * Converts trits to trytes.
+     *
+     * @param trits  The trits to be converted.
+     * @param offset The offset to start from.
+     * @param size   The size.
+     * @return The trytes.
+     **/
+    public static String trytes(final List<Integer> trits, final int offset, final int size) {
+
+        StringBuilder trytes = new StringBuilder();
+        for (int i = 0; i < (size + NUMBER_OF_TRITS_IN_A_TRYTE - 1) / NUMBER_OF_TRITS_IN_A_TRYTE; i++) {
+
+            int j = trits.get(offset + i * 3) + trits.get(offset + i * 3 + 1) * 3 + trits.get(offset + i * 3 + 2) * 9;
+            if (j < 0) {
+
+                j += Constants.TRYTE_ALPHABET.length();
+            }
+            trytes.append(Constants.TRYTE_ALPHABET.charAt(j));
+        }
+        return trytes.toString();
+    }
 
     public static String trytes(final int[] trits) {
         return trytes(trits, 0, trits.length);
+    }
+    
+    public static String trytes(final List<Integer> trits) {
+        return trytes(trits, 0, trits.size());
     }
 
     /**

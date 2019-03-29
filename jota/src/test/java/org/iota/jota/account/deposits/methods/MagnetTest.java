@@ -49,7 +49,7 @@ public class MagnetTest extends DepositTest {
         ConditionalDepositAddress request = method.parse(MAGNET);
         
         assertEquals(conditions, request);
-        assertEquals(conditions.getDepositAddress().getWithChecksum(), DepositTest.depositAddress.getWithChecksum());
+        assertEquals(conditions.getDepositAddress().getHashCheckSum(), DepositTest.depositAddress.getHashCheckSum());
     }
 
     @Test
