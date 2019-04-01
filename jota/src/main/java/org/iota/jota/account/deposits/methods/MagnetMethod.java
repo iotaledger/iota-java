@@ -26,9 +26,9 @@ public class MagnetMethod implements DepositMethod<String> {
     
     private static final String SCHEME = "iota";
     
-    private static final String CONDITION_EXPIRES = "t";
-    private static final String CONDITION_MULTI_USE = "m";
-    private static final String CONDITION_AMOUNT = "am";
+    public static final String CONDITION_EXPIRES = "timeout_at";
+    public static final String CONDITION_MULTI_USE = "multi_use";
+    public static final String CONDITION_AMOUNT = "expected_amount";
     
     private static final String magnetUrl = SCHEME + "://%s/?" 
             + CONDITION_EXPIRES + "=%d&"
@@ -91,7 +91,7 @@ public class MagnetMethod implements DepositMethod<String> {
         }
     }
 
-    private Map<String, List<String>> collectParams(URI uri) {
+    private Map<String, List<String>> collectParams(URI uri) throws MagnetError {
         Map<String, List<String>> paramsMap = new HashMap<>();
 
         // iota://address/, so getSchemeSpecificPart removes iota:
@@ -99,15 +99,19 @@ public class MagnetMethod implements DepositMethod<String> {
                 .substring(Constants.ADDRESS_LENGTH_WITH_CHECKSUM + 4)
                 .split("&");
         for (String param : params) {
-            String[] parts = param.split("=");
-            String name = parts[0];
-            String value = parts[1];
-            List<String> values = paramsMap.get(name);
-            if (values == null) {
-                values = new ArrayList<>();
-                paramsMap.put(name, values);
+            try {
+                String[] parts = param.split("=");
+                String name = parts[0];
+                String value = parts[1];
+                List<String> values = paramsMap.get(name);
+                if (values == null) {
+                    values = new ArrayList<>();
+                    paramsMap.put(name, values);
+                }
+                values.add(value);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new MagnetError("Magnet field param is missing a value");
             }
-            values.add(value);
         }
 
         return paramsMap;
