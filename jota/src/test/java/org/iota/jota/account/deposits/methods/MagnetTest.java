@@ -56,7 +56,6 @@ public class MagnetTest extends DepositTest {
     public void magnetChecksum() {
         String checksum = method.magnetChecksum(DepositTest.depositAddress.getHash(), 
                 TIME, MULTI, AMOUNT);
-        System.out.println(checksum);
         assertEquals("Checksum should be equal to the pregenerated one", MAGNET_CHECKSUM, checksum);
     }
     
