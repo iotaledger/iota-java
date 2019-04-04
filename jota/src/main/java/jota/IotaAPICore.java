@@ -44,6 +44,7 @@ public class IotaAPICore {
     private IotaAPIService service;
     private String protocol, host, port;
     private IotaLocalPoW localPoW;
+    private int timeOut;
 
     /**
      * Build the API core.
@@ -55,6 +56,7 @@ public class IotaAPICore {
         host = builder.host;
         port = builder.port;
         localPoW = builder.localPoW;
+        timeOut = builder.timeOut;
         postConstruct();
     }
 
@@ -106,7 +108,7 @@ public class IotaAPICore {
 
         // Create OkHttpBuilder
         final OkHttpClient client = new OkHttpClient.Builder()
-                .readTimeout(5000, TimeUnit.SECONDS)
+                .readTimeout(timeOut, TimeUnit.SECONDS)
                 .addInterceptor(new Interceptor() {
                     @Override
                     public okhttp3.Response intercept(Chain chain) throws IOException {
@@ -120,7 +122,7 @@ public class IotaAPICore {
                         return chain.proceed(newRequest);
                     }
                 })
-                .connectTimeout(5000, TimeUnit.SECONDS)
+                .connectTimeout(timeOut, TimeUnit.SECONDS)
                 .build();
 
         // use client to create Retrofit service
@@ -639,6 +641,7 @@ public class IotaAPICore {
 
     @SuppressWarnings("unchecked")
     public static class Builder<T extends Builder<T>> {
+        public int timeOut = 5;
         String protocol, host, port;
         IotaLocalPoW localPoW;
         private FileReader fileReader = null;
@@ -715,6 +718,16 @@ public class IotaAPICore {
 
         public T localPoW(IotaLocalPoW localPoW) {
             this.localPoW = localPoW;
+            return (T) this;
+        }
+        
+        /**
+         * Sets the API timeout in seconds
+         * @param timeOut the amount we wait for a response
+         * @return
+         */
+        public T timeOut(int timeOut) {
+            this.timeOut = timeOut;
             return (T) this;
         }
     }
