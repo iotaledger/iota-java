@@ -89,7 +89,7 @@ public class IotaAPIUtils {
                 int keyIndex = 0;
                 int keySecurity = 0;
                 for (Input input : inputs) {
-                    if (input.getAddress().equals(thisAddress)) {
+                    if (input.getAddress().subSequence(0,  81).equals(thisAddress.subSequence(0,  81))) {
                         keyIndex = input.getKeyIndex();
                         keySecurity = input.getSecurity();
                     }
