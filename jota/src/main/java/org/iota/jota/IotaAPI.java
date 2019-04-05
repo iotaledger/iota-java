@@ -383,13 +383,11 @@ public class IotaAPI extends IotaAPICore {
         }
 
         try {
-            System.out.println("storeTransactions");
             storeTransactions(trytes);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ArgumentException(e.toString());
         }
-        System.out.println("broadcastTransactions");
         return broadcastTransactions(trytes);
     }
 
@@ -409,15 +407,12 @@ public class IotaAPI extends IotaAPICore {
      * @see #storeAndBroadcast(String...)
      */
     public List<Transaction> sendTrytes(String[] trytes, int depth, int minWeightMagnitude, String reference) throws ArgumentException {
-        System.out.println("gtta");
         GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth, reference);
 
         // attach to tangle - do pow
-        System.out.println("attachToTangle " + minWeightMagnitude);
         GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
 
         try {
-            System.out.println("storeAndBroadcast");
             storeAndBroadcast(res.getTrytes());
         } catch (ArgumentException e) {
             return new ArrayList<>();
@@ -1119,7 +1114,6 @@ public class IotaAPI extends IotaAPICore {
 
         StopWatch stopWatch = new StopWatch();
 
-        System.out.println("prepare");
         List<String> trytes = prepareTransfers(seed, security, transfers, remainderAddress, inputs, tips, validateInputs);
         
         if (validateInputAddresses) {
@@ -1128,13 +1122,11 @@ public class IotaAPI extends IotaAPICore {
 
         String reference = tips != null && tips.size() > 0 ? tips.get(0).getHash(): null;
 
-        System.out.println("send");
         List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude, reference);
 
         Boolean[] successful = new Boolean[trxs.size()];
         
         for (int i = 0; i < trxs.size(); i++) {
-            System.out.println("findTransactionsByBundles");
             final FindTransactionResponse response = findTransactionsByBundles(trxs.get(i).getBundle());
             successful[i] = response.getHashes().length != 0;
         }

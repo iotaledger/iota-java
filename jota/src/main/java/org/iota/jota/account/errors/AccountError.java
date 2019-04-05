@@ -1,6 +1,6 @@
 package org.iota.jota.account.errors;
 
-public abstract class AccountError extends RuntimeException {
+public class AccountError extends RuntimeException {
     
     /**
      * 

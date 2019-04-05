@@ -59,6 +59,7 @@ import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.InputValidator;
 import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.TrytesConverter;
+import org.iota.jota.utils.thread.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +79,10 @@ public class IotaAccount implements Account, EventListener {
     boolean loaded = false;
     
     String accountId = null;
+
+    private AddressGeneratorServiceImpl addressService;
+
+    private AccountBalanceCache balanceCache;
     
     /**
      * 
@@ -157,6 +162,16 @@ public class IotaAccount implements Account, EventListener {
     @Override
     public void load() {
         String accountId = buildAccountId();
+        
+        // TODO make this nicer
+        if (options.getStore() instanceof TaskService) {
+            try {
+                ((TaskService)options.getStore()).load();
+            } catch (Exception e) {
+                throw new AccountError(e);
+            }
+        }
+        
         load(accountId, getStore().loadAccount(accountId));
     }
     
@@ -175,22 +190,23 @@ public class IotaAccount implements Account, EventListener {
         return sha256hex;*/
     }
 
-    public void load(String accountId, AccountState state) {
+    public void load(String accountId, AccountState state) throws AccountError {
         loaded = false;
         
         this.accountId = accountId;
-        AddressGeneratorServiceImpl service = new AddressGeneratorServiceImpl(options);
         
-        AccountBalanceCache cache = new AccountBalanceCache(service, state, getApi());
+        addressService = new AddressGeneratorServiceImpl(options);
         
-        InputSelectionStrategy strategy = new InputSelectionStrategyImpl(cache, options.getTime());
+        balanceCache = new AccountBalanceCache(addressService, state, getApi());
+        
+        InputSelectionStrategy strategy = new InputSelectionStrategyImpl(balanceCache, options.getTime());
         
         
-        accountManager = new AccountStateManager(cache, accountId, strategy, state, service, options, getStore());
+        accountManager = new AccountStateManager(balanceCache, accountId, strategy, state, addressService, options, getStore());
         
         //All plugins do their startup tasks on load();
         addTask(new PromoterReattacherImpl(eventManager, getApi(), accountManager, options));
-        addTask(new IncomingTransferCheckerImpl(eventManager, getApi(), accountManager, service, cache));
+        addTask(new IncomingTransferCheckerImpl(eventManager, getApi(), accountManager, addressService, balanceCache));
         addTask(new OutgoingTransferCheckerImpl(eventManager, getApi(), accountManager));
         
         shutdownHook();
@@ -220,6 +236,11 @@ public class IotaAccount implements Account, EventListener {
      * Unloads all registered tasks. 
      */
     private void unload(boolean clearTasks) {
+        //TODO Improve
+        if (options.getStore() instanceof TaskService) {
+            ((TaskService)options.getStore()).shutdown();
+        }
+        
         synchronized (tasks) {
             for (Plugin task : tasks) {
                 getEventManager().unRegisterListener(task);
@@ -241,7 +262,7 @@ public class IotaAccount implements Account, EventListener {
                     tasks.add(task);
                     log.debug("Loaded plugin " + task.name());
                 } catch (Exception e) {
-                    //TODO: Print account error
+                    throw new AccountError(e);
                 }
                 
             }
@@ -263,7 +284,20 @@ public class IotaAccount implements Account, EventListener {
      */
     @Override
     public boolean start() throws AccountError {
-        // TODO: Make inner task loop to prevent async errors
+        //TODO Improve
+        if (options.getStore() instanceof TaskService) {
+            if (!((TaskService)options.getStore()).start()) {
+                throw new AccountError("Store failed to start");
+            }
+        }
+        
+        synchronized (tasks) {
+            for (Plugin task : tasks) {
+                if (!task.start()) {
+                    // TODO log failed start
+                }
+            }
+        }
         return true;
     }
 
@@ -319,80 +353,93 @@ public class IotaAccount implements Account, EventListener {
         start();
     }
     
+    /**
+     * Future always completed
+     * 
+     * @param address
+     * @param amount
+     * @param message
+     * @param tag
+     * @return
+     * @throws ArgumentException
+     */
     public Future<Bundle> send(String address, long amount, Optional<String> message, 
                                Optional<String> tag) throws ArgumentException {
-       
-        if (!loaded) {
-            return null;
-        }
-        
-        String tryteTag = tag.orElse("");
-        tryteTag = StringUtils.rightPad(tryteTag, Constants.TAG_LENGTH, '9');
-        
-        if (!InputValidator.isTag(tryteTag)) {
-            throw new ArgumentException(Constants.INVALID_TAG_INPUT_ERROR);
-        }
-        
-        String asciiMessage = message.orElse("");
-        String tryteMsg = TrytesConverter.asciiToTrytes( asciiMessage);
-        if (!InputValidator.isTrytes(tryteMsg, tryteMsg.length())) {
-            throw new ArgumentException(Constants.INVALID_INPUT_ERROR);
-        }
-        
-        try {
-            boolean spent = getApi().checkWereAddressSpentFrom(address);
-            if (spent) {
-                throw new ArgumentException(Constants.INVALID_ADDRESS_INPUT_ERROR);
+        FutureTask<Bundle> task = new FutureTask<Bundle>(() -> {
+            if (!loaded) {
+                return null;
             }
             
-            Transfer transfer = new Transfer(address, amount, tryteMsg, tryteTag);
+            String tryteTag = tag.orElse("");
+            tryteTag = StringUtils.rightPad(tryteTag, Constants.TAG_LENGTH, '9');
             
-            List<Input> inputs = accountManager.getInputAddresses(amount);
+            if (!InputValidator.isTag(tryteTag)) {
+                throw new ArgumentException(Constants.INVALID_TAG_INPUT_ERROR);
+            }
             
-            AtomicLong totalValue = new AtomicLong(0);
-            inputs.stream().forEach(input -> totalValue.addAndGet(input.getBalance()));
+            String asciiMessage = message.orElse("");
+            String tryteMsg = TrytesConverter.asciiToTrytes( asciiMessage);
+            if (!InputValidator.isTrytes(tryteMsg, tryteMsg.length())) {
+                throw new ArgumentException(Constants.INVALID_INPUT_ERROR);
+            }
             
-            Transfer remainder = null;
-            if (totalValue.get() > amount) {
-                Input input = accountManager.createRemainder(totalValue.get() - amount);
+            try {
+                boolean spent = getApi().checkWereAddressSpentFrom(address);
+                if (spent) {
+                    throw new ArgumentException(Constants.INVALID_ADDRESS_INPUT_ERROR);
+                }
                 
-                remainder = new Transfer(input.getAddress(), input.getBalance(), "", tryteTag);
-            }
+                Transfer transfer = new Transfer(address, amount, tryteMsg, tryteTag);
+                
+                List<Input> inputs = accountManager.getInputAddresses(amount);
+                
+                AtomicLong totalValue = new AtomicLong(0);
+                inputs.stream().forEach(input -> totalValue.addAndGet(input.getBalance()));
+                
+                Transfer remainder = null;
+                if (totalValue.get() > amount) {
+                    Input input = accountManager.createRemainder(totalValue.get() - amount);
+                    
+                    remainder = new Transfer(input.getAddress(), input.getBalance(), "", tryteTag);
+                }
+            
+                List<Trytes> trytes = prepareTransfers(transfer, inputs, remainder);
+                
         
-            List<Trytes> trytes = prepareTransfers(transfer, inputs, remainder);
-            
-
-            List<Transaction> transferResponse = getApi().sendTrytes(
-                    trytes.stream().map(Trytes::toString).toArray(String[]::new), 
-                    options.getDepth(), options.getMwm(), null
-                );
-            
-            accountManager.addPendingTransfer(
-                    new Hash(transferResponse.get(0).getHash()), 
-                    transferResponse.stream()
-                        .map(Transaction::toTrytes)
-                        .map(Trytes::new)
-                        .toArray(Trytes[]::new),
-                    1
-                );
-            
-            Bundle bundle = new Bundle(transferResponse, transferResponse.size());
-            EventSentTransfer event = new EventSentTransfer(bundle);
-            eventManager.emit(event);
-            
-            return new FutureTask<Bundle>(() -> bundle);
-        } catch (ArgumentException | IllegalStateException e) {
-            // TODO: Throw accounts error
-            EventAccountError event = new EventAccountError(e);
-            eventManager.emit(event);
-            
-            log.error(e.getMessage());
-            return null;
-        }
+                List<Transaction> transferResponse = getApi().sendTrytes(
+                        trytes.stream().map(Trytes::toString).toArray(String[]::new), 
+                        options.getDepth(), options.getMwm(), null
+                    );
+                
+                accountManager.addPendingTransfer(
+                        new Hash(transferResponse.get(0).getHash()), 
+                        transferResponse.stream()
+                            .map(Transaction::toTrytes)
+                            .map(Trytes::new)
+                            .toArray(Trytes[]::new),
+                        1
+                    );
+                
+                Bundle bundle = new Bundle(transferResponse, transferResponse.size());
+                EventSentTransfer event = new EventSentTransfer(bundle);
+                eventManager.emit(event);
+                
+                return bundle;
+            } catch (ArgumentException | IllegalStateException e) {
+                // TODO: Throw accounts error
+                EventAccountError event = new EventAccountError(e);
+                eventManager.emit(event);
+                
+                log.error(e.getMessage());
+                return null;
+            }
+        });
+        task.run();
+        return task;
     }
     
     /**
-     * 
+     * Future always completed
      * {@inheritDoc}
      */
     @Override
@@ -402,17 +449,25 @@ public class IotaAccount implements Account, EventListener {
     }
     
     public Future<ConditionalDepositAddress> newDepositRequest(DepositRequest request, ExpireCondition... otherConditions) throws AccountError {
-        Address address = accountManager.getNextAddress();
-        StoredDepositRequest storedRequest = new StoredDepositRequest(request, options.getSecurityLevel());
-        accountManager.addDepositRequest(address.getIndex(), storedRequest);
-        
-        EventNewInput event = new EventNewInput(address, request);
-        eventManager.emit(event);
-        return new FutureTask<ConditionalDepositAddress>(() -> new ConditionalDepositAddress(request, address.getAddress()));
+        FutureTask<ConditionalDepositAddress> task = new FutureTask<ConditionalDepositAddress>(() -> {
+            Address address = accountManager.getNextAddress();
+            StoredDepositRequest storedRequest = new StoredDepositRequest(request, options.getSecurityLevel());
+            accountManager.addDepositRequest(address.getIndex(), storedRequest);
+            
+            /*balanceCache.addBalance(
+                    new Input(address.getAddress().getHashCheckSum(), 0, address.getIndex(), options.getSecurityLevel()), 
+                    request);*/
+            
+            EventNewInput event = new EventNewInput(address, request);
+            eventManager.emit(event);
+            return new ConditionalDepositAddress(request, address.getAddress());
+        });
+        task.run();
+        return task;
     }
     
     /**
-     * 
+     * Future always completed
      * {@inheritDoc}
      */
     @Override
@@ -435,6 +490,7 @@ public class IotaAccount implements Account, EventListener {
     }
 
     /**
+     * Future always completed
      * 
      * @param message the optional message to use, can be null
      * @param tag the optional tag to use, can be null
@@ -448,6 +504,7 @@ public class IotaAccount implements Account, EventListener {
     }
     
     /**
+     * Future always completed
      * 
      * @param message the optional message to use
      * @param tag the optional tag to use
@@ -456,58 +513,76 @@ public class IotaAccount implements Account, EventListener {
      * @throws SendException If an internal error happened whilst sending
      */
     public Future<Bundle> sendZeroValue(Optional<String> message, Optional<String> tag, Optional<String> address) throws ArgumentException, SendException {
-        if (!loaded) {
-            return null;
-        }
-        
-        if (tag.isPresent() && !InputValidator.isTag(tag.get())) {
-            throw new ArgumentException(Constants.INVALID_TAG_INPUT_ERROR);
-        }
-        
-        String addressHash = Constants.NULL_HASH;
-        // remove the checksum of the address if provided
-        if (address.isPresent()) {
-            if (InputValidator.isAddress(address.get())) {
-                addressHash = Checksum.removeChecksum(address.get());
-            } else {
-                throw new ArgumentException(Constants.INVALID_ADDRESS_INPUT_ERROR);
+        FutureTask<Bundle> task = new FutureTask<Bundle>(() -> {
+            if (!loaded) {
+                return null;
             }
-        }
-
-        String tryteTag = tag.orElse("");
-        tryteTag = StringUtils.rightPad(tryteTag, Constants.TAG_LENGTH, '9');
-        
-        //Set a message, or use default. We use this to keep track which transfer is the outbound.
-        String asciiMessage = message.orElse(Constants.ACCOUNT_MESSAGE);
-        String tryteMsg = TrytesConverter.asciiToTrytes( asciiMessage);
-        
-        Transfer transfer = new Transfer(addressHash, 0, tryteMsg, tryteTag);
-        List<Transfer> transfers = new LinkedList<>();
-        transfers.add(transfer);
-        
-        try {
-            //Trytes of one bundle
-            List<String> trytes = prepareTransfers(transfers);
-            List<Transaction> transferResponse = getApi().sendTrytes(
-                    trytes.toArray(new String[trytes.size()]), options.getDepth(), options.getMwm(), null);
             
-            Bundle bundle = new Bundle(transferResponse, transferResponse.size());
-            EventSentTransfer event = new EventSentTransfer(bundle);
-            eventManager.emit(event);
+            if (tag.isPresent() && !InputValidator.isTag(tag.get())) {
+                throw new ArgumentException(Constants.INVALID_TAG_INPUT_ERROR);
+            }
             
-            return new FutureTask<Bundle>(() -> bundle);
-        } catch (ArgumentException e) {
-            e.printStackTrace();
-            return null;
-        }
+            String addressHash = Constants.NULL_HASH;
+            // remove the checksum of the address if provided
+            if (address.isPresent()) {
+                if (InputValidator.isAddress(address.get())) {
+                    addressHash = Checksum.removeChecksum(address.get());
+                } else {
+                    throw new ArgumentException(Constants.INVALID_ADDRESS_INPUT_ERROR);
+                }
+            }
+    
+            String tryteTag = tag.orElse("");
+            tryteTag = StringUtils.rightPad(tryteTag, Constants.TAG_LENGTH, '9');
+            
+            //Set a message, or use default. We use this to keep track which transfer is the outbound.
+            String asciiMessage = message.orElse(Constants.ACCOUNT_MESSAGE);
+            String tryteMsg = TrytesConverter.asciiToTrytes( asciiMessage);
+            
+            Transfer transfer = new Transfer(addressHash, 0, tryteMsg, tryteTag);
+            List<Transfer> transfers = new LinkedList<>();
+            transfers.add(transfer);
+            
+            try {
+                //Trytes of one bundle
+                List<String> trytes = prepareTransfers(transfers);
+                List<Transaction> transferResponse = getApi().sendTrytes(
+                        trytes.toArray(new String[trytes.size()]), options.getDepth(), options.getMwm(), null);
+                
+                Bundle bundle = new Bundle(transferResponse, transferResponse.size());
+                EventSentTransfer event = new EventSentTransfer(bundle);
+                eventManager.emit(event);
+                
+                return bundle;
+            } catch (ArgumentException e) {
+                e.printStackTrace();
+                return null;
+            }
+        });
+        task.run();
+        return task;
     }
 
+    /**
+     * NOT YET IMPLEMENTED
+     * 
+     * @param addresses
+     * @param amount
+     * @param message
+     * @param tag
+     * @return
+     */
     public Future<Bundle> sendMulti(String[] addresses, long amount, Optional<String> message, Optional<String> tag) {
-        if (!loaded) {
-            return null;
-        }
+        FutureTask<Bundle> task = new FutureTask<Bundle>(() -> {
+            if (!loaded) {
         
-        return null;
+                return null;
+            }
+        
+            return null;
+        });
+        task.run();
+        return task;
     }
     
     /**
@@ -541,11 +616,9 @@ public class IotaAccount implements Account, EventListener {
         }
         
         Bundle bundle = new Bundle();
-        System.out.println("prepareBundle");
         List<String> signatureFragments = prepareBundle(bundle, transfers);
         
         try {
-            System.out.println("sign");
             List<String> output = IotaAPIUtils.signInputsAndReturn(getSeed().getSeed().getTrytesString(), inputs, bundle, signatureFragments, getApi().getCurl());
             Collections.reverse(output);
             
@@ -573,8 +646,6 @@ public class IotaAccount implements Account, EventListener {
         
         Bundle bundle = new Bundle();
         List<String> signatureFragments = prepareBundle(bundle, transfers);
-        
-        signatureFragments.stream().forEach(System.out::println);
         
         //Zero value!  simply finalize the bundle
         bundle.finalize(getApi().getCurl());
@@ -629,7 +700,6 @@ public class IotaAccount implements Account, EventListener {
             long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
 
             // Add first entry to the bundle
-            System.out.println("trasnfer add to bundle: " + signatureMessageLength);
             bundle.addEntry(signatureMessageLength, transfer.getAddress(), transfer.getValue(), transfer.getTag(), timestamp);
         }
         return signatureFragments;
@@ -676,7 +746,7 @@ public class IotaAccount implements Account, EventListener {
         return options.getSeed();
     }
     
-    public AccountStore getStore(){
+    private AccountStore getStore(){
         return options.getStore();
     }
     
@@ -688,7 +758,7 @@ public class IotaAccount implements Account, EventListener {
         return eventManager;
     }
     
-    private AccountStateManager getAccountManager() {
+    public AccountStateManager getAccountManager() {
         return accountManager;
     }
     

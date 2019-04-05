@@ -51,14 +51,7 @@ public class AccountFileStore extends AccountStoreImpl {
 
     @Override
     public boolean start() {
-        try {
-            store.load();
-            return true;
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return false;
-        }
+        return true;
     }
 
     @Override
@@ -74,6 +67,7 @@ public class AccountFileStore extends AccountStoreImpl {
     @Override
     public AccountState loadAccount(String id) {
         AccountState state = store.get(id, null);
+
         if (state == null) {
             saveAccount(id, state = new AccountState());
         }

@@ -26,6 +26,12 @@ public class FlatFileStore implements Store {
     
     protected MemoryStore memoryStore = null;
     
+    /**
+     * Careful when supplying a stream, FlatFileStore CONTINUOUSLY writes to output stream.
+     * 
+     * @param inputStream
+     * @param outputStream
+     */
     public FlatFileStore(InputStream inputStream, OutputStream outputStream) {
         this.inputStream = inputStream;
         this.outputStream = outputStream;
@@ -56,7 +62,6 @@ public class FlatFileStore implements Store {
             inputStream = new FileInputStream(file);
         }
         Map<String, Serializable> store = loadFromInputStream(inputStream);
-        
         memoryStore = new MemoryStore(store);
         memoryStore.load();
         
@@ -87,17 +92,25 @@ public class FlatFileStore implements Store {
     public void save(boolean closeResources) {
         memoryStore.save(closeResources);
         try {
+            boolean closed = false;
             if (file != null && outputStream == null) {
                 outputStream = new FileOutputStream(file);
+                closed = true;
             }
             
             writeToOutputStream(outputStream, memoryStore.getAll());
+            if (closed) {
+                outputStream.close();
+                outputStream = null;
+            }
         } catch (IOException e) {
             log.warn("Failed to save config to disk! " + e.getMessage());
         } finally {
             if (closeResources) {
                 try {
-                    outputStream.close();
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
                 } catch (IOException e) {
                     //TODO Throw account error
                     e.printStackTrace();

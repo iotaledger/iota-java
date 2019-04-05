@@ -1,23 +1,20 @@
 package org.iota.jota.account.event.events;
 
 import org.iota.jota.account.event.AccountEventType;
-import org.iota.jota.account.event.impl.EventImpl;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.types.Address;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EventReceivedDeposit extends EventImpl {
+public class EventReceivedDeposit extends EventAbstractBundle {
     
-    Logger log = LoggerFactory.getLogger(EventReceivedDeposit.class);
+    private static final Logger log = LoggerFactory.getLogger(EventReceivedDeposit.class);
     
-    Address receiver;
-    
-    Bundle bundle;
+    private Address receiver;
 
-    public EventReceivedDeposit() {
-        super(AccountEventType.ReceivedDeposit);
+    public EventReceivedDeposit(Bundle bundle) {
+        super(AccountEventType.ReceivedDeposit, bundle);
     }
 
     public Address getReceiver() {
@@ -28,12 +25,8 @@ public class EventReceivedDeposit extends EventImpl {
         return receiver;
     }
     
-    public Bundle getBundle() {
-        return bundle;
-    }
-    
     public long getAmount() {
-        for (Transaction t : bundle.getTransactions()) {
+        for (Transaction t : getBundle().getTransactions()) {
             if (t.getAddress().equals(receiver.getAddress().toString())) {
                 return t.getValue();
             }

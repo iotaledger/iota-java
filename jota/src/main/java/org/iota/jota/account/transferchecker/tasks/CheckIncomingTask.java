@@ -76,18 +76,18 @@ public class CheckIncomingTask implements Runnable {
             if (isValue(bundle)) {
                 if (!receivingBefore(bundle)) {
                     receivingBundles.add(bundle.getBundleHash());
-                    emit(new EventReceivingDeposit());
+                    emit(new EventReceivingDeposit(bundle));
                 }
                 
                 if (isConsistent(bundle)) {
                     // Approved
                     receivedBundles.add(bundle.getBundleHash());
-                    emit(new EventReceivedDeposit());
+                    emit(new EventReceivedDeposit(bundle));
                 }
             } else {
                 //Message
                 receivedBundles.add(bundle.getBundleHash());
-                emit(new EventReceievedMessage());
+                emit(new EventReceievedMessage(bundle));
             }
         }
     }
