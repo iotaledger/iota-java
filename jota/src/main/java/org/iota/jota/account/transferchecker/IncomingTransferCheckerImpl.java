@@ -80,6 +80,10 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
         return true;
     }
     
+    /**
+     * Adds a new {@link CheckIncomingTask} for each address
+     * @param address
+     */
     private void addUnconfirmedBundle(Address address) {
         unconfirmedBundles.put(
             address.getAddress().getHash(), 

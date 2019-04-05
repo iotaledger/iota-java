@@ -481,7 +481,7 @@ public class Transaction {
         this.tag = this.tag != null && !this.tag.isEmpty() ? this.tag : this.obsoleteTag;
 
         String trytes = this.getSignatureFragments()
-                + this.getAddress()
+                + this.getAddress().substring(0, 81)
                 + Converter.trytes(valueTrits)
                 + this.getObsoleteTag()
                 + Converter.trytes(timestampTrits)

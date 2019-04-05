@@ -52,7 +52,10 @@ public interface Account extends TaskService {
     
     /**
      * Allocates a new CDA in the underlying store.
-     * 
+     * @param timeOut
+     * @param multiUse
+     * @param expectedAmount
+     * @param otherConditions
      * @return
      * @throws AccountError
      */

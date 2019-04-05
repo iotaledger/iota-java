@@ -72,6 +72,7 @@ public class AccountBalanceCache {
     }
     
     private void addInput(Input input, DepositRequest balance) {
+        System.out.println("adding balance: " + input.getAddress() + " -> " + input.getBalance());
         cachedIndexMap.put(input, balance);
         totalBalance += input.getBalance();
     }
@@ -121,6 +122,11 @@ public class AccountBalanceCache {
         }
     }
     
+    /**
+     * Based on CDA amount defined
+     * TODO: if CDA amount = 0, add input amount
+     * @return
+     */
     public long getTotalBalance() {
         return totalBalance;
     }

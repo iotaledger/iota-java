@@ -1,5 +1,6 @@
 package org.iota.jota.account;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -137,6 +138,10 @@ public class AccountStateManager {
         return cache.getTotalBalance();
     }
     
+    /**
+     * Returns the total balance of addresses which have their deposit conditions fulfilled
+     * @return The usable account balance (You are able to send this)
+     */
     public long getUsableBalance() {
         return inputSelector.getUsableBalance();
     }
@@ -165,8 +170,13 @@ public class AccountStateManager {
         store.removeDepositRequest(accountId, index);
     }
     
+    /**
+     * Makes a copy of the current deposit addresses
+     * 
+     * @return A map of key index with its related deposit request
+     */
     public Map<Integer, StoredDepositRequest> getDepositRequests(){
-        return store.getDepositRequests(accountId);
+        return new HashMap<Integer, StoredDepositRequest>(store.getDepositRequests(accountId));
     }
     
     public void addPendingTransfer(Hash tailTx, Trytes[] bundleTrytes, int... indices) {

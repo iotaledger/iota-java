@@ -21,6 +21,8 @@ public class DepositFactory {
 
     private DepositFactory() {
         methods = new ArrayList<>();
+        methods.add(new MagnetMethod());
+        methods.add(new QRMethod());
     }
 
     public void addMethod(DepositMethod method) {

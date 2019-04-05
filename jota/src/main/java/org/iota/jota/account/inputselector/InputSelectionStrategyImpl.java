@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.iota.jota.account.AccountBalanceCache;
 import org.iota.jota.account.clock.Clock;
 import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.errors.AccountNoBalanceError;
 import org.iota.jota.model.Input;
 
@@ -61,12 +62,37 @@ public class InputSelectionStrategyImpl implements InputSelectionStrategy {
         }
     }
     
-    private boolean isUsable(Input input, DepositRequest request) {
+    //Package private for testing
+    boolean isUsable(Input input, DepositRequest request) {
         if (!request.hasTimeOut()) {
+            if (input.getBalance() == 0) {
+                throw new AccountError("remainder address in system without 'expected amount'");
+            }
+            return true;
+        }
+        
+        if (clock.time().after(request.getTimeOut())) {
+            // We should recalculate this address first, maybe we missed something.
+            // Best to check anyways before we spent
+            return true;
+        }
+        
+        if (request.hasExpectedAmount() && input.getBalance() >= request.getExpectedAmount()) {
+            return true;
+        } else {
+            // This should timeout
+        }
+        
+        
+        /*System.out.println("isusable: " + input);
+        if (!request.hasTimeOut()) {
+            if (input.getBalance() == 0) {
+                throw new AccountError("remainder address in system without 'expected amount'");
+            }
             return true;
         } else if (request.getTimeOut().after(clock.time())) {
-            // TODO: Check for persist after timeout
-            
+
+            System.out.println("past timeout");
             if (request.isMultiUse()) {
                 if (request.hasExpectedAmount()) {
                     if (input.getBalance() >= request.getExpectedAmount()) {
@@ -84,8 +110,7 @@ public class InputSelectionStrategyImpl implements InputSelectionStrategy {
                     return true;
                 }
             }
-        } 
-        
+        } */
         // Any other input is discarded
         return false;
     }

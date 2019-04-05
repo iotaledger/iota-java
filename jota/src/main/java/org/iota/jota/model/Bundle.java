@@ -152,7 +152,13 @@ public class Bundle implements Comparable<Bundle> {
 
             int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).getLastIndex(), 27);
             
-            int[] t = Converter.trits(this.getTransactions().get(i).getAddress() + Converter.trytes(valueTrits) + this.getTransactions().get(i).getObsoleteTag() + Converter.trytes(timestampTrits) + Converter.trytes(currentIndexTrits) + Converter.trytes(lastIndexTrits));
+            int[] t = Converter.trits(
+                    this.getTransactions().get(i).getAddress().substring(0, 81) + 
+                    Converter.trytes(valueTrits) + 
+                    this.getTransactions().get(i).getObsoleteTag() + 
+                    Converter.trytes(timestampTrits) + 
+                    Converter.trytes(currentIndexTrits) + 
+                    Converter.trytes(lastIndexTrits));
             
             curl.absorb(t, 0, t.length);
           }

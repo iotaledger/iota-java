@@ -370,14 +370,14 @@ public class IotaAccount implements Account, EventListener {
                 return null;
             }
             
-            String tryteTag = tag.orElse("");
+            String tryteTag = tag == null ? "" : tag.orElse("");
             tryteTag = StringUtils.rightPad(tryteTag, Constants.TAG_LENGTH, '9');
             
             if (!InputValidator.isTag(tryteTag)) {
                 throw new ArgumentException(Constants.INVALID_TAG_INPUT_ERROR);
             }
             
-            String asciiMessage = message.orElse("");
+            String asciiMessage = message == null ? "" : message.orElse("");
             String tryteMsg = TrytesConverter.asciiToTrytes( asciiMessage);
             if (!InputValidator.isTrytes(tryteMsg, tryteMsg.length())) {
                 throw new ArgumentException(Constants.INVALID_INPUT_ERROR);
@@ -403,11 +403,10 @@ public class IotaAccount implements Account, EventListener {
                     remainder = new Transfer(input.getAddress(), input.getBalance(), "", tryteTag);
                 }
             
-                List<Trytes> trytes = prepareTransfers(transfer, inputs, remainder);
+                List<String> trytes = prepareTransfers(transfer, inputs, remainder);
                 
-        
                 List<Transaction> transferResponse = getApi().sendTrytes(
-                        trytes.stream().map(Trytes::toString).toArray(String[]::new), 
+                        trytes.toArray(new String[trytes.size()]), 
                         options.getDepth(), options.getMwm(), null
                     );
                 
@@ -453,10 +452,9 @@ public class IotaAccount implements Account, EventListener {
             Address address = accountManager.getNextAddress();
             StoredDepositRequest storedRequest = new StoredDepositRequest(request, options.getSecurityLevel());
             accountManager.addDepositRequest(address.getIndex(), storedRequest);
-            
-            /*balanceCache.addBalance(
+            balanceCache.addBalance(
                     new Input(address.getAddress().getHashCheckSum(), 0, address.getIndex(), options.getSecurityLevel()), 
-                    request);*/
+                    request);
             
             EventNewInput event = new EventNewInput(address, request);
             eventManager.emit(event);
@@ -594,7 +592,7 @@ public class IotaAccount implements Account, EventListener {
      * @return
      * @see #prepareTransfers(List)
      */
-    private List<Trytes> prepareTransfers(Transfer transfer, List<Input> inputs, Transfer remainder) {
+    private List<String> prepareTransfers(Transfer transfer, List<Input> inputs, Transfer remainder) {
         List<Transfer> transfers = new LinkedList<>();
         
         // Add the actual transfer
@@ -605,7 +603,7 @@ public class IotaAccount implements Account, EventListener {
             transfers.add(new Transfer(input.getAddress(), -input.getBalance(), "", transfer.getTag()));
             
             // For each security level, add a transfer
-            for (int i = 1; i < input.getSecurity(); i++) {
+            for (int i = Constants.MIN_SECURITY_LEVEL; i < input.getSecurity(); i++) {
                 transfers.add(new Transfer(input.getAddress(), 0, "", transfer.getTag()));
             }
         });
@@ -619,12 +617,15 @@ public class IotaAccount implements Account, EventListener {
         List<String> signatureFragments = prepareBundle(bundle, transfers);
         
         try {
-            List<String> output = IotaAPIUtils.signInputsAndReturn(getSeed().getSeed().getTrytesString(), inputs, bundle, signatureFragments, getApi().getCurl());
-            Collections.reverse(output);
+            List<String> output = IotaAPIUtils.signInputsAndReturn(
+                    getSeed().getSeed().getTrytesString(), inputs, bundle, signatureFragments, getApi().getCurl());
+            //Collections.reverse(output);
             
-            return output.stream().map(Trytes::new).collect(Collectors.toList());
+            return output;
+            //return output.stream().map(Trytes::new).collect(Collectors.toList());
         } catch (ArgumentException e) {
             // Seed is validated at creation, will not happen under normal circumstances
+            e.printStackTrace();
             return null; 
         }
     }

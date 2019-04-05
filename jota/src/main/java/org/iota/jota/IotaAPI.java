@@ -411,7 +411,9 @@ public class IotaAPI extends IotaAPICore {
 
         // attach to tangle - do pow
         GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
-
+        for (String tryte : res.getTrytes()) {
+            System.out.println(new Transaction(tryte));
+        }
         try {
             storeAndBroadcast(res.getTrytes());
         } catch (ArgumentException e) {
