@@ -12,6 +12,7 @@ import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.pow.ICurl;
+import org.iota.jota.pow.SpongeFactory;
 
 /**
  * Client Side computation service.
@@ -72,7 +73,6 @@ public class IotaAPIUtils {
         if (!InputValidator.areValidInputsList(inputs)) {
             throw new ArgumentException(Constants.INVALID_INPUT_ERROR);
         }
-        
         bundle.finalize(curl);
         bundle.addTrytes(signatureFragments);
 
@@ -135,7 +135,6 @@ public class IotaAPIUtils {
         for (Transaction tx : bundle.getTransactions()) {
             bundleTrytes.add(tx.toTrytes());
         }
-        Collections.reverse(bundleTrytes);
         return bundleTrytes;
     }
 }

@@ -519,7 +519,7 @@ public class Transaction {
         int[] transactionTrits = Converter.trits(trytes);
         int[] hash = new int[Constants.HASH_LENGTH_TRITS];
 
-        ICurl curl = customCurl != null ? customCurl.clone() : SpongeFactory.create(SpongeFactory.Mode.CURLP81);
+        ICurl curl = customCurl != null ? customCurl.clone() : SpongeFactory.create(SpongeFactory.Mode.KERL);
         // generate the correct transaction hash
         curl.reset();
         curl.absorb(transactionTrits, 0, transactionTrits.length);

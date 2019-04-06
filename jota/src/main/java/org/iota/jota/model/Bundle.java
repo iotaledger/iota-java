@@ -159,7 +159,6 @@ public class Bundle implements Comparable<Bundle> {
                     Converter.trytes(timestampTrits) + 
                     Converter.trytes(currentIndexTrits) + 
                     Converter.trytes(lastIndexTrits));
-            
             curl.absorb(t, 0, t.length);
           }
 
@@ -192,7 +191,7 @@ public class Bundle implements Comparable<Bundle> {
      */
     public void addTrytes(List<String> signatureFragments) {
         String emptySignatureFragment = "";
-        String emptyHash = EMPTY_HASH;
+        String emptyHash = Constants.NULL_HASH;
         long emptyTimestamp = 999999999L;
 
         emptySignatureFragment = StringUtils.rightPad(emptySignatureFragment, 2187, '9');

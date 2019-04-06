@@ -3,6 +3,7 @@ package org.iota.jota;
 import static org.iota.jota.utils.Constants.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -38,6 +39,7 @@ import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.pow.ICurl;
+import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.InputValidator;
 import org.slf4j.Logger;
@@ -593,10 +595,11 @@ public class IotaAPICore {
         if (pow != null) {
             final String[] resultTrytes = new String[trytes.length];
             String previousTransaction = null;
-            for (int i = 0; i < trytes.length; i++) {
+            for (int i = trytes.length-1; i >= 0; i--) {
                 Transaction txn = new Transaction(trytes[i]);
                 txn.setTrunkTransaction(previousTransaction == null ? trunkTransaction : previousTransaction);
                 txn.setBranchTransaction(previousTransaction == null ? branchTransaction : trunkTransaction);
+
                 if (txn.getTag().isEmpty() || txn.getTag().matches("9*")) {
                     txn.setTag(txn.getObsoleteTag());
                 }
@@ -605,7 +608,7 @@ public class IotaAPICore {
                 txn.setAttachmentTimestampLowerBound(0);
                 txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
                 resultTrytes[i] = pow.performPoW(txn.toTrytes(), minWeightMagnitude);
-                previousTransaction = new Transaction(resultTrytes[i]).getHash();
+                previousTransaction = new Transaction(resultTrytes[i], SpongeFactory.create(SpongeFactory.Mode.CURLP81)).getHash();
             }
             return new GetAttachToTangleResponse(resultTrytes);
         }

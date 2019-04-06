@@ -42,6 +42,7 @@ import org.iota.jota.utils.InputValidator;
 import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.Parallel;
 import org.iota.jota.utils.StopWatch;
+import org.omg.CORBA.RepositoryIdHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -408,12 +409,9 @@ public class IotaAPI extends IotaAPICore {
      */
     public List<Transaction> sendTrytes(String[] trytes, int depth, int minWeightMagnitude, String reference) throws ArgumentException {
         GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth, reference);
-
+        
         // attach to tangle - do pow
         GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
-        for (String tryte : res.getTrytes()) {
-            System.out.println(new Transaction(tryte));
-        }
         try {
             storeAndBroadcast(res.getTrytes());
         } catch (ArgumentException e) {
@@ -423,7 +421,7 @@ public class IotaAPI extends IotaAPICore {
         final List<Transaction> trx = new ArrayList<>();
 
         for (String tryte : res.getTrytes()) {
-            trx.add(new Transaction(tryte, getCurl()));
+            trx.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURLP81)));
         }
         
         return trx;
@@ -449,7 +447,7 @@ public class IotaAPI extends IotaAPICore {
         final List<Transaction> trxs = new ArrayList<>();
 
         for (final String tryte : trytesResponse.getTrytes()) {
-            trxs.add(new Transaction(tryte, getCurl()));
+            trxs.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURLP81)));
         }
         return trxs;
     }
@@ -713,7 +711,7 @@ public class IotaAPI extends IotaAPICore {
         } else {
 
             // If no input required, don't sign and simply finalize the bundle
-            bundle.finalize(getCurl());
+            bundle.finalize(SpongeFactory.create(SpongeFactory.Mode.KERL));
             bundle.addTrytes(signatureFragments);
 
             List<Transaction> trxb = bundle.getTransactions();
@@ -722,7 +720,6 @@ public class IotaAPI extends IotaAPICore {
             for (Transaction trx : trxb) {
                 bundleTrytes.add(trx.toTrytes());
             }
-            Collections.reverse(bundleTrytes);
             return bundleTrytes;
         }
     }
@@ -1157,7 +1154,7 @@ public class IotaAPI extends IotaAPICore {
                 throw new ArgumentException(Constants.INVALID_BUNDLE_ERROR);
             }
 
-            Transaction trx = new Transaction(gtr.getTrytes()[0], getCurl());
+            Transaction trx = new Transaction(gtr.getTrytes()[0], SpongeFactory.create(SpongeFactory.Mode.CURLP81));
             if (trx.getBundle() == null) {
                 throw new ArgumentException(Constants.INVALID_TRYTES_INPUT_ERROR);
             }
@@ -1423,8 +1420,7 @@ public class IotaAPI extends IotaAPICore {
 
                 bundle.addEntry(1, remainderAddress, remainder, tag, timestamp);
             }
-
-            bundle.finalize(SpongeFactory.create(SpongeFactory.Mode.CURLP81));
+            bundle.finalize(SpongeFactory.create(SpongeFactory.Mode.KERL));
             bundle.addTrytes(signatureFragments);
 
             return bundle.getTransactions();
@@ -1460,7 +1456,7 @@ public class IotaAPI extends IotaAPICore {
         List<String> inputAddresses = new ArrayList<>();
 
         for (String trx : trytes) {
-            Transaction transaction = new Transaction(trx, getCurl());
+            Transaction transaction = new Transaction(trx, SpongeFactory.create(SpongeFactory.Mode.CURLP81));
             addresses.add(Checksum.addChecksum(transaction.getAddress()));
             inputTransactions.add(transaction);
         }

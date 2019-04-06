@@ -135,5 +135,6 @@ public class AccountBalanceCache {
         synchronized(cachedIndexMap) {
             cachedIndexMap.remove(input);
         }
+        totalBalance -= input.getBalance();
     }
 }
