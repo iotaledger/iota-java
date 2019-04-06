@@ -83,34 +83,6 @@ public class InputSelectionStrategyImpl implements InputSelectionStrategy {
             // This should timeout
         }
         
-        
-        /*System.out.println("isusable: " + input);
-        if (!request.hasTimeOut()) {
-            if (input.getBalance() == 0) {
-                throw new AccountError("remainder address in system without 'expected amount'");
-            }
-            return true;
-        } else if (request.getTimeOut().after(clock.time())) {
-
-            System.out.println("past timeout");
-            if (request.isMultiUse()) {
-                if (request.hasExpectedAmount()) {
-                    if (input.getBalance() >= request.getExpectedAmount()) {
-                        return true;
-                    }
-                } else {
-                    return false;
-                }
-            } else {
-                if (request.hasExpectedAmount()) {
-                    if (input.getBalance() >= request.getExpectedAmount()) {
-                        return true;
-                    }
-                } else {
-                    return true;
-                }
-            }
-        } */
         // Any other input is discarded
         return false;
     }

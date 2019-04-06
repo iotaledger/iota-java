@@ -72,7 +72,6 @@ public class AccountBalanceCache {
     }
     
     private void addInput(Input input, DepositRequest balance) {
-        System.out.println("adding balance: " + input.getAddress() + " -> " + input.getBalance());
         cachedIndexMap.put(input, balance);
         totalBalance += input.getBalance();
     }
