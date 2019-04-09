@@ -20,7 +20,7 @@ import org.iota.jota.utils.Pair;
 
 public class EventManagerImpl implements EventManager {
     
-    Map<Class<? extends Event>, List<Pair<EventListener, Method>>> listeners;
+    private Map<Class<? extends Event>, List<Pair<EventListener, Method>>> listeners;
 
     public EventManagerImpl() {
         listeners = new ConcurrentHashMap<>();
@@ -32,26 +32,27 @@ public class EventManagerImpl implements EventManager {
         if (listeners == null || listeners.size() == 0) {
             return;
         }
-        
-        for (Pair<EventListener, Method> listener : listeners) {
-            try {
-                //TODO: Create and use fields in annotation
-                AccountEvent annotInstance = listener.hi.getAnnotation(AccountEvent.class);
-                
-                boolean accessible = listener.hi.isAccessible();
-                if (!accessible) {
-                    listener.hi.setAccessible(true);
+        synchronized (listeners) {
+            for (Pair<EventListener, Method> listener : listeners) {
+                try {
+                    //TODO: Create and use fields in annotation
+                    AccountEvent annotInstance = listener.hi.getAnnotation(AccountEvent.class);
+                    
+                    boolean accessible = listener.hi.isAccessible();
+                    if (!accessible) {
+                        listener.hi.setAccessible(true);
+                    }
+                    
+                    listener.hi.invoke(listener.low, event);
+                    
+                    if (!accessible) {
+                        listener.hi.setAccessible(false);
+                    }
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    e.printStackTrace();
+                    
+                    //Remove listener?
                 }
-                
-                listener.hi.invoke(listener.low, event);
-                
-                if (!accessible) {
-                    listener.hi.setAccessible(false);
-                }
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                e.printStackTrace();
-                
-                //Remove listener?
             }
         }
     }

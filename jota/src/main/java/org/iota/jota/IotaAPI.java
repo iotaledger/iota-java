@@ -288,7 +288,7 @@ public class IotaAPI extends IotaAPICore {
      *
      * @param addresses       Array of addresses.
      * @param inclusionStates If <code>true</code>, it also gets the inclusion state of each bundle.
-     * @return All the transaction bundles for the addresses
+     * @return All the transaction bundles for the addresses, or <code>null</code> when our thread gets interrupted
      * @throws ArgumentException When the addresses are invalid
      * @throws IllegalStateException When inclusion state/confirmed could not be determined (<tt>null</tt> returned)
      */
@@ -333,7 +333,8 @@ public class IotaAPI extends IotaAPICore {
             }
         }
         final GetInclusionStateResponse finalInclusionStates = gisr;
-        Parallel.of(Arrays.asList(tailTxArray),
+        try {
+            Parallel.of(Arrays.asList(tailTxArray),
                 new Parallel.Operation<String>() {
                     public void perform(String tailTx) {
 
@@ -358,6 +359,9 @@ public class IotaAPI extends IotaAPICore {
                         }
                     }
                 });
+        } catch (InterruptedException e) {
+            return null;
+        }
 
         Collections.sort(finalBundles);
         Bundle[] returnValue = new Bundle[finalBundles.size()];
@@ -1045,7 +1049,6 @@ public class IotaAPI extends IotaAPICore {
             bundleTrytes.add(trx.toTrytes());
         }
 
-        Collections.reverse(bundleTrytes);
         List<Transaction> trxs = sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), depth, minWeightMagnitude, reference);
 
         Boolean[] successful = new Boolean[trxs.size()];

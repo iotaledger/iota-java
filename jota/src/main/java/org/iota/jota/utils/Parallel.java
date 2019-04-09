@@ -7,9 +7,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * @author Adrian
- */
 public class Parallel {
 
     private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
@@ -19,14 +16,10 @@ public class Parallel {
      * @param elements
      * @param operation
      * @param <T>
+     * @throws InterruptedException 
      */
-    public static <T> void of(final Iterable<T> elements, final Operation<T> operation) {
-        try {
-            // invokeAll blocks for us until all submitted tasks in the call complete
-            forPool.invokeAll(createCallables(elements, operation));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public static <T> void of(final Iterable<T> elements, final Operation<T> operation) throws InterruptedException {
+        forPool.invokeAll(createCallables(elements, operation));
     }
 
     /**

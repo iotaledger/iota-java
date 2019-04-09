@@ -13,8 +13,9 @@ public class EventReceivedDeposit extends EventAbstractBundle {
     
     private Address receiver;
 
-    public EventReceivedDeposit(Bundle bundle) {
+    public EventReceivedDeposit(Bundle bundle, Address address) {
         super(AccountEventType.ReceivedDeposit, bundle);
+        receiver = address;
     }
 
     public Address getReceiver() {

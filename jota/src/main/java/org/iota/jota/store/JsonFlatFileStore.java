@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 public class JsonFlatFileStore extends FlatFileStore {
     
@@ -52,7 +53,11 @@ public class JsonFlatFileStore extends FlatFileStore {
         try {
             store = objectMapper.readValue(stream, new TypeReference<Map<String, AccountState>>(){});
         } catch (IOException e) {
-            store = new HashMap<String, Serializable>();
+            if (e.getClass().equals(MismatchedInputException.class)) {
+                store = new HashMap<>();
+            } else {
+                throw new RuntimeException(e);
+            }
         }
         return store;
     }

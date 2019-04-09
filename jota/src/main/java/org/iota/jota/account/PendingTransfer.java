@@ -7,6 +7,9 @@ import java.util.List;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trits;
 
+/**
+ * Pojo for original bundle trits and its tails created during broadcasting/promotion/reattachment
+ */
 public class PendingTransfer implements Serializable {
 
     private static final long serialVersionUID = 5549430894683695596L;

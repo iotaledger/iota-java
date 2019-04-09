@@ -131,10 +131,10 @@ public class Transaction {
 
     /**
      * Initializes a new instance of the Signature class.
-     * Default Mode.KERL is being used
+     * Default Mode.CURLP81 is being used
      */
     public Transaction() {
-        customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
+        customCurl = SpongeFactory.create(SpongeFactory.Mode.CURLP81);
     }
 
     /**
@@ -156,6 +156,10 @@ public class Transaction {
     public Transaction(String trytes, ICurl customCurl) {
        this(customCurl);
         transactionObject(trytes);
+    }
+    
+    public void setCustomCurl(ICurl customCurl) {
+        this.customCurl = customCurl;
     }
     
     public long getAttachmentTimestampLowerBound() {
@@ -519,7 +523,7 @@ public class Transaction {
         int[] transactionTrits = Converter.trits(trytes);
         int[] hash = new int[Constants.HASH_LENGTH_TRITS];
 
-        ICurl curl = customCurl != null ? customCurl.clone() : SpongeFactory.create(SpongeFactory.Mode.KERL);
+        ICurl curl = customCurl != null ? customCurl.clone() : SpongeFactory.create(SpongeFactory.Mode.CURLP81);
         // generate the correct transaction hash
         curl.reset();
         curl.absorb(transactionTrits, 0, transactionTrits.length);

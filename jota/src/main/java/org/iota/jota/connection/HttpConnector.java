@@ -48,15 +48,16 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HttpConnector implements Connection {
+
+    private static final Logger log = LoggerFactory.getLogger(HttpConnector.class);
     
-    private static final int DEFAULT_PORT = 1;
+    private static final int DEFAULT_PORT = 14265;
     
     private URL url;
     
     private IotaNodeHTTPService service;
     private OkHttpClient client;
     
-    private static final Logger log = LoggerFactory.getLogger(HttpConnector.class);
 
     /**
      * Creates an HTTP connector using the default timeout by creating an {@link OkHttpClient}

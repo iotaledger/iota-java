@@ -20,6 +20,7 @@ import org.iota.jota.account.event.events.EventPromotion;
 import org.iota.jota.account.event.events.EventReattachment;
 import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.event.events.EventTransferConfirmed;
+import org.iota.jota.account.transferchecker.IncomingTransferCheckerTask;
 import org.iota.jota.dto.response.GetTrytesResponse;
 import org.iota.jota.dto.response.ReplayBundleResponse;
 import org.iota.jota.model.Bundle;
@@ -28,9 +29,13 @@ import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trits;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.thread.UnboundScheduledExecutorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
-
+    
+    private static final Logger log = LoggerFactory.getLogger(PromoterReattacherImpl.class);
+    
     private static final int APROX_ABOVE_MAX_DEPTH_MIN = 5;
     private static final long PROMOTE_DELAY = 10000;
     
@@ -45,8 +50,15 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     private UnboundScheduledExecutorService service;
     
     //TODO: Find a better structure for this, or a different object
+    /**
+     * Bundle hash -> future check runnable
+     */
     private Map<String, ScheduledFuture<?>> unconfirmedBundles;
-    private Map<Hash, List<Transaction>> bundleTails;
+    
+    /**
+     * Original tail mapped to its original tail tx and its reattachment tx
+     */
+    private Map<String, List<Transaction>> bundleTails;
     
     public PromoterReattacherImpl(EventManager eventManager, IotaAPI api, AccountStateManager manager, AccountOptions options) {
         this.eventManager = eventManager;
@@ -63,12 +75,16 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
         service = new UnboundScheduledExecutorService();
         
         for (Entry<String, PendingTransfer> entry : manager.getPendingTransfers().entrySet()) {
+            // Recreate the bundle
             Bundle bundle = new Bundle();
             for (Trits trits : entry.getValue().getBundleTrits()){
-                bundle.addTransaction( new Transaction(Converter.trytes(trits.getTrits())));
+                Transaction tx = new Transaction(Converter.trytes(trits.getTrits()));
+                bundle.addTransaction(tx);
             }
+            bundle.setLength(entry.getValue().getBundleTrits().size());
             
-            addUnconfirmedBundle(bundle);
+            // Start 
+            addUnconfirmedBundle(bundle, 0);
         }
     }
 
@@ -84,67 +100,94 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     
     @AccountEvent
     private void onBundleBroadcast(EventSentTransfer event) {
-        addUnconfirmedBundle(event.getBundle());
+        addUnconfirmedBundle(event.getBundle(), PROMOTE_DELAY);
     }
 
-    private void addUnconfirmedBundle(Bundle bundle) {
+    private void addUnconfirmedBundle(Bundle bundle, long initialDelay) {
+        addBundleTail(bundle.getTransactions().get(0).getHash(), bundle.getTransactions().get(0));
         Runnable r = () -> doTask(bundle);
         unconfirmedBundles.put(
             bundle.getBundleHash(), 
-            service.scheduleAtFixedRate(r, 0, PROMOTE_DELAY, TimeUnit.MILLISECONDS)
+            service.scheduleAtFixedRate(r, initialDelay, PROMOTE_DELAY, TimeUnit.MILLISECONDS)
         );
     }
     
     @AccountEvent
     private void onConfirmed(EventTransferConfirmed event) {
-        ScheduledFuture<?> runnable = unconfirmedBundles.get(event.getBundle().getBundleHash());
-        if (null != runnable) {
-            runnable.cancel(true); 
+        String tail = getOriginalTailFromBundle(event.getBundle());
+        List<Transaction> allTails = bundleTails.get(tail);
+        
+        // Remove all possible reattaches/promotes etc
+        for (Transaction tx : allTails) {
+            ScheduledFuture<?> runnable = unconfirmedBundles.remove(tx.getBundle());
+            if (null != runnable && !runnable.isDone()) {
+                runnable.cancel(true); 
+            }
         }
         
-        unconfirmedBundles.remove(event.getBundle().getBundleHash());
-        bundleTails.remove(new Hash(event.getBundle().getBundleHash()));
+        //Then clear all
+        bundleTails.remove(tail);
+    }
+
+    private String getOriginalTailFromBundle(Bundle bundle) {
+        String tail = bundle.getTransactions().get(0).getHash();
+        for (Entry<String, List<Transaction>> entry : bundleTails.entrySet()) {
+            if (entry.getKey().equals(tail)) {
+                return entry.getKey();
+            } else {
+                for (Transaction tx : entry.getValue()) {
+                    if (tx.getBundle().equals(bundle.getBundleHash())) {
+                        return entry.getKey(); 
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private void doTask(Bundle bundle) {
-        PendingTransfer pendingBundle = getPendingBundle(bundle);
-        
-        if (null == pendingBundle) {
-            //Was this confirmed in the meantime?
-            return;
-        }
-        
-        Hash bundleHash = new Hash(bundle.getBundleHash());
-        Hash promotableTail = findPromotableTail(pendingBundle, bundleHash);
-        if (promotableTail != null) {
-            promote(bundle, promotableTail); 
-        } else {
-            reattach(bundle);
+        try {
+            PendingTransfer pendingBundle = getPendingTransferForBundle(bundle);
+            if (null == pendingBundle) {
+                //Was this confirmed in the meantime?
+                return;
+            }
+            
+            String promotableTail = findPromotableTail(pendingBundle);
+            if (promotableTail != null) {
+                promote(bundle, promotableTail); 
+            } else {
+                reattach(bundle);
+            }
+        } catch (Exception e) {
+            log.error("Failed to run promote task for " + bundle.getBundleHash() + ": " + e.getMessage());
         }
     }
     
-    private PendingTransfer getPendingBundle(Bundle bundle) {
+    private PendingTransfer getPendingTransferForBundle(Bundle bundle) {
+        String hash = bundle.getTransactions().get(0).getHash();
         for (Entry<String, PendingTransfer> entry : manager.getPendingTransfers().entrySet()) {
-            if (entry.getKey().equals(bundle.getBundleHash())) {
+            if (entry.getKey().equals(hash)) {
                 return entry.getValue();
             }
         }
         return null;
     }
     
-    private Hash findPromotableTail(PendingTransfer pendingBundle, Hash bundleHash) {
-        for (int i =  pendingBundle.getTailHashes().size() - 1; i >= 0; i--) {
-            Hash tail = pendingBundle.getTailHashes().get(i);
-            Transaction tailTransaction = getBundleTail(bundleHash, tail);
+    private String findPromotableTail(PendingTransfer pendingBundle) {
+        String tailOrig = pendingBundle.getTailHashes().get(0).getHash();
+        for (int i = pendingBundle.getTailHashes().size() - 1; i >= 0; i--) {
+            String tail = pendingBundle.getTailHashes().get(i).getHash();
+            Transaction tailTransaction = getBundleTail(tailOrig, tail);
             
             if (null == tailTransaction) {
-                GetTrytesResponse res = api.getTrytes(tail.getHash());
+                GetTrytesResponse res = api.getTrytes(tail);
                 if (res.getTrytes().length < 1) {
                     // Cant find tail transaction
                     continue;
                 }
                 tailTransaction = new Transaction(res.getTrytes()[0]);
-                addBundleTail(bundleHash, tailTransaction);
+                addBundleTail(tailOrig, tailTransaction);
             }
             
             if (aboveMaxDepth(tailTransaction.getAttachmentTimestamp())) {
@@ -157,7 +200,7 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
         return null;
     }
     
-    private void addBundleTail(Hash bundleHash, Transaction tailTransaction) {
+    private void addBundleTail(String bundleHash, Transaction tailTransaction) {
         List<Transaction> tails = bundleTails.get(bundleHash);
         if (null == tails) {
             tails = new ArrayList<>();
@@ -167,12 +210,11 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
         tails.add(tailTransaction);
     }
 
-    private Transaction getBundleTail(Hash bundleHash, Hash tail) {
-        List<Transaction> tails = bundleTails.get(bundleHash);
-        
+    private Transaction getBundleTail(String originalTail, String tail) {
+        List<Transaction> tails = bundleTails.get(originalTail);
         if (null != tails) {
             for (Transaction t : tails) {
-                if (t.getHash().equals(tail.getHash())) {
+                if (t.getHash().equals(tail)) {
                     return t;
                 }
             }
@@ -184,16 +226,16 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     private boolean aboveMaxDepth(long time) {
         Date now = this.options.getTime().time();
         long res = now.getTime() - time;
-        return TimeUnit.MINUTES.convert(res, TimeUnit.MILLISECONDS) < APROX_ABOVE_MAX_DEPTH_MIN;
+        return TimeUnit.MINUTES.convert(res, TimeUnit.MILLISECONDS) > APROX_ABOVE_MAX_DEPTH_MIN;
     }
 
     private void promote(Bundle pendingBundle) {
-        this.promote(pendingBundle, new Hash(pendingBundle.getTransactions().get(0).getHash()));
+        this.promote(pendingBundle, pendingBundle.getTransactions().get(0).getHash());
     }
     
-    public void promote(Bundle pendingBundle, Hash promotableTail) {
+    public void promote(Bundle pendingBundle, String promotableTail) {
         List<Transaction> res = api.promoteTransaction(
-                promotableTail.getHash(), options.getDepth(), options.getMwm(), pendingBundle);
+                promotableTail, options.getDepth(), options.getMwm(), pendingBundle);
         
         Bundle promotedBundle = new Bundle(res);
         
@@ -205,7 +247,7 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
         Bundle newBundle = createReattachBundle(pendingBundle);
         manager.addTailHash(
             new Hash(pendingBundle.getTransactions().get(0).getHash()), 
-            new Hash(newBundle.getTransactions().get(0).getHash())
+            new Hash(newBundle.getTransactions().get(newBundle.getTransactions().size() - 1).getHash())
         );
         
         EventReattachment event = new EventReattachment(pendingBundle, newBundle);
@@ -215,8 +257,7 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     }
     
     private Bundle createReattachBundle(Bundle pendingBundle) {
-        ReplayBundleResponse ret = api.replayBundle(pendingBundle, options.getDepth(), options.getMwm(), 
-                pendingBundle.getTransactions().get(0).getHash());
+        ReplayBundleResponse ret = api.replayBundle(pendingBundle, options.getDepth(), options.getMwm(), null);
         
         return ret.getNewBundle();
     }

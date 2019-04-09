@@ -40,23 +40,24 @@ public class AccountBalanceCache {
      */
     public void recalcluate(IotaAPI api) {
         cachedIndexMap = new ConcurrentHashMap<>();
-        
-        for (Entry<Integer, StoredDepositRequest> entry : state.getDepositRequests().entrySet()) {
-            try {
-                calculateBalance(api, 
-                        entry.getKey(), 
-                        entry.getValue().getRequest(), 
-                        entry.getValue().getSecurityLevel());
-            } catch (ArgumentException e) {
-                e.printStackTrace();
-                System.out.println("Failed to find balance for index " + entry.getKey() + ", ignoring..");
+        synchronized(cachedIndexMap) {
+            for (Entry<Integer, StoredDepositRequest> entry : state.getDepositRequests().entrySet()) {
+                try {
+                    calculateBalance(api, 
+                            entry.getKey(), 
+                            entry.getValue().getRequest(), 
+                            entry.getValue().getSecurityLevel());
+                } catch (ArgumentException e) {
+                    e.printStackTrace();
+                    System.out.println("Failed to find balance for index " + entry.getKey() + ", ignoring..");
+                }
             }
         }
     }
 
     private void calculateBalance(IotaAPI api, int index, DepositRequest request, int security) {
         Address address = addressGenerator.get(index);
-        
+    
         long balance;
         if (request.hasTimeOut()) {
             // Not a remainder address, check balance
@@ -81,7 +82,7 @@ public class AccountBalanceCache {
     }
     
     public Entry<Input, DepositRequest> getByHash(Hash hash){
-        return getByHash(hash.getHash());
+        return getByHash(hash.getHashCheckSum());
     }
     
     public Entry<Input, DepositRequest> getByHash(String hash){
@@ -108,7 +109,7 @@ public class AccountBalanceCache {
     }
 
     public Input first() {
-        return cachedIndexMap.entrySet().toArray(new Input[] {})[0];
+        return cachedIndexMap.keySet().toArray(new Input[0])[0];
     }
     
     public Stream<Entry<Input, DepositRequest>> getStream(){
@@ -133,7 +134,7 @@ public class AccountBalanceCache {
     public void removeInput(Input input) {
         synchronized(cachedIndexMap) {
             cachedIndexMap.remove(input);
+            totalBalance -= input.getBalance();
         }
-        totalBalance -= input.getBalance();
     }
 }

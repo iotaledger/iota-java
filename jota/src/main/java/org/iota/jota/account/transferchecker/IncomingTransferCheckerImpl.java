@@ -11,12 +11,12 @@ import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.addressgenerator.AddressGeneratorService;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.StoredDepositRequest;
+import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.events.EventNewInput;
 import org.iota.jota.account.event.events.EventReceivedDeposit;
 import org.iota.jota.account.event.events.EventSentTransfer;
-import org.iota.jota.account.transferchecker.tasks.CheckIncomingTask;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.types.Address;
@@ -81,15 +81,19 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
     }
     
     /**
-     * Adds a new {@link CheckIncomingTask} for each address
+     * Adds a new {@link IncomingTransferCheckerTask} for each address
      * @param address
      */
     private void addUnconfirmedBundle(Address address) {
-        unconfirmedBundles.put(
-            address.getAddress().getHash(), 
-            service.scheduleAtFixedRate(new CheckIncomingTask(address, api, eventManager, skipFirst, accountManager), 
-                                        0, CHECK_INCOMING_DELAY, TimeUnit.MILLISECONDS)
-        );
+        ScheduledFuture<?> task = service.scheduleAtFixedRate(
+                new IncomingTransferCheckerTask(address, api, eventManager, skipFirst, accountManager), 
+                0, CHECK_INCOMING_DELAY, TimeUnit.MILLISECONDS);
+        unconfirmedBundles.put(address.getAddress().getHash(), task);
+    }
+    
+    @AccountEvent
+    public void newInput(EventNewInput event) {
+        addUnconfirmedBundle(event.getAddress());
     }
     
     @AccountEvent
@@ -99,10 +103,12 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
         if (null == res) {
             // Received unknown deposit!!, create, SAVE and mark
             // How did we get here though? Should not check any other addresses then the ones we have made
-            cache.addBalance(null, null);
+            //cache.addBalance(null, null);
+            throw new AccountError("Got a received deposit which is not founf in the cache!");
         }
         
         //Update balance
+        System.out.println("onReceivedDeposit for: " + receivedEvent.getAddress());
         res.getKey().setBalance(res.getKey().getBalance() + receivedEvent.getAmount());
     }
 
@@ -114,16 +120,12 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
                 
                 ScheduledFuture<?> runnable = unconfirmedBundles.get(t.getAddress());
                 if (null != runnable) {
+                    System.out.println("Removing and cancelling: " + t.getAddress());
                     runnable.cancel(true);
                     unconfirmedBundles.remove(t.getAddress());
                 }
             }
         }
-    }
-    
-    @AccountEvent
-    public void inputAddressRequested(EventNewInput newInput) {
-        addUnconfirmedBundle(newInput.getAddress());
     }
 
     @Override

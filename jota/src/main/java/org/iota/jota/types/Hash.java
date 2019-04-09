@@ -47,6 +47,6 @@ public class Hash implements Serializable {
     
     @Override
     public boolean equals(Object obj) {
-        return obj != null && obj.getClass().equals(Hash.class) && toString().equals(obj.toString());
+        return obj != null && obj.getClass().equals(Hash.class) && hash.equals(((Hash)obj).hash);
     }
 }

@@ -191,6 +191,10 @@ public class AccountStateManager {
         store.addTailHash(accountId, tailHash, newTailTxHash);
     }
     
+    /**
+     * 
+     * @return Map of first tail hash with its pending transfer data
+     */
     public Map<String, PendingTransfer> getPendingTransfers(){
         return store.getPendingTransfers(accountId);
     }

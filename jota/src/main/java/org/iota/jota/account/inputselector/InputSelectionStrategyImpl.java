@@ -77,7 +77,9 @@ public class InputSelectionStrategyImpl implements InputSelectionStrategy {
             return true;
         }
         
-        if (request.hasExpectedAmount() && input.getBalance() >= request.getExpectedAmount()) {
+        if (request.hasExpectedAmount() 
+                && input.getBalance() >= request.getExpectedAmount() 
+                ) { 
             return true;
         } else {
             // This should timeout
