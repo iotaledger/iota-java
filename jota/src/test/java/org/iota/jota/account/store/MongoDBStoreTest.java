@@ -1,32 +1,25 @@
 package org.iota.jota.account.store;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
-import org.bson.Document;
 import org.iota.jota.account.PendingTransfer;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.StoredDepositAddress;
 import org.iota.jota.config.types.IotaDefaultConfig;
-import org.iota.jota.model.Transaction;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trits;
 import org.iota.jota.types.Trytes;
 import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.Converter;
-import org.iota.jota.utils.TrytesConverter;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.UpdateResult;
 
 public class MongoDBStoreTest {
     
@@ -35,9 +28,10 @@ public class MongoDBStoreTest {
 
     @Before
     public void setUp() {
-        this.store = new MongoStore("heroku_d8ntbcbh", IotaDefaultConfig.Defaults.TABLE_NAME, 
-                "ds157538.mlab.com", 57538);
-        store.addCredentials("heroku_d8ntbcbh", "2pl8q378ppb2ofgiegmc0qs9in");
+        // Want to run this test? Update it with your mongodb details locally for now
+        this.store = new MongoStore("databasename", IotaDefaultConfig.Defaults.TABLE_NAME, 
+                "url", 1337);
+        //store.addCredentials("username", "password");
     }
     
     @After
@@ -46,6 +40,7 @@ public class MongoDBStoreTest {
         store.shutdown();
     }
     
+    @Ignore
     @Test
     public void testConnection() {
         try {
@@ -55,6 +50,7 @@ public class MongoDBStoreTest {
         }
     }
     
+    @Ignore
     @Test
     public void depositRequestTest() throws Exception{
         store.start();
@@ -73,6 +69,7 @@ public class MongoDBStoreTest {
         assertEquals("Store should no longer have this field", 0, result.size());
     }
     
+    @Ignore
     @Test
     public void indexTest() throws Exception{
         store.start();
@@ -85,6 +82,7 @@ public class MongoDBStoreTest {
         assertEquals("Store should have a value after setting", 5, result);
     }
     
+    @Ignore
     @Test
     public void pendingTransferTest() throws Exception{
         store.start();
