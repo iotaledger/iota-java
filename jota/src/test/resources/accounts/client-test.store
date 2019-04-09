@@ -1,0 +1,18 @@
+{
+   "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZC":{
+      "keyIndex":4,
+      "depositRequests":{
+         "1":{
+            "securityLevel": 1,
+            "request": {
+               "timeOut":0,
+               "multiUse":false,
+               "expectedAmount":5
+            }
+         }
+      },
+      "pendingTransfers":{
+
+      }
+   }
+}

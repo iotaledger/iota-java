@@ -69,7 +69,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
 
     ```gradle
     dependencies {
-        compile 'com.github.iotaledger:iota-java:1.0.0-beta3'
+        compile 'com.github.iotaledger:iota-java:1.0.0-beta4'
     }
     ```
     
@@ -96,7 +96,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
     ```
     
 3. Change the value of the `<version>` tag to either a release number or the first 10 characters of a Git commit hash:
-`<version>a98de8ea50</version>` or `<version>1.0.0-beta3</version>`
+`<version>51adea1b25</version>` or `<version>1.0.0-beta4</version>`
 
 **Note:** Find the latest version on the [Jitpack](https://jitpack.io/#iotaledger/iota-java) page.
 
@@ -178,6 +178,7 @@ We have a list of test cases on the [`src/test/java` directory][tests] that you 
 A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/jota/IotaAPITest.java).
 
 ## Change logs:
+- Changes in [**1.0.0-beta4**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta3...1.0.0-beta4)
 - Changes in [**1.0.0-beta3**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta2...1.0.0-beta3)
 - Changes in [**1.0.0-beta2**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta1...1.0.0-beta2)
 - Changes in [**1.0.0-beta1**](https://github.com/iotaledger/iota-java/compare/0.9.10...1.0.0-beta1)
@@ -211,8 +212,8 @@ The Apache 2.0 license can be found [here](license).
 [travis-badge]: https://travis-ci.org/iotaledger/iota-java.svg?branch=master
 [license]: https://github.com/iotaledger/iota-java/blob/master/LICENSE
 [license-badge]: https://img.shields.io/github/license/iotaledger/iota-java.svg
-[iota-iri]: https://github.com/iotaledger/iri/tree/v1.5.5
-[iota-iri-badge]: https://img.shields.io/badge/IOTA%20IRI%20compatibility-v1.5.5-blue.svg
+[iota-iri]: https://github.com/iotaledger/iri/tree/v1.6.1
+[iota-iri-badge]: https://img.shields.io/badge/IOTA%20IRI%20compatibility-v1.6.1-blue.svg
 [iota-api]: https://iota.readme.io/reference
 [iota-api-badge]: https://img.shields.io/badge/IOTA%20API%20coverage-15/15%20commands-green.svg
 [javadoc]: https://iotaledger.github.io/iota-java/javadoc/
