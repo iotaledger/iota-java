@@ -73,7 +73,6 @@ public class Input {
      * @param balance The balance.
      */
     public void setBalance(long balance) {
-        System.out.println(address + ": " +  this.balance + " -> " + balance);
         this.balance = balance;
     }
 

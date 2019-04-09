@@ -104,11 +104,10 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
             // Received unknown deposit!!, create, SAVE and mark
             // How did we get here though? Should not check any other addresses then the ones we have made
             //cache.addBalance(null, null);
-            throw new AccountError("Got a received deposit which is not founf in the cache!");
+            throw new AccountError("Got a received deposit which is not found in the cache!");
         }
         
         //Update balance
-        System.out.println("onReceivedDeposit for: " + receivedEvent.getAddress());
         res.getKey().setBalance(res.getKey().getBalance() + receivedEvent.getAmount());
     }
 
@@ -120,7 +119,6 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
                 
                 ScheduledFuture<?> runnable = unconfirmedBundles.get(t.getAddress());
                 if (null != runnable) {
-                    System.out.println("Removing and cancelling: " + t.getAddress());
                     runnable.cancel(true);
                     unconfirmedBundles.remove(t.getAddress());
                 }

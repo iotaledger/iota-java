@@ -67,7 +67,6 @@ public class IncomingTransferCheckerTask implements Runnable {
                 if (receivedBefore(bundle)) {
                     continue;
                 } else if (!isValid(bundle)) {
-                    System.out.println("Encountered invalid bundle: ");
                     continue;
                 } 
                 
@@ -115,9 +114,6 @@ public class IncomingTransferCheckerTask implements Runnable {
         } catch (Exception e) {
             // Thread got interrupted or http call closed, could be a problem so we log
             log.warn(e.getMessage());
-            e.printStackTrace();
-            System.out.println("Checkincoming: " + addrHash);
-            System.out.println(e.getMessage());
         }
     }
 
@@ -163,7 +159,6 @@ public class IncomingTransferCheckerTask implements Runnable {
         if (skipFirst) {
             return;
         }
-        System.out.println("emit: " + event.getClass());
         eventManager.emit(event);
     }
 }

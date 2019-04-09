@@ -9,6 +9,7 @@ import org.iota.jota.IotaAPI;
 import org.iota.jota.account.addressgenerator.AddressGeneratorService;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.StoredDepositRequest;
+import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Input;
 import org.iota.jota.types.Address;
@@ -48,8 +49,7 @@ public class AccountBalanceCache {
                             entry.getValue().getRequest(), 
                             entry.getValue().getSecurityLevel());
                 } catch (ArgumentException e) {
-                    e.printStackTrace();
-                    System.out.println("Failed to find balance for index " + entry.getKey() + ", ignoring..");
+                    throw new AccountError(e);
                 }
             }
         }
