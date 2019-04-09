@@ -2,7 +2,7 @@ package org.iota.jota.account;
 
 import java.util.Map;
 
-import org.iota.jota.account.deposits.StoredDepositRequest;
+import org.iota.jota.account.deposits.StoredDepositAddress;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trytes;
 
@@ -18,11 +18,11 @@ public interface AccountStore {
     
     void writeIndex(String id, int index);
     
-    void addDepositRequest(String id, int index, StoredDepositRequest request);
+    void addDepositAddress(String id, int index, StoredDepositAddress request);
     
-    void removeDepositRequest(String id, int index);
+    void removeDepositAddress(String id, int index);
     
-    Map<Integer, StoredDepositRequest> getDepositRequests(String id);
+    Map<Integer, StoredDepositAddress> getDepositAddresses(String id);
     
     /**
      * Adds transaction as pending

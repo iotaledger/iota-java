@@ -23,7 +23,7 @@ import org.iota.jota.account.addressgenerator.AddressGeneratorServiceImpl;
 import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
-import org.iota.jota.account.deposits.StoredDepositRequest;
+import org.iota.jota.account.deposits.StoredDepositAddress;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.errors.AccountLoadError;
 import org.iota.jota.account.event.AccountEvent;
@@ -449,8 +449,12 @@ public class IotaAccount implements Account, EventListener {
     
     public Future<ConditionalDepositAddress> newDepositRequest(DepositRequest request, ExpireCondition... otherConditions) throws AccountError {
         FutureTask<ConditionalDepositAddress> task = new FutureTask<ConditionalDepositAddress>(() -> {
+            if (request.getMultiUse() && request.getExpectedAmount() != 0) {
+                throw new AccountError("Cannot use multi-use and amount simultaniously");
+            }
+            
             Address address = accountManager.getNextAddress();
-            StoredDepositRequest storedRequest = new StoredDepositRequest(request, options.getSecurityLevel());
+            StoredDepositAddress storedRequest = new StoredDepositAddress(request, options.getSecurityLevel());
             accountManager.addDepositRequest(address.getIndex(), storedRequest);
             balanceCache.addBalance(
                     new Input(address.getAddress().getHashCheckSum(), 0, address.getIndex(), options.getSecurityLevel()), 
@@ -553,8 +557,7 @@ public class IotaAccount implements Account, EventListener {
                 
                 return bundle;
             } catch (ArgumentException e) {
-                e.printStackTrace();
-                return null;
+                throw new AccountError(e);
             }
         });
         task.run();
@@ -585,6 +588,7 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * Translates input, remainder and transfer to a single list of transfers
+     * Used in sending value transactions
      * 
      * @param transfer
      * @param inputs
@@ -619,10 +623,8 @@ public class IotaAccount implements Account, EventListener {
         try {
             List<String> output = IotaAPIUtils.signInputsAndReturn(
                     getSeed().getSeed().getTrytesString(), inputs, bundle, signatureFragments, getApi().getCurl());
-            //Collections.reverse(output);
             
             return output;
-            //return output.stream().map(Trytes::new).collect(Collectors.toList());
         } catch (ArgumentException e) {
             // Seed is validated at creation, will not happen under normal circumstances
             e.printStackTrace();
@@ -630,6 +632,12 @@ public class IotaAccount implements Account, EventListener {
         }
     }
     
+    /**
+     * TODO Merge both prepareTransfers funcitons
+     * 
+     * @param transfers
+     * @return
+     */
     private List<String> prepareTransfers(List<Transfer> transfers){
         List<String> bundleTrytes = new LinkedList<>();
         
@@ -711,7 +719,7 @@ public class IotaAccount implements Account, EventListener {
      * Modifications to the copy do not reflect in the original.
      * 
      * The IotaAccount is still using the original account state
-     * @return a clone of the account state.
+     * @return a clone of the account state. or <code>null</code> if it failed
      */
     public AccountState exportAccount() {
         if (!loaded) {
@@ -777,7 +785,6 @@ public class IotaAccount implements Account, EventListener {
         builder.append("iota-java accounts configured with the following: ");
         
         builder.append(System.getProperty("line.separator"));
-        //builder.append("Seed: " + getSeed().substring(0, 10) + StringUtils.repeat('X', Constants.SEED_LENGTH_MAX - 10));
         
         builder.append(options.toString());
         

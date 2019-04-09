@@ -10,7 +10,7 @@ import org.iota.jota.account.AccountBalanceCache;
 import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.addressgenerator.AddressGeneratorService;
 import org.iota.jota.account.deposits.DepositRequest;
-import org.iota.jota.account.deposits.StoredDepositRequest;
+import org.iota.jota.account.deposits.StoredDepositAddress;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
@@ -64,7 +64,7 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
     
     @Override
     public boolean start() {
-        for (Entry<Integer, StoredDepositRequest> entry : accountManager.getDepositRequests().entrySet()) {
+        for (Entry<Integer, StoredDepositAddress> entry : accountManager.getDepositRequests().entrySet()) {
             if (entry.getValue().getSecurityLevel() != addressGen.getSecurityLevel()) {
                 // Different security level request, ignoring for now
                 continue;

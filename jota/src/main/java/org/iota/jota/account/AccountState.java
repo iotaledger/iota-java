@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.iota.jota.account.deposits.StoredDepositRequest;
+import org.iota.jota.account.deposits.StoredDepositAddress;
 
 public class AccountState implements Serializable {
 
@@ -22,7 +22,7 @@ public class AccountState implements Serializable {
     /**
      * Map of key indexes and their corresponding stored deposit
      */
-    private Map<Integer, StoredDepositRequest> depositRequests;
+    private Map<Integer, StoredDepositAddress> depositRequests;
     
     /**
      * 
@@ -36,7 +36,7 @@ public class AccountState implements Serializable {
     
     
     
-    public AccountState(int keyIndex, Map<Integer, StoredDepositRequest> depositRequests,
+    public AccountState(int keyIndex, Map<Integer, StoredDepositAddress> depositRequests,
             Map<String, PendingTransfer> pendingTransfers) {
         this.keyIndex = keyIndex;
         this.depositRequests = depositRequests;
@@ -50,7 +50,7 @@ public class AccountState implements Serializable {
      * @param index keyIndex
      * @param request request to store
      */
-    public void addDepositRequest(int index, StoredDepositRequest request){
+    public void addDepositRequest(int index, StoredDepositAddress request){
         depositRequests.put(index, request);
     }
     
@@ -75,7 +75,7 @@ public class AccountState implements Serializable {
         return depositRequests.size() == 0 && pendingTransfers.size() == 0;
     }
     
-    public Map<Integer, StoredDepositRequest> getDepositRequests() {
+    public Map<Integer, StoredDepositAddress> getDepositRequests() {
         return depositRequests;
     }
     

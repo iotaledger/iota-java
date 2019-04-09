@@ -21,7 +21,7 @@ import org.bson.json.JsonWriterSettings;
 import org.iota.jota.account.AccountState;
 import org.iota.jota.account.ExportedAccountState;
 import org.iota.jota.account.PendingTransfer;
-import org.iota.jota.account.deposits.StoredDepositRequest;
+import org.iota.jota.account.deposits.StoredDepositAddress;
 import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trytes;
@@ -236,7 +236,7 @@ public class MongoStore extends DatabaseStore {
     }
 
     @Override
-    public void addDepositRequest(String id, int index, StoredDepositRequest request) {
+    public void addDepositAddress(String id, int index, StoredDepositAddress request) {
         UpdateResult result = collection.updateOne(
                 Filters.eq("_id", id), 
                 new Document("$set", new Document(DEPOSIT, new Document(index + "", request))), 
@@ -247,7 +247,7 @@ public class MongoStore extends DatabaseStore {
     }
 
     @Override
-    public void removeDepositRequest(String id, int index) {
+    public void removeDepositAddress(String id, int index) {
         UpdateResult result = collection.updateOne(
                 Filters.eq("_id", id), 
                 new Document("$unset", new Document(DEPOSIT, new Document(index + "", ""))),
@@ -258,13 +258,13 @@ public class MongoStore extends DatabaseStore {
     }
 
     @Override
-    public Map<Integer, StoredDepositRequest> getDepositRequests(String id) {
+    public Map<Integer, StoredDepositAddress> getDepositAddresses(String id) {
         Document requests = collection.find(
                 Filters.eq("_id", id))
                 .projection(Projections.fields(Projections.include(DEPOSIT)))
                 .first();
         
-        Map<Integer, StoredDepositRequest> deposits = null;
+        Map<Integer, StoredDepositAddress> deposits = null;
         if (requests != null) {
             Map<String, Document> strDeposits = requests.get(DEPOSIT, Map.class);
 
@@ -272,12 +272,12 @@ public class MongoStore extends DatabaseStore {
             if (strDeposits  != null) {
                 for (Entry<String, Document> entry : strDeposits.entrySet()) {
     
-                    BsonDocument store = entry.getValue().toBsonDocument(StoredDepositRequest.class, collection.getCodecRegistry());
+                    BsonDocument store = entry.getValue().toBsonDocument(StoredDepositAddress.class, collection.getCodecRegistry());
                     try {
                         // Get custom Reverse snake parser, read Document as bson using custom builder
-                        StoredDepositRequest dep = JsonParser.get().getObjectMapper().readValue(
+                        StoredDepositAddress dep = JsonParser.get().getObjectMapper().readValue(
                                 store.toJson(settings), 
-                                StoredDepositRequest.class);
+                                StoredDepositAddress.class);
                         
                         deposits.put(Integer.valueOf(entry.getKey()), dep);
                     } catch (IOException e) {
@@ -398,21 +398,21 @@ public class MongoStore extends DatabaseStore {
     private class StringAccountState {
         int keyIndex;
         Map<String, PendingTransfer> pendingTransfers;
-        Map<String, StoredDepositRequest> depositRequests;
+        Map<String, StoredDepositAddress> depositRequests;
         
         public StringAccountState(AccountState state) {
             keyIndex = state.getKeyIndex();
             pendingTransfers = state.getPendingTransfers();
             
             depositRequests = new java.util.HashMap<>();
-            for (Entry<Integer, StoredDepositRequest> entry : state.getDepositRequests().entrySet()) {
+            for (Entry<Integer, StoredDepositAddress> entry : state.getDepositRequests().entrySet()) {
                 depositRequests.put(entry.getKey() + "", entry.getValue());
             }
         }
         
         public AccountState toAccountState() {
-            Map<Integer, StoredDepositRequest> depositRequests = new java.util.HashMap<>();
-            for (Entry<String, StoredDepositRequest> entry : this.depositRequests.entrySet()) {
+            Map<Integer, StoredDepositAddress> depositRequests = new java.util.HashMap<>();
+            for (Entry<String, StoredDepositAddress> entry : this.depositRequests.entrySet()) {
                 depositRequests.put(Integer.valueOf(entry.getKey()), entry.getValue());
             }
             

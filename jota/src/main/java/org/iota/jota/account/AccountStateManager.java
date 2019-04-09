@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import org.iota.jota.account.addressgenerator.AddressGeneratorService;
 import org.iota.jota.account.deposits.DepositRequest;
-import org.iota.jota.account.deposits.StoredDepositRequest;
+import org.iota.jota.account.deposits.StoredDepositAddress;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.errors.AddressGenerationError;
 import org.iota.jota.account.inputselector.InputSelectionStrategy;
@@ -91,7 +91,7 @@ public class AccountStateManager {
             
             deposit = new DepositRequest(null, false, remainder);
             
-            addDepositRequest(key, new StoredDepositRequest(deposit, options.getSecurityLevel()));
+            addDepositRequest(key, new StoredDepositAddress(deposit, options.getSecurityLevel()));
         
         
             Input remainderInput = new Input(
@@ -126,7 +126,7 @@ public class AccountStateManager {
         
         
             for (Input i : inputs) {
-                store.removeDepositRequest(accountId, i.getKeyIndex());
+                store.removeDepositAddress(accountId, i.getKeyIndex());
                 cache.removeInput(i);
             }
 
@@ -162,12 +162,12 @@ public class AccountStateManager {
         store.writeIndex(accountId, index);
     }
     
-    public void addDepositRequest(int index, StoredDepositRequest request) {
-        store.addDepositRequest(accountId, index, request);
+    public void addDepositRequest(int index, StoredDepositAddress request) {
+        store.addDepositAddress(accountId, index, request);
     }
     
     public void removeDepositRequest(int index) {
-        store.removeDepositRequest(accountId, index);
+        store.removeDepositAddress(accountId, index);
     }
     
     /**
@@ -175,8 +175,8 @@ public class AccountStateManager {
      * 
      * @return A map of key index with its related deposit request
      */
-    public Map<Integer, StoredDepositRequest> getDepositRequests(){
-        return new HashMap<Integer, StoredDepositRequest>(store.getDepositRequests(accountId));
+    public Map<Integer, StoredDepositAddress> getDepositRequests(){
+        return new HashMap<Integer, StoredDepositAddress>(store.getDepositAddresses(accountId));
     }
     
     public void addPendingTransfer(Hash tailTx, Trytes[] bundleTrytes, int... indices) {
@@ -200,7 +200,7 @@ public class AccountStateManager {
     }
 
     public boolean isOwnAddress(String hash) {
-        for (Entry<Integer, StoredDepositRequest> entry : getDepositRequests().entrySet()) {
+        for (Entry<Integer, StoredDepositAddress> entry : getDepositRequests().entrySet()) {
             if (addressService.get(entry.getKey(), entry.getValue().getSecurityLevel())
                     .getAddress().getHash().equals(hash)) {
                 

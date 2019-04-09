@@ -2,17 +2,17 @@ package org.iota.jota.account.deposits;
 
 import java.util.Objects;
 
-public class StoredDepositRequest {
+public class StoredDepositAddress {
     
     private DepositRequest request;
     
     private int securityLevel;
     
-    private StoredDepositRequest() {
+    private StoredDepositAddress() {
         
     }
 
-    public StoredDepositRequest(DepositRequest request, int securityLevel) {
+    public StoredDepositAddress(DepositRequest request, int securityLevel) {
         this.request = request;
         this.securityLevel = securityLevel;
     }
@@ -32,16 +32,16 @@ public class StoredDepositRequest {
     
     @Override
     public boolean equals(Object obj) {
-        if (!obj.getClass().equals(StoredDepositRequest.class)) {
+        if (!obj.getClass().equals(StoredDepositAddress.class)) {
             return false;
         }
-        StoredDepositRequest sr = (StoredDepositRequest) obj;
+        StoredDepositAddress sr = (StoredDepositAddress) obj;
         return sr.securityLevel == securityLevel
                 && Objects.equals(sr.request, request);
     }
     
     @Override
-    public StoredDepositRequest clone() throws CloneNotSupportedException {
-        return (StoredDepositRequest) super.clone();
+    public StoredDepositAddress clone() throws CloneNotSupportedException {
+        return (StoredDepositAddress) super.clone();
     }
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 import org.bson.Document;
 import org.iota.jota.account.PendingTransfer;
 import org.iota.jota.account.deposits.DepositRequest;
-import org.iota.jota.account.deposits.StoredDepositRequest;
+import org.iota.jota.account.deposits.StoredDepositAddress;
 import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.types.Hash;
@@ -60,16 +60,16 @@ public class MongoDBStoreTest {
         store.start();
         
         DepositRequest request = new DepositRequest(new Date(0), false, 5);
-        StoredDepositRequest stored = new StoredDepositRequest(request, 1);
+        StoredDepositAddress stored = new StoredDepositAddress(request, 1);
         
-        store.addDepositRequest(ID, 1, stored);
+        store.addDepositAddress(ID, 1, stored);
         
-        Map<Integer, StoredDepositRequest> result = store.getDepositRequests(ID);
+        Map<Integer, StoredDepositAddress> result = store.getDepositAddresses(ID);
         assertEquals("Store should have a value after setting", 1, result.size());
         assertEquals("Store should have the same value after setting", stored, result.get(1));
         
-        store.removeDepositRequest(ID, 1);
-        result = store.getDepositRequests(ID);
+        store.removeDepositAddress(ID, 1);
+        result = store.getDepositAddresses(ID);
         assertEquals("Store should no longer have this field", 0, result.size());
     }
     

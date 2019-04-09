@@ -7,7 +7,7 @@ import java.util.Map;
 import org.iota.jota.account.AccountState;
 import org.iota.jota.account.ExportedAccountState;
 import org.iota.jota.account.PendingTransfer;
-import org.iota.jota.account.deposits.StoredDepositRequest;
+import org.iota.jota.account.deposits.StoredDepositAddress;
 import org.iota.jota.store.IotaFileStore;
 import org.iota.jota.store.JsonFlatFileStore;
 import org.iota.jota.store.Store;
@@ -98,19 +98,19 @@ public class AccountFileStore extends AccountStoreImpl {
     }
 
     @Override
-    public void addDepositRequest(String id, int index, StoredDepositRequest request) {
+    public void addDepositAddress(String id, int index, StoredDepositAddress request) {
         loadAccount(id).addDepositRequest(index, request);
         save();
     }
 
     @Override
-    public void removeDepositRequest(String id, int index) {
+    public void removeDepositAddress(String id, int index) {
         loadAccount(id).removeDepositRequest(index);
         save();
     }
 
     @Override
-    public Map<Integer, StoredDepositRequest> getDepositRequests(String id) {
+    public Map<Integer, StoredDepositAddress> getDepositAddresses(String id) {
         return loadAccount(id).getDepositRequests();
     }
 

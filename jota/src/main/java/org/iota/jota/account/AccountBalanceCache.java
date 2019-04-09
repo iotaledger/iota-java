@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.addressgenerator.AddressGeneratorService;
 import org.iota.jota.account.deposits.DepositRequest;
-import org.iota.jota.account.deposits.StoredDepositRequest;
+import org.iota.jota.account.deposits.StoredDepositAddress;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Input;
@@ -42,7 +42,7 @@ public class AccountBalanceCache {
     public void recalcluate(IotaAPI api) {
         cachedIndexMap = new ConcurrentHashMap<>();
         synchronized(cachedIndexMap) {
-            for (Entry<Integer, StoredDepositRequest> entry : state.getDepositRequests().entrySet()) {
+            for (Entry<Integer, StoredDepositAddress> entry : state.getDepositRequests().entrySet()) {
                 try {
                     calculateBalance(api, 
                             entry.getKey(), 
