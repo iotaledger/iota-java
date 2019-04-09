@@ -1,5 +1,10 @@
 package org.iota.jota;
 
+import static org.junit.Assert.assertThat;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hamcrest.core.IsNull;
 import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.error.ArgumentException;
@@ -8,11 +13,6 @@ import org.iota.jota.pow.pearldiver.PearlDiverLocalPoW;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertThat;
 
 /**
  * Created by pinpong on 01.10.17.

@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.iota.jota.account.Account;

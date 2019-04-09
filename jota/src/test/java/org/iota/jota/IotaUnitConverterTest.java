@@ -1,11 +1,10 @@
 package org.iota.jota;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 import org.iota.jota.utils.IotaUnitConverter;
 import org.iota.jota.utils.IotaUnits;
+import org.junit.Test;
 
 /**
  * @author pinpong

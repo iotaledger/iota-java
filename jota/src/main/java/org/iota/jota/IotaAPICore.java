@@ -1,9 +1,15 @@
 package org.iota.jota;
 
-import static org.iota.jota.utils.Constants.*;
+import static org.iota.jota.utils.Constants.ARRAY_NULL_OR_EMPTY;
+import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_APPROVE_DEPTH_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_ATTACHED_TRYTES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_HASHES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_TAG_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_THRESHOLD_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_TRYTES_INPUT_ERROR;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 

@@ -1,15 +1,15 @@
 package org.iota.jota;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transfer;
 import org.iota.jota.utils.InputValidator;
 import org.junit.Test;
 import org.junit.jupiter.api.RepeatedTest;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class InputValidatorTest {
 

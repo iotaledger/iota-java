@@ -1,10 +1,10 @@
 package org.iota.jota.utils.thread;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class contains a collection of methods that make the management of {@link Thread}s a little bit more convenient.

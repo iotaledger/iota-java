@@ -1,14 +1,13 @@
 package org.iota.jota.utils;
 
-import org.iota.jota.error.ArgumentException;
-import org.iota.jota.model.Transfer;
-import org.iota.jota.utils.InputValidator;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.model.Transfer;
+import org.junit.Test;
 
 public class InputValidatorTest {
 

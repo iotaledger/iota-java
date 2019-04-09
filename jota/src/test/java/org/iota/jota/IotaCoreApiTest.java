@@ -1,20 +1,30 @@
 package org.iota.jota;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.Collections;
+
 import org.hamcrest.core.IsNull;
 import org.iota.jota.category.IntegrationTest;
 import org.iota.jota.config.types.FileConfig;
-import org.iota.jota.dto.response.*;
+import org.iota.jota.dto.response.AddNeighborsResponse;
+import org.iota.jota.dto.response.FindTransactionResponse;
+import org.iota.jota.dto.response.GetBalancesResponse;
+import org.iota.jota.dto.response.GetInclusionStateResponse;
+import org.iota.jota.dto.response.GetNodeInfoResponse;
+import org.iota.jota.dto.response.GetTipsResponse;
+import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
+import org.iota.jota.dto.response.GetTrytesResponse;
+import org.iota.jota.dto.response.RemoveNeighborsResponse;
+import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.utils.Checksum;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.util.Collections;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class IotaCoreApiTest {
 

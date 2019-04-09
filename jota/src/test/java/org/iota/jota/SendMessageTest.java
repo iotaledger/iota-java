@@ -1,5 +1,11 @@
 package org.iota.jota;
 
+import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.core.IsNull;
 import org.iota.jota.dto.response.SendTransferResponse;
@@ -9,12 +15,6 @@ import org.iota.jota.model.Transfer;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class SendMessageTest {
 

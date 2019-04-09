@@ -1,5 +1,10 @@
 package org.iota.jota;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.iota.jota.category.IntegrationTest;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.error.ArgumentException;
@@ -14,11 +19,6 @@ import org.iota.jota.utils.Signing;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
 
 public class IotaMultisigTest {
 

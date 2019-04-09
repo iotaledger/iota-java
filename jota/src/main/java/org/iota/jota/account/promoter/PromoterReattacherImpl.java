@@ -20,7 +20,6 @@ import org.iota.jota.account.event.events.EventPromotion;
 import org.iota.jota.account.event.events.EventReattachment;
 import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.event.events.EventTransferConfirmed;
-import org.iota.jota.account.transferchecker.IncomingTransferCheckerTask;
 import org.iota.jota.dto.response.GetTrytesResponse;
 import org.iota.jota.dto.response.ReplayBundleResponse;
 import org.iota.jota.model.Bundle;

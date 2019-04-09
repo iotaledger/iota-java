@@ -1,6 +1,6 @@
 package org.iota.jota.config;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.store.FlatFileStore;

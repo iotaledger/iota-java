@@ -1,13 +1,12 @@
 package org.iota.jota;
 
-import org.iota.jota.error.ArgumentException;
-import org.iota.jota.utils.TrytesConverter;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.utils.TrytesConverter;
+import org.junit.Test;
 
 public class TrytesConverterTest {
 

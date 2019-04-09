@@ -9,7 +9,6 @@ import org.iota.jota.config.types.EnvConfig;
 import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.config.types.PropertiesConfig;
 import org.iota.jota.store.PropertiesStore;
-
 import org.slf4j.Logger;
 
 /**

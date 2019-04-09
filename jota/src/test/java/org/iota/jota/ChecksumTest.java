@@ -1,11 +1,10 @@
 package org.iota.jota;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.utils.Checksum;
+import org.junit.Test;
 
 public class ChecksumTest {
 

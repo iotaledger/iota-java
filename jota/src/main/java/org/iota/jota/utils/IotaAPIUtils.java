@@ -4,7 +4,6 @@ import static org.iota.jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.iota.jota.error.ArgumentException;
@@ -12,7 +11,6 @@ import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.pow.ICurl;
-import org.iota.jota.pow.SpongeFactory;
 
 /**
  * Client Side computation service.

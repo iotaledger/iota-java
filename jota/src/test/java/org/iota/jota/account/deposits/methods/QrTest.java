@@ -1,6 +1,7 @@
 package org.iota.jota.account.deposits.methods;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,7 +10,6 @@ import java.util.Date;
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.DepositTest;
-import org.iota.jota.account.deposits.methods.QRMethod;
 import org.junit.Before;
 import org.junit.Test;
 

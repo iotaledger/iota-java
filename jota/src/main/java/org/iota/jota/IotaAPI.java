@@ -42,7 +42,6 @@ import org.iota.jota.utils.InputValidator;
 import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.Parallel;
 import org.iota.jota.utils.StopWatch;
-import org.omg.CORBA.RepositoryIdHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

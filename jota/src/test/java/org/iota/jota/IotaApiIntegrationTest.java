@@ -1,8 +1,7 @@
 package org.iota.jota;
 
-import static org.iota.jota.IotaAPICommands.GET_TRYTES;
-
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.iota.jota.IotaAPICommands.GET_TRYTES;
 
 import java.io.IOException;
 

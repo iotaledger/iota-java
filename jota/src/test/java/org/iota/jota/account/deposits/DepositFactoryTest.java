@@ -1,6 +1,6 @@
 package org.iota.jota.account.deposits;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Date;
 

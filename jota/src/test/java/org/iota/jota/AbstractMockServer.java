@@ -1,13 +1,16 @@
 package org.iota.jota;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
+import static java.nio.charset.Charset.defaultCharset;
+import static net.jadler.Jadler.closeJadler;
+import static net.jadler.Jadler.initJadler;
+import static net.jadler.Jadler.onRequest;
+import static net.jadler.Jadler.port;
 
 import java.io.IOException;
 
-import static java.nio.charset.Charset.defaultCharset;
-import static net.jadler.Jadler.*;
+import org.apache.commons.io.IOUtils;
+import org.junit.After;
+import org.junit.Before;
 
 public abstract class AbstractMockServer {
 

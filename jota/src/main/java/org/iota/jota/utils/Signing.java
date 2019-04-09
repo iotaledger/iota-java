@@ -1,7 +1,10 @@
 package org.iota.jota.utils;
 
 import static org.iota.jota.pow.JCurl.HASH_LENGTH;
-import static org.iota.jota.utils.Constants.*;
+import static org.iota.jota.utils.Constants.INVALID_INDEX_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_SEED_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.KEY_LENGTH;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,17 +1,16 @@
 package org.iota.jota;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
-import org.iota.jota.IotaAPI;
 import org.iota.jota.category.IntegrationTest;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.config.types.IotaDefaultConfig;
@@ -37,8 +36,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.google.gson.Gson;
-
-import java.util.Arrays;
 
 /**
  * Let's do some integration test coverage against a default local real node.
