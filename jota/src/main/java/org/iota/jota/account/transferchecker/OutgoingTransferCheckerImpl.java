@@ -24,7 +24,7 @@ import org.iota.jota.utils.thread.UnboundScheduledExecutorService;
 
 public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements OutgoingTransferChecker {
 
-    private static final long CHECK_CONFIRMED_DELAY = 10000;
+    private static final long CHECK_CONFIRMED_DELAY = 30000;
 
     private Map<String, ScheduledFuture<?>> unconfirmedBundles;
     
@@ -54,7 +54,7 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
             for (Trits trits : entry.getValue().getBundleTrits()){
                 bundle.addTransaction( new Transaction(Converter.trytes(trits.getTrits())));
             }
-            
+            //TODO: use all tails created from reattach
             addUnconfirmedBundle(bundle);
         }
         return true;
