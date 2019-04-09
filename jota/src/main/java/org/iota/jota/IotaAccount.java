@@ -353,6 +353,10 @@ public class IotaAccount implements Account, EventListener {
         start();
     }
     
+    public Future<Bundle> send(String address, long amount, String message, String tag){
+        return send(address, amount, Optional.ofNullable(message), Optional.ofNullable(tag));
+    }
+    
     /**
      * Future always completed
      * 
@@ -368,6 +372,10 @@ public class IotaAccount implements Account, EventListener {
         FutureTask<Bundle> task = new FutureTask<Bundle>(() -> {
             if (!loaded) {
                 return null;
+            }
+            
+            if (amount == 0) {
+                return sendZeroValue(message, tag, Optional.ofNullable(address)).get();
             }
             
             String tryteTag = tag == null ? "" : tag.orElse("");
