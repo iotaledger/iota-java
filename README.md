@@ -96,7 +96,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
     ```
     
 3. Change the value of the `<version>` tag to either a release number or the first 10 characters of a Git commit hash:
-`<version>d44646aa77</version>` or `<version>1.0.0-beta4</version>`
+`<version>51adea1b25</version>` or `<version>1.0.0-beta4</version>`
 
 **Note:** Find the latest version on the [Jitpack](https://jitpack.io/#iotaledger/iota-java) page.
 
