@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.iota</groupId>
         <artifactId>jota-parent</artifactId>
-        <version>1.0.0-beta2</version>
+        <version>1.0.0-beta4</version>
     </parent>
 
     <name>JOTA : Library</name>
@@ -33,18 +33,71 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>net.jadler</groupId>
             <artifactId>jadler-all</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <!-- Testing -->
         <dependency>
-            <groupId>org.iota</groupId>
-            <artifactId>mddoclet</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.jadler</groupId>
+            <artifactId>jadler-all</artifactId>
+        </dependency>
+        
+        <!-- Account specific -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.github.kenglxn.qrgen</groupId>
+            <artifactId>javase</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>bson</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>${md-doclet-group}</groupId>
+            <artifactId>${md-doclet-artifact}</artifactId>
         </dependency>
     </dependencies>
     
@@ -78,19 +131,14 @@
                                 <additionalOption>-version "${project.version}"</additionalOption>
                                 <additionalOption>-template "iota-java"</additionalOption>
                                 <additionalOption>
-                                    -repolink "https://github.com/iotaledger/iota-java/blob/dev/jota/src/main/java/"
+                                    -repolink "https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/"
                                 </additionalOption>
                             </additionalOptions>
                             <quiet>true</quiet>
                             <docletArtifact>
-                                <groupId>org.iota</groupId>
-                                <artifactId>mddoclet</artifactId>
-                                <version>0.2</version>
-                                <!--  
-                                <groupId>com.github.iotaledger</groupId>
-                                <artifactId>iri-mdx-doclet</artifactId>
+                                <groupId>${md-doclet-group}</groupId>
+                                <artifactId>${md-doclet-artifact}</artifactId>
                                 <version>${md-doclet-version}</version>
-                                -->
                             </docletArtifact>
                         </configuration>
                         <reports>
