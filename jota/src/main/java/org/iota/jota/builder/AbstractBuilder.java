@@ -72,7 +72,9 @@ public abstract class AbstractBuilder<T, E, F extends Config> {
         EnvConfig env = new EnvConfig();
         ArrayList<F> array = new ArrayList<>();
         array.add((F)env);
-        if (config != null) array.add((F) config);
+        if (config != null) {
+            array.add((F) config);
+        }
         array.add((F) new IotaDefaultConfig());
         
         return array;
@@ -82,9 +84,7 @@ public abstract class AbstractBuilder<T, E, F extends Config> {
         return config;
     }
 
-    public void setConfig(Config config) {
+    private void setConfig(Config config) {
         this.config = config;
     }
-    
-    
 }
