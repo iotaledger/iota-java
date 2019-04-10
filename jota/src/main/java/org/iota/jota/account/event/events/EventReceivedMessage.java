@@ -9,22 +9,25 @@ import org.iota.jota.utils.TrytesConverter;
 
 public class EventReceivedMessage extends EventAbstractBundle {
     
+    private String message = null;
+    
     public EventReceivedMessage(Bundle bundle) {
         super(AccountEventType.ReceivedMessage, bundle);
     }
 
     public String getMessage() {
+        if (message != null) {
+            return message;
+        }
+        
         StringBuilder str = new StringBuilder();
         
         List<Transaction> bundles = getBundle().getTransactions();
-        for (int i = bundles.size() - 1; i >=0; i--) {
-            Transaction t = bundles.get(i);
+        for (Transaction t : bundles) {
             if (t.getValue() == 0) {
-                str.append(TrytesConverter.trytesToAscii(
-                        t.getSignatureFragments()
-                        .substring(0, t.getSignatureFragments().length()-1)));
+                str.append(t.getSignatureFragments());
             }
         }
-        return str.toString();
+        return message = TrytesConverter.trytesToAscii(str.toString());
     }
 }

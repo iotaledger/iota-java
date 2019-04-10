@@ -672,7 +672,6 @@ public class IotaAccount implements Account, EventListener {
         for (Transaction trx : trxb) {
             bundleTrytes.add(trx.toTrytes());
         }
-        Collections.reverse(bundleTrytes);
         return bundleTrytes;
     }
 
