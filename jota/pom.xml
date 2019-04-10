@@ -109,9 +109,9 @@
             </plugin>   
 
             <!-- The javadoc for the report can be called by running "mvn site" and will generate the the iota
-                 documentation in Markdown format. To compile this report you need the iri-mdx-doclet files from:
-                 https://github.com/iotaledger/iri-mdx-doclet. Follow the documentation on the github site to compile
-                 and install the iri-mdx-doclet locally in your maven repository.
+                 documentation in Markdown format. To compile this report you need the java-md-doclet files from:
+                 https://github.com/iotaledger/java-md-doclet. Follow the documentation on the github site to compile
+                 and install the java-md-doclet locally in your maven repository, or import it using JitPack
 
                  Note: If you need the classic api documentation run "mvn javadoc:javadoc" instead.
                  -->
@@ -123,7 +123,7 @@
                     <reportSet>
                         <id>javadoc</id>
                         <configuration>
-                            <!-- This dependency can be found at: https://github.com/iotaledger/iri-mdx-doclet -->
+                            <!-- This dependency can be found at: https://github.com/iotaledger/java-md-doclet -->
                             <doclet>org.iota.mddoclet.MDDoclet</doclet>
                             <sourcepath>src/main/java</sourcepath>
                             <useStandardDocletOptions>false</useStandardDocletOptions>

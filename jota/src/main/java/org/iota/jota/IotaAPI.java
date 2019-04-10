@@ -1548,7 +1548,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException When the seed is invalid
      * @throws ArgumentException When the security level is wrong.
      * @throws IllegalStateException When the inputs do not contain enough balance to reach <tt>totalValue</tt>.
-     * @see IotaAPIUtils#signInputsAndReturn
+     * @see IotaAPIUtils#signInputsAndReturn(String, List, Bundle, List, org.iota.jota.pow.ICurl)
      * @see #getNextAvailableAddress(String, int, boolean)
      */
     @Document
