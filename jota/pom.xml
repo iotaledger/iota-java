@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.iota</groupId>
         <artifactId>jota-parent</artifactId>
-        <version>1.0.0-beta3</version>
+        <version>1.0.0-beta5</version>
     </parent>
 
     <name>JOTA : Library</name>
@@ -33,14 +33,120 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>net.jadler</groupId>
             <artifactId>jadler-all</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.jadler</groupId>
+            <artifactId>jadler-all</artifactId>
+        </dependency>
+        
+        <!-- Account specific -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.github.kenglxn.qrgen</groupId>
+            <artifactId>javase</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>bson</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>${md-doclet-group}</groupId>
+            <artifactId>${md-doclet-artifact}</artifactId>
+        </dependency>
     </dependencies>
+    
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+            </plugin>   
+
+            <!-- The javadoc for the report can be called by running "mvn site" and will generate the the iota
+                 documentation in Markdown format. To compile this report you need the java-md-doclet files from:
+                 https://github.com/iotaledger/java-md-doclet. Follow the documentation on the github site to compile
+                 and install the java-md-doclet locally in your maven repository, or import it using JitPack
+
+                 Note: If you need the classic api documentation run "mvn javadoc:javadoc" instead.
+                 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${version.maven-javadoc-plugin}</version>
+                <reportSets>
+                    <reportSet>
+                        <id>javadoc</id>
+                        <configuration>
+                            <!-- This dependency can be found at: https://github.com/iotaledger/java-md-doclet -->
+                            <doclet>org.iota.mddoclet.MDDoclet</doclet>
+                            <sourcepath>src/main/java</sourcepath>
+                            <useStandardDocletOptions>false</useStandardDocletOptions>
+                            <additionalOptions>
+                                <additionalOption>-version "${project.version}"</additionalOption>
+                                <additionalOption>-template "iota-java"</additionalOption>
+                                <additionalOption>
+                                    -repolink "https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/"
+                                </additionalOption>
+                            </additionalOptions>
+                            <quiet>true</quiet>
+                            <docletArtifact>
+                                <groupId>${md-doclet-group}</groupId>
+                                <artifactId>${md-doclet-artifact}</artifactId>
+                                <version>${md-doclet-version}</version>
+                            </docletArtifact>
+                        </configuration>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

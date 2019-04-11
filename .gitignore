@@ -9,3 +9,4 @@ tomcat.*
 .classpath
 .project
 *.class
+settings.xml
