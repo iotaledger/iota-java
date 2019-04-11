@@ -4,7 +4,7 @@
 
     <groupId>org.iota</groupId>
     <artifactId>jota-parent</artifactId>
-    <version>1.0.0-beta4</version>
+    <version>1.0.0-beta5</version>
     <packaging>pom</packaging>
     <name>JOTA</name>
     <description>JOTA library is a simple Java wrapper around IOTA Node's JSON-REST HTTP interface.</description>
