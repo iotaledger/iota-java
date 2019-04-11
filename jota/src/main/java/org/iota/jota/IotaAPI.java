@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+
+import org.iota.mddoclet.Document;
+
 import org.iota.jota.builder.ApiBuilder;
 import org.iota.jota.dto.response.BroadcastTransactionsResponse;
 import org.iota.jota.dto.response.CheckConsistencyResponse;
@@ -42,6 +45,7 @@ import org.iota.jota.utils.InputValidator;
 import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.Parallel;
 import org.iota.jota.utils.StopWatch;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,6 +127,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException When the seed is invalid
      * @throws ArgumentException When the security level is wrong.
      */
+    @Document
     public GetNewAddressResponse getNextAvailableAddress(String seed, int security, boolean checksum, int index) throws ArgumentException {
         return generateNewAddresses(seed, security, checksum, index, 1, false);
     }
@@ -140,6 +145,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException When the security level is wrong.
      * @throws ArgumentException When the amount is negative
      */
+    @Document
     public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int amount) throws ArgumentException {
         return generateNewAddresses(seed, security, checksum, 0, amount, false);
     }
@@ -179,6 +185,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException When the security level is wrong.
      * @throws ArgumentException When index plus the amount are below 0
      */
+    @Document
     public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int index, long amount, boolean addSpendAddresses) throws ArgumentException {
         if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
@@ -230,6 +237,7 @@ public class IotaAPI extends IotaAPICore {
      * @return {@link GetNewAddressResponse}
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
+    @Document
     public GetNewAddressResponse getAddressesUnchecked(String seed, int security, boolean checksum, int index, int amount) throws ArgumentException {
         if ((!InputValidator.isValidSeed(seed))) {
             throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
@@ -257,6 +265,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException Invalid security index
      * @throws IllegalStateException When the seed is invalid
      */
+    @Document
     public GetTransferResponse getTransfers(String seed, int security, Integer start, Integer end, Boolean inclusionStates) throws ArgumentException {
 
         // validate seed
@@ -291,6 +300,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException When the addresses are invalid
      * @throws IllegalStateException When inclusion state/confirmed could not be determined (<tt>null</tt> returned)
      */
+    @Document
     public Bundle[] bundlesFromAddresses(Boolean inclusionStates, String... addresses) throws ArgumentException {
 
         List<Transaction> trxs = findTransactionObjectsByAddresses(addresses);
@@ -380,6 +390,7 @@ public class IotaAPI extends IotaAPICore {
      * @see #storeTransactions(String...)
      * @see #broadcastTransactions(String...)
      */
+    @Document
     public BroadcastTransactionsResponse storeAndBroadcast(String... trytes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
@@ -410,9 +421,9 @@ public class IotaAPI extends IotaAPICore {
      * @see #attachToTangle(String, String, Integer, String...)
      * @see #storeAndBroadcast(String...)
      */
+    @Document
     public List<Transaction> sendTrytes(String[] trytes, int depth, int minWeightMagnitude, String reference) throws ArgumentException {
         GetTransactionsToApproveResponse txs = getTransactionsToApprove(depth, reference);
-        
         // attach to tangle - do pow
         GetAttachToTangleResponse res = attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), minWeightMagnitude, trytes);
         try {
@@ -439,6 +450,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException if hashes is not a valid array of hashes
      * @see #getTrytes(String...)
      **/
+    @Document
     public List<Transaction> findTransactionsObjectsByHashes(String... hashes) throws ArgumentException {
 
         if (!InputValidator.isArrayOfHashes(hashes)) {
@@ -464,6 +476,7 @@ public class IotaAPI extends IotaAPICore {
      * @see #findTransactionsByAddresses(String...)
      * @see #findTransactionsObjectsByHashes
      **/
+    @Document
     public List<Transaction> findTransactionObjectsByAddresses(String[] addresses) throws ArgumentException {
         FindTransactionResponse ftr = findTransactionsByAddresses(addresses);
         if (ftr == null || ftr.getHashes() == null) {
@@ -480,6 +493,7 @@ public class IotaAPI extends IotaAPICore {
      * @param tags The tags the transactions we search for have
      * @return Transactions.
      **/
+    @Document
     public List<Transaction> findTransactionObjectsByTag(String... tags) throws ArgumentException {
         FindTransactionResponse ftr = findTransactionsByTags(tags);
         if (ftr == null || ftr.getHashes() == null) {
@@ -498,6 +512,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException if addresses is not a valid array of hashes
      * @see #findTransactionsByApprovees
      **/
+    @Document
     public List<Transaction> findTransactionObjectsByApprovees(String... approvees) throws ArgumentException {
         FindTransactionResponse ftr = findTransactionsByApprovees(approvees);
         if (ftr == null || ftr.getHashes() == null) {
@@ -546,12 +561,17 @@ public class IotaAPI extends IotaAPICore {
      * @throws IllegalStateException If the transfers are not all valid
      * @throws IllegalStateException If there is not enough balance in the inputs
      */
+    @Document
     public List<String> prepareTransfers(String seed, int security, 
                                          List<Transfer> transfers, 
                                          String remainder, 
                                          List<Input> inputs, 
                                          List<Transaction> tips, 
                                          boolean validateInputs) throws ArgumentException {
+        //validate seed
+        if ((!InputValidator.isValidSeed(seed))) {
+            throw new IllegalStateException(Constants.INVALID_SEED_INPUT_ERROR);
+        }
 
         if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
@@ -742,6 +762,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException when <tt>start</tt> and <tt>end</tt> are more then 500 apart
      * @see #getBalanceAndFormat(List, List, long, int, StopWatch, int)
      **/
+    @Document
     public GetBalancesAndFormatResponse getInputs(String seed, int security, int start, int end, long threshold, final String... tips) throws ArgumentException {
 
         // validate the seed
@@ -824,6 +845,7 @@ public class IotaAPI extends IotaAPICore {
      * @return {@link GetBalancesAndFormatResponse}
      * @throws ArgumentException is thrown when the specified security level is not valid.
      **/
+    @Document
     public GetBalancesAndFormatResponse getBalanceAndFormat(List<String> addresses, 
                                                             List<String> tips, 
                                                             long threshold, 
@@ -831,6 +853,7 @@ public class IotaAPI extends IotaAPICore {
                                                             StopWatch stopWatch, 
                                                             int security) throws ArgumentException, 
                                                                                  IllegalStateException {
+
         if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
@@ -884,6 +907,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException if the transaction hash is invalid
      * @throws ArgumentException if the bundle is invalid or not found
      */
+    @Document
     public GetBundleResponse getBundle(String transaction) throws ArgumentException {
 
         if (!InputValidator.isHash(transaction)) {
@@ -922,9 +946,10 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException when <tt>start</tt> and <tt>end</tt> are invalid
      * @see #getTransfers(String, int, Integer, Integer, Boolean)
      */
+    @Document
     public GetAccountDataResponse getAccountData(String seed, int security, int index, boolean checksum, int total, 
             boolean returnAll, int start, int end, boolean inclusionStates, long threshold) throws ArgumentException {
-        
+
         if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
@@ -950,6 +975,7 @@ public class IotaAPI extends IotaAPICore {
      * @return list of address boolean checks
      * @throws ArgumentException when an address is invalid
      */
+    @Document
     public boolean[] checkWereAddressSpentFrom(String... addresses) throws ArgumentException {
         WereAddressesSpentFromResponse response = wereAddressesSpentFrom(addresses);
         return response.getStates();
@@ -986,6 +1012,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException when the bundle is invalid or not found
      * @see #sendTrytes(String[], int, int, String)
      */
+    @Document
     public ReplayBundleResponse replayBundle(String tailTransactionHash, int depth, int minWeightMagnitude, 
             String reference) throws ArgumentException {
         
@@ -1073,6 +1100,7 @@ public class IotaAPI extends IotaAPICore {
      * @see #getNodeInfo()
      * @see #getInclusionStates(String[], String[])
      */
+    @Document
     public GetInclusionStateResponse getLatestInclusion(String... hashes) throws ArgumentException {
         GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
 
@@ -1108,6 +1136,7 @@ public class IotaAPI extends IotaAPICore {
      * @see #sendTrytes(String[], int, int, String)
      * @see #validateTransfersAddresses(String, int, List)
      */
+    @Document
     public SendTransferResponse sendTransfer(String seed, int security, int depth, int minWeightMagnitude, 
                                              List<Transfer> transfers, List<Input> inputs, String remainderAddress, 
                                              boolean validateInputs, boolean validateInputAddresses, 
@@ -1147,6 +1176,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException when a transaction in the bundle has no reference to the bundle
      * @throws ArgumentException when the first transaction in the bundle is not a tail
      */
+    @Document
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
         GetTrytesResponse gtr = getTrytes(trunkTx);
         
@@ -1270,6 +1300,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws IllegalStateException When a <tt>remainderAddress</tt> is required, but not supplied
      * @throws RuntimeException When the total value from the transfers is not 0
      */
+    @Document
     public List<Transaction> initiateTransfer(int securitySum, String inputAddress, String remainderAddress,
                                               List<Transfer> transfers, List<Transaction> tips,
                                               boolean testMode) throws ArgumentException {
@@ -1451,6 +1482,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException when we try to remove funds from an address that is not an input
      * @throws ArgumentException when we are sending from an address we have already used for sending
      */
+    @Document
     public void validateTransfersAddresses(String seed, int security, List<String> trytes) throws ArgumentException {
 
         HashSet<String> addresses = new HashSet<>();
@@ -1516,9 +1548,10 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException When the seed is invalid
      * @throws ArgumentException When the security level is wrong.
      * @throws IllegalStateException When the inputs do not contain enough balance to reach <tt>totalValue</tt>.
-     * @see IotaAPIUtils#signInputsAndReturn
+     * @see IotaAPIUtils#signInputsAndReturn(String, List, Bundle, List, org.iota.jota.pow.ICurl)
      * @see #getNextAvailableAddress(String, int, boolean)
      */
+    @Document
     public List<String> addRemainder(String seed, int security, List<Input> inputs, Bundle bundle, 
                                      String tag, long totalValue, String remainderAddress,
                                      List<String> signatureFragments) throws ArgumentException {
@@ -1591,6 +1624,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException when we can't get the consistency of this transaction
      * @see #checkConsistency(String...)
      */
+    @Document
     public boolean isPromotable(Transaction tail) throws ArgumentException {
         long lowerBound = tail.getAttachmentTimestamp();
         CheckConsistencyResponse consistencyResponse = checkConsistency(tail.getHash());
@@ -1657,6 +1691,7 @@ public class IotaAPI extends IotaAPICore {
      * @see #attachToTangle(String, String, Integer, String...)
      * @see #storeAndBroadcast(String...)
      */
+    @Document
     public List<Transaction> promoteTransaction(String tail, int depth, int minWeightMagnitude, Bundle bundle) throws BaseException {
         if (bundle == null || bundle.getTransactions().size() == 0) {
             throw new ArgumentException("Need at least one transaction in the bundle");
