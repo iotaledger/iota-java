@@ -66,13 +66,19 @@
         <version.maven-source-plugin>3.0.1</version.maven-source-plugin>
         <version.maven-javadoc-plugin>3.1.0</version.maven-javadoc-plugin>
         <version.maven-site-plugin>3.7.1</version.maven-site-plugin>
-        <version.maven-surefire-plugin>2.22</version.maven-surefire-plugin>
+        <version.maven-surefire-plugin>2.22.0</version.maven-surefire-plugin>
         <version.maven-project-info-reports-plugin>2.9</version.maven-project-info-reports-plugin>
         <version.maven-failsafe-plugin>2.22.0</version.maven-failsafe-plugin>
         
         <md-doclet-group>com.github.iotaledger</md-doclet-group>
         <md-doclet-artifact>java-md-doclet</md-doclet-artifact>
-        <md-doclet-version>master-SNAPSHOT</md-doclet-version>
+        <md-doclet-version>2.1.1</md-doclet-version>
+        
+        <!-- 
+        org.iota / com.github.iotaledger
+	    java-md-doclet
+	    2.1.1 / master-SNAPSHOT
+        -->
         
         <version.junit5.vintage>5.4.0</version.junit5.vintage>
         <version.junit5>5.4.0</version.junit5>
