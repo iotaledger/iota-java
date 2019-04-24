@@ -32,11 +32,6 @@ import org.iota.jota.dto.response.StoreTransactionsResponse;
 import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
 import org.iota.jota.error.ArgumentException;
 
-import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
-
 public interface IotaNodeApi {
     
 
