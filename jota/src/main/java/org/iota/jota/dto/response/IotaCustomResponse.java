@@ -1,4 +1,4 @@
-package jota.dto.response;
+package org.iota.jota.dto.response;
 
 import java.util.HashMap;
 import java.util.Map;

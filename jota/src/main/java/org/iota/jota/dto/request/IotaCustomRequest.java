@@ -1,4 +1,4 @@
-package jota.dto.request;
+package org.iota.jota.dto.request;
 
 public class IotaCustomRequest extends IotaCommandRequest {
 

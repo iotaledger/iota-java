@@ -18,6 +18,7 @@ import org.iota.jota.dto.request.IotaAttachToTangleRequest;
 import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
 import org.iota.jota.dto.request.IotaCheckConsistencyRequest;
 import org.iota.jota.dto.request.IotaCommandRequest;
+import org.iota.jota.dto.request.IotaCustomRequest;
 import org.iota.jota.dto.request.IotaFindTransactionsRequest;
 import org.iota.jota.dto.request.IotaGetBalancesRequest;
 import org.iota.jota.dto.request.IotaGetInclusionStateRequest;
@@ -39,6 +40,7 @@ import org.iota.jota.dto.response.GetTipsResponse;
 import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
 import org.iota.jota.dto.response.GetTrytesResponse;
 import org.iota.jota.dto.response.InterruptAttachingToTangleResponse;
+import org.iota.jota.dto.response.IotaCustomResponse;
 import org.iota.jota.dto.response.RemoveNeighborsResponse;
 import org.iota.jota.dto.response.StoreTransactionsResponse;
 import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
@@ -280,8 +282,7 @@ public class IotaAPICore {
     public IotaCustomResponse callIxi(String module, String... args) throws ArgumentException {
         final IotaCustomRequest findTransRequest = IotaCustomRequest.createCustomRequest(module, args);
 
-        final Call<IotaCustomResponse> res = service.customRequest(findTransRequest);
-        return wrapCheckedException(res).body();
+        return service.customRequest(findTransRequest);
     }
 
     /**
