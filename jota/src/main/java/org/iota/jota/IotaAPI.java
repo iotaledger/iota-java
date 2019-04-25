@@ -208,15 +208,21 @@ public class IotaAPI extends IotaAPICore {
             final FindTransactionResponse response = findTransactionsByAddresses(
                     checksum ? newAddress : Checksum.addChecksum(newAddress));
 
-            
+            boolean isSpent = true;
             if (response.getHashes().length == 0) {
-                //Unspent address, if we ask for 0, we dont need to add it
-                if (amount != 0) {
-                    allAddresses.add(newAddress);
+                WereAddressesSpentFromResponse spent = wereAddressesSpentFrom(checksum ? newAddress : Checksum.addChecksum(newAddress));
+                if (spent.getStates().length > 0 && !spent.getStates()[0]) {
+                    //Unspent address, if we ask for 0, we dont need to add it
+                    if (amount != 0) {
+                        allAddresses.add(newAddress);
+                    }
+                    
+                    numUnspentFound++;
+                    isSpent = false;
                 }
-                
-                numUnspentFound++;
-            } else if (addSpendAddresses) {
+            } 
+            
+            if (isSpent && addSpendAddresses) {
                 //Spend address, were interested anyways
                 allAddresses.add(newAddress);
             }
