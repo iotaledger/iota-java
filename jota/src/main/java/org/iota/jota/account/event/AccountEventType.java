@@ -10,5 +10,7 @@ public enum AccountEventType {
     ReceivedMessage,
     DepositAddress,
     Shutdown,
-    Error
+    Error, 
+    AttachingToTangle,
+    DoingProofOfWork
 }

@@ -2,7 +2,6 @@ package org.iota.jota;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +29,8 @@ import org.iota.jota.account.event.EventListener;
 import org.iota.jota.account.event.EventManager;
 import org.iota.jota.account.event.Plugin;
 import org.iota.jota.account.event.events.EventAccountError;
+import org.iota.jota.account.event.events.EventAttachingToTangle;
+import org.iota.jota.account.event.events.EventDoingProofOfWork;
 import org.iota.jota.account.event.events.EventNewInput;
 import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.event.events.EventShutdown;
@@ -43,12 +44,15 @@ import org.iota.jota.account.transferchecker.OutgoingTransferCheckerImpl;
 import org.iota.jota.builder.AccountBuilder;
 import org.iota.jota.config.options.AccountConfig;
 import org.iota.jota.config.types.FileConfig;
+import org.iota.jota.dto.response.GetAttachToTangleResponse;
+import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.error.SendException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
+import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.types.Address;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Recipient;
@@ -411,11 +415,7 @@ public class IotaAccount implements Account, EventListener {
                 }
             
                 List<String> trytes = prepareTransfers(transfer, inputs, remainder);
-                
-                List<Transaction> transferResponse = getApi().sendTrytes(
-                        trytes.toArray(new String[trytes.size()]), 
-                        options.getDepth(), options.getMwm(), null
-                    );
+                List<Transaction> transferResponse = sendTrytes(null, trytes.toArray(new String[trytes.size()]));
                 
                 accountManager.addPendingTransfer(
                         new Hash(transferResponse.get(0).getHash()), 
@@ -555,8 +555,7 @@ public class IotaAccount implements Account, EventListener {
             try {
                 //Trytes of one bundle
                 List<String> trytes = prepareTransfers(transfers);
-                List<Transaction> transferResponse = getApi().sendTrytes(
-                        trytes.toArray(new String[trytes.size()]), options.getDepth(), options.getMwm(), null);
+                List<Transaction> transferResponse = sendTrytes(null, trytes.toArray(new String[trytes.size()]));
                 
                 Bundle bundle = new Bundle(transferResponse, transferResponse.size());
                 EventSentTransfer event = new EventSentTransfer(bundle);
@@ -718,6 +717,42 @@ public class IotaAccount implements Account, EventListener {
             bundle.addEntry(signatureMessageLength, transfer.getAddress(), transfer.getValue(), transfer.getTag(), timestamp);
         }
         return signatureFragments;
+    }
+    
+    private List<Transaction> sendTrytes(Hash reference, String... trytes) {
+        GetTransactionsToApproveResponse txs = getApi().getTransactionsToApprove(options.getDepth(), 
+                reference == null ? null : reference.getHash());
+
+        EventAttachingToTangle attach = new EventAttachingToTangle(trytes);
+        getEventManager().emit(attach);
+        
+        GetAttachToTangleResponse res;
+        // attach to tangle - do pow
+        if (getApi().options.getLocalPoW() != null) {
+            EventDoingProofOfWork eventPow = new EventDoingProofOfWork(trytes);
+            getEventManager().emit(eventPow);
+            
+            res = getApi().attachToTangleLocalPow(txs.getTrunkTransaction(), txs.getBranchTransaction(), 
+                    options.getMwm(), getApi().options.getLocalPoW(), trytes);
+        } else {
+            res = getApi().attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), 
+                    options.getMwm(), trytes);
+        }
+        
+        
+        try {
+            getApi().storeAndBroadcast(res.getTrytes());
+        } catch (ArgumentException e) {
+            return new ArrayList<>();
+        }
+
+        final List<Transaction> trx = new ArrayList<>();
+
+        for (String tryte : res.getTrytes()) {
+            trx.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURLP81)));
+        }
+        
+        return trx;
     }
     
     /**

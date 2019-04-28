@@ -584,7 +584,11 @@ public class IotaAPICore {
      * @throws ArgumentException
      */
     public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws ArgumentException {
-
+        IotaLocalPoW pow = options.getLocalPoW();
+        if (pow != null) {
+            return attachToTangleLocalPow(trunkTransaction, branchTransaction, minWeightMagnitude, pow, trytes);
+        }
+        
         if (!InputValidator.isHash(trunkTransaction)) {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
@@ -596,31 +600,85 @@ public class IotaAPICore {
         if (!InputValidator.isArrayOfRawTransactionTrytes(trytes)) {
             throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
         }
-
-        IotaLocalPoW pow = options.getLocalPoW();
-        if (pow != null) {
-            final String[] resultTrytes = new String[trytes.length];
-            String previousTransaction = null;
-            for (int i = trytes.length-1; i >= 0; i--) {
-                Transaction txn = new Transaction(trytes[i]);
-                txn.setTrunkTransaction(previousTransaction == null ? trunkTransaction : previousTransaction);
-                txn.setBranchTransaction(previousTransaction == null ? branchTransaction : trunkTransaction);
-
-                if (txn.getTag().isEmpty() || txn.getTag().matches("9*")) {
-                    txn.setTag(txn.getObsoleteTag());
-                }
-                
-                txn.setAttachmentTimestamp(System.currentTimeMillis());
-                txn.setAttachmentTimestampLowerBound(0);
-                txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
-                resultTrytes[i] = pow.performPoW(txn.toTrytes(), minWeightMagnitude);
-                previousTransaction = new Transaction(resultTrytes[i], SpongeFactory.create(SpongeFactory.Mode.CURLP81)).getHash();
-            }
-            return new GetAttachToTangleResponse(resultTrytes);
-        }
         
         GetAttachToTangleResponse ret = service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
         return ret;
+    }
+    
+    /**
+     * <p>
+     * Prepares the specified transactions (trytes) for attachment to the Tangle by doing Proof of Work.
+     * You need to supply <tt>branchTransaction</tt> as well as <tt>trunkTransaction</tt>.
+     * These are the tips which you're going to validate and reference with this transaction. 
+     * These are obtainable by the <tt>getTransactionsToApprove</tt> API call.
+     * </p>
+     * <p>
+     * The returned value is a different set of tryte values which you can input into 
+     * <tt>broadcastTransactions</tt> and <tt>storeTransactions</tt>.
+     * </p>
+     * 
+     * The last 243 trytes of the return value consist of the following:
+     * <ul>
+     * <li><code>trunkTransaction</code></li>
+     * <li><code>branchTransaction</code></li>
+     * <li><code>nonce</code></li>
+     * </ul>
+     * 
+     * These are valid trytes which are then accepted by the network.
+     * @param trunkTransaction A reference to an external transaction (tip) used as trunk.
+     *                         The transaction with index 0 will have this tip in its trunk.
+     *                         All other transactions reference the previous transaction in the bundle (Their index-1).
+     *                         
+     * @param branchTransaction A reference to an external transaction (tip) used as branch.
+     *                          Each Transaction in the bundle will have this tip as their branch, except the last.
+     *                          The last one will have the branch in its trunk.
+     * @param minWeightMagnitude The amount of work we should do to confirm this transaction. 
+     *                           Each 0-trit on the end of the transaction represents 1 magnitude. 
+     *                           A 9-tryte represents 3 magnitudes, since a 9 is represented by 3 0-trits.
+     *                           Transactions with a different minWeightMagnitude are compatible.
+     * @param pow Method of proof of work
+     * @param trytes The list of trytes to prepare for network attachment, by doing proof of work.
+     * @return {@link GetAttachToTangleResponse}
+     * @throws ArgumentException when a trunk or branch hash is invalid
+     * @throws ArgumentException when the provided transaction trytes are invalid
+     * @throws ArgumentException
+     */
+    public GetAttachToTangleResponse attachToTangleLocalPow(String trunkTransaction, String branchTransaction,
+            Integer minWeightMagnitude, IotaLocalPoW pow, String... trytes) {
+        if (pow == null) {
+            return attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes);
+        }
+        
+        if (!InputValidator.isHash(trunkTransaction)) {
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
+        }
+
+        if (!InputValidator.isHash(branchTransaction)) {
+            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
+        }
+
+        if (!InputValidator.isArrayOfRawTransactionTrytes(trytes)) {
+            throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
+        }
+        
+        final String[] resultTrytes = new String[trytes.length];
+        String previousTransaction = null;
+        for (int i = trytes.length-1; i >= 0; i--) {
+            Transaction txn = new Transaction(trytes[i]);
+            txn.setTrunkTransaction(previousTransaction == null ? trunkTransaction : previousTransaction);
+            txn.setBranchTransaction(previousTransaction == null ? branchTransaction : trunkTransaction);
+
+            if (txn.getTag().isEmpty() || txn.getTag().matches("9*")) {
+                txn.setTag(txn.getObsoleteTag());
+            }
+            
+            txn.setAttachmentTimestamp(System.currentTimeMillis());
+            txn.setAttachmentTimestampLowerBound(0);
+            txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
+            resultTrytes[i] = pow.performPoW(txn.toTrytes(), minWeightMagnitude);
+            previousTransaction = new Transaction(resultTrytes[i], SpongeFactory.create(SpongeFactory.Mode.CURLP81)).getHash();
+        }
+        return new GetAttachToTangleResponse(resultTrytes);
     }
 
     /**
