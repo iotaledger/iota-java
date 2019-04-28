@@ -1,9 +1,12 @@
 package org.iota.jota.account;
 
+import java.util.List;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.clock.Clock;
+import org.iota.jota.account.event.Plugin;
 import org.iota.jota.account.seedprovider.SeedProvider;
 import org.iota.jota.builder.AccountBuilder;
 import org.iota.jota.config.options.AccountSettings;
@@ -21,6 +24,8 @@ public class AccountOptions implements AccountSettings {
     
     private Clock clock;
     
+    private List<Plugin> customPlugins;
+    
     public AccountOptions(AccountBuilder builder) {
         mwm = builder.getMwm();
         depth = builder.getDepth();
@@ -29,6 +34,7 @@ public class AccountOptions implements AccountSettings {
         api = builder.getApi();
         seed = builder.getSeed();
         clock = builder.getTime();
+        customPlugins = builder.getPlugins();
     }
     
     @Override
@@ -69,5 +75,10 @@ public class AccountOptions implements AccountSettings {
     @Override
     public Clock getTime() {
         return clock;
+    }
+    
+    @Override
+    public List<Plugin> getPlugins() {
+        return customPlugins;
     }
 }

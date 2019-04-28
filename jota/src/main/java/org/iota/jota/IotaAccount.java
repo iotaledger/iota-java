@@ -212,6 +212,12 @@ public class IotaAccount implements Account, EventListener {
         addTask(new IncomingTransferCheckerImpl(eventManager, getApi(), accountManager, addressService, balanceCache, true));
         addTask(new OutgoingTransferCheckerImpl(eventManager, getApi(), accountManager));
         
+        if (options.getPlugins() != null) {
+            for (Plugin customPlugin : options.getPlugins()) {
+                addTask(customPlugin);
+            }
+        }
+        
         shutdownHook();
         
         try {

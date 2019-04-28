@@ -1,11 +1,15 @@
 package org.iota.jota.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.iota.jota.IotaAPI;
 import org.iota.jota.IotaAccount;
 import org.iota.jota.account.AccountOptions;
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.clock.Clock;
 import org.iota.jota.account.clock.SystemClock;
+import org.iota.jota.account.event.Plugin;
 import org.iota.jota.account.seedprovider.SeedProvider;
 import org.iota.jota.account.seedprovider.SeedProviderImpl;
 import org.iota.jota.config.options.AccountConfig;
@@ -42,6 +46,8 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     private int mwm, depth, securityLevel;
     
     private Clock clock;
+
+    private List<Plugin> plugins;
     
     /**
      * Start of the builder. Every Account needs to be started with at least a seed.
@@ -109,6 +115,15 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     
     public AccountBuilder clock(Clock clock) {
         this.clock = clock;
+        return this;
+    }
+    
+    public AccountBuilder plugin(Plugin plugin){
+        if (plugins == null) {
+            plugins = new ArrayList<>();
+        }
+        
+        plugins.add(plugin);
         return this;
     }
 
@@ -187,5 +202,10 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     @Override
     public Clock getTime() {
         return clock;
+    }
+
+    @Override
+    public List<Plugin> getPlugins() {
+        return plugins;
     }
 }
