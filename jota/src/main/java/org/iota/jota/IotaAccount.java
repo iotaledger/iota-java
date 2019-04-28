@@ -441,8 +441,6 @@ public class IotaAccount implements Account, EventListener {
                 // TODO: Throw accounts error
                 EventAccountError event = new EventAccountError(e);
                 eventManager.emit(event);
-                
-                log.error(e.getMessage());
                 return null;
             }
         });
@@ -821,8 +819,6 @@ public class IotaAccount implements Account, EventListener {
     @AccountEvent
     private void onError(EventAccountError error) {
         log.error(error.getMessage(), error.getCause());
-        
-        error.getException().printStackTrace();
     }
     
     @Override
