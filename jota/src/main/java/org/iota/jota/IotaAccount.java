@@ -818,7 +818,9 @@ public class IotaAccount implements Account, EventListener {
     
     @AccountEvent
     private void onError(EventAccountError error) {
-        log.error(error.getMessage(), error.getCause());
+        if (error.shouldLog()) {
+            log.error(error.getMessage(), error.getCause());
+        }
     }
     
     @Override
