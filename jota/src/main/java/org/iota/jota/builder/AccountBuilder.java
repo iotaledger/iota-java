@@ -134,19 +134,19 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
             if (config != null) {
                 //calculate Account specific values
                 
-                if (0 == getMwm()) {
+                if (0 == getMwm() && config.getMwm() != 0) {
                     mwm(config.getMwm());
                 }
                 
-                if (0 == getDepth()) {
+                if (0 == getDepth() && config.getDepth() != 0) {
                     depth(config.getDepth());
                 }
                 
-                if (0 == getSecurityLevel()) {
+                if (0 == getSecurityLevel() && config.getSecurityLevel() != 0) {
                     securityLevel(config.getSecurityLevel());
                 }
                 
-                if (null == store) {
+                if (null == store && config.getStore() != null) {
                     store(config.getStore());
                 }
                 
