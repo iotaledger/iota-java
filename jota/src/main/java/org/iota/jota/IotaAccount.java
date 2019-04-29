@@ -820,6 +820,7 @@ public class IotaAccount implements Account, EventListener {
     private void onError(EventAccountError error) {
         if (error.shouldLog()) {
             log.error(error.getMessage(), error.getCause());
+            error.getException().printStackTrace();
         }
     }
     

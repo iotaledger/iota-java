@@ -342,7 +342,7 @@ public class IotaAPI extends IotaAPICore {
         // of the tail transactions, and thus the bundles
         GetInclusionStateResponse gisr = null;
         if (tailTxArray.length != 0 && inclusionStates) {
-                gisr = getLatestInclusion(tailTxArray);
+            gisr = getLatestInclusion(tailTxArray);
             if (gisr == null || gisr.getStates() == null || gisr.getStates().length == 0) {
                 throw new IllegalStateException(Constants.GET_INCLUSION_STATE_RESPONSE_ERROR);
             }

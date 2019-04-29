@@ -11,6 +11,7 @@ import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.PendingTransfer;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
+import org.iota.jota.account.event.events.EventReattachment;
 import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.event.events.EventTransferConfirmed;
 import org.iota.jota.dto.response.GetInclusionStateResponse;
@@ -81,8 +82,14 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
     private void doTask(Bundle bundle) {
         try {
             String hash = bundle.getTransactions().get(0).getHash();
-            GetInclusionStateResponse check = api.getLatestInclusion(hash);
-            if (check.getStates()[0]) {
+            PendingTransfer pending = accountManager.getPendingTransfers().get(hash);
+            
+            // Get states of all tails (reattachments incl original)
+            GetInclusionStateResponse check = api.getLatestInclusion(
+                pending.getTailHashes().stream().map(Hash::getHash).toArray(size -> new String[size])
+            );
+            
+            if (anyTrue(check.getStates())) {
                 // Restart might not have a runnable
                 ScheduledFuture<?> runnable = unconfirmedBundles.get(bundle.getBundleHash());
                 if (null != runnable) {
@@ -101,6 +108,15 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
         } catch (ArgumentException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean anyTrue(boolean[] states) {
+        for (boolean b : states) {
+            if (b) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
