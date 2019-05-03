@@ -1,9 +1,6 @@
 package org.iota.jota.account.promoter;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
@@ -235,7 +232,8 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     public void promote(Bundle pendingBundle, String promotableTail) {
         List<Transaction> res = api.promoteTransaction(
                 promotableTail, options.getDepth(), options.getMwm(), pendingBundle);
-        
+
+        Collections.reverse(res);
         Bundle promotedBundle = new Bundle(res);
         
         EventPromotion event = new EventPromotion(promotedBundle);
@@ -244,9 +242,11 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
 
     public void reattach(Bundle pendingBundle) {
         Bundle newBundle = createReattachBundle(pendingBundle);
+        Collections.reverse(newBundle.getTransactions());
+
         manager.addTailHash(
             new Hash(pendingBundle.getTransactions().get(0).getHash()), 
-            new Hash(newBundle.getTransactions().get(newBundle.getTransactions().size() - 1).getHash())
+            new Hash(newBundle.getTransactions().get(0).getHash())
         );
         
         EventReattachment event = new EventReattachment(pendingBundle, newBundle);

@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.core.IsNull;
+import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transaction;
@@ -28,11 +29,10 @@ public class SendMessageTest {
     private IotaAPI iotaClient;
 
     @Before
-    public void createApiClientInstance() {
-        iotaClient = new IotaAPI.Builder().build();
+    public void createApiClientInstance() throws Exception {
+        iotaClient = new IotaAPI.Builder().config(new FileConfig()).build();
     }
 
-    @Ignore
     @Test
     public void shouldSendMessage() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();

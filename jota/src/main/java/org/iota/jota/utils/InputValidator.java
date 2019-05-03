@@ -57,7 +57,7 @@ public class InputValidator {
      * This is because Curl addresses always are with a 0 trit on the end.
      * So we validate if we actually send to a proper address, to prevent having to double spent
      * 
-     * @param address The trytes to check
+     * @param trytes The trytes to check
      * @return <code>true</code> if the specified trytes end with 0, otherwise <code>false</code>.
      */
     public static boolean hasTrailingZeroTrit(String trytes) {
@@ -297,6 +297,21 @@ public class InputValidator {
      */
     public static boolean isValidTag(String tag) {
         return tag != null && tag.length() <= Constants.TAG_LENGTH && isTrytes(tag);
+    }
+
+    /**
+     * Checks if the tags are valid.
+     *
+     * @param tags The tags to validate.
+     * @return <code>true</code> if all the tags are valid; otherwise, <code>false</code>.
+     */
+    public static boolean areValidTags(String... tags) {
+        for (String tag : tags){
+            if (!isValidTag(tag)){
+                return false;
+            }
+        }
+        return true;
     }
     
     /**

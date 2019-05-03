@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class MongoDBStoreTest {
     
     private static final String ID = "id";
@@ -39,8 +40,7 @@ public class MongoDBStoreTest {
         store.removeAccount(ID);
         store.shutdown();
     }
-    
-    @Ignore
+
     @Test
     public void testConnection() {
         try {
@@ -49,8 +49,7 @@ public class MongoDBStoreTest {
             fail("Store should connect to database");
         }
     }
-    
-    @Ignore
+
     @Test
     public void depositRequestTest() throws Exception{
         store.start();
@@ -68,8 +67,7 @@ public class MongoDBStoreTest {
         result = store.getDepositAddresses(ID);
         assertEquals("Store should no longer have this field", 0, result.size());
     }
-    
-    @Ignore
+
     @Test
     public void indexTest() throws Exception{
         store.start();
@@ -81,8 +79,7 @@ public class MongoDBStoreTest {
         int result = store.readIndex(ID);
         assertEquals("Store should have a value after setting", 5, result);
     }
-    
-    @Ignore
+
     @Test
     public void pendingTransferTest() throws Exception{
         store.start();

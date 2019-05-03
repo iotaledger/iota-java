@@ -172,7 +172,7 @@
 			    <version>${version.junit5.vintage}</version>
 			    <scope>test</scope>
 			</dependency>
-		    
+
             <dependency>
                 <groupId>net.jadler</groupId>
                 <artifactId>jadler-all</artifactId>
@@ -292,7 +292,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <excludedGroups>jota.category.IntegrationTest</excludedGroups>
+                    <excludedGroups>org.iota.jota.category.IntegrationTest</excludedGroups>
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>

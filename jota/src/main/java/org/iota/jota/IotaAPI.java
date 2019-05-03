@@ -32,7 +32,7 @@ import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.error.BaseException;
-import org.iota.jota.error.NotPromotableException;
+import org.iota.jota.account.errors.NotPromotableException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
@@ -134,7 +134,7 @@ public class IotaAPI extends IotaAPICore {
     
     /**
      * Generates new addresses, meaning addresses which were not spend from, according to the connected node.
-     * Starts at index 0, untill <code>amount</code> of unspent addresses are found.
+     * Starts at index 0, until <code>amount</code> of unspent addresses are found.
      * 
      * @param seed      Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
@@ -165,7 +165,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException When index plus the amount are below 0
      */
     public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int index, int amount) throws ArgumentException {
-        return generateNewAddresses(seed, security, checksum, 0, amount, false);
+        return generateNewAddresses(seed, security, checksum, index, amount, false);
     }
     
     /**
@@ -178,7 +178,6 @@ public class IotaAPI extends IotaAPICore {
      * @param index     Key index to start search from.
      * @param amount    Total number of addresses to generate.
      *                  If this is set to 0, we will generate until the first unspent address is found, and stop.
-     *                  If amount is negative, we count back from index.
      * @param addSpendAddresses If <code>true</code>, it returns all addresses, even those who were determined to be spent from
      * @return {@link GetNewAddressResponse}
      * @throws ArgumentException When the seed is invalid
@@ -213,7 +212,7 @@ public class IotaAPI extends IotaAPICore {
                 WereAddressesSpentFromResponse spent = wereAddressesSpentFrom(checksum ? newAddress : Checksum.addChecksum(newAddress));
                 if (spent.getStates().length > 0 && !spent.getStates()[0]) {
                     //Unspent address, if we ask for 0, we dont need to add it
-                    if (amount != 0) {
+                    if (0 != amount) {
                         allAddresses.add(newAddress);
                     }
                     
@@ -291,7 +290,7 @@ public class IotaAPI extends IotaAPICore {
 
         GetNewAddressResponse gnr = getNewAddress(seed, security, start, true, end, true);
         if (gnr != null && gnr.getAddresses() != null) {
-            Bundle[] bundles = bundlesFromAddresses(inclusionStates, gnr.getAddresses().toArray(new String[gnr.getAddresses().size()]));
+            Bundle[] bundles = bundlesFromAddresses(inclusionStates, gnr.getAddresses().toArray(new String[0]));
             return GetTransferResponse.create(bundles, stopWatch.getElapsedTimeMili());
         }
         return GetTransferResponse.create(new Bundle[]{}, stopWatch.getElapsedTimeMili());
@@ -325,7 +324,7 @@ public class IotaAPI extends IotaAPICore {
             }
         }
 
-        List<Transaction> bundleObjects = findTransactionObjectsByBundle(nonTailBundleHashes.toArray(new String[nonTailBundleHashes.size()]));
+        List<Transaction> bundleObjects = findTransactionObjectsByBundle(nonTailBundleHashes.toArray(new String[0]));
         for (Transaction trx : bundleObjects) {
             // Sort tail and nonTails
             if (trx.getCurrentIndex() == 0) {
@@ -336,7 +335,7 @@ public class IotaAPI extends IotaAPICore {
         }
 
         final List<Bundle> finalBundles = new ArrayList<>();
-        final String[] tailTxArray = tailTransactions.toArray(new String[tailTransactions.size()]);
+        final String[] tailTxArray = tailTransactions.toArray(new String[0]);
 
         // If inclusionStates, get the confirmation status
         // of the tail transactions, and thus the bundles
@@ -349,31 +348,27 @@ public class IotaAPI extends IotaAPICore {
         }
         final GetInclusionStateResponse finalInclusionStates = gisr;
         try {
-            Parallel.of(Arrays.asList(tailTxArray),
-                new Parallel.Operation<String>() {
-                    public void perform(String tailTx) {
-
-                        try {
-                            GetBundleResponse bundleResponse = getBundle(tailTx);
-                            Bundle gbr = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
-                            if (gbr.getTransactions() != null) {
-                                if (inclusionStates) {
-                                    boolean thisInclusion = false;
-                                    if (finalInclusionStates != null) {
-                                        thisInclusion = finalInclusionStates.getStates()[Arrays.asList(tailTxArray).indexOf(tailTx)];
-                                    }
-                                    for (Transaction t : gbr.getTransactions()) {
-                                        t.setPersistence(thisInclusion);
-                                    }
-                                }
-                                finalBundles.add(gbr);
+            Parallel.of(Arrays.asList(tailTxArray),  tailTx -> {
+                try {
+                    GetBundleResponse bundleResponse = getBundle(tailTx);
+                    Bundle gbr = new Bundle(bundleResponse.getTransactions(), bundleResponse.getTransactions().size());
+                    if (gbr.getTransactions() != null) {
+                        if (inclusionStates) {
+                            boolean thisInclusion = false;
+                            if (finalInclusionStates != null) {
+                                thisInclusion = finalInclusionStates.getStates()[Arrays.asList(tailTxArray).indexOf(tailTx)];
                             }
-                            // If error returned from getBundle, simply ignore it because the bundle was most likely incorrect
-                        } catch (ArgumentException e) {
-                            log.warn(Constants.GET_BUNDLE_RESPONSE_ERROR);
+                            for (Transaction t : gbr.getTransactions()) {
+                                t.setPersistence(thisInclusion);
+                            }
                         }
+                        finalBundles.add(gbr);
                     }
-                });
+                    // If error returned from getBundle, simply ignore it because the bundle was most likely incorrect
+                } catch (ArgumentException e) {
+                    log.warn(Constants.GET_BUNDLE_RESPONSE_ERROR);
+                }
+            });
         } catch (InterruptedException e) {
             return null;
         }
@@ -712,7 +707,6 @@ public class IotaAPI extends IotaAPICore {
 
                         // if we've already reached the intended input value, break out of loop
                         if (totalBalance >= totalValue) {
-                            log.info("Total balance already reached ");
                             break;
                         }
                     }
@@ -749,17 +743,21 @@ public class IotaAPI extends IotaAPICore {
             for (Transaction trx : trxb) {
                 bundleTrytes.add(trx.toTrytes());
             }
+
+            Collections.reverse(bundleTrytes);
             return bundleTrytes;
         }
     }
 
     /**
      * Gets the inputs of a seed
+     * If start, end and threshold are 0, checks everything until an address with nothing is found.
+     * Addresses are all with checksum appended
      *
      * @param seed            Tryte-encoded seed. It should be noted that this seed is not transferred.
      * @param security        Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @param start           Starting key index, must be at least 0.
-     * @param end             Ending key index, must be bigger then <tt>start</tt>
+     * @param end             Ending key index, must be bigger then <tt>start</tt>, and cant span more than 500 indexes
      * @param threshold       Minimum balance required.
      * @param tips            The starting points we walk back from to find the balance of the addresses, can be <tt>null</tt>
      * @return {@link GetBalancesAndFormatResponse}
@@ -805,14 +803,51 @@ public class IotaAPI extends IotaAPICore {
 
             return getBalanceAndFormat(allAddresses, tipsList, threshold, start, stopWatch, security);
         }
-        //  Case 2: iterate till threshold || end
+        //  Case 2: iterate till threshold
         //
         //  Either start from index: 0 or start (if defined) until threshold is reached.
-        //  Calls getNewAddress and deterministically generates and returns all addresses
-        //  We then do getBalance, format the output and return it
         else {
-            final GetNewAddressResponse res =  generateNewAddresses(seed, security, true, start, threshold, true);
-            return getBalanceAndFormat(res.getAddresses(), tipsList, threshold, start, stopWatch, security);
+            List<Input> allInputs = new ArrayList<>();
+
+            boolean thresholdReached = true;
+            long currentTotal = 0;
+
+            for (int i=start; thresholdReached; i++) {
+                String address = IotaAPIUtils.newAddress(seed, security, i, true, getCurl());
+
+                // Received input, this epoch or previous
+                GetBalancesResponse response = getBalances(100, Collections.singletonList(address), tipsList);
+                long balance;
+                try {
+                    balance = Long.parseLong(response.getBalances()[0]);
+                } catch (NumberFormatException e) {
+                    throw new ArgumentException(e.getMessage());
+                }
+
+                if (balance > 0) {
+                    // Is it already spent from?
+                    WereAddressesSpentFromResponse wasSpent = this.wereAddressesSpentFrom(address);
+                    if (wasSpent.getStates().length > 0 && !wasSpent.getStates()[0]) {
+                        // We can use this!
+                        allInputs.add(new Input(address, balance, i, security));
+                        currentTotal += balance;
+
+                        if (threshold != 0 && threshold <= currentTotal) {
+                            // Stop because we found threshold
+                            thresholdReached = false;
+                        }
+                    }
+                } else {
+                    // Check if there was any activity at all
+                    FindTransactionResponse tx = findTransactionsByAddresses(address);
+                    if (tx.getHashes().length == 0 || i-start > 500) {
+                        // Stop because we reached our limit or no activity
+                        thresholdReached = false;
+                    }
+                }
+            }
+
+            return GetBalancesAndFormatResponse.create(allInputs, currentTotal, stopWatch.getElapsedTimeMili());
         }
     }
     
@@ -826,7 +861,7 @@ public class IotaAPI extends IotaAPICore {
      *
      * @param threshold The confirmation threshold between 0 and 100(inclusive). 
      *                  Should be set to 100 for getting balance by counting only confirmed transactions.
-     * @param addresse The addresses where we will find the balance for.
+     * @param address The addresses where we will find the balance for.
      * @return {@link GetBalancesResponse}
      * @throws ArgumentException The the request was considered wrong in any way by the node
      */
@@ -850,6 +885,7 @@ public class IotaAPI extends IotaAPICore {
      * @param security  Security level to be used for the private key / address. Can be 1, 2 or 3.
      * @return {@link GetBalancesAndFormatResponse}
      * @throws ArgumentException is thrown when the specified security level is not valid.
+     * @throws IllegalStateException when there is not enough balance on the addresses
      **/
     @Document
     public GetBalancesAndFormatResponse getBalanceAndFormat(List<String> addresses, 
@@ -899,7 +935,7 @@ public class IotaAPI extends IotaAPICore {
         }
 
         if (thresholdReached) {
-            return GetBalancesAndFormatResponse.create(inputs, totalBalance, stopWatch.getElapsedTimeMili());
+            return GetBalancesAndFormatResponse.create(inputs, totalBalance, suppliedStopWatch.getElapsedTimeMili());
         }
         throw new IllegalStateException(Constants.NOT_ENOUGH_BALANCE_ERROR);
     }
@@ -1081,7 +1117,7 @@ public class IotaAPI extends IotaAPICore {
             bundleTrytes.add(trx.toTrytes());
         }
 
-        List<Transaction> trxs = sendTrytes(bundleTrytes.toArray(new String[bundleTrytes.size()]), depth, minWeightMagnitude, reference);
+        List<Transaction> trxs = sendTrytes(bundleTrytes.toArray(new String[0]), depth, minWeightMagnitude, reference);
 
         Boolean[] successful = new Boolean[trxs.size()];
 
@@ -1158,7 +1194,7 @@ public class IotaAPI extends IotaAPICore {
 
         String reference = tips != null && tips.size() > 0 ? tips.get(0).getHash(): null;
 
-        List<Transaction> trxs = sendTrytes(trytes.toArray(new String[trytes.size()]), depth, minWeightMagnitude, reference);
+        List<Transaction> trxs = sendTrytes(trytes.toArray(new String[0]), depth, minWeightMagnitude, reference);
 
         Boolean[] successful = new Boolean[trxs.size()];
         
@@ -1501,16 +1537,16 @@ public class IotaAPI extends IotaAPICore {
             inputTransactions.add(transaction);
         }
 
-        String[] hashes = findTransactionsByAddresses(addresses.toArray(new String[addresses.size()])).getHashes();
+        String[] hashes = findTransactionsByAddresses(addresses.toArray(new String[0])).getHashes();
         List<Transaction> transactions = findTransactionsObjectsByHashes(hashes);
-        GetNewAddressResponse gna = generateNewAddresses(seed, security, true, 0, 0, false);
+
+        // Get addresses until first unspent
+        GetNewAddressResponse gna = generateNewAddresses(seed, security, true, 0, 0, true);
+
+        // Get inputs for this seed, until we fund an unused address
         GetBalancesAndFormatResponse gbr = getInputs(seed, security, 0, 0, 0);
 
-        for (Input input : gbr.getInputs()) {
-            inputAddresses.add(Checksum.addChecksum(input.getAddress()));
-        }
-
-        //check if send to input
+        //check if receive address is also used as an input address
         for (Transaction trx : inputTransactions) {
             if (trx.getValue() > 0 ) {
                 if (inputAddresses.contains(trx.getAddress())) {
@@ -1720,7 +1756,7 @@ public class IotaAPI extends IotaAPICore {
         GetTransactionsToApproveResponse transactionsToApprove = getTransactionsToApprove(depth, tail);
 
         final GetAttachToTangleResponse res = attachToTangle(transactionsToApprove.getTrunkTransaction(), transactionsToApprove.getBranchTransaction(), minWeightMagnitude,
-                bundle.getTransactions().stream().map(tx -> tx.toTrytes()).toArray(String[]::new));
+                bundle.getTransactions().stream().map(Transaction::toTrytes).toArray(String[]::new));
 
         try {
             storeAndBroadcast(res.getTrytes());

@@ -1,11 +1,6 @@
 package org.iota.jota;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicLong;
@@ -47,7 +42,7 @@ import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.dto.response.GetAttachToTangleResponse;
 import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
 import org.iota.jota.error.ArgumentException;
-import org.iota.jota.error.SendException;
+import org.iota.jota.account.errors.SendException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
@@ -89,7 +84,7 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * 
-     * @param builder
+     * @param options
      */
     public IotaAccount(AccountOptions options) {
         this.options = options;
@@ -116,8 +111,6 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * Constructs a IotaAccount with a config based on environment variables or default values.
-     * If no environment variable is defined, will use {@value org.iota.jota.config.types.FileConfig#DEFAULT_CONFIG_NAME}
-     * The default storage will be at {@value jota.config.IotaFileStore#DEFAULT_STORE}
      * 
      * @param seed
      * @throws Exception If the config did not load for whatever reason
@@ -128,7 +121,6 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * Constructs a IotaAccount with a config based on environment variables or default values.
-     * If no environment variable is defined, will use {@value org.iota.jota.config.types.FileConfig#DEFAULT_CONFIG_NAME}
      * 
      * @param seed
      * @param store The method we use for storing key/value data
@@ -421,16 +413,21 @@ public class IotaAccount implements Account, EventListener {
                 }
             
                 List<String> trytes = prepareTransfers(transfer, inputs, remainder);
-                List<Transaction> transferResponse = sendTrytes(null, trytes.toArray(new String[trytes.size()]));
-                
+
+                //Reversed order, end is tail
+                List<Transaction> transferResponse = sendTrytes(null, trytes.toArray(new String[0]));
+
+                // Back to "normal"
+                Collections.reverse(transferResponse);
+
+                Trytes[] bundleTrytes = new Trytes[transferResponse.size()];
+                for (int i=0; i<transferResponse.size(); i++){
+                    bundleTrytes[i] = new Trytes(transferResponse.get(i).toTrytes());
+                }
+
                 accountManager.addPendingTransfer(
-                        new Hash(transferResponse.get(0).getHash()), 
-                        transferResponse.stream()
-                            .map(Transaction::toTrytes)
-                            .map(Trytes::new)
-                            .toArray(Trytes[]::new),
-                        1
-                    );
+                        new Hash(transferResponse.get(0).getHash()),
+                        bundleTrytes,1);
                 
                 Bundle bundle = new Bundle(transferResponse, transferResponse.size());
                 EventSentTransfer event = new EventSentTransfer(bundle);
@@ -559,7 +556,7 @@ public class IotaAccount implements Account, EventListener {
             try {
                 //Trytes of one bundle
                 List<String> trytes = prepareTransfers(transfers);
-                List<Transaction> transferResponse = sendTrytes(null, trytes.toArray(new String[trytes.size()]));
+                List<Transaction> transferResponse = sendTrytes(null, trytes.toArray(new String[0]));
                 
                 Bundle bundle = new Bundle(transferResponse, transferResponse.size());
                 EventSentTransfer event = new EventSentTransfer(bundle);

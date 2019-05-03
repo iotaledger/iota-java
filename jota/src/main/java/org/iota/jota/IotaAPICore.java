@@ -188,7 +188,7 @@ public class IotaAPICore {
      *
      * @param uris list of neighbors to add
      * @return {@link AddNeighborsResponse}
-     * @throws ArgumentException 
+     * @throws ArgumentException When an URI is invalid
      */
     public AddNeighborsResponse addNeighbors(String... uris) throws ArgumentException {
         return service.addNeighbors(IotaNeighborsRequest.createAddNeighborsRequest(uris));
@@ -204,7 +204,7 @@ public class IotaAPICore {
      *
      * @param uris The URIs of the neighbors we want to remove.
      * @return {@link RemoveNeighborsResponse}
-     * @throws ArgumentException 
+     * @throws ArgumentException When an URI is invalid
      */
     public RemoveNeighborsResponse removeNeighbors(String... uris) throws ArgumentException {
         return service.removeNeighbors(IotaNeighborsRequest.createRemoveNeighborsRequest(uris));
@@ -236,7 +236,7 @@ public class IotaAPICore {
      * @param approvees Array of transaction hashes
      * @param bundles Array of bundle hashes
      * @return {@link FindTransactionResponse}
-     * @throws ArgumentException 
+     * @throws ArgumentException If any of the parameters are not empty but have invalid values
      */
     public FindTransactionResponse findTransactions(String[] addresses, String[] tags, String[] approvees, String[] bundles) throws ArgumentException {
         if (null != addresses && addresses.length > 0 ) {
@@ -254,7 +254,7 @@ public class IotaAPICore {
                 throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
             }
             
-            if (!InputValidator.isArrayOfHashes(tags)) {
+            if (!InputValidator.areValidTags(tags)) {
                 throw new ArgumentException(INVALID_TAG_INPUT_ERROR);
             }
         }
@@ -282,7 +282,7 @@ public class IotaAPICore {
      *
      * @param addresses An array of addresses, must contain checksums
      * @return {@link FindTransactionResponse}
-     * @throws ArgumentException 
+     * @throws ArgumentException If one of the addresses is invalid
      */
     public FindTransactionResponse findTransactionsByAddresses(String... addresses) throws ArgumentException {
         if (!InputValidator.isStringArrayValid(addresses)) {
@@ -300,7 +300,7 @@ public class IotaAPICore {
      *
      * @param bundles An array of bundles.
      * @return {@link FindTransactionResponse}
-     * @throws ArgumentException 
+     * @throws ArgumentException If one of the bundle hashes is invalid
      */
     public FindTransactionResponse findTransactionsByBundles(String... bundles) throws ArgumentException {
         return findTransactions(null, null, null, bundles);
@@ -309,9 +309,9 @@ public class IotaAPICore {
     /**
      * Find the transactions by approvees
      *
-     * @param approvees An array of approveess.
+     * @param approvees An array of approvees.
      * @return {@link FindTransactionResponse}
-     * @throws ArgumentException 
+     * @throws ArgumentException If one of the approvee hashes is invalid
      */
     public FindTransactionResponse findTransactionsByApprovees(String... approvees) throws ArgumentException {
         return findTransactions(null, null, approvees, null);
@@ -319,25 +319,27 @@ public class IotaAPICore {
 
     /**
      * Find the transactions by digests
+     * Deprecated: Use {@link #findTransactionsByTags} instead
      * 
      * @param digests A List of digests. Must be hashed tags (digest)
      * @return The transaction hashes which are returned depend on the input.
-     * @throws ArgumentException 
+     * @throws ArgumentException When one of the digests is invalid
      */
+    @Deprecated
     public FindTransactionResponse findTransactionsByDigests(String... digests) throws ArgumentException {
-        return findTransactions(null, digests, null, null);
+        return findTransactionsByTags(digests);
     }
     
 
     /**
      * Find the transactions by tags
      *
-     * @param tags A List of tags. Must be hashed tags (digest)
+     * @param tags A List of tags.
      * @return {@link FindTransactionResponse}
-     * @throws ArgumentException 
+     * @throws ArgumentException When one of the tags is invalid
      */
     public FindTransactionResponse findTransactionsByTags(String... tags) throws ArgumentException {
-        return findTransactionsByDigests(tags);
+        return findTransactions(null, tags, null, null);
     }
 
 
@@ -357,7 +359,6 @@ public class IotaAPICore {
      * @return {@link GetInclusionStateResponse}
      * @throws ArgumentException when a transaction hash is invalid
      * @throws ArgumentException when a tip is invalid
-     * @throws ArgumentException
      */
     public GetInclusionStateResponse getInclusionStates(String[] transactions, String[] tips) throws ArgumentException {
 
@@ -381,7 +382,6 @@ public class IotaAPICore {
      * @param hashes The transaction hashes you want to get trytes from.
      * @return {@link GetTrytesResponse}
      * @throws ArgumentException when a transaction hash is invalid
-     * @throws ArgumentException
      */
     public GetTrytesResponse getTrytes(String... hashes) throws ArgumentException {
 
@@ -405,7 +405,7 @@ public class IotaAPICore {
      *                  This used to make sure the tips returned reference a given transaction in their past.
      *                  Can be <tt>null</tt>.
      * @return {@link GetTransactionsToApproveResponse}
-     * @throws ArgumentException
+     * @throws ArgumentException The depth is invalid
      */
     public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth, String reference) throws ArgumentException {
         if (depth < 0) {
@@ -445,8 +445,9 @@ public class IotaAPICore {
      * @param addresses The addresses where we will find the balance for. Must contain the checksum.
      * @param tips The optional tips to find the balance through.
      * @return {@link GetBalancesResponse}
-     * @throws ArgumentException The the request was considered wrong in any way by the node
-     * @throws ArgumentException
+     * @throws ArgumentException The request was considered wrong in any way by the node
+     * @throws ArgumentException The threshold is invalid
+     * @throws ArgumentException The tips or addresses are invalid
      */
     public GetBalancesResponse getBalances(Integer threshold, String[] addresses, String[] tips) throws ArgumentException {
         if (threshold < 0 || threshold > 100) {
@@ -483,11 +484,11 @@ public class IotaAPICore {
      * @param addresses The addresses where we will find the balance for. Must contain the checksum.
      * @param tips The tips to find the balance through. Can be <tt>null</tt>
      * @return {@link GetBalancesResponse}
-     * @throws ArgumentException The the request was considered wrong in any way by the node
+     * @throws ArgumentException The request was considered wrong in any way by the node
      */
     public GetBalancesResponse getBalances(Integer threshold, List<String> addresses, List<String> tips) throws ArgumentException {
-        String[] tipsArray = tips != null ? tips.toArray(new String[tips.size()]) : null;
-        String[] addressesArray = addresses != null ? addresses.toArray(new String[addresses.size()]) : null;
+        String[] tipsArray = tips != null ? tips.toArray(new String[0]) : null;
+        String[] addressesArray = addresses != null ? addresses.toArray(new String[0]) : null;
         
         return getBalances(threshold, addressesArray, tipsArray);
     }
@@ -503,7 +504,7 @@ public class IotaAPICore {
      * @param threshold The confirmation threshold, should be set to 100.
      * @param addresses The list of addresses you want to get the confirmed balance from. Must contain the checksum.
      * @return {@link GetBalancesResponse}
-     * @throws ArgumentException
+     * @throws ArgumentException The request was considered wrong in any way by the node
      */
     public GetBalancesResponse getBalances(Integer threshold, List<String> addresses) throws ArgumentException {
         return getBalances(threshold, addresses, null);
@@ -515,7 +516,6 @@ public class IotaAPICore {
      * @param addresses List of addresses to check if they were ever spent from. Must contain the checksum.
      * @return {@link WereAddressesSpentFromResponse}
      * @throws ArgumentException when an address is invalid
-     * @throws ArgumentException
      */
     public WereAddressesSpentFromResponse wereAddressesSpentFrom(String... addresses) throws ArgumentException {
         if (null == addresses || addresses.length == 0 || !InputValidator.isAddressesArrayValid(addresses)) {
@@ -535,7 +535,6 @@ public class IotaAPICore {
      * @param tails The tails describing the subtangle.
      * @return {@link CheckConsistencyResponse}
      * @throws ArgumentException when a tail hash is invalid
-     * @throws ArgumentException
      */
     public CheckConsistencyResponse checkConsistency(String... tails) throws ArgumentException {
         if (!InputValidator.isArrayOfHashes(tails)) {
@@ -581,7 +580,6 @@ public class IotaAPICore {
      * @return {@link GetAttachToTangleResponse}
      * @throws ArgumentException when a trunk or branch hash is invalid
      * @throws ArgumentException when the provided transaction trytes are invalid
-     * @throws ArgumentException
      */
     public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws ArgumentException {
         IotaLocalPoW pow = options.getLocalPoW();
@@ -600,9 +598,8 @@ public class IotaAPICore {
         if (!InputValidator.isArrayOfRawTransactionTrytes(trytes)) {
             throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
         }
-        
-        GetAttachToTangleResponse ret = service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
-        return ret;
+
+        return service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
     }
     
     /**
@@ -641,7 +638,6 @@ public class IotaAPICore {
      * @return {@link GetAttachToTangleResponse}
      * @throws ArgumentException when a trunk or branch hash is invalid
      * @throws ArgumentException when the provided transaction trytes are invalid
-     * @throws ArgumentException
      */
     public GetAttachToTangleResponse attachToTangleLocalPow(String trunkTransaction, String branchTransaction,
             Integer minWeightMagnitude, IotaLocalPoW pow, String... trytes) {
@@ -675,9 +671,12 @@ public class IotaAPICore {
             txn.setAttachmentTimestamp(System.currentTimeMillis());
             txn.setAttachmentTimestampLowerBound(0);
             txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
-            resultTrytes[i] = pow.performPoW(txn.toTrytes(), minWeightMagnitude);
-            previousTransaction = new Transaction(resultTrytes[i], SpongeFactory.create(SpongeFactory.Mode.CURLP81)).getHash();
+
+            int reverseIndex = trytes.length-1 - i;
+            resultTrytes[reverseIndex] = pow.performPoW(txn.toTrytes(), minWeightMagnitude);
+            previousTransaction = new Transaction(resultTrytes[reverseIndex], SpongeFactory.create(SpongeFactory.Mode.CURLP81)).getHash();
         }
+
         return new GetAttachToTangleResponse(resultTrytes);
     }
 
@@ -685,7 +684,7 @@ public class IotaAPICore {
      * Interrupts and completely aborts the <tt>attachToTangle</tt> process.
      * 
      * @return {@link InterruptAttachingToTangleResponse}
-     * @throws ArgumentException 
+     * @throws ArgumentException If node connection fails
      */
     public InterruptAttachingToTangleResponse interruptAttachingToTangle() throws ArgumentException {
         return service.interruptAttachingToTangle(IotaCommandRequest.createInterruptAttachToTangleRequest());
@@ -699,7 +698,6 @@ public class IotaAPICore {
      * @param trytes The list of transaction trytes to broadcast
      * @return {@link BroadcastTransactionsResponse}
      * @throws ArgumentException when the provided transaction trytes are invalid
-     * @throws ArgumentException 
      */
     public BroadcastTransactionsResponse broadcastTransactions(String... trytes) throws ArgumentException {
         if (!InputValidator.isArrayOfRawTransactionTrytes(trytes)) {
@@ -716,7 +714,7 @@ public class IotaAPICore {
      *
      * @param trytes Transaction data to be stored.
      * @return {@link StoreTransactionsResponse}
-     * @throws ArgumentException 
+     * @throws ArgumentException when the provided transaction trytes are invalid
      */
     public StoreTransactionsResponse storeTransactions(String... trytes) throws ArgumentException {
         if (!InputValidator.isArrayOfRawTransactionTrytes(trytes)) {
@@ -765,9 +763,11 @@ public class IotaAPICore {
         builder.append(options.toString());
         
         builder.append(System.getProperty("line.separator"));
-        builder.append("Registrered nodes: " + System.getProperty("line.separator"));
+        builder.append("Registered nodes: ");
+        builder.append(System.getProperty("line.separator"));
         for (Connection n : nodes) {
-            builder.append(n.toString() + System.getProperty("line.separator"));
+            builder.append(n.toString());
+            builder.append(System.getProperty("line.separator"));
         }
         
         return builder.toString();

@@ -64,11 +64,6 @@
             <artifactId>junit-vintage-engine</artifactId>
         </dependency>
         
-        <dependency>
-            <groupId>net.jadler</groupId>
-            <artifactId>jadler-all</artifactId>
-        </dependency>
-        
         <!-- Account specific -->
         <dependency>
             <groupId>com.google.zxing</groupId>
