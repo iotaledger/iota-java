@@ -1,15 +1,15 @@
 package org.iota.jota.account;
 
-import java.util.List;
-
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.clock.Clock;
-import org.iota.jota.account.event.Plugin;
+import org.iota.jota.account.plugins.Plugin;
 import org.iota.jota.account.seedprovider.SeedProvider;
 import org.iota.jota.builder.AccountBuilder;
 import org.iota.jota.config.options.AccountSettings;
+
+import java.util.List;
 
 public class AccountOptions implements AccountSettings {
 

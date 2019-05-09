@@ -1,17 +1,7 @@
 package org.iota.jota;
 
-import java.util.*;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.commons.lang3.StringUtils;
-import org.iota.jota.account.Account;
-import org.iota.jota.account.AccountBalanceCache;
-import org.iota.jota.account.AccountOptions;
-import org.iota.jota.account.AccountState;
-import org.iota.jota.account.AccountStateManager;
-import org.iota.jota.account.AccountStore;
+import org.iota.jota.account.*;
 import org.iota.jota.account.addressgenerator.AddressGeneratorServiceImpl;
 import org.iota.jota.account.condition.ExpireCondition;
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
@@ -19,30 +9,25 @@ import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.StoredDepositAddress;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.errors.AccountLoadError;
+import org.iota.jota.account.errors.SendException;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventListener;
 import org.iota.jota.account.event.EventManager;
-import org.iota.jota.account.event.Plugin;
-import org.iota.jota.account.event.events.EventAccountError;
-import org.iota.jota.account.event.events.EventAttachingToTangle;
-import org.iota.jota.account.event.events.EventDoingProofOfWork;
-import org.iota.jota.account.event.events.EventNewInput;
-import org.iota.jota.account.event.events.EventSentTransfer;
-import org.iota.jota.account.event.events.EventShutdown;
+import org.iota.jota.account.plugins.Plugin;
+import org.iota.jota.account.event.events.*;
 import org.iota.jota.account.event.impl.EventManagerImpl;
 import org.iota.jota.account.inputselector.InputSelectionStrategy;
 import org.iota.jota.account.inputselector.InputSelectionStrategyImpl;
-import org.iota.jota.account.promoter.PromoterReattacherImpl;
+import org.iota.jota.account.plugins.promoter.PromoterReattacherImpl;
 import org.iota.jota.account.seedprovider.SeedProvider;
-import org.iota.jota.account.transferchecker.IncomingTransferCheckerImpl;
-import org.iota.jota.account.transferchecker.OutgoingTransferCheckerImpl;
+import org.iota.jota.account.plugins.transferchecker.IncomingTransferCheckerImpl;
+import org.iota.jota.account.plugins.transferchecker.OutgoingTransferCheckerImpl;
 import org.iota.jota.builder.AccountBuilder;
 import org.iota.jota.config.options.AccountConfig;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.dto.response.GetAttachToTangleResponse;
 import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
 import org.iota.jota.error.ArgumentException;
-import org.iota.jota.account.errors.SendException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
@@ -52,14 +37,15 @@ import org.iota.jota.types.Address;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Recipient;
 import org.iota.jota.types.Trytes;
-import org.iota.jota.utils.Checksum;
-import org.iota.jota.utils.Constants;
-import org.iota.jota.utils.InputValidator;
-import org.iota.jota.utils.IotaAPIUtils;
-import org.iota.jota.utils.TrytesConverter;
+import org.iota.jota.utils.*;
 import org.iota.jota.utils.thread.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 public class IotaAccount implements Account, EventListener {
@@ -172,17 +158,6 @@ public class IotaAccount implements Account, EventListener {
     
     private String buildAccountId() {
         return IotaAPIUtils.newAddress(getSeed().getSeed().toString(), 2, 0, false, getApi().getCurl());
-        /*
-        // Sha256 impl of account id, might be used later over the sec-2 address
-        MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            return null;
-        }
-        byte[] hash = digest.digest(getSeed().getSeed().getTrytesString().getBytes(StandardCharsets.UTF_8));
-        String sha256hex = new String(Hex.encode(hash));
-        return sha256hex;*/
     }
 
     public void load(String accountId, AccountState state) throws AccountError {
@@ -246,6 +221,7 @@ public class IotaAccount implements Account, EventListener {
             for (Plugin task : tasks) {
                 getEventManager().unRegisterListener(task);
                 task.shutdown();
+                task.setAccount(null);
             }
             
             if (clearTasks) {
@@ -258,6 +234,7 @@ public class IotaAccount implements Account, EventListener {
         synchronized (tasks) {
             if (task != null) {
                 try {
+                    task.setAccount(this);
                     task.load();
                     getEventManager().registerListener(task);
                     tasks.add(task);

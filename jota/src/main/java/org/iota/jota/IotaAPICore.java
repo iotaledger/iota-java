@@ -1,47 +1,8 @@
 package org.iota.jota;
 
-import static org.iota.jota.utils.Constants.ARRAY_NULL_OR_EMPTY;
-import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_APPROVE_DEPTH_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_ATTACHED_TRYTES_INPUT_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_HASHES_INPUT_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_TAG_INPUT_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_THRESHOLD_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_TRYTES_INPUT_ERROR;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import org.iota.jota.connection.Connection;
-import org.iota.jota.dto.request.IotaAttachToTangleRequest;
-import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
-import org.iota.jota.dto.request.IotaCheckConsistencyRequest;
-import org.iota.jota.dto.request.IotaCommandRequest;
-import org.iota.jota.dto.request.IotaFindTransactionsRequest;
-import org.iota.jota.dto.request.IotaGetBalancesRequest;
-import org.iota.jota.dto.request.IotaGetInclusionStateRequest;
-import org.iota.jota.dto.request.IotaGetTransactionsToApproveRequest;
-import org.iota.jota.dto.request.IotaGetTrytesRequest;
-import org.iota.jota.dto.request.IotaNeighborsRequest;
-import org.iota.jota.dto.request.IotaStoreTransactionsRequest;
-import org.iota.jota.dto.request.IotaWereAddressesSpentFromRequest;
-import org.iota.jota.dto.response.AddNeighborsResponse;
-import org.iota.jota.dto.response.BroadcastTransactionsResponse;
-import org.iota.jota.dto.response.CheckConsistencyResponse;
-import org.iota.jota.dto.response.FindTransactionResponse;
-import org.iota.jota.dto.response.GetAttachToTangleResponse;
-import org.iota.jota.dto.response.GetBalancesResponse;
-import org.iota.jota.dto.response.GetInclusionStateResponse;
-import org.iota.jota.dto.response.GetNeighborsResponse;
-import org.iota.jota.dto.response.GetNodeInfoResponse;
-import org.iota.jota.dto.response.GetTipsResponse;
-import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
-import org.iota.jota.dto.response.GetTrytesResponse;
-import org.iota.jota.dto.response.InterruptAttachingToTangleResponse;
-import org.iota.jota.dto.response.RemoveNeighborsResponse;
-import org.iota.jota.dto.response.StoreTransactionsResponse;
-import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
+import org.iota.jota.dto.request.*;
+import org.iota.jota.dto.response.*;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.pow.ICurl;
@@ -51,6 +12,12 @@ import org.iota.jota.utils.InputValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import static org.iota.jota.utils.Constants.*;
+
 /**
  * 
  * This class provides access to the Iota core API
@@ -59,13 +26,10 @@ import org.slf4j.LoggerFactory;
  */
 public class IotaAPICore {
     private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
-
-    // Legacy, remove soon
-    private Connection service = null;
     
     protected ApiOptions options;
     
-    protected List<Connection> nodes = new ArrayList<>();
+    protected final List<Connection> nodes = new ArrayList<>();
     
     
     protected IotaAPICore(ApiOptions options) {
@@ -108,10 +72,6 @@ public class IotaAPICore {
                     //Huray! Lets add it
                     nodes.add(n);
                     log.debug("Added node: " + n.toString());
-                    //Legacy wants a node in service for getting ports etc
-                    if (null == service) {
-                        service = n;
-                    }
                 }
 
                 return started;
@@ -121,7 +81,7 @@ public class IotaAPICore {
             return false;
         }
     }
-    
+
     public boolean removeNode(Connection n) {
         synchronized (nodes) {
             for (int i = 0; i < nodes.size(); i++) {
@@ -138,7 +98,7 @@ public class IotaAPICore {
     
     /**
      * Gives a clone of the custom curl defined in {@link ApiOptions}
-     * @return
+     * @return A clone of our curl object
      */
     public ICurl getCurl() {
         return options.getCustomCurl().clone();
@@ -157,13 +117,29 @@ public class IotaAPICore {
     }
 
     /**
+     * Finds the proper connection for a request
+     *
+     * @param cmd The request we are going to make on the node
+     *            If this is <code>null</code>, the primary node will be returned (first node)
+     * @return A node connection
+     */
+    private Connection getNodeFor(IotaAPICommand cmd){
+        if (null == cmd){
+            return nodes.get(0);
+        }
+
+        //TODO switch based on cmd
+        return nodes.get(0);
+    }
+
+    /**
      * Returns information about this node.
      *
      * @return {@link GetNodeInfoResponse}
-     * @throws ArgumentException 
+     * @throws ArgumentException The request was considered wrong in any way by the node
      */
     public GetNodeInfoResponse getNodeInfo() throws ArgumentException {
-        return service.getNodeInfo(IotaCommandRequest.createNodeInfoRequest());
+        return getNodeFor(IotaAPICommand.GET_NODE_INFO).getNodeInfo(IotaCommandRequest.createNodeInfoRequest());
     }
 
     /**
@@ -171,10 +147,10 @@ public class IotaAPICore {
      * The activity counters are reset after restarting IRI.
      *
      * @return {@link GetNeighborsResponse}
-     * @throws ArgumentException 
+     * @throws ArgumentException The request was considered wrong in any way by the node
      */
     public GetNeighborsResponse getNeighbors() throws ArgumentException {
-        return service.getNeighbors(IotaCommandRequest.createGetNeighborsRequest());
+        return getNodeFor(IotaAPICommand.GET_NEIGHBORS).getNeighbors(IotaCommandRequest.createGetNeighborsRequest());
     }
 
     /**
@@ -188,10 +164,11 @@ public class IotaAPICore {
      *
      * @param uris list of neighbors to add
      * @return {@link AddNeighborsResponse}
+     * @throws ArgumentException The request was considered wrong in any way by the node
      * @throws ArgumentException When an URI is invalid
      */
     public AddNeighborsResponse addNeighbors(String... uris) throws ArgumentException {
-        return service.addNeighbors(IotaNeighborsRequest.createAddNeighborsRequest(uris));
+        return getNodeFor(IotaAPICommand.ADD_NEIGHBORS).addNeighbors(IotaNeighborsRequest.createAddNeighborsRequest(uris));
     }
 
     /**
@@ -204,20 +181,21 @@ public class IotaAPICore {
      *
      * @param uris The URIs of the neighbors we want to remove.
      * @return {@link RemoveNeighborsResponse}
+     * @throws ArgumentException The request was considered wrong in any way by the node
      * @throws ArgumentException When an URI is invalid
      */
     public RemoveNeighborsResponse removeNeighbors(String... uris) throws ArgumentException {
-        return service.removeNeighbors(IotaNeighborsRequest.createRemoveNeighborsRequest(uris));
+        return getNodeFor(IotaAPICommand.REMOVE_NEIGHBORS).removeNeighbors(IotaNeighborsRequest.createRemoveNeighborsRequest(uris));
     }
 
     /**
      * Returns all tips currently known by this node.
      *
      * @return {@link GetTipsResponse}
-     * @throws ArgumentException 
+     * @throws ArgumentException The request was considered wrong in any way by the node
      */
     public GetTipsResponse getTips() throws ArgumentException {
-        return service.getTips(IotaCommandRequest.createGetTipsRequest());
+        return getNodeFor(IotaAPICommand.GET_TIPS).getTips(IotaCommandRequest.createGetTipsRequest());
     }
 
 
@@ -236,6 +214,7 @@ public class IotaAPICore {
      * @param approvees Array of transaction hashes
      * @param bundles Array of bundle hashes
      * @return {@link FindTransactionResponse}
+     * @throws ArgumentException The request was considered wrong in any way by the node
      * @throws ArgumentException If any of the parameters are not empty but have invalid values
      */
     public FindTransactionResponse findTransactions(String[] addresses, String[] tags, String[] approvees, String[] bundles) throws ArgumentException {
@@ -274,7 +253,7 @@ public class IotaAPICore {
                 .byApprovees(approvees)
                 .byBundles(bundles);
 
-        return service.findTransactions(findTransRequest);
+        return getNodeFor(IotaAPICommand.FIND_TRANSACTIONS).findTransactions(findTransRequest);
     }
 
     /**
@@ -282,6 +261,7 @@ public class IotaAPICore {
      *
      * @param addresses An array of addresses, must contain checksums
      * @return {@link FindTransactionResponse}
+     * @throws ArgumentException The request was considered wrong in any way by the node
      * @throws ArgumentException If one of the addresses is invalid
      */
     public FindTransactionResponse findTransactionsByAddresses(String... addresses) throws ArgumentException {
@@ -300,6 +280,7 @@ public class IotaAPICore {
      *
      * @param bundles An array of bundles.
      * @return {@link FindTransactionResponse}
+     * @throws ArgumentException The request was considered wrong in any way by the node
      * @throws ArgumentException If one of the bundle hashes is invalid
      */
     public FindTransactionResponse findTransactionsByBundles(String... bundles) throws ArgumentException {
@@ -311,6 +292,7 @@ public class IotaAPICore {
      *
      * @param approvees An array of approvees.
      * @return {@link FindTransactionResponse}
+     * @throws ArgumentException The request was considered wrong in any way by the node
      * @throws ArgumentException If one of the approvee hashes is invalid
      */
     public FindTransactionResponse findTransactionsByApprovees(String... approvees) throws ArgumentException {
@@ -323,6 +305,7 @@ public class IotaAPICore {
      * 
      * @param digests A List of digests. Must be hashed tags (digest)
      * @return The transaction hashes which are returned depend on the input.
+     * @throws ArgumentException The request was considered wrong in any way by the node
      * @throws ArgumentException When one of the digests is invalid
      */
     @Deprecated
@@ -336,6 +319,7 @@ public class IotaAPICore {
      *
      * @param tags A List of tags.
      * @return {@link FindTransactionResponse}
+     * @throws ArgumentException The request was considered wrong in any way by the node
      * @throws ArgumentException When one of the tags is invalid
      */
     public FindTransactionResponse findTransactionsByTags(String... tags) throws ArgumentException {
@@ -357,6 +341,7 @@ public class IotaAPICore {
      * @param transactions Array of transactions you want to get the inclusion state for.
      * @param tips Array of tips (including milestones) you want to search for the inclusion state.
      * @return {@link GetInclusionStateResponse}
+     * @throws ArgumentException The request was considered wrong in any way by the node
      * @throws ArgumentException when a transaction hash is invalid
      * @throws ArgumentException when a tip is invalid
      */
@@ -370,7 +355,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
-        return service.getInclusionStates(IotaGetInclusionStateRequest
+        return getNodeFor(IotaAPICommand.GET_INCLUSIONS_STATES).getInclusionStates(IotaGetInclusionStateRequest
                 .createGetInclusionStateRequest(transactions, tips));
     }
 
@@ -381,6 +366,7 @@ public class IotaAPICore {
      *
      * @param hashes The transaction hashes you want to get trytes from.
      * @return {@link GetTrytesResponse}
+     * @throws ArgumentException The request was considered wrong in any way by the node
      * @throws ArgumentException when a transaction hash is invalid
      */
     public GetTrytesResponse getTrytes(String... hashes) throws ArgumentException {
@@ -389,7 +375,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
         
-        return service.getTrytes(IotaGetTrytesRequest.createGetTrytesRequest(hashes));
+        return getNodeFor(IotaAPICommand.GET_TRYTES).getTrytes(IotaGetTrytesRequest.createGetTrytesRequest(hashes));
     }
 
     /**
@@ -405,6 +391,7 @@ public class IotaAPICore {
      *                  This used to make sure the tips returned reference a given transaction in their past.
      *                  Can be <tt>null</tt>.
      * @return {@link GetTransactionsToApproveResponse}
+     * @throws ArgumentException The request was considered wrong in any way by the node
      * @throws ArgumentException The depth is invalid
      */
     public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth, String reference) throws ArgumentException {
@@ -412,7 +399,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_APPROVE_DEPTH_ERROR);
         }
         
-        return service.getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(depth, reference));
+        return getNodeFor(IotaAPICommand.GET_TRANSACTIONS_TO_APPROVE).getTransactionsToApprove(IotaGetTransactionsToApproveRequest.createIotaGetTransactionsToApproveRequest(depth, reference));
     }
 
     /**
@@ -425,6 +412,7 @@ public class IotaAPICore {
      *
      * @param depth Number of bundles to go back to determine the transactions for approval.
      * @return {@link GetTransactionsToApproveResponse}
+     * @throws ArgumentException The request was considered wrong in any way by the node
      */
     public GetTransactionsToApproveResponse getTransactionsToApprove(Integer depth) throws ArgumentException {
         return getTransactionsToApprove(depth, null);
@@ -466,7 +454,7 @@ public class IotaAPICore {
             addresses[i] = Checksum.removeChecksum(addresses[i]);
         }
         
-        return service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses, tips));
+        return getNodeFor(IotaAPICommand.GET_BALANCES).getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses, tips));
     }
 
     /**
@@ -526,7 +514,7 @@ public class IotaAPICore {
             addresses[i] = Checksum.removeChecksum(addresses[i]);
         }
 
-        return service.wereAddressesSpentFrom(IotaWereAddressesSpentFromRequest.create(addresses));
+        return getNodeFor(IotaAPICommand.WERE_ADDRESSES_SPENT_FROM).wereAddressesSpentFrom(IotaWereAddressesSpentFromRequest.create(addresses));
     }
     
     /**
@@ -541,7 +529,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
-        return service.checkConsistency(IotaCheckConsistencyRequest.create(tails));
+        return getNodeFor(IotaAPICommand.CHECK_CONSISTENCY).checkConsistency(IotaCheckConsistencyRequest.create(tails));
     }
 
 
@@ -599,7 +587,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
         }
 
-        return service.attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
+        return getNodeFor(IotaAPICommand.ATTACH_TO_TANGLE).attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
     }
     
     /**
@@ -687,7 +675,7 @@ public class IotaAPICore {
      * @throws ArgumentException If node connection fails
      */
     public InterruptAttachingToTangleResponse interruptAttachingToTangle() throws ArgumentException {
-        return service.interruptAttachingToTangle(IotaCommandRequest.createInterruptAttachToTangleRequest());
+        return getNodeFor(IotaAPICommand.INTERRUPT_ATTACHING_TO_TANGLE).interruptAttachingToTangle(IotaCommandRequest.createInterruptAttachToTangleRequest());
     }
 
     /**
@@ -704,7 +692,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR);
         }
 
-        return service.broadcastTransactions(IotaBroadcastTransactionRequest.createBroadcastTransactionsRequest(trytes));
+        return getNodeFor(IotaAPICommand.BROADCAST_TRANSACTIONS).broadcastTransactions(IotaBroadcastTransactionRequest.createBroadcastTransactionsRequest(trytes));
     }
 
     /**
@@ -721,7 +709,7 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR);
         }
         
-        return service.storeTransactions(IotaStoreTransactionsRequest.createStoreTransactionsRequest(trytes));
+        return getNodeFor(IotaAPICommand.STORE_TRANSACTIONS).storeTransactions(IotaStoreTransactionsRequest.createStoreTransactionsRequest(trytes));
     }
 
     /**
@@ -733,7 +721,7 @@ public class IotaAPICore {
     public String getProtocol() {
         //Should be carefull, its still possible to not display the protocol if url doesn't contain :
         //Will never break because a split on not found character returns the entire string in [0]
-        return service.url().getProtocol();
+        return getNodeFor(null).url().getProtocol();
     }
 
     /**
@@ -743,7 +731,7 @@ public class IotaAPICore {
      */
     @Deprecated
     public String getHost() {
-        return service.url().getHost();
+        return getNodeFor(null).url().getHost();
     }
 
     /**
@@ -753,7 +741,7 @@ public class IotaAPICore {
      */
     @Deprecated
     public String getPort() {
-        return service.url().getPort() + "";
+        return getNodeFor(null).url().getPort() + "";
     }
     
     @Override

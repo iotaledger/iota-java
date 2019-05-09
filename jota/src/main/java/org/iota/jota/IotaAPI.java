@@ -401,8 +401,7 @@ public class IotaAPI extends IotaAPICore {
         try {
             storeTransactions(trytes);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new ArgumentException(e.toString());
+            throw new ArgumentException(e.getMessage(), e);
         }
         return broadcastTransactions(trytes);
     }
@@ -727,7 +726,9 @@ public class IotaAPI extends IotaAPICore {
             //  confirm that the inputs exceed the threshold
             else {
                 GetBalancesAndFormatResponse newinputs = getInputs(seed, security, 0, 0, totalValue);
-                
+                if (newinputs == null || newinputs.getTotalBalance() < totalValue) {
+                    throw new IllegalStateException(Constants.NOT_ENOUGH_BALANCE_ERROR);
+                }
                 // If inputs with enough balance
                 return addRemainder(seed, security, newinputs.getInputs(), bundle, tag, totalValue, remainder, signatureFragments);
             }

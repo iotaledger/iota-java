@@ -1,10 +1,4 @@
-package org.iota.jota.account.promoter;
-
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+package org.iota.jota.account.plugins.promoter;
 
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.AccountOptions;
@@ -12,11 +6,11 @@ import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.PendingTransfer;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
-import org.iota.jota.account.event.Plugin;
 import org.iota.jota.account.event.events.EventPromotion;
 import org.iota.jota.account.event.events.EventReattachment;
 import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.event.events.EventTransferConfirmed;
+import org.iota.jota.account.plugins.AccountPlugin;
 import org.iota.jota.dto.response.GetTrytesResponse;
 import org.iota.jota.dto.response.ReplayBundleResponse;
 import org.iota.jota.model.Bundle;
@@ -28,7 +22,13 @@ import org.iota.jota.utils.thread.UnboundScheduledExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
+public class PromoterReattacherImpl extends AccountPlugin implements PromoterReattacher {
     
     private static final Logger log = LoggerFactory.getLogger(PromoterReattacherImpl.class);
     

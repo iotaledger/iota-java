@@ -4,7 +4,7 @@ package org.iota.jota;
  * IOTA's node command list
  *
  */
-public enum IotaAPICommands {
+public enum IotaAPICommand {
 
     GET_NODE_INFO("getNodeInfo"),
     GET_NEIGHBORS("getNeighbors"),
@@ -26,9 +26,9 @@ public enum IotaAPICommands {
     private String command;
 
     /**
-     * Initializes a new instance of the IotaAPICommands class.
+     * Initializes a new instance of the IotaAPICommand class.
      */
-    IotaAPICommands(String command) {
+    IotaAPICommand(String command) {
         this.command = command;
     }
 

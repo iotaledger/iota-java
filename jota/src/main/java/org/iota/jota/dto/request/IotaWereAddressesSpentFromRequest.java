@@ -1,6 +1,6 @@
 package org.iota.jota.dto.request;
 
-import org.iota.jota.IotaAPICommands;
+import org.iota.jota.IotaAPICommand;
 
 /**
  * This class represents the core API request 'wereAddressesSpentFrom'.
@@ -17,7 +17,7 @@ public class IotaWereAddressesSpentFromRequest extends IotaCommandRequest {
      * @param addresses
      */
     private IotaWereAddressesSpentFromRequest(String... addresses) {
-        super(IotaAPICommands.WERE_ADDRESSES_SPENT_FROM);
+        super(IotaAPICommand.WERE_ADDRESSES_SPENT_FROM);
         this.addresses = addresses;
     }
 

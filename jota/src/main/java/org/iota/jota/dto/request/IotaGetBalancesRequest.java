@@ -1,6 +1,6 @@
 package org.iota.jota.dto.request;
 
-import org.iota.jota.IotaAPICommands;
+import org.iota.jota.IotaAPICommand;
 
 /**
  * This class represents the core api request 'getBalances'.
@@ -19,7 +19,7 @@ public class IotaGetBalancesRequest extends IotaCommandRequest {
      * @param tips
      */
     private IotaGetBalancesRequest(final Integer threshold, final String[] addresses, final String... tips) {
-        super(IotaAPICommands.GET_BALANCES);
+        super(IotaAPICommand.GET_BALANCES);
         this.addresses = addresses;
         this.threshold = threshold;
         this.tips = tips;

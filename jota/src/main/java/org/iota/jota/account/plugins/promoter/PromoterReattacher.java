@@ -1,4 +1,4 @@
-package org.iota.jota.account.promoter;
+package org.iota.jota.account.plugins.promoter;
 
 import org.iota.jota.model.Bundle;
 import org.iota.jota.utils.thread.TaskService;
