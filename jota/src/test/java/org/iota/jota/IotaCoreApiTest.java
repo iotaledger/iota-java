@@ -1,30 +1,19 @@
 package org.iota.jota;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.Collections;
-
 import org.hamcrest.core.IsNull;
 import org.iota.jota.category.IntegrationTest;
 import org.iota.jota.config.types.FileConfig;
-import org.iota.jota.dto.response.AddNeighborsResponse;
-import org.iota.jota.dto.response.FindTransactionResponse;
-import org.iota.jota.dto.response.GetBalancesResponse;
-import org.iota.jota.dto.response.GetInclusionStateResponse;
-import org.iota.jota.dto.response.GetNodeInfoResponse;
-import org.iota.jota.dto.response.GetTipsResponse;
-import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
-import org.iota.jota.dto.response.GetTrytesResponse;
-import org.iota.jota.dto.response.RemoveNeighborsResponse;
-import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
+import org.iota.jota.dto.response.*;
+import org.iota.jota.error.AccessLimitedException;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.utils.Checksum;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.util.Collections;
+
+import static org.junit.Assert.*;
 
 public class IotaCoreApiTest {
 
@@ -37,6 +26,8 @@ public class IotaCoreApiTest {
     private static final String TEST_ADDRESS_WITH_CHECKSUM = "YJNQ9EQWSXUMLFCIUZDCAJZSAXUQNZSY9AKKVYKKFBAAHRSTKSHUOCCFTQVPPASPGGC9YGNLDQNOUWCAWGWIJNRJMX";
     
     private static final String TEST_HASH = "OOAARHCXXCPMNZPUEYOOUIUCTWZSQGKNIECIKRBNUUJEVMLJAWGCXREXEQGNJUJKUXXQAWWAZYKB99999";
+
+    private static final String TAG = "IOTA9TAG9999999999999999";
     
     private static IotaAPICore proxy;
 
@@ -75,14 +66,14 @@ public class IotaCoreApiTest {
         //assertThat(neighbors.getNeighbors(), IsNull.notNullValue());
     }
 
-    @Test(expected = IllegalAccessError.class)
+    @Test(expected = AccessLimitedException.class)
     @Category(IntegrationTest.class)
     public void shouldAddNeighbors() throws ArgumentException {
         AddNeighborsResponse res = proxy.addNeighbors("udp://8.8.8.8:14265");
         assertThat(res, IsNull.notNullValue());
     }
 
-    @Test(expected = IllegalAccessError.class)
+    @Test(expected = AccessLimitedException.class)
     @Category(IntegrationTest.class)
     public void shouldRemoveNeighbors() throws ArgumentException {
         RemoveNeighborsResponse res = proxy.removeNeighbors("udp://8.8.8.8:14265");
@@ -120,7 +111,7 @@ public class IotaCoreApiTest {
     @Test
     @Category(IntegrationTest.class)
     public void shouldFindTransactionsByDigests() throws ArgumentException {
-        FindTransactionResponse trans = proxy.findTransactionsByTags(TEST_HASH);
+        FindTransactionResponse trans = proxy.findTransactionsByTags(TAG);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
@@ -180,7 +171,7 @@ public class IotaCoreApiTest {
         String test = TEST_BUNDLE;
         FindTransactionResponse resp = proxy.findTransactions(
                 new String[]{Checksum.addChecksum(test)}, 
-                new String[]{test}, 
+                new String[]{TAG},
                 new String[]{test}, 
                 new String[]{test});
     }
