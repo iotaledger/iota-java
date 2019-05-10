@@ -49,6 +49,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 
 public class IotaAccount implements Account, EventListener {
+
+    private static final String ACC_START_FAILED = "Failed to load accounts. Check the error log";
     
     private static final Logger log = LoggerFactory.getLogger(IotaAccount.class);
     
@@ -87,7 +89,7 @@ public class IotaAccount implements Account, EventListener {
         if (loaded) {
             start();
         } else {
-            throw new AccountLoadError("Failed to load accounts. Check the error log");
+            throw new AccountLoadError(ACC_START_FAILED);
         }
     }
     
@@ -325,10 +327,20 @@ public class IotaAccount implements Account, EventListener {
     @Override
     public void updateSettings(AccountOptions newSettings) throws AccountError {
         shutdown();
-        unload(true);
+        unload(false);
         options = newSettings;
-        load();
-        start();
+
+        try {
+            load();
+
+            if (!start()) {
+                throw new AccountError(ACC_START_FAILED);
+            }
+        } catch (AccountError e){
+            EventAccountError event = new EventAccountError(e);
+            eventManager.emit(event);
+            throw e;
+        }
     }
     
     public Future<Bundle> send(String address, long amount, String message, String tag){
@@ -435,7 +447,7 @@ public class IotaAccount implements Account, EventListener {
     public Future<ConditionalDepositAddress> newDepositRequest(DepositRequest request, ExpireCondition... otherConditions) throws AccountError {
         FutureTask<ConditionalDepositAddress> task = new FutureTask<ConditionalDepositAddress>(() -> {
             if (request.getMultiUse() && request.getExpectedAmount() != 0) {
-                throw new AccountError("Cannot use multi-use and amount simultaniously");
+                throw new AccountError("Cannot use multi-use and amount simultaneously");
             }
             
             Address address = accountManager.getNextAddress();

@@ -1,14 +1,13 @@
 package org.iota.jota.account.inputselector;
 
-import java.util.List;
-
 import org.iota.jota.model.Input;
+
+import java.util.List;
 
 public interface InputSelectionStrategy {
     
     /**
-     * 
-     * @param state
+     *
      * @param requiredValue
      * @param balanceCheck
      * @return

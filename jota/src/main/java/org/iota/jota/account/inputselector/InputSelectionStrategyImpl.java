@@ -1,19 +1,20 @@
 package org.iota.jota.account.inputselector;
 
+import org.iota.jota.account.AccountBalanceCache;
+import org.iota.jota.account.clock.Clock;
+import org.iota.jota.account.deposits.DepositRequest;
+import org.iota.jota.account.errors.AccountError;
+import org.iota.jota.account.errors.AccountNoBalanceError;
+import org.iota.jota.account.plugins.AccountPlugin;
+import org.iota.jota.model.Input;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.iota.jota.account.AccountBalanceCache;
-import org.iota.jota.account.clock.Clock;
-import org.iota.jota.account.deposits.DepositRequest;
-import org.iota.jota.account.errors.AccountError;
-import org.iota.jota.account.errors.AccountNoBalanceError;
-import org.iota.jota.model.Input;
-
-public class InputSelectionStrategyImpl implements InputSelectionStrategy {
+public class InputSelectionStrategyImpl extends AccountPlugin implements InputSelectionStrategy {
     
     private Clock clock;
     private AccountBalanceCache cache;
@@ -26,6 +27,10 @@ public class InputSelectionStrategyImpl implements InputSelectionStrategy {
     @Override
     public List<Input> getInput(long requiredValue, boolean balanceCheck) {
         long remaining = requiredValue;
+
+        if (balanceCheck){
+            //cache.recalcluate(getAccount());
+        }
         
         List<Input> balances = cache.getStream()
                 .filter(entry -> isUsable(entry.getKey(), entry.getValue()))
@@ -87,5 +92,10 @@ public class InputSelectionStrategyImpl implements InputSelectionStrategy {
         
         // Any other input is discarded
         return false;
+    }
+
+    @Override
+    public String name() {
+        return "InputSelection:default";
     }
 }
