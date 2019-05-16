@@ -402,12 +402,9 @@ public class IotaAccount implements Account, EventListener {
                 }
             
                 List<String> trytes = prepareTransfers(transfer, inputs, remainder);
-
+                
                 //Reversed order, end is tail
                 List<Transaction> transferResponse = sendTrytes(null, trytes.toArray(new String[0]));
-
-                // Back to "normal"
-                Collections.reverse(transferResponse);
 
                 Trytes[] bundleTrytes = new Trytes[transferResponse.size()];
                 for (int i=0; i<transferResponse.size(); i++){
@@ -718,12 +715,12 @@ public class IotaAccount implements Account, EventListener {
         
         GetAttachToTangleResponse res;
         // attach to tangle - do pow
-        if (getApi().options.getLocalPoW() != null) {
+        if (getApi().getOptions().getLocalPoW() != null) {
             EventDoingProofOfWork eventPow = new EventDoingProofOfWork(trytes);
             getEventManager().emit(eventPow);
             
             res = getApi().attachToTangleLocalPow(txs.getTrunkTransaction(), txs.getBranchTransaction(), 
-                    options.getMwm(), getApi().options.getLocalPoW(), trytes);
+                    options.getMwm(), getApi().getOptions().getLocalPoW(), trytes);
         } else {
             res = getApi().attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), 
                     options.getMwm(), trytes);

@@ -182,12 +182,11 @@ public class InputValidator {
     }
 
     /**
-     * Determines whether the specified string array contains only trytes, and 
-     * Deprecated - Use isArrayOfRawTransactionTrytes
+     * Determines whether the specified string array contains only trytes
+     * 
      * @param trytes The trytes array to validate.
      * @return <code>true</code> if the specified array contains only valid trytes otherwise, <code>false</code>.
      **/
-    @Deprecated
     public static boolean isArrayOfTrytes(String[] trytes) {
         return isArrayOfTrytes(trytes, Constants.TRANSACTION_LENGTH);
     }
@@ -199,6 +198,12 @@ public class InputValidator {
      * @return <code>true</code> if the specified array contains only valid trytes otherwise, <code>false</code>.
      **/
     public static boolean isArrayOfRawTransactionTrytes(String[] trytes) {
+        for (String tr : trytes) {
+            // This part of the value trits exceed iota max supply when used
+            if (!InputValidator.isNinesTrytes(tr.substring(2279, 2295), 16)) {
+                return false;
+            }
+        }
         return isArrayOfTrytes(trytes, Constants.TRANSACTION_LENGTH);
     }
     

@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -27,7 +29,7 @@ import static org.iota.jota.utils.Constants.*;
 public class IotaAPICore {
     private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
     
-    protected ApiOptions options;
+    private ApiOptions options;
     
     protected final List<Connection> nodes = new ArrayList<>();
     
@@ -54,6 +56,10 @@ public class IotaAPICore {
     
     public List<Connection> getNodes() {
         return nodes;
+    }
+    
+    ApiOptions getOptions() {
+        return options;
     }
     
     public boolean addNode(Connection n) {
@@ -101,19 +107,19 @@ public class IotaAPICore {
      * @return A clone of our curl object
      */
     public ICurl getCurl() {
-        return options.getCustomCurl().clone();
+        return getOptions().getCustomCurl().clone();
     }
     
     public void setCurl(ICurl localPoW) {
-        options.setCustomCurl(localPoW);
+        getOptions().setCustomCurl(localPoW);
     }
     
     public IotaLocalPoW getLocalPoW() {
-        return options.getLocalPoW();
+        return getOptions().getLocalPoW();
     }
     
     public void setLocalPoW(IotaLocalPoW localPoW) {
-        options.setLocalPoW(localPoW);
+        getOptions().setLocalPoW(localPoW);
     }
 
     /**
@@ -570,7 +576,7 @@ public class IotaAPICore {
      * @throws ArgumentException when the provided transaction trytes are invalid
      */
     public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws ArgumentException {
-        IotaLocalPoW pow = options.getLocalPoW();
+        IotaLocalPoW pow = getOptions().getLocalPoW();
         if (pow != null) {
             return attachToTangleLocalPow(trunkTransaction, branchTransaction, minWeightMagnitude, pow, trytes);
         }
@@ -630,6 +636,7 @@ public class IotaAPICore {
     public GetAttachToTangleResponse attachToTangleLocalPow(String trunkTransaction, String branchTransaction,
             Integer minWeightMagnitude, IotaLocalPoW pow, String... trytes) {
         if (pow == null) {
+            log.warn("Called local POW without POW defined, switching to remote POW");
             return attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes);
         }
         
@@ -647,24 +654,28 @@ public class IotaAPICore {
         
         final String[] resultTrytes = new String[trytes.length];
         String previousTransaction = null;
-        for (int i = trytes.length-1; i >= 0; i--) {
-            Transaction txn = new Transaction(trytes[i]);
-            txn.setTrunkTransaction(previousTransaction == null ? trunkTransaction : previousTransaction);
-            txn.setBranchTransaction(previousTransaction == null ? branchTransaction : trunkTransaction);
-
-            if (txn.getTag().isEmpty() || txn.getTag().matches("9*")) {
-                txn.setTag(txn.getObsoleteTag());
+        
+        try {
+            for (int i = 0; i < resultTrytes.length; i++) {
+                Transaction txn = new Transaction(trytes[i]);
+                txn.setTrunkTransaction(previousTransaction == null ? trunkTransaction : previousTransaction);
+                txn.setBranchTransaction(previousTransaction == null ? branchTransaction : trunkTransaction);
+    
+                if (txn.getTag().isEmpty() || txn.getTag().matches("9*")) {
+                    txn.setTag(txn.getObsoleteTag());
+                }
+                
+                txn.setAttachmentTimestamp(System.currentTimeMillis());
+                txn.setAttachmentTimestampLowerBound(0);
+                txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
+    
+                resultTrytes[i] = pow.performPoW(txn.toTrytes(), minWeightMagnitude);
+                previousTransaction = new Transaction(resultTrytes[i], SpongeFactory.create(SpongeFactory.Mode.CURLP81)).getHash();
             }
-            
-            txn.setAttachmentTimestamp(System.currentTimeMillis());
-            txn.setAttachmentTimestampLowerBound(0);
-            txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
-
-            int reverseIndex = trytes.length-1 - i;
-            resultTrytes[reverseIndex] = pow.performPoW(txn.toTrytes(), minWeightMagnitude);
-            previousTransaction = new Transaction(resultTrytes[reverseIndex], SpongeFactory.create(SpongeFactory.Mode.CURLP81)).getHash();
+            Collections.reverse(Arrays.asList(resultTrytes));
+        } catch (Exception e) {
+            throw new ArgumentException("Could not compute PoW trytes", e);
         }
-
         return new GetAttachToTangleResponse(resultTrytes);
     }
 
@@ -748,7 +759,7 @@ public class IotaAPICore {
     public String toString() {
         StringBuilder builder = new StringBuilder("----------------------");
         builder.append(System.getProperty("line.separator"));
-        builder.append(options.toString());
+        builder.append(getOptions().toString());
         
         builder.append(System.getProperty("line.separator"));
         builder.append("Registered nodes: ");

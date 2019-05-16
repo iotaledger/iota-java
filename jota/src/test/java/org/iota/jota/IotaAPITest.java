@@ -10,6 +10,8 @@ import org.iota.jota.error.InternalException;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
+import org.iota.jota.pow.SpongeFactory;
+import org.iota.jota.pow.pearldiver.PearlDiverLocalPoW;
 import org.iota.jota.utils.Constants;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +27,6 @@ import static org.junit.Assert.*;
 /**
  * Let's do some integration test coverage against a devnet node
  * Careful with running these tests too fast, the balance might not work in that case
- *
  */
 public class IotaAPITest {
 
@@ -170,7 +171,8 @@ public class IotaAPITest {
         GetNewAddressResponse res = iotaAPI.getAddressesUnchecked(TEST_SEED1, 2, false, 0, 100);
         assertEquals("Should have generated 100 addresses", res.getAddresses().size(), 100);
     }
-
+    
+    @Test
     @Category(IntegrationTest.class)
     public void shouldPrepareTransfer() {
         List<Transfer> transfers = new ArrayList<>();
@@ -185,6 +187,7 @@ public class IotaAPITest {
         assertEquals("prepareTransfers should have reversed bundle order for attachToTangle", first.getCurrentIndex(), first.getLastIndex());
     }
 
+    @Test
     @Category(IntegrationTest.class)
     public void shouldPrepareTransferWithInputs(){
         List<Input> inputlist = new ArrayList<>();
@@ -211,7 +214,7 @@ public class IotaAPITest {
             List<Transfer> transfers = new ArrayList<>();
 
             transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 100, TEST_MESSAGE, TEST_TAG));
-            List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED2, 2, transfers, null, null, null, false);
+            iotaAPI.prepareTransfers(TEST_SEED2, 2, transfers, null, null, null, false);
 
             fail("prepareTransfers should have thrown an error due to lack of balance on the seed");
         } catch (IllegalStateException e){
@@ -226,7 +229,7 @@ public class IotaAPITest {
             List<Input> inputlist = new ArrayList<>();
             List<Transfer> transfers = new ArrayList<>();
             transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
-            List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED2, 2, transfers, null, inputlist, null, true);
+            iotaAPI.prepareTransfers(TEST_SEED2, 2, transfers, null, inputlist, null, true);
 
             fail("prepareTransfer should have thrown an error on wrong/lack of inputs");
         } catch (ArgumentException e){
@@ -294,10 +297,17 @@ public class IotaAPITest {
         assertThat("Bundle should be replayed", rbr, IsNull.notNullValue());
     }
 
-    @Test(expected = InternalException.class)
+    @Test
     public void shouldNotSendTrytes(){
-        iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, null);
-    }
+        try {
+            iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, null);
+            fail("Should have thrown an exception on attempting to attach wrong trytes");
+        } catch (ArgumentException | InternalException e) {
+            // ArgumentException for local PoW
+            // InternalException for remote PoW
+            //TODO: Validate message/return
+        }
+    } 
 
     @Test()
     @Category(IntegrationTest.class)
