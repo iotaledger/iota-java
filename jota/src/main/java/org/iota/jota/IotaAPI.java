@@ -471,7 +471,7 @@ public class IotaAPI extends IotaAPICore {
      * Wrapper function: Finds transactions, gets trytes and turns it into {@link Transaction} objects.
      *
      * @param addresses The addresses we should get the transactions for, must contain checksums
-     * @return {@link Transaction} objects.
+     * @return a list of {@link Transaction} objects.
      * @throws ArgumentException if addresses is not a valid array of hashes
      * @see #findTransactionsByAddresses(String...)
      * @see #findTransactionsObjectsByHashes
@@ -491,7 +491,10 @@ public class IotaAPI extends IotaAPICore {
      * Wrapper function: Finds transactions, gets trytes and turns it into {@link Transaction} objects.
      *
      * @param tags The tags the transactions we search for have
-     * @return Transactions.
+     * @return a list of {@link Transaction} objects.
+     * @throws ArgumentException if any of the tags are not a valid
+     * @see #findTransactionsByTags(String...)
+     * @see #findTransactionsObjectsByHashes
      **/
     @Document
     public List<Transaction> findTransactionObjectsByTag(String... tags) throws ArgumentException {

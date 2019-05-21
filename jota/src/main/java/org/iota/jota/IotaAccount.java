@@ -255,7 +255,6 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
-    @Document
     public String getId() throws AccountError {
         return accountId;
     }
@@ -265,7 +264,6 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
-    @Document
     public boolean start() throws AccountError {
         //TODO Improve
         if (options.getStore() instanceof TaskService) {
@@ -289,7 +287,6 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
-    @Document
     public void shutdown() throws AccountError {
         Date now = options.getTime().time();
         unload(true);
@@ -302,7 +299,6 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
-    @Document
     public long usableBalance() throws AccountError {
         return accountManager.getUsableBalance();
     }
@@ -312,7 +308,6 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
-    @Document
     public long totalBalance() throws AccountError {
         return accountManager.getTotalBalance();
     }
@@ -322,7 +317,6 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
-    @Document
     public boolean isNew() {
         return accountManager.isNew();
     }
@@ -332,7 +326,6 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
-    @Document
     public void updateSettings(AccountOptions newSettings) throws AccountError {
         shutdown();
         unload(false);
@@ -356,17 +349,18 @@ public class IotaAccount implements Account, EventListener {
     }
     
     /**
-     * Future always completed
+     * Sends a transfer using the accounts balance to the provided address.
+     * You must call <code>.get()</code> on the future in order to start this transfer.
      * 
-     * @param address
-     * @param amount
-     * @param message
-     * @param tag
-     * @return
-     * @throws ArgumentException
+     * @param address The receiver of this transfer
+     * @param amount The amount we are sending to the address
+     * @param message An optional message for this transfer
+     * @param tag An optional tag for this transfer
+     * @return The bundle we sent
      */
+    @Document
     public Future<Bundle> send(String address, long amount, Optional<String> message, 
-                               Optional<String> tag) throws ArgumentException {
+                               Optional<String> tag) {
         FutureTask<Bundle> task = new FutureTask<Bundle>(() -> {
             if (!loaded) {
                 return null;
@@ -444,7 +438,6 @@ public class IotaAccount implements Account, EventListener {
      * 
      * {@inheritDoc}
      */
-    @Document
     @Override
     public Future<ConditionalDepositAddress> newDepositAddress(Date timeOut, boolean multiUse, long expectedAmount,
             ExpireCondition... otherConditions) throws AccountError {
@@ -474,9 +467,9 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * Future always completed
+     * 
      * {@inheritDoc}
      */
-    @Document
     @Override
     public Future<Bundle> send(Recipient recipient) throws AccountError {
         if (recipient.getAddresses().length == 1) {
