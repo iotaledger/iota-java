@@ -39,6 +39,7 @@ import org.iota.jota.types.Recipient;
 import org.iota.jota.types.Trytes;
 import org.iota.jota.utils.*;
 import org.iota.jota.utils.thread.TaskService;
+import org.iota.mddoclet.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -254,6 +255,7 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
+    @Document
     public String getId() throws AccountError {
         return accountId;
     }
@@ -263,6 +265,7 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
+    @Document
     public boolean start() throws AccountError {
         //TODO Improve
         if (options.getStore() instanceof TaskService) {
@@ -286,6 +289,7 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
+    @Document
     public void shutdown() throws AccountError {
         Date now = options.getTime().time();
         unload(true);
@@ -298,6 +302,7 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
+    @Document
     public long usableBalance() throws AccountError {
         return accountManager.getUsableBalance();
     }
@@ -307,6 +312,7 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
+    @Document
     public long totalBalance() throws AccountError {
         return accountManager.getTotalBalance();
     }
@@ -316,6 +322,7 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
+    @Document
     public boolean isNew() {
         return accountManager.isNew();
     }
@@ -325,6 +332,7 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
+    @Document
     public void updateSettings(AccountOptions newSettings) throws AccountError {
         shutdown();
         unload(false);
@@ -433,8 +441,10 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * Future always completed
+     * 
      * {@inheritDoc}
      */
+    @Document
     @Override
     public Future<ConditionalDepositAddress> newDepositAddress(Date timeOut, boolean multiUse, long expectedAmount,
             ExpireCondition... otherConditions) throws AccountError {
@@ -466,6 +476,7 @@ public class IotaAccount implements Account, EventListener {
      * Future always completed
      * {@inheritDoc}
      */
+    @Document
     @Override
     public Future<Bundle> send(Recipient recipient) throws AccountError {
         if (recipient.getAddresses().length == 1) {
