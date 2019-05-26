@@ -1,6 +1,6 @@
 package org.iota.jota;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +10,9 @@ import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transfer;
 import org.iota.jota.pow.pearldiver.PearlDiverLocalPoW;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created by pinpong on 01.10.17.
@@ -28,12 +28,12 @@ public class IotaLocalPoWTest {
 
     private IotaAPI iotaClient;
 
-    @Before
+    @BeforeEach
     public void createApiClientInstance() {
         iotaClient = new IotaAPI.Builder().localPoW(new PearlDiverLocalPoW()).build();
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void shouldSendTransfer() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();

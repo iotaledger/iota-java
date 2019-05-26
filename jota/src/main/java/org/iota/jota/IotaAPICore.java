@@ -519,7 +519,7 @@ public class IotaAPICore {
      */
     public WereAddressesSpentFromResponse wereAddressesSpentFrom(String... addresses) throws ArgumentException {
         if (null == addresses || addresses.length == 0 || !InputValidator.isAddressesArrayValid(addresses)) {
-            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
+            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
         }
         
         for (int i = 0; i < addresses.length; i++) {

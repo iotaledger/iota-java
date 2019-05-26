@@ -1,7 +1,5 @@
 package org.iota.jota.account;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -12,25 +10,27 @@ import org.iota.jota.account.deposits.StoredDepositAddress;
 import org.iota.jota.account.store.AccountFileStore;
 import org.iota.jota.account.store.AccountStoreImpl;
 import org.iota.jota.store.JsonFlatFileStore;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AccountFileStoreTest {
     
-    protected static final String addressId = 
+    private static final String addressId =
             "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZC";
     
     private File file;
     
     private AccountStoreImpl store;
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         file = File.createTempFile("client", "store");
     }
     
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         store.shutdown();
         FileUtils.forceDelete(file);

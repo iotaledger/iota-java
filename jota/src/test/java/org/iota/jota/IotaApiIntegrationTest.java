@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.hamcrest.core.IsNull;
 import org.iota.jota.dto.response.GetBundleResponse;
 import org.iota.jota.error.ArgumentException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class IotaApiIntegrationTest extends AbstractMockServer {
 
