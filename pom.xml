@@ -84,6 +84,9 @@
         <version.junit5>5.4.0</version.junit5>
         
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
+        <bcprov-jdk15on.version>1.61</bcprov-jdk15on.version>
+        <converter-gson.version>2.5.0</converter-gson.version>
+        <jackson-databind.version>2.9.9</jackson-databind.version>
     </properties>
 
     <modules>
@@ -103,7 +106,7 @@
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15on</artifactId>
-                <version>1.58</version>
+                <version>${bcprov-jdk15on.version}</version>
             </dependency>
             
             <dependency>
@@ -115,7 +118,7 @@
             <dependency>
                 <groupId>com.squareup.retrofit2</groupId>
                 <artifactId>converter-gson</artifactId>
-                <version>2.3.0</version>
+                <version>${converter-gson.version}</version>
             </dependency>
             
             <dependency>
@@ -202,7 +205,7 @@
 	        <dependency>
 			    <groupId>com.fasterxml.jackson.core</groupId>
 			    <artifactId>jackson-databind</artifactId>
-			    <version>2.9.8</version>
+			    <version>${jackson-databind.version}</version>
 			</dependency>
 			
 		    <dependency>
