@@ -84,6 +84,7 @@
         <version.junit5>5.4.0</version.junit5>
         
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
+        <dependency-check-maven.version>5.0.0-M3</dependency-check-maven.version>
     </properties>
 
     <modules>
@@ -300,6 +301,11 @@
 	            <artifactId>maven-failsafe-plugin</artifactId>
 	            <version>${version.maven-failsafe-plugin}</version>
 	        </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check-maven.version}</version>
+            </plugin>
         </plugins>
     </build>
     
