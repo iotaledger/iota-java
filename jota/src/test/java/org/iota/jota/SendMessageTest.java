@@ -1,8 +1,5 @@
 package org.iota.jota;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertThat;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +9,12 @@ import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SendMessageTest {
 
@@ -27,12 +27,12 @@ public class SendMessageTest {
 
     private IotaAPI iotaClient;
 
-    @Before
+    @BeforeEach
     public void createApiClientInstance() {
         iotaClient = new IotaAPI.Builder().build();
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void shouldSendMessage() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();

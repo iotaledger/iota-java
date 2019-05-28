@@ -1,18 +1,12 @@
 package org.iota.jota.config;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.store.FlatFileStore;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FileConfigTest {
-    
-    @Before
-    public void setUp() throws Exception {
-        
-    }
     
     @Test
     public void testOldConfig() throws Exception {

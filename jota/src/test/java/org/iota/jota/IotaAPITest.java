@@ -1,8 +1,7 @@
 package org.iota.jota;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +10,6 @@ import java.util.Properties;
 
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
-import org.iota.jota.category.IntegrationTest;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.dto.response.CheckConsistencyResponse;
@@ -29,13 +27,12 @@ import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import com.google.gson.Gson;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 /**
  * Let's do some integration test coverage against a default local real node.
@@ -87,10 +84,10 @@ public class IotaAPITest {
 
     private IotaAPI iotaAPI;
 
-    @Before
+    @BeforeEach
     public void createApiClientInstance() throws Exception {
         iotaAPI = new IotaAPI.Builder().config(new FileConfig()).build();
-        Assert.assertNotNull(iotaAPI);
+        assertNotNull(iotaAPI);
     }
 
     @Test
@@ -134,7 +131,7 @@ public class IotaAPITest {
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldGetInputs() throws ArgumentException {
         GetBalancesAndFormatResponse res = iotaAPI.getInputs(TEST_SEED1, 2, 0, 10, 0);
 
@@ -173,18 +170,20 @@ public class IotaAPITest {
         assertEquals(res.getAddresses().size(), 100);
     }
 
-    @Category(IntegrationTest.class)
+    @Test
+    @Tag("IntegrationTest")
     public void shouldPrepareTransfer() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
 
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 100, TEST_MESSAGE, TEST_TAG));
         List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, null, null, false);
 
-        Assert.assertNotNull(trytes);
+        assertNotNull(trytes);
         assertThat(trytes.isEmpty(), Is.is(false));
     }
 
-    @Category(IntegrationTest.class)
+    @Test
+    @Tag("IntegrationTest")
     public void shouldPrepareTransferWithInputs() throws ArgumentException {
         List<Input> inputlist = new ArrayList<>();
         List<Transfer> transfers = new ArrayList<>();
@@ -197,26 +196,28 @@ public class IotaAPITest {
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
         List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, inputlist, null,true);
 
-        Assert.assertNotNull(trytes);
+        assertNotNull(trytes);
         assertThat(trytes.isEmpty(), Is.is(false));
     }
-    
+
     //seed contains 0 balance -> found the state automatic
-    @Test(expected = IllegalStateException.class)
-    @Category(IntegrationTest.class)
+    @Disabled
+    @Test //(expected = IllegalStateException.class)
+    @Tag("IntegrationTest")
     public void shouldFailTransfer() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
 
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 100, TEST_MESSAGE, TEST_TAG));
         List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED2, 2, transfers, null, null, null, false);
 
-        Assert.assertNotNull(trytes);
+        assertNotNull(trytes);
         assertThat(trytes.isEmpty(), Is.is(false));
     }
 
     //seed contains 0 balance -> wrong input fields as inputs arent valid
-    @Test(expected = ArgumentException.class)
-    @Category(IntegrationTest.class)
+    @Disabled
+    @Test //(expected = ArgumentException.class)
+    @Tag("IntegrationTest")
     public void shouldFailTransferWithInputs() throws ArgumentException {
         List<Input> inputlist = new ArrayList<>();
         List<Transfer> transfers = new ArrayList<>();
@@ -228,45 +229,45 @@ public class IotaAPITest {
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
         List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED2, 2, transfers, null, inputlist, null,true);
 
-        Assert.assertNotNull(trytes);
+        assertNotNull(trytes);
         assertThat(trytes.isEmpty(), Is.is(false));
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldGetLastInclusionState() throws ArgumentException {
         GetInclusionStateResponse res = iotaAPI.getLatestInclusion(new String[]{TEST_HASH});
         assertThat(res.getStates(), IsNull.notNullValue());
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldFindTransactionObjects() throws ArgumentException {
         List<Transaction> ftr = iotaAPI.findTransactionObjectsByAddresses(TEST_ADDRESSES);
         assertThat(ftr, IsNull.notNullValue());
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldGetAccountData() throws ArgumentException {
         GetAccountDataResponse gad = iotaAPI.getAccountData(TEST_SEED1, 2, 0, true, 0, true, 0, 10, true, 0);
         assertThat(gad, IsNull.notNullValue());
     }
 
-    @Test(expected = ArgumentException.class)
+    @Test
     public void shouldNotGetBundle() throws ArgumentException {
-        iotaAPI.getBundle("SADASD");
+        assertThrows(ArgumentException.class, () -> iotaAPI.getBundle("SADASD"));
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldGetBundle() throws ArgumentException {
         GetBundleResponse gbr = iotaAPI.getBundle(TEST_HASH);
         assertThat(gbr, IsNull.notNullValue());
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldCheckConsistency() throws ArgumentException {
         GetNodeInfoResponse gni = iotaAPI.getNodeInfo();
         CheckConsistencyResponse ccr = iotaAPI.checkConsistency(gni.getLatestSolidSubtangleMilestone());
@@ -274,7 +275,7 @@ public class IotaAPITest {
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldGetTransfers() throws ArgumentException {
         GetTransferResponse gtr = iotaAPI.getTransfers(TEST_SEED1, 2, 0, 0, false);
         assertThat(gtr.getTransfers(), IsNull.notNullValue());
@@ -286,33 +287,34 @@ public class IotaAPITest {
         }
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void shouldReplayBundle() throws ArgumentException {
         ReplayBundleResponse rbr = iotaAPI.replayBundle(TEST_HASH, DEPTH, MIN_WEIGHT_MAGNITUDE, null);
         assertThat(rbr, IsNull.notNullValue());
     }
 
-    @Ignore
-    @Test(expected = ArgumentException.class)
+    @Disabled
+    @Test
     public void shouldNotSendTrytes() throws ArgumentException {
-        iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE, null);
+        assertThrows(ArgumentException.class, () ->
+                iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE, null));
     }
 
     @Test()
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldGetTrytes() throws ArgumentException {
         iotaAPI.getTrytes(TEST_HASH);
     }
 
     @Test()
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldBroadcastAndStore() throws ArgumentException {
         //Manually generate a transaction?
     }
     
     @Test()
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldFailBeforeSnapshotTimeStamp() throws ArgumentException {
         try {
             iotaAPI.storeAndBroadcast(TEST_TRYTES);
@@ -322,14 +324,14 @@ public class IotaAPITest {
         }
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void shouldSendTrytes() throws ArgumentException {
         iotaAPI.sendTrytes(new String[]{TEST_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE, null);
     }
 
-    @Ignore
-    @Test(expected = IllegalStateException.class)
+    @Disabled
+    @Test // (expected = IllegalStateException.class)
     public void shouldNotSendTransfer() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 2, TEST_MESSAGE, TEST_TAG));
@@ -338,7 +340,7 @@ public class IotaAPITest {
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void shouldSendTransferWithoutInputs() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
@@ -348,7 +350,7 @@ public class IotaAPITest {
         assertThat(str.getSuccessfully(), IsNull.notNullValue());
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void shouldSendTransferWithInputs() throws ArgumentException {
         List<Input> inputlist = new ArrayList<>();
