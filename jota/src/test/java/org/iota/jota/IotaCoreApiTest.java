@@ -160,13 +160,26 @@ public class IotaCoreApiTest {
 
     @Test
     @Tag("IntegrationTest")
-    public void shouldFindTransactions() {
+    public void findTransactionsWithValidTags() {
         String test = TEST_BUNDLE;
-        proxy.findTransactions(
-                new String[]{Checksum.addChecksum(test)}, 
+        FindTransactionResponse resp = proxy.findTransactions(
+                new String[]{Checksum.addChecksum(test)},
                 new String[]{TAG},
                 new String[]{test}, 
                 new String[]{test});
+
+        assertNotNull(resp);
+    }
+
+    @Test
+    @Tag("IntegrationTest")
+    public void findTransactionsFailIfInvalidTagIsProvided() {
+        String test = TEST_BUNDLE;
+        ArgumentException argumentException = assertThrows(ArgumentException.class,
+                () -> proxy.findTransactions(
+                        new String[]{Checksum.addChecksum(test)}, new String[]{test},
+                        new String[]{test}, new String[]{test}));
+        assertEquals("[Invalid tag provided.]", argumentException.getMessage());
     }
 
     @Test

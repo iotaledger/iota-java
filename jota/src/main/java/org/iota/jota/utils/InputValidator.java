@@ -18,7 +18,7 @@ import static org.iota.jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
  * This class provides methods to validate the parameters of different iota API methods
  */
 public class InputValidator {
-    
+
     /**
      * Determines whether the specified string is an address. 
      * Address must contain a checksum to be valid
@@ -137,7 +137,7 @@ public class InputValidator {
     public static boolean isTrytesOfExactLength(String trytes, int length) {
         return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
     }
-    
+
     /**
      * Determines whether the specified string contains only characters from the trytes alphabet (see <see cref="Constants.TryteAlphabet"/>).
      * Alias of {@link #isTrytesOfExactLength(String, int)}
@@ -173,7 +173,7 @@ public class InputValidator {
 
     /**
      * Determines whether the specified string array contains only trytes
-     * 
+     *
      * @param trytes The trytes array to validate.
      * @return <code>true</code> if the specified array contains only valid trytes otherwise, <code>false</code>.
      **/
@@ -212,7 +212,7 @@ public class InputValidator {
         }
         return true;
     }
-    
+
     /**
      * Checks if the array is not null and not empty
      * @param data The array with data
@@ -285,10 +285,11 @@ public class InputValidator {
     }
     
     /**
-     * Checks if the tag is valid.
+     * Checks if the tag is valid. The string must not be empty and must contain trytes.
      * 
      * @param tag The tag to validate.
      * @return <code>true</code> if the specified tag is valid; otherwise, <code>false</code>.
+     * @see #isTrytes(String)
      */
     public static boolean isValidTag(String tag) {
         return tag != null && tag.length() <= Constants.TAG_LENGTH && isTrytes(tag);
@@ -308,7 +309,7 @@ public class InputValidator {
         }
         return true;
     }
-    
+
     /**
      * Checks if the inputs are valid. 
      *
