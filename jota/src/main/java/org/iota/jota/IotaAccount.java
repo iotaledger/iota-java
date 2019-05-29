@@ -616,7 +616,6 @@ public class IotaAccount implements Account, EventListener {
         
         Bundle bundle = new Bundle();
         List<String> signatureFragments = prepareBundle(bundle, transfers);
-        
         try {
             List<String> output = IotaAPIUtils.signInputsAndReturn(
                     getSeed().getSeed().getTrytesString(), inputs, bundle, signatureFragments, getApi().getCurl());
@@ -662,6 +661,7 @@ public class IotaAccount implements Account, EventListener {
         for (Transaction trx : trxb) {
             bundleTrytes.add(trx.toTrytes());
         }
+        Collections.reverse(bundleTrytes);
         return bundleTrytes;
     }
 
