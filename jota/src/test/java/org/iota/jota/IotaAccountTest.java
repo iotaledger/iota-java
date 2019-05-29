@@ -30,7 +30,8 @@ public class IotaAccountTest {
 
     private static final String TEST_SEED = "IJEEPFTJEFGFRDTSQGLGEAUZPUJFP9LDMDOOYUNOZFJ9JMJFALJATJGHEUPHHFVTFDYSGZNKMRK9EQKWG";
     private static final String TEST_SEED_ID = "J9SPZIPMIHEGZEBNDLMBTVVTCGQREQXZFXUYTJTYVQCR9TUZWZDBSJBOZLTTLJYXCGGVAIEQFPWLNUGHD";
-
+    private static final String ADDR_0_SEC_3 = "TAKWNELREDNHLFYCQ9LMGZVYGTPTABFDEPQZILJAYAZSSCPXMEGCVAH9AHTJRDPVDCGIH9APCWG9KBSGA9VKXRLMU9";
+    
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
@@ -94,7 +95,7 @@ public class IotaAccountTest {
     @Test
     void usableBalance() {
         // Force CDA to have received
-        mockBalance("LDPAXRRUFJBPYMJCQSXTZZK9CHMWYH9FSRTBAETWB9HFM9QUDSMJYWFNJOUWPDOHOMFRQH9UYOMXSOJCDIWZJAOYW9", 5l);
+        mockBalance(ADDR_0_SEC_3, 5l);
 
         // Has a CDA with 5
         JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);

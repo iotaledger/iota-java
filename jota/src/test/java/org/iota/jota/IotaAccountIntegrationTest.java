@@ -1,6 +1,7 @@
 package org.iota.jota;
 
 import org.apache.commons.io.FileUtils;
+import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.errors.SendException;
 import org.iota.jota.account.store.AccountFileStore;
@@ -8,18 +9,25 @@ import org.iota.jota.account.store.AccountStoreImpl;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
+import org.iota.jota.model.Transaction;
+import org.iota.jota.pow.pearldiver.PearlDiverLocalPoW;
 import org.iota.jota.store.JsonFlatFileStore;
 import org.iota.jota.utils.BundleValidator;
+import org.iota.jota.utils.Signing;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 public class IotaAccountIntegrationTest {
     
@@ -32,7 +40,8 @@ public class IotaAccountIntegrationTest {
 
     private static final String TEST_SEED = "IJEEPFTJEFGFRDTSQGLGEAUZPUJFP9LDMDOOYUNOZFJ9JMJFALJATJGHEUPHHFVTFDYSGZNKMRK9EQKWG";
     private static final String TEST_SEED_ID = "J9SPZIPMIHEGZEBNDLMBTVVTCGQREQXZFXUYTJTYVQCR9TUZWZDBSJBOZLTTLJYXCGGVAIEQFPWLNUGHD";
-
+    private static final String ADDR_0_SEC_3 = "TAKWNELREDNHLFYCQ9LMGZVYGTPTABFDEPQZILJAYAZSSCPXMEGCVAH9AHTJRDPVDCGIH9APCWG9KBSGA9VKXRLMU9";
+    private static final String ADDR_1_SEC_3 = "LJGVBUTNFABXQUGMQROIMVXAPHAPXGZUFDMLALGSNUBAZLONQCKAUIMNUIHEDVRMBUEPUMCLHQZHVHCZBRGGLRBGAC";
     private IotaAPI iotaAPI;
 
     private File file;
@@ -42,7 +51,7 @@ public class IotaAccountIntegrationTest {
     @BeforeEach
     public void setUp() throws Exception {
         file = File.createTempFile("client", "account");
-        iotaAPI = new IotaAPI.Builder().config(new FileConfig()).build();
+        iotaAPI = new IotaAPI.Builder().config(new FileConfig()).localPoW(new PearlDiverLocalPoW()).build();
     }
 
     @AfterEach
@@ -96,24 +105,81 @@ public class IotaAccountIntegrationTest {
     
     @Test
     void sendValueTest() throws AccountError, InterruptedException, ExecutionException {
+        IotaAPI iotaAPI = fakeBalance(ADDR_0_SEC_3, 5l);
+        
         JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
         store = new AccountFileStore(json);
         
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
         
-        Bundle sent = account.sendZeroValue(lorem, "IOTA9ACCOUNTS", 
-                account.getAccountManager().getNextAddress().getAddress().getHashCheckSum()).get();
+        Date timeOut = new Date(Long.MAX_VALUE);
+        ConditionalDepositAddress cda = account.newDepositAddress(timeOut, false, 10).get();
+        
+        Bundle sent = account.send(cda.getDepositAddress().getHashCheckSum(), 5, 
+                "Another IOTA Accounts test run at " + new Date().toString(), 
+                "IOTA9ACCOUNTS").get();
+
+        List<Transaction> res = iotaAPI.findTransactionObjectsByBundle(sent.getBundleHash());
+        Bundle remote = new Bundle(res);
+        
+        Signing sig = new Signing();
+        boolean valid = sig.validateSignatures(sent, sent.getTransactions().get(1).getAddress());     
+        
+        String[] fragments = new String[] {
+               sent.getTransactions().get(2).getSignatureFragments(),
+               sent.getTransactions().get(1).getSignatureFragments()
+        };
+        boolean valid2 = sig.validateSignatures(sent.getTransactions().get(1).getAddress(), fragments, sent.getBundleHash());
+        
+        // sent is in order, remote is 0-3-1-2??
+        assertTrue(BundleValidator.isBundle(sent), "Should be a valid bundle");
+    }
+    
+    @Test
+    void sendLongValueTest() throws AccountError, InterruptedException, ExecutionException {
+        IotaAPI iotaAPI = fakeBalance(ADDR_0_SEC_3, 10l);
+        
+        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
+        store = new AccountFileStore(json);
+        
+        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
+        
+        Date timeOut = new Date(Long.MAX_VALUE);
+        ConditionalDepositAddress cda = account.newDepositAddress(timeOut, false, 10).get();
+        
+        Bundle sent = account.send(cda.getDepositAddress().getHashCheckSum(), 1, 
+                lorem, "IOTA9ACCOUNTS").get();
 
         assertTrue(BundleValidator.isBundle(sent), "Should be a valid bundle");
     }
     
     @Test
-    void sendLongValueTest() {
+    void sendLongMultiValueTest() throws AccountError, InterruptedException, ExecutionException {
+        IotaAPI iotaAPI = fakeBalance(ADDR_0_SEC_3, 5l);
+        iotaAPI = fakeBalance(ADDR_1_SEC_3, 5l, iotaAPI);
         
+        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
+        store = new AccountFileStore(json);
+        
+        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
+        
+        Date timeOut = new Date(Long.MAX_VALUE);
+        ConditionalDepositAddress cda = account.newDepositAddress(timeOut, false, 10).get();
+        
+        Bundle sent = account.send(cda.getDepositAddress().getHashCheckSum(), 1, 
+                lorem, "IOTA9ACCOUNTS").get();
+
+        assertTrue(BundleValidator.isBundle(sent), "Should be a valid bundle");
     }
     
-    @Test
-    void sendLongMultiValueTest() {
-        
+    private IotaAPI fakeBalance(String addr, long balance) {
+        IotaAPI spyApi = Mockito.spy(iotaAPI);
+        when(spyApi.getBalance(100, addr)).thenReturn(balance);
+        return spyApi;
+    }
+    
+    private IotaAPI fakeBalance(String addr, long balance, IotaAPI spyApi) {
+        when(spyApi.getBalance(100, addr)).thenReturn(balance);
+        return spyApi;
     }
 }

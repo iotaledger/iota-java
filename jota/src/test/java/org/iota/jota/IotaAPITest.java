@@ -184,7 +184,7 @@ public class IotaAPITest {
         assertFalse("prepareTransfers should throw an error on failure", trytes.isEmpty());
 
         Transaction first = new Transaction(trytes.get(0));
-        assertEquals("prepareTransfers should have reversed bundle order for attachToTangle", first.getCurrentIndex(), first.getLastIndex());
+        assertEquals("prepareTransfers should have reversed bundle order for attachToTangle", first.getLastIndex(), first.getCurrentIndex());
     }
 
     @Test
@@ -204,7 +204,7 @@ public class IotaAPITest {
         assertFalse("prepareTransfers should throw an error on failure", trytes.isEmpty());
 
         Transaction first = new Transaction(trytes.get(0));
-        assertEquals("prepareTransfers should have reversed bundle order for attachToTangle", first.getCurrentIndex(), first.getLastIndex());
+        assertEquals("prepareTransfers should have reversed bundle order for attachToTangle",first.getLastIndex(), first.getCurrentIndex());
     }
 
     @Test
@@ -362,7 +362,7 @@ public class IotaAPITest {
         String address = iotaAPI.getNextAvailableAddress(TEST_SEED1, 2, true).first();
         transfers.add(new Transfer(address, 1, TEST_MESSAGE, TEST_TAG));
 
-        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, true, null);
+        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, false, null);
         assertThat("Sending transfer should have returned multiple transactions", str.getTransactions(), IsNull.notNullValue());
         assertThat("Sending transfer should contain success information", str.getSuccessfully(), IsNull.notNullValue());
 

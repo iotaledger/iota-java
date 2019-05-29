@@ -3,7 +3,15 @@
       "keyIndex":4,
       "depositRequests":{
          "1":{
-            "securityLevel": 2,
+            "securityLevel": 3,
+            "request": {
+               "timeOut":0,
+               "multiUse":false,
+               "expectedAmount":5
+            }
+         },
+         "2":{
+            "securityLevel": 3,
             "request": {
                "timeOut":0,
                "multiUse":false,
