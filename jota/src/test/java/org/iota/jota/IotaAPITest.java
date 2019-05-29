@@ -87,7 +87,7 @@ public class IotaAPITest {
 
     @Before
     public void createApiClientInstance() throws Exception {
-        iotaAPI = new IotaAPI.Builder().config(new FileConfig()).build();
+        iotaAPI = new IotaAPI.Builder().config(new FileConfig()).localPoW(new PearlDiverLocalPoW()).build();
         assertNotNull("An API should have been created", iotaAPI);
     }
 
@@ -362,7 +362,7 @@ public class IotaAPITest {
         String address = iotaAPI.getNextAvailableAddress(TEST_SEED1, 2, true).first();
         transfers.add(new Transfer(address, 1, TEST_MESSAGE, TEST_TAG));
 
-        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, false, null);
+        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, true, null);
         assertThat("Sending transfer should have returned multiple transactions", str.getTransactions(), IsNull.notNullValue());
         assertThat("Sending transfer should contain success information", str.getSuccessfully(), IsNull.notNullValue());
 
