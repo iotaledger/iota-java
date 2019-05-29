@@ -78,8 +78,8 @@
         </dependency>
         
         <dependency>
-            <groupId>com.github.iotaledger</groupId>
-            <artifactId>java-md-doclet</artifactId>
+            <groupId>${md-doclet-group}</groupId>
+            <artifactId>${md-doclet-artifactId}</artifactId>
         </dependency>
     </dependencies>
 
@@ -137,8 +137,8 @@
                             </additionalOptions>
                             <quiet>true</quiet>
                             <docletArtifact>
-                                <groupId>com.github.iotaledger</groupId>
-                                <artifactId>java-md-doclet</artifactId>
+                                <groupId>${md-doclet-group}</groupId>
+                                <artifactId>${md-doclet-artifactId}</artifactId>
                                 <version>${md-doclet-version}</version>
                             </docletArtifact>
                         </configuration>
