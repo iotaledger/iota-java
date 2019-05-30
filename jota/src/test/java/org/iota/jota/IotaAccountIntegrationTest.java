@@ -131,7 +131,6 @@ public class IotaAccountIntegrationTest {
         };
         boolean valid2 = sig.validateSignatures(sent.getTransactions().get(1).getAddress(), fragments, sent.getBundleHash());
         
-        // sent is in order, remote is 0-3-1-2??
         assertTrue(BundleValidator.isBundle(sent), "Should be a valid bundle");
     }
     
