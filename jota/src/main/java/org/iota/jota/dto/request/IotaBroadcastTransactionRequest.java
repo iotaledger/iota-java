@@ -1,6 +1,6 @@
 package org.iota.jota.dto.request;
 
-import org.iota.jota.IotaAPICommands;
+import org.iota.jota.IotaAPICommand;
 
 /**
  * This class represents the core API request 'broadcastTransaction'.
@@ -17,7 +17,7 @@ public class IotaBroadcastTransactionRequest extends IotaCommandRequest {
      * @param trytes
      */
     private IotaBroadcastTransactionRequest(final String... trytes) {
-        super(IotaAPICommands.BROADCAST_TRANSACTIONS);
+        super(IotaAPICommand.BROADCAST_TRANSACTIONS);
         this.trytes = trytes;
     }
 

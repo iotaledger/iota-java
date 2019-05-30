@@ -14,6 +14,10 @@ public class Hash implements Serializable {
     private String hash;
     private transient String hashCheckSum;
     
+    /**
+     * Used in json de/construction
+     */
+    @SuppressWarnings("unused")
     private Hash() {
         
     }

@@ -8,6 +8,8 @@ import org.iota.jota.model.Transfer;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InputValidatorTest {
@@ -62,7 +64,13 @@ public class InputValidatorTest {
 
     @Test
     public void shouldIsArrayOfTrytes() {
-        assertTrue(InputValidator.isArrayOfRawTransactionTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}));
+        assertEquals(InputValidator.isArrayOfTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}), true);
+    }
+    
+    @Test
+    public void shouldInvalidTxTrytes() {
+        // We fail on having value above max supply
+        assertFalse(InputValidator.isArrayOfRawTransactionTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}));
     }
 
     @Test

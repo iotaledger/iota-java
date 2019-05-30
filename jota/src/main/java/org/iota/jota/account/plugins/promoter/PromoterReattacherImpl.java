@@ -1,13 +1,4 @@
-package org.iota.jota.account.promoter;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+package org.iota.jota.account.plugins.promoter;
 
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.AccountOptions;
@@ -15,11 +6,11 @@ import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.PendingTransfer;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
-import org.iota.jota.account.event.Plugin;
 import org.iota.jota.account.event.events.EventPromotion;
 import org.iota.jota.account.event.events.EventReattachment;
 import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.event.events.EventTransferConfirmed;
+import org.iota.jota.account.plugins.AccountPlugin;
 import org.iota.jota.dto.response.GetTrytesResponse;
 import org.iota.jota.dto.response.ReplayBundleResponse;
 import org.iota.jota.model.Bundle;
@@ -31,7 +22,13 @@ import org.iota.jota.utils.thread.UnboundScheduledExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
+public class PromoterReattacherImpl extends AccountPlugin implements PromoterReattacher {
     
     private static final Logger log = LoggerFactory.getLogger(PromoterReattacherImpl.class);
     
@@ -235,7 +232,8 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
     public void promote(Bundle pendingBundle, String promotableTail) {
         List<Transaction> res = api.promoteTransaction(
                 promotableTail, options.getDepth(), options.getMwm(), pendingBundle);
-        
+
+        Collections.reverse(res);
         Bundle promotedBundle = new Bundle(res);
         
         EventPromotion event = new EventPromotion(promotedBundle);
@@ -244,9 +242,11 @@ public class PromoterReattacherImpl implements PromoterReattacher, Plugin {
 
     public void reattach(Bundle pendingBundle) {
         Bundle newBundle = createReattachBundle(pendingBundle);
+        Collections.reverse(newBundle.getTransactions());
+
         manager.addTailHash(
             new Hash(pendingBundle.getTransactions().get(0).getHash()), 
-            new Hash(newBundle.getTransactions().get(newBundle.getTransactions().size() - 1).getHash())
+            new Hash(newBundle.getTransactions().get(0).getHash())
         );
         
         EventReattachment event = new EventReattachment(pendingBundle, newBundle);

@@ -9,6 +9,14 @@
                "multiUse":false,
                "expectedAmount":5
             }
+         },
+         "2":{
+            "securityLevel": 3,
+            "request": {
+               "timeOut":0,
+               "multiUse":false,
+               "expectedAmount":5
+            }
          }
       },
       "pendingTransfers":{

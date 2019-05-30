@@ -4,16 +4,7 @@ import java.util.Collections;
 
 import org.hamcrest.core.IsNull;
 import org.iota.jota.config.types.FileConfig;
-import org.iota.jota.dto.response.AddNeighborsResponse;
-import org.iota.jota.dto.response.FindTransactionResponse;
-import org.iota.jota.dto.response.GetBalancesResponse;
-import org.iota.jota.dto.response.GetInclusionStateResponse;
-import org.iota.jota.dto.response.GetNodeInfoResponse;
-import org.iota.jota.dto.response.GetTipsResponse;
-import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
-import org.iota.jota.dto.response.GetTrytesResponse;
-import org.iota.jota.dto.response.RemoveNeighborsResponse;
-import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
+import org.iota.jota.dto.response.*;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.utils.Checksum;
 import org.junit.jupiter.api.*;
@@ -32,7 +23,7 @@ public class IotaCoreApiTest {
     
     private static final String TEST_HASH = "OOAARHCXXCPMNZPUEYOOUIUCTWZSQGKNIECIKRBNUUJEVMLJAWGCXREXEQGNJUJKUXXQAWWAZYKB99999";
 
-    private static final String TEST_TAG = "IOTAJAVASPAM999999999999999";
+    private static final String TAG = "IOTA9TAG9999999999999999";
     
     private static IotaAPICore proxy;
 
@@ -63,12 +54,13 @@ public class IotaCoreApiTest {
         assertThat(nodeInfo.getTransactionsToRequest(), IsNull.notNullValue());
     }
 
-    @Test
+    @Disabled
+    @Test //(expected = IllegalAccessError.class)
     @Tag("IntegrationTest")
     public void shouldGetNeighbors() throws ArgumentException {
         //getNeighBors is by default disabled
-        //GetNeighborsResponse neighbors = proxy.getNeighbors();
-        //assertThat(neighbors.getNeighbors(), IsNull.notNullValue());
+        GetNeighborsResponse neighbors = proxy.getNeighbors();
+        assertThat(neighbors.getNeighbors(), IsNull.notNullValue());
     }
 
     @Disabled
@@ -118,7 +110,7 @@ public class IotaCoreApiTest {
     @Test
     @Tag("IntegrationTest")
     public void shouldFindTransactionsByDigests() throws ArgumentException {
-        FindTransactionResponse trans = proxy.findTransactionsByTags(TEST_HASH);
+        FindTransactionResponse trans = proxy.findTransactionsByTags(TAG);
         assertThat(trans.getHashes(), IsNull.notNullValue());
     }
 
@@ -136,7 +128,7 @@ public class IotaCoreApiTest {
                 () -> proxy.getInclusionStates(new String[]{TEST_HASH},
                         new String[]{"ZIJGAJ9AADLRPWNCYNNHUHRRAC9QOUDATEDQUMTNOTABUVRPTSTFQDGZKFYUUIE9ZEBIVCCXXXLKX9999"}),
                 "Failed to throw error on wrong bundle hash");
-        assertEquals("[{\"error\":\"One of the tips is absent\",\"duration\":0}]", argumentException.getMessage());
+        assertTrue(argumentException.getMessage().startsWith("{\"error\":\"One of the tips is absent\",\"duration\":"));
     }
 
     @Test
@@ -163,16 +155,16 @@ public class IotaCoreApiTest {
         ArgumentException argumentException = assertThrows(ArgumentException.class,
                 () -> proxy.getTransactionsToApprove(27),
                 "Depth more then 15 is not supported by default");
-        assertEquals("[{\"error\":\"Invalid depth input\",\"duration\":0}]", argumentException.getMessage());
+        assertTrue(argumentException.getMessage().startsWith("{\"error\":\"Invalid depth input\",\"duration\":"));
     }
 
     @Test
     @Tag("IntegrationTest")
     public void shouldFindTransactions() {
         String test = TEST_BUNDLE;
-        FindTransactionResponse resp = proxy.findTransactions(
+        proxy.findTransactions(
                 new String[]{Checksum.addChecksum(test)}, 
-                new String[]{test},
+                new String[]{TAG},
                 new String[]{test}, 
                 new String[]{test});
     }
@@ -193,7 +185,7 @@ public class IotaCoreApiTest {
         ArgumentException argumentException = assertThrows(ArgumentException.class,
                 () -> proxy.wereAddressesSpentFrom(TEST_ADDRESS_WITHOUT_CHECKSUM),
                 "Failed to throw error on wrong address hash");
-        assertEquals("[Invalid addresses provided.]", argumentException.getMessage());
+        assertEquals("Invalid addresses provided.", argumentException.getMessage());
     }
     
     @Test

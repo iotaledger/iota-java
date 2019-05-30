@@ -1,4 +1,4 @@
-package org.iota.jota.account.transferchecker;
+package org.iota.jota.account.plugins.transferchecker;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,7 +11,6 @@ import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.PendingTransfer;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventManager;
-import org.iota.jota.account.event.events.EventReattachment;
 import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.event.events.EventTransferConfirmed;
 import org.iota.jota.dto.response.GetInclusionStateResponse;

@@ -1,7 +1,4 @@
-package org.iota.jota.account.transferchecker;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.iota.jota.account.plugins.transferchecker;
 
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.AccountStateManager;
@@ -16,6 +13,9 @@ import org.iota.jota.types.Address;
 import org.iota.jota.utils.BundleValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class IncomingTransferCheckerTask implements Runnable {
 

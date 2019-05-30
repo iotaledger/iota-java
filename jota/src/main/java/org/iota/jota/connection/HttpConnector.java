@@ -35,7 +35,10 @@ import org.iota.jota.dto.response.InterruptAttachingToTangleResponse;
 import org.iota.jota.dto.response.RemoveNeighborsResponse;
 import org.iota.jota.dto.response.StoreTransactionsResponse;
 import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
+import org.iota.jota.error.AccessLimitedException;
 import org.iota.jota.error.ArgumentException;
+import org.iota.jota.error.ConnectorException;
+import org.iota.jota.error.InternalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -246,12 +249,12 @@ public class HttpConnector implements Connection {
                 throw new ArgumentException(error);
 
             } else if (res.code() == 401) {
-                throw new IllegalAccessError("401 " + error);
+                throw new AccessLimitedException(error);
             } else if (res.code() == 500) {
-                throw new IllegalAccessError("500 " + error);
+                throw new InternalException(error);
             } else if (error != null || res.body() == null) {
                 //Unknown error, could be node timeout before our timeout or similar errors
-                throw new IllegalAccessError(res.code() + " " + res.message());
+                throw new ConnectorException(res.message(), res.code());
             }
 
             return res;

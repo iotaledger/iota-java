@@ -24,6 +24,10 @@ public class PendingTransfer implements Serializable {
      */
     List<Hash> tailHashes;
     
+    /**
+     * Used in json de/construction
+     */
+    @SuppressWarnings("unused")
     private PendingTransfer() {
         
     }

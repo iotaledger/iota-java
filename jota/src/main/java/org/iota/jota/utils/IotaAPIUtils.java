@@ -4,6 +4,7 @@ import static org.iota.jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.iota.jota.error.ArgumentException;
@@ -133,6 +134,7 @@ public class IotaAPIUtils {
         for (Transaction tx : bundle.getTransactions()) {
             bundleTrytes.add(tx.toTrytes());
         }
+        Collections.reverse(bundleTrytes);
         return bundleTrytes;
     }
 }

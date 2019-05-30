@@ -8,19 +8,12 @@ import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.model.Input;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-//@ExtendWith(MockitoRule.class)
 public class InputSelectionStrategyImplTest {
-
-    //@Rule
-    //public MockitoRule mockitoRule = MockitoJUnit.rule();
     
     @Mock
     AccountBalanceCache cache;

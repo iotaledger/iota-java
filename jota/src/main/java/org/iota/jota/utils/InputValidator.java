@@ -57,7 +57,7 @@ public class InputValidator {
      * This is because Curl addresses always are with a 0 trit on the end.
      * So we validate if we actually send to a proper address, to prevent having to double spent
      * 
-     * @param address The trytes to check
+     * @param trytes The trytes to check
      * @return <code>true</code> if the specified trytes end with 0, otherwise <code>false</code>.
      */
     public static boolean hasTrailingZeroTrit(String trytes) {
@@ -182,12 +182,11 @@ public class InputValidator {
     }
 
     /**
-     * Determines whether the specified string array contains only trytes, and 
-     * Deprecated - Use isArrayOfRawTransactionTrytes
+     * Determines whether the specified string array contains only trytes
+     * 
      * @param trytes The trytes array to validate.
      * @return <code>true</code> if the specified array contains only valid trytes otherwise, <code>false</code>.
      **/
-    @Deprecated
     public static boolean isArrayOfTrytes(String[] trytes) {
         return isArrayOfTrytes(trytes, Constants.TRANSACTION_LENGTH);
     }
@@ -199,6 +198,12 @@ public class InputValidator {
      * @return <code>true</code> if the specified array contains only valid trytes otherwise, <code>false</code>.
      **/
     public static boolean isArrayOfRawTransactionTrytes(String[] trytes) {
+        for (String tr : trytes) {
+            // This part of the value trits exceed iota max supply when used
+            if (!InputValidator.isNinesTrytes(tr.substring(2279, 2295), 16)) {
+                return false;
+            }
+        }
         return isArrayOfTrytes(trytes, Constants.TRANSACTION_LENGTH);
     }
     
@@ -297,6 +302,21 @@ public class InputValidator {
      */
     public static boolean isValidTag(String tag) {
         return tag != null && tag.length() <= Constants.TAG_LENGTH && isTrytes(tag);
+    }
+
+    /**
+     * Checks if the tags are valid.
+     *
+     * @param tags The tags to validate.
+     * @return <code>true</code> if all the tags are valid; otherwise, <code>false</code>.
+     */
+    public static boolean areValidTags(String... tags) {
+        for (String tag : tags){
+            if (!isValidTag(tag)){
+                return false;
+            }
+        }
+        return true;
     }
     
     /**

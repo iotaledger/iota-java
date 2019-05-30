@@ -1,15 +1,13 @@
 package org.iota.jota.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.iota.jota.IotaAPI;
 import org.iota.jota.IotaAccount;
 import org.iota.jota.account.AccountOptions;
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.clock.Clock;
 import org.iota.jota.account.clock.SystemClock;
-import org.iota.jota.account.event.Plugin;
+import org.iota.jota.account.errors.AccountError;
+import org.iota.jota.account.plugins.Plugin;
 import org.iota.jota.account.seedprovider.SeedProvider;
 import org.iota.jota.account.seedprovider.SeedProviderImpl;
 import org.iota.jota.config.options.AccountConfig;
@@ -20,6 +18,9 @@ import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.InputValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -104,26 +105,42 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     }
     
     public AccountBuilder store(AccountStore store) {
-        this.store = store;
+        if (null != store) {
+            this.store = store;
+        } else {
+            throw new AccountError("Cannot set store to null");
+        }
         return this;
     }
     
     public AccountBuilder api(IotaAPI api) {
-        this.api = api;
+        if (null != api) {
+            this.api = api;
+        } else {
+            throw new AccountError("Cannot set api to null");
+        }
         return this;
     }
     
     public AccountBuilder clock(Clock clock) {
-        this.clock = clock;
+        if (null != clock) {
+            this.clock = clock;
+        } else {
+            throw new AccountError("Cannot set clock to null");
+        }
         return this;
     }
     
     public AccountBuilder plugin(Plugin plugin){
-        if (plugins == null) {
-            plugins = new ArrayList<>();
+        if (null != plugin) {
+            if (plugins == null) {
+                plugins = new ArrayList<>();
+            }
+
+            plugins.add(plugin);
+        } else {
+            throw new AccountError("Attempted to add null as a plugin");
         }
-        
-        plugins.add(plugin);
         return this;
     }
 
