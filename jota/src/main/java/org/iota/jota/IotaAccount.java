@@ -27,7 +27,6 @@ import org.iota.jota.config.options.AccountConfig;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.dto.response.GetAttachToTangleResponse;
 import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
-import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;

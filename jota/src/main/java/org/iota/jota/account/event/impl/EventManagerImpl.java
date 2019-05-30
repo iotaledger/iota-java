@@ -36,7 +36,7 @@ public class EventManagerImpl implements EventManager {
             for (Pair<EventListener, Method> listener : listeners) {
                 try {
                     //TODO: Create and use fields in annotation
-                    AccountEvent annotInstance = listener.hi.getAnnotation(AccountEvent.class);
+                    //AccountEvent annotInstance = listener.hi.getAnnotation(AccountEvent.class);
                     
                     boolean accessible = listener.hi.isAccessible();
                     if (!accessible) {
@@ -61,11 +61,14 @@ public class EventManagerImpl implements EventManager {
         return this.listeners.get(c);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void registerListener(EventListener listener) {
        for (Method method : listener.getClass().getDeclaredMethods()) {
            if (method.isAnnotationPresent(AccountEvent.class)) {
-               AccountEvent annotInstance = method.getAnnotation(AccountEvent.class);
+
+               //TODO: Create and use fields in annotation
+               //AccountEvent annotInstance = method.getAnnotation(AccountEvent.class);
                
                if (method.getParameterCount() != 1) {
                    //Invalid parameters assigned
@@ -77,8 +80,8 @@ public class EventManagerImpl implements EventManager {
                    //Not an event parameter
                    continue;
                }
-               List<Pair<EventListener, Method>> listeners = this.listeners.get(param.getType());
                synchronized (this.listeners) {
+                   List<Pair<EventListener, Method>> listeners = this.listeners.get(param.getType());
                    if (listeners == null) {
                        listeners = Collections.synchronizedList(new ArrayList<>());
                        this.listeners.put((Class) param.getType(), listeners);

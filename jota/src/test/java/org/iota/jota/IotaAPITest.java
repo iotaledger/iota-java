@@ -90,6 +90,7 @@ public class IotaAPITest {
         assertNotNull(iotaAPI, "An API should have been created");
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void shouldCreateIotaApiProxyInstanceWithDefaultValues() {
         iotaAPI = new IotaAPI.Builder().build();
@@ -99,6 +100,7 @@ public class IotaAPITest {
         assertEquals(iotaAPI.getProtocol(), IotaDefaultConfig.Defaults.LEGACY_PROTOCOL, "Protocol should have been set to defaults");
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void shouldRetainValuesFromBuilder() {
         iotaAPI = new IotaAPI.Builder().host("iota.org").build();
@@ -111,6 +113,7 @@ public class IotaAPITest {
         assertEquals(iotaAPI.getProtocol(),"https", "Protocol should have been set to https");
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void shouldGetValuesFromProperties() {
         Properties properties = new Properties();

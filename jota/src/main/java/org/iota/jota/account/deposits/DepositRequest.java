@@ -13,6 +13,10 @@ public class DepositRequest implements Serializable {
     
     long expectedAmount;
 
+    /**
+     * Used in json de/construction
+     */
+    @SuppressWarnings("unused")
     private DepositRequest() {
         
     }

@@ -40,10 +40,14 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
     }
     
     /**
+     * Generates values for options which were not assigned through the builder.
+     * Starts by checking a optionally set config using {@link #config(org.iota.jota.config.Config)}
+     * THen checks Environment, and in the end goes to {@link IotaDefaultConfig} for defaults
      * 
-     * @return
-     * @throws Exception
+     * @return The builder
+     * @throws Exception When we failed to load env configs or a url was malformed
      */
+    @SuppressWarnings("deprecation")
     protected T generate() throws Exception {
         for (ApiConfig config : getConfigs()) {
             if (config != null) {

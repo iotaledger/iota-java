@@ -8,6 +8,10 @@ public class StoredDepositAddress {
     
     private int securityLevel;
     
+    /**
+     * Used in json de/construction
+     */
+    @SuppressWarnings("unused")
     private StoredDepositAddress() {
         
     }

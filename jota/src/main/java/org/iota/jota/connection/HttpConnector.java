@@ -39,7 +39,6 @@ import org.iota.jota.error.AccessLimitedException;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.error.ConnectorException;
 import org.iota.jota.error.InternalException;
-import org.iota.jota.account.errors.SendException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

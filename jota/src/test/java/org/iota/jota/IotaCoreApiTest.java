@@ -128,7 +128,7 @@ public class IotaCoreApiTest {
                 () -> proxy.getInclusionStates(new String[]{TEST_HASH},
                         new String[]{"ZIJGAJ9AADLRPWNCYNNHUHRRAC9QOUDATEDQUMTNOTABUVRPTSTFQDGZKFYUUIE9ZEBIVCCXXXLKX9999"}),
                 "Failed to throw error on wrong bundle hash");
-        assertEquals("{\"error\":\"One of the tips is absent\",\"duration\":0}", argumentException.getMessage());
+        assertTrue(argumentException.getMessage().startsWith("{\"error\":\"One of the tips is absent\",\"duration\":"));
     }
 
     @Test
@@ -155,7 +155,7 @@ public class IotaCoreApiTest {
         ArgumentException argumentException = assertThrows(ArgumentException.class,
                 () -> proxy.getTransactionsToApprove(27),
                 "Depth more then 15 is not supported by default");
-        assertEquals("{\"error\":\"Invalid depth input\",\"duration\":0}", argumentException.getMessage());
+        assertTrue(argumentException.getMessage().startsWith("{\"error\":\"Invalid depth input\",\"duration\":"));
     }
 
     @Test

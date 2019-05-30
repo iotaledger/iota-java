@@ -1549,7 +1549,7 @@ public class IotaAPI extends IotaAPICore {
 
         // Get inputs for this seed, until we fund an unused address
         GetBalancesAndFormatResponse gbr = getInputs(seed, security, 0, 0, 0);
-
+        
         //check if receive address is also used as an input address
         for (Transaction trx : inputTransactions) {
             if (trx.getValue() > 0 ) {
