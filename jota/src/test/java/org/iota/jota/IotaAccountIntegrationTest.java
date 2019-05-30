@@ -1,6 +1,7 @@
 package org.iota.jota;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.NullOutputStream;
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.errors.SendException;
@@ -81,7 +82,7 @@ public class IotaAccountIntegrationTest {
     @Test
     void sendZeroValueTest() throws AccountError, InterruptedException, ExecutionException {
         // CDA needed for getting first addr value
-        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
+        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), new NullOutputStream());
         store = new AccountFileStore(json);
         
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
@@ -96,7 +97,7 @@ public class IotaAccountIntegrationTest {
     @Test
     void sendLongZeroMessage() throws ArgumentException, SendException, InterruptedException, ExecutionException {
         // CDA needed for getting first addr value
-        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
+        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), new NullOutputStream());
         store = new AccountFileStore(json);
         
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
@@ -111,7 +112,7 @@ public class IotaAccountIntegrationTest {
     void sendValueTest() throws AccountError, InterruptedException, ExecutionException {
         IotaAPI iotaAPI = fakeBalance(ADDR_1_SEC_3, 5l);
         
-        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
+        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), new NullOutputStream());
         store = new AccountFileStore(json);
         
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
@@ -130,7 +131,7 @@ public class IotaAccountIntegrationTest {
     void sendLongValueTest() throws AccountError, InterruptedException, ExecutionException {
         IotaAPI iotaAPI = fakeBalance(ADDR_1_SEC_3, 10l);
         
-        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
+        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), new NullOutputStream());
         store = new AccountFileStore(json);
         
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
@@ -149,7 +150,7 @@ public class IotaAccountIntegrationTest {
         IotaAPI iotaAPI = fakeBalance(ADDR_1_SEC_3, 5l);
         iotaAPI = fakeBalance(ADDR_2_SEC_3, 5l, iotaAPI);
         
-        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-testMulti.store"), System.out);
+        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-testMulti.store"), new NullOutputStream());
         store = new AccountFileStore(json);
         
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
@@ -168,7 +169,7 @@ public class IotaAccountIntegrationTest {
         IotaAPI iotaAPI = fakeBalance(ADDR_1_SEC_3, 6l);
         iotaAPI = fakeBalance(ADDR_2_SEC_3, 5l, iotaAPI);
         
-        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-testMulti.store"), System.out);
+        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-testMulti.store"), new NullOutputStream());
         store = new AccountFileStore(json);
         
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
@@ -184,8 +185,7 @@ public class IotaAccountIntegrationTest {
     
     private IotaAPI fakeBalance(String addr, long balance) {
         IotaAPI spyApi = Mockito.spy(iotaAPI);
-        when(spyApi.getBalance(100, addr)).thenReturn(balance);
-        return spyApi;
+        return fakeBalance(addr, balance, spyApi);
     }
     
     private IotaAPI fakeBalance(String addr, long balance, IotaAPI spyApi) {

@@ -292,12 +292,14 @@ public class IotaAPITest {
     }
 
     @Test
+    @Tag("IntegrationTest")
     public void shouldReplayBundle(){
         ReplayBundleResponse rbr = iotaAPI.replayBundle(TEST_HASH, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, null);
         assertThat("Bundle should be replayed", rbr, IsNull.notNullValue());
     }
 
     @Test
+    @Tag("IntegrationTest")
     public void shouldNotSendTrytes() throws ArgumentException {
         assertThrows(ArgumentException.class, () ->
                 iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE, null));
@@ -328,18 +330,20 @@ public class IotaAPITest {
     }
 
     @Test
+    @Tag("IntegrationTest")
     public void shouldSendTrytes(){
         List<Transaction> response = iotaAPI.sendTrytes(new String[]{TEST_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, null);
         assertEquals(1, response.size(), "Sending 1 transaction received unexpected amount");
     }
 
     @Test
+    @Tag("IntegrationTest")
     public void shouldNotSendTransfer(){
         try {
             List<Transfer> transfers = new ArrayList<>();
             // Adress is spent
             transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 2, TEST_MESSAGE, TEST_TAG));
-            SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, true, null);
+            iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, true, null);
             fail("Transaction did not fail on spent address");
         } catch (ArgumentException e){
             assertEquals(Constants.SENDING_TO_USED_ADDRESS_ERROR, e.getMessage(), "Message should say we try to use a used address");
@@ -347,6 +351,7 @@ public class IotaAPITest {
     }
 
     @Test
+    @Tag("IntegrationTest")
     public void shouldSendTransferWithoutInputs(){
         List<Transfer> transfers = new ArrayList<>();
 
@@ -361,6 +366,7 @@ public class IotaAPITest {
     }
 
     @Test
+    @Tag("IntegrationTest")
     public void shouldSendTransferWithInputs(){
         List<Input> inputlist = new ArrayList<>();
         List<Transfer> transfers = new ArrayList<>();

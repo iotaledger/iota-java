@@ -1,6 +1,7 @@
 package org.iota.jota;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.NullOutputStream;
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.store.AccountFileStore;
 import org.iota.jota.account.store.AccountStoreImpl;
@@ -68,7 +69,7 @@ public class IotaAccountTest {
     @Test
     void totalBalance() throws ExecutionException, InterruptedException {
         // Has a CDA with 5
-        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
+        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), new NullOutputStream());
         store = new AccountFileStore(json);
 
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(MOCK_API).build();
@@ -94,7 +95,7 @@ public class IotaAccountTest {
         mockBalance(ADDR_0_SEC_3, 5l);
 
         // Has a CDA with 5
-        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), System.out);
+        JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), new NullOutputStream());
         store = new AccountFileStore(json);
 
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(MOCK_API).build();
