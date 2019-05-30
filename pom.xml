@@ -75,17 +75,11 @@
         <version.maven-project-info-reports-plugin>2.9</version.maven-project-info-reports-plugin>
         <version.maven-failsafe-plugin>2.22.0</version.maven-failsafe-plugin>
 
+        <!-- Please keep this, this is needed for test purposes,
+        if the test runs on Jitpack these values will be adjusted -->
         <md-doclet-group>com.github.iotaledger</md-doclet-group>
-        <md-doclet-artifact>java-md-doclet</md-doclet-artifact>
+        <md-doclet-artifactId>java-md-doclet</md-doclet-artifactId>
         <md-doclet-version>2.1.1</md-doclet-version>
-
-        <!-- 
-        org.iota / com.github.iotaledger
-	    java-md-doclet
-	    2.1.1 / master-SNAPSHOT
-        -->
-
-        <version.junit5>5.5.0-M1</version.junit5>
 
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
 
@@ -103,6 +97,7 @@
         <jackson-databind.version>2.9.9</jackson-databind.version>
         <mongodb-driver.version>3.4.3</mongodb-driver.version>
         <bson.version>3.5.0</bson.version>
+        <junit5.version>5.5.0-M1</junit5.version>
 
         <dependency-check-maven.version>5.0.0-M3</dependency-check-maven.version>
     </properties>
@@ -153,7 +148,7 @@
             </dependency>
             <dependency>
                 <groupId>${md-doclet-group}</groupId>
-                <artifactId>${md-doclet-artifact}</artifactId>
+                <artifactId>${md-doclet-artifactId}</artifactId>
                 <version>${md-doclet-version}</version>
             </dependency>
 
@@ -161,17 +156,17 @@
             <dependency>
                 <groupId>com.google.zxing</groupId>
                 <artifactId>core</artifactId>
-                <version>3.3.3</version>
+                <version>${zxing.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.kenglxn.qrgen</groupId>
                 <artifactId>javase</artifactId>
-                <version>2.5.0</version>
+                <version>${javase.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.9.8</version>
+                <version>${jackson-databind.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mongodb</groupId>
@@ -200,13 +195,13 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
-                <version>${version.junit5}</version>
+                <version>${junit5.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
-                <version>${version.junit5}</version>
+                <version>${junit5.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -220,42 +215,6 @@
                         <groupId>junit</groupId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>${md-doclet-group}</groupId>
-                <artifactId>${md-doclet-artifact}</artifactId>
-                <version>${md-doclet-version}</version>
-            </dependency>
-
-            <!-- Account specific -->
-            <dependency>
-                <groupId>com.google.zxing</groupId>
-                <artifactId>core</artifactId>
-                <version>3.3.3</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.kenglxn.qrgen</groupId>
-                <artifactId>javase</artifactId>
-                <version>2.5.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson-databind.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongodb-driver</artifactId>
-                <version>3.4.3</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>bson</artifactId>
-                <version>3.5.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

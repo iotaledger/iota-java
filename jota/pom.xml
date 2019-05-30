@@ -38,22 +38,18 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
-        
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
         </dependency>
-        
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
         </dependency>
-        
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
         </dependency>
-        
         <dependency>
             <groupId>net.jadler</groupId>
             <artifactId>jadler-all</artifactId>
@@ -64,22 +60,18 @@
             <groupId>com.google.zxing</groupId>
             <artifactId>core</artifactId>
         </dependency>
-        
         <dependency>
             <groupId>com.github.kenglxn.qrgen</groupId>
             <artifactId>javase</artifactId>
         </dependency>
-        
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-        
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>
         </dependency>
-        
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>bson</artifactId>
@@ -87,7 +79,7 @@
         
         <dependency>
             <groupId>${md-doclet-group}</groupId>
-            <artifactId>${md-doclet-artifact}</artifactId>
+            <artifactId>${md-doclet-artifactId}</artifactId>
         </dependency>
     </dependencies>
 
@@ -146,7 +138,7 @@
                             <quiet>true</quiet>
                             <docletArtifact>
                                 <groupId>${md-doclet-group}</groupId>
-                                <artifactId>${md-doclet-artifact}</artifactId>
+                                <artifactId>${md-doclet-artifactId}</artifactId>
                                 <version>${md-doclet-version}</version>
                             </docletArtifact>
                         </configuration>
