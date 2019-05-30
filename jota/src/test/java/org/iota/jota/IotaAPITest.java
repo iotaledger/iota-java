@@ -17,7 +17,6 @@ import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
 
 import org.iota.jota.pow.pearldiver.PearlDiverLocalPoW;
-import org.iota.jota.utils.Constants;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -37,7 +36,7 @@ public class IotaAPITest {
 
     // contains 1000 iota
     private static final String TEST_SEED3 = "9JFTUEPOTYPJHFKAURUZAQKGVJEREFDJMYTAGHFEGPZ9GJWTEJGF9IHFUPOZNQLSNMFDJOEMFLLSDKGJD";
-    
+
     private static final String TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1 = "MALAZGDVZIAQQRTNYJDSZMY9VE9LAHQKTVCUOAGZUCX9IBUMODFFTMGUIUAXGLWZQ9CYRSLYBM9QBIBYAEIAOPKXEA";
     private static final String TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2 = "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZCCOZVXMTXC";
     private static final String TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_3 = "ASCZZOBQDMNHLELQKWJBMRETMHBTF9V9TNKYDIFW9PDXPUHPVVGHMSWPVMNJHSJF99QFCMNTPCPGS9DT9XAFKJVO9X";
@@ -171,7 +170,63 @@ public class IotaAPITest {
     @Test
     public void shouldCreate100Addresses() throws ArgumentException {
         GetNewAddressResponse res = iotaAPI.getAddressesUnchecked(TEST_SEED1, 2, false, 0, 100);
-        assertEquals(res.getAddresses().size(), 100);
+        assertEquals(100, res.getAddresses().size());
+    }
+
+    @Test
+    public void generateNewAddressesWithWrongSeedShouldFail() {
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
+                iotaAPI.generateNewAddresses("wrong", 2, false, 0, 0));
+        assertEquals("Invalid seed provided.", exception.getMessage());
+    }
+
+    @Test
+    public void generateNewAddressesWithWrongSecurityLevelShouldFail() {
+        ArgumentException argumentException = assertThrows(ArgumentException.class, () ->
+                iotaAPI.generateNewAddresses(TEST_SEED1, -1, false, 0, 0));
+        assertEquals("[Invalid security level provided.]", argumentException.getMessage());
+    }
+
+    @Test
+    public void generateNewAddressesWithNegativeIndexAndZeroAmountShouldFail() {
+        ArgumentException argumentException = assertThrows(ArgumentException.class, () ->
+                iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, -1, 0));
+        assertEquals("[Invalid input provided.]", argumentException.getMessage());
+    }
+
+    @Test
+    public void generateNewAddressesWithZeroIndexAndNegativeAmountShouldFail() {
+        ArgumentException argumentException = assertThrows(ArgumentException.class, () ->
+                iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, 0, -1));
+        assertEquals("[Invalid input provided.]", argumentException.getMessage());
+    }
+
+    @Test
+    public void generateNewAddressesWithZeroIndexAndZeroAmountShouldGenerateNoAddresses() {
+        GetNewAddressResponse addressResponse = iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, 0, 0);
+        assertEquals(0, addressResponse.getAddresses().size());
+    }
+
+    @Test
+    public void generateNewAddressesWithZeroAmountShouldGenerateNoAddresses() {
+        GetNewAddressResponse addressResponse = iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, 1, 0);
+        assertEquals(0, addressResponse.getAddresses().size());
+    }
+
+    @Test
+    public void generateNewAddresses() {
+        GetNewAddressResponse firstAddressResponse = iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, 0, 1);
+        assertEquals(1, firstAddressResponse.getAddresses().size());
+        assertNotNull(firstAddressResponse.getAddresses().get(0));
+    }
+
+    @Test
+    public void generateNewAddressesWithSameIndexAndOneAmountShouldGenerateSameAddress() {
+        GetNewAddressResponse firstAddressResponse = iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, 0, 1);
+        GetNewAddressResponse secondAddressResponse = iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, 0, 1);
+        assertEquals(1, firstAddressResponse.getAddresses().size());
+        assertEquals(1, secondAddressResponse.getAddresses().size());
+        assertEquals(firstAddressResponse.getAddresses().get(0), secondAddressResponse.getAddresses().get(0));
     }
 
     @Test

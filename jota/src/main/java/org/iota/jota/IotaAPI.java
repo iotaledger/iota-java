@@ -1,17 +1,6 @@
 package org.iota.jota;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
-
-import org.iota.mddoclet.Document;
-
 import org.iota.jota.builder.ApiBuilder;
 import org.iota.jota.dto.response.BroadcastTransactionsResponse;
 import org.iota.jota.dto.response.CheckConsistencyResponse;
@@ -45,9 +34,17 @@ import org.iota.jota.utils.InputValidator;
 import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.Parallel;
 import org.iota.jota.utils.StopWatch;
-
+import org.iota.mddoclet.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * IotaAPI Builder. Usage:
@@ -167,7 +164,7 @@ public class IotaAPI extends IotaAPICore {
     public GetNewAddressResponse generateNewAddresses(String seed, int security, boolean checksum, int index, int amount) throws ArgumentException {
         return generateNewAddresses(seed, security, checksum, index, amount, false);
     }
-    
+
     /**
      * Generates new addresses, meaning addresses which were not spend from, according to the connected node.
      * Stops when <code>amount</code> of unspent addresses are found,starting from <code>index</code>
@@ -854,18 +851,18 @@ public class IotaAPI extends IotaAPICore {
             return GetBalancesAndFormatResponse.create(allInputs, currentTotal, stopWatch.getElapsedTimeMili());
         }
     }
-    
+
     /**
      * <p>
      * The returned balance is based on the latest confirmed milestone.
-     * In addition to the balances, it also returns the referencing <tt>tips</tt> (or milestone), 
+     * In addition to the balances, it also returns the referencing <tt>tips</tt> (or milestone),
      * as well as the index with which the confirmed balance was determined.
      * The balances are returned as a list in the same order as the addresses were provided as input.
      * </p>
      *
-     * @param threshold The confirmation threshold between 0 and 100(inclusive). 
+     * @param threshold The confirmation threshold between 0 and 100(inclusive).
      *                  Should be set to 100 for getting balance by counting only confirmed transactions.
-     * @param address The addresses where we will find the balance for.
+     * @param address   The addresses where we will find the balance for.
      * @return {@link GetBalancesResponse}
      * @throws ArgumentException The the request was considered wrong in any way by the node
      */
@@ -1549,11 +1546,11 @@ public class IotaAPI extends IotaAPICore {
 
         // Get inputs for this seed, until we fund an unused address
         GetBalancesAndFormatResponse gbr = getInputs(seed, security, 0, 0, 0);
-        
+
         for (Input input : gbr.getInputs()) {
             inputAddresses.add(input.getAddress());
         }
-        
+
         //check if receive address is also used as an input address
         for (Transaction trx : inputTransactions) {
             if (trx.getValue() > 0 ) {
