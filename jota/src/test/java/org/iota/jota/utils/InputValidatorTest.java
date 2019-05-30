@@ -44,7 +44,13 @@ public class InputValidatorTest {
 
     @Test
     public void shouldIsArrayOfTrytes() {
-        assertEquals(InputValidator.isArrayOfRawTransactionTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}), true);
+        assertEquals(InputValidator.isArrayOfTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}), true);
+    }
+    
+    @Test
+    public void shouldInvalidTxTrytes() {
+        // We fail on having value above max supply
+        assertEquals(InputValidator.isArrayOfRawTransactionTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}), false);
     }
 
     @Test
