@@ -1,8 +1,7 @@
 package org.iota.jota;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +9,14 @@ import java.util.List;
 import org.hamcrest.core.IsNull;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.dto.response.GetAttachToTangleResponse;
-import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
 import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
 import org.iota.jota.pow.pearldiver.PearlDiverLocalPoW;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created by pinpong on 01.10.17.
@@ -40,9 +39,9 @@ public class IotaLocalPoWTest {
 
     private IotaAPI iotaClient;
 
-    @Before
+    @BeforeEach
     public void createApiClientInstance() throws Exception {
-        iotaClient = new IotaAPI.Builder().config(new FileConfig()).localPoW(new PearlDiverLocalPoW()).build();
+    iotaClient = new IotaAPI.Builder().config(new FileConfig()).localPoW(new PearlDiverLocalPoW()).build();
     }
 
     @Test

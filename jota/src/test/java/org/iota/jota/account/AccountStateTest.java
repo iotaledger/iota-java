@@ -1,13 +1,13 @@
 package org.iota.jota.account;
 
-import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class AccountStateTest {
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         
     }

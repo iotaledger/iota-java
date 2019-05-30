@@ -6,7 +6,6 @@ import org.iota.jota.account.store.AccountFileStore;
 import org.iota.jota.account.store.AccountStoreImpl;
 import org.iota.jota.dto.response.GetNodeInfoResponse;
 import org.iota.jota.store.JsonFlatFileStore;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,9 +31,6 @@ public class IotaAccountTest {
     private static final String TEST_SEED_ID = "J9SPZIPMIHEGZEBNDLMBTVVTCGQREQXZFXUYTJTYVQCR9TUZWZDBSJBOZLTTLJYXCGGVAIEQFPWLNUGHD";
     private static final String ADDR_0_SEC_3 = "TAKWNELREDNHLFYCQ9LMGZVYGTPTABFDEPQZILJAYAZSSCPXMEGCVAH9AHTJRDPVDCGIH9APCWG9KBSGA9VKXRLMU9";
     
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
     @Mock
     private IotaAPI MOCK_API;
 
@@ -88,8 +84,8 @@ public class IotaAccountTest {
 
         assertEquals(0, account.usableBalance(), "Account should have 0 usable balance");
         assertEquals(15, account.totalBalance(), "Account should have 15 total balance");
-        assertEquals( "9ZNTLLNHIPQACIJEIEOQXDAZOKXGHBIXUTVWFUD9XMKNVQIEACJQIXVXKTQKVEPQNLBQYNLVACZRGSFUY", cda.getDepositAddress().getHash(),
-                "Should have generated address at index 4");
+        assertEquals( "GGAOVJJKOHECPAR9GQBFOISLYUXSRXXXPT9GEYBTRBBMTJAN9CMH9EVVRYDGXUTDMECGXKFWPYAXUO9QD", cda.getDepositAddress().getHash(),
+                "Should have generated address at index 5");
     }
 
     @Test

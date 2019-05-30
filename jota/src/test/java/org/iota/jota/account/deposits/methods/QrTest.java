@@ -1,8 +1,5 @@
 package org.iota.jota.account.deposits.methods;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -10,10 +7,13 @@ import java.util.Date;
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.DepositTest;
-import org.junit.Before;
-import org.junit.Test;
 
 import net.glxn.qrgen.javase.QRCode;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QrTest extends DepositTest {
     
@@ -54,7 +54,7 @@ public class QrTest extends DepositTest {
     QRMethod qrMethod = null;
     ConditionalDepositAddress conditions = null;
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         qrMethod = new QRMethod();
         
@@ -66,16 +66,15 @@ public class QrTest extends DepositTest {
     public void qrFromString() {
         QRCode code = qrMethod.build(conditions);
         ConditionalDepositAddress deposit = qrMethod.parse(code);
+
         assertEquals(conditions, deposit);
     }
 
     @Test
     public void qrFromDeposit() throws IOException {
         QRCode code = qrMethod.build(conditions);
-        ByteArrayOutputStream stream = code.stream();
-        System.out.println(java.util.Arrays.toString(code.stream().toByteArray()));
-        
-        assertArrayEquals(qrBytes, code.stream().toByteArray());
-        stream.close();
+        try (ByteArrayOutputStream stream = code.stream()) {
+            assertArrayEquals(qrBytes, stream.toByteArray());
+        }
     }
 }

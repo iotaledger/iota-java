@@ -175,7 +175,7 @@ Here are some of the most commonly used API functions:
 ## Examples
 
 We have a list of test cases on the [`src/test/java` directory][tests] that you can use as a reference when developing apps with IOTA.
-A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/jota/IotaAPITest.java).
+A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/org/iota/jota/IotaAPITest.java).
 
 ## Change logs:
 - Changes in [**1.0.0-beta5**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta4...1.0.0-beta5)
@@ -194,7 +194,7 @@ A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-ja
 ## Supporting the project
 
 If the IOTA Java client library has been useful to you and you feel like contributing, consider posting a [bug report](https://github.com/iotaledger/iota-java/issues/new-issue), feature request or a [pull request](https://github.com/iotaledger/iota-java/pulls/).  
-We have some [basic contribution guidelines](contribution-guidelines.md) to keep our code base stable and consistent.
+We have some [basic contribution guidelines](CONTRIBUTING.md) to keep our code base stable and consistent.
 
 ## Joining the Discussion
 
@@ -202,7 +202,7 @@ If you want to get involved in the community, need help with getting setup, have
 
 ## License
 
-The Apache 2.0 license can be found [here](license).
+The Apache 2.0 license can be found [here](LICENSE).
 
 [iota-logo]: https://avatars0.githubusercontent.com/u/20126597?s=200&v=4
 [codacy]: https://www.codacy.com/app/kwek20/iota-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iotaledger/iota-java&amp;utm_campaign=Badge_Grade
@@ -223,6 +223,6 @@ The Apache 2.0 license can be found [here](license).
 [pull-requests]: https://github.com/iotaledger/iota-java/pulls
 [new-pull-request]: https://github.com/iotaledger/iota-java/compare
 [contribution-guidelines]: https://github.com/iotaledger/iota-java/blob/master/CONTRIBUTING.md
-[tests]: https://github.com/iotaledger/iota-java/tree/master/jota/src/test/java/jota
+[tests]: https://github.com/iotaledger/iota-java/tree/master/jota/src/test/java/org/iota/jota
 [iota-discord]: https://discord.gg/7Gu2mG5
 [iota-forum]: https://forum.iota.org/

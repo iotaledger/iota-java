@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.iota</groupId>
@@ -45,14 +46,18 @@
             <id>jpkrohling</id>
             <name>Juraci Paixão Kröhling</name>
         </developer>
-		<developer>
-			<id>th0br0</id>
-			<name>Andreas C. Osowski</name>
-		</developer>
-		<developer>
-			<id>kwek20</id>
-			<name>Brord van Wierst</name>
-		</developer>
+        <developer>
+            <id>th0br0</id>
+            <name>Andreas C. Osowski</name>
+        </developer>
+        <developer>
+            <id>kwek20</id>
+            <name>Brord van Wierst</name>
+        </developer>
+        <developer>
+            <id>ManuZiD</id>
+            <name>Emanuel Zienecker</name>
+        </developer>
     </developers>
 
     <properties>
@@ -69,27 +74,39 @@
         <version.maven-surefire-plugin>2.22.0</version.maven-surefire-plugin>
         <version.maven-project-info-reports-plugin>2.9</version.maven-project-info-reports-plugin>
         <version.maven-failsafe-plugin>2.22.0</version.maven-failsafe-plugin>
-        
+
+        <!-- Please keep this, this is needed for test purposes,
+        if the test runs on Jitpack these values will be adjusted -->
         <md-doclet-group>com.github.iotaledger</md-doclet-group>
-        <md-doclet-artifact>java-md-doclet</md-doclet-artifact>
+        <md-doclet-artifactId>java-md-doclet</md-doclet-artifactId>
         <md-doclet-version>2.1.1</md-doclet-version>
-        
-        <!-- 
-        org.iota / com.github.iotaledger
-	    java-md-doclet
-	    2.1.1 / master-SNAPSHOT
-        -->
-        
-        <version.junit5.vintage>5.4.0</version.junit5.vintage>
-        <version.junit5>5.4.0</version.junit5>
-        
+
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
+
+        <bcprov-jdk15on.version>1.61</bcprov-jdk15on.version>
+        <retrofit.version>2.5.0</retrofit.version>
+        <converter-gson.version>2.5.0</converter-gson.version>
+        <commons-lang3.version>3.6</commons-lang3.version>
+        <slf4j-api.version>1.7.25</slf4j-api.version>
+        <commons-io.version>2.5</commons-io.version>
+        <mockito-core.version>2.23.0</mockito-core.version>
+        <mockito-junit-jupiter.version>2.23.0</mockito-junit-jupiter.version>
+        <hamcrest-core.version>2.1</hamcrest-core.version>
+        <jadler-all.version>1.3.0</jadler-all.version>
+        <zxing.version>3.3.3</zxing.version>
+        <javase.version>2.5.0</javase.version>
+        <jackson-databind.version>2.9.9</jackson-databind.version>
+        <mongodb-driver.version>3.4.3</mongodb-driver.version>
+        <bson.version>3.5.0</bson.version>
+        <junit5.version>5.5.0-M1</junit5.version>
+
+        <dependency-check-maven.version>5.0.0-M3</dependency-check-maven.version>
     </properties>
 
     <modules>
         <module>jota</module>
     </modules>
-    
+
     <repositories>
         <repository>
             <id>jitpack.io</id>
@@ -103,126 +120,109 @@
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15on</artifactId>
-                <version>1.58</version>
+                <version>${bcprov-jdk15on.version}</version>
             </dependency>
-            
             <dependency>
                 <groupId>com.squareup.retrofit2</groupId>
                 <artifactId>retrofit</artifactId>
-                <version>2.5.0</version>
+                <version>${retrofit.version}</version>
             </dependency>
-            
             <dependency>
                 <groupId>com.squareup.retrofit2</groupId>
                 <artifactId>converter-gson</artifactId>
-                <version>2.3.0</version>
+                <version>${converter-gson.version}</version>
             </dependency>
-            
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.6</version>
+                <version>${commons-lang3.version}</version>
             </dependency>
-            
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.25</version>
+                <version>${slf4j-api.version}</version>
             </dependency>
-            
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.5</version>
+                <version>${commons-io.version}</version>
             </dependency>
-            
-            <!-- Testing -->
-            
-	        <dependency>
-	            <groupId>org.mockito</groupId>
-	            <artifactId>mockito-core</artifactId>
-	            <version>2.23.0</version>
-	            <scope>test</scope>
-	        </dependency>
+            <dependency>
+                <groupId>${md-doclet-group}</groupId>
+                <artifactId>${md-doclet-artifactId}</artifactId>
+                <version>${md-doclet-version}</version>
+            </dependency>
 
+            <!-- Account specific -->
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>core</artifactId>
+                <version>${zxing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.kenglxn.qrgen</groupId>
+                <artifactId>javase</artifactId>
+                <version>${javase.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver</artifactId>
+                <version>${mongodb-driver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>bson</artifactId>
+                <version>${bson.version}</version>
+            </dependency>
+
+            <!-- Testing -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito-core.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
-                <version>2.23.0</version>
+                <version>${mockito-junit-jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
-	        
             <dependency>
                 <groupId>org.hamcrest</groupId>
-			    <artifactId>hamcrest-core</artifactId>
-			    <version>2.1</version>
+                <artifactId>hamcrest-core</artifactId>
+                <version>${hamcrest-core.version}</version>
                 <scope>test</scope>
             </dependency>
-            
             <dependency>
-		        <groupId>org.junit.jupiter</groupId>
-		        <artifactId>junit-jupiter-api</artifactId>
-		        <version>${version.junit5}</version>
-		        <scope>test</scope>
-		    </dependency>
-		    
-		    <dependency>
-		        <groupId>org.junit.jupiter</groupId>
-		        <artifactId>junit-jupiter-engine</artifactId>
-		        <version>${version.junit5}</version>
-		        <scope>test</scope>
-		    </dependency>
-		    
-		    <dependency>
-			    <groupId>org.junit.vintage</groupId>
-			    <artifactId>junit-vintage-engine</artifactId>
-			    <version>${version.junit5.vintage}</version>
-			    <scope>test</scope>
-			</dependency>
-
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit5.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit5.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>net.jadler</groupId>
                 <artifactId>jadler-all</artifactId>
-                <version>1.3.0</version>
+                <version>${jadler-all.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>junit</artifactId>
+                        <groupId>junit</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
-
-            <dependency>
-	            <groupId>${md-doclet-group}</groupId>
-	            <artifactId>${md-doclet-artifact}</artifactId>
-	            <version>${md-doclet-version}</version>
-	        </dependency>
-            
-            <!-- Account specific -->
-	        <dependency>
-	            <groupId>com.google.zxing</groupId>
-	            <artifactId>core</artifactId>
-	             <version>3.3.3</version>
-	        </dependency>
-	        
-	        <dependency>
-	            <groupId>com.github.kenglxn.qrgen</groupId>
-	            <artifactId>javase</artifactId>
-	            <version>2.5.0</version>
-	        </dependency>
-	        
-	        <dependency>
-			    <groupId>com.fasterxml.jackson.core</groupId>
-			    <artifactId>jackson-databind</artifactId>
-			    <version>2.9.8</version>
-			</dependency>
-			
-		    <dependency>
-		        <groupId>org.mongodb</groupId>
-		        <artifactId>mongodb-driver</artifactId>
-		        <version>3.4.3</version>
-		    </dependency>
-		    
-		    <dependency>
-		        <groupId>org.mongodb</groupId>
-		        <artifactId>bson</artifactId>
-		        <version>3.5.0</version>
-		    </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -235,31 +235,31 @@
 
     <build>
         <resources>
-	      <resource>
-	        <directory>src/main/resources</directory>
-	        <filtering>false</filtering>
-	      </resource>
-	    </resources>
-    
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
         <plugins>
-		<plugin>
-			<groupId>org.sonatype.plugins</groupId>
-			<artifactId>nexus-staging-maven-plugin</artifactId>
-			<version>1.6.7</version>
-			<extensions>true</extensions>
-			<configuration>
-				<serverId>ossrh</serverId>
-				<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-				<autoReleaseAfterClose>true</autoReleaseAfterClose>
-			</configuration>
-		</plugin>
             <plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-checkstyle-plugin</artifactId>
-	            <version>${version.maven-checkstyle-plugin}</version>
-	            <configuration>
-	                <logViolationsToConsole>true</logViolationsToConsole>
-	            </configuration>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${version.maven-checkstyle-plugin}</version>
+                <configuration>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                </configuration>
                 <executions>
                     <execution>
                         <id>validate</id>
@@ -275,7 +275,7 @@
                         </goals>
                     </execution>
                 </executions>
-	        </plugin>
+            </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>${version.maven-release-plugin}</version>
@@ -290,33 +290,30 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${version.maven-surefire-plugin}</version>
-                <dependencies>
-                
-                    <dependency>
-                        <groupId>org.apache.maven.surefire</groupId>
-                        <artifactId>surefire-junit47</artifactId>
-                        <version>${version.maven-surefire-plugin}</version>
-                    </dependency>
-                </dependencies>
                 <configuration>
-                    <excludedGroups>org.iota.jota.category.IntegrationTest</excludedGroups>
+                    <excludedGroups>IntegrationTest</excludedGroups>
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
             <plugin>
-	            <artifactId>maven-failsafe-plugin</artifactId>
-	            <version>${version.maven-failsafe-plugin}</version>
-	        </plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${version.maven-failsafe-plugin}</version>
+	          </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check-maven.version}</version>
+            </plugin>
         </plugins>
     </build>
-    
+
     <reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>${version.maven-project-info-reports-plugin}</version>
-            </plugin>   
+            </plugin>
         </plugins>
     </reporting>
 
@@ -333,7 +330,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass />
+                                    <mainClass/>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
@@ -362,7 +359,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    
+
                     <plugin>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>${version.maven-javadoc-plugin}</version>
@@ -386,28 +383,28 @@
                 </plugins>
             </build>
         </profile>
-    
+
         <profile>
             <id>release</id>
             <activation>
-		          <activeByDefault>false</activeByDefault>
-		    </activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
             <build>
                 <plugins>
-				    <plugin>
-					    <groupId>org.apache.maven.plugins</groupId>
-					    <artifactId>maven-gpg-plugin</artifactId>
-					    <version>1.5</version>
-					    <executions>
-						    <execution>
-							    <id>sign-artifacts</id>
-							    <phase>verify</phase>
-							    <goals>
-								    <goal>sign</goal>
-							    </goals>
-						    </execution>
-					    </executions>
-				    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

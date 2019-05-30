@@ -1,28 +1,27 @@
 package org.iota.jota;
 
-import org.hamcrest.core.IsNull;
-import org.iota.jota.category.IntegrationTest;
-import org.iota.jota.config.types.FileConfig;
-import org.iota.jota.config.types.IotaDefaultConfig;
-import org.iota.jota.dto.response.*;
-import org.iota.jota.error.ArgumentException;
-import org.iota.jota.error.InternalException;
-import org.iota.jota.model.Input;
-import org.iota.jota.model.Transaction;
-import org.iota.jota.model.Transfer;
-import org.iota.jota.pow.SpongeFactory;
-import org.iota.jota.pow.pearldiver.PearlDiverLocalPoW;
-import org.iota.jota.utils.Constants;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import static org.hamcrest.MatcherAssert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
+import org.hamcrest.core.IsNull;
+import org.iota.jota.config.types.FileConfig;
+import org.iota.jota.config.types.IotaDefaultConfig;
+import org.iota.jota.dto.response.*;
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.model.Input;
+import org.iota.jota.model.Transaction;
+import org.iota.jota.model.Transfer;
+
+import org.iota.jota.pow.pearldiver.PearlDiverLocalPoW;
+import org.iota.jota.utils.Constants;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 /**
  * Let's do some integration test coverage against a devnet node
@@ -85,31 +84,31 @@ public class IotaAPITest {
 
     private IotaAPI iotaAPI;
 
-    @Before
+    @BeforeEach
     public void createApiClientInstance() throws Exception {
         iotaAPI = new IotaAPI.Builder().config(new FileConfig()).localPoW(new PearlDiverLocalPoW()).build();
-        assertNotNull("An API should have been created", iotaAPI);
+        assertNotNull(iotaAPI, "An API should have been created");
     }
 
     @Test
     public void shouldCreateIotaApiProxyInstanceWithDefaultValues() {
         iotaAPI = new IotaAPI.Builder().build();
         assertNotNull(iotaAPI);
-        assertEquals("Host should have been set to defaults", iotaAPI.getHost(), IotaDefaultConfig.Defaults.LEGACY_HOST);
-        assertEquals("Port should have been set to defaults", iotaAPI.getPort(),IotaDefaultConfig.Defaults.LEGACY_PORT + "");
-        assertEquals("Protocol should have been set to defaults", iotaAPI.getProtocol(), IotaDefaultConfig.Defaults.LEGACY_PROTOCOL);
+        assertEquals(iotaAPI.getHost(), IotaDefaultConfig.Defaults.LEGACY_HOST, "Host should have been set to defaults");
+        assertEquals(iotaAPI.getPort(),IotaDefaultConfig.Defaults.LEGACY_PORT + "", "Port should have been set to defaults");
+        assertEquals(iotaAPI.getProtocol(), IotaDefaultConfig.Defaults.LEGACY_PROTOCOL, "Protocol should have been set to defaults");
     }
 
     @Test
     public void shouldRetainValuesFromBuilder() {
         iotaAPI = new IotaAPI.Builder().host("iota.org").build();
-        assertEquals("Host should have been set to iota.org", iotaAPI.getHost(),"iota.org");
+        assertEquals(iotaAPI.getHost(),"iota.org", "Host should have been set to iota.org");
 
         iotaAPI = new IotaAPI.Builder().port(15515).build();
-        assertEquals("Port should have been set to 15515", iotaAPI.getPort(),"15515");
+        assertEquals(iotaAPI.getPort(),"15515", "Port should have been set to 15515");
 
         iotaAPI = new IotaAPI.Builder().protocol("https").build();
-        assertEquals("Protocol should have been set to https", iotaAPI.getProtocol(),"https");
+        assertEquals(iotaAPI.getProtocol(),"https", "Protocol should have been set to https");
     }
 
     @Test
@@ -118,78 +117,78 @@ public class IotaAPITest {
 
         properties.put("iota.node.host", "somewhere_over_the_rainbow");
         iotaAPI = new IotaAPI.Builder().config(properties).build();
-        assertEquals("Host should have been set to somewhere_over_the_rainbow", iotaAPI.getHost(),"somewhere_over_the_rainbow");
+        assertEquals(iotaAPI.getHost(),"somewhere_over_the_rainbow", "Host should have been set to somewhere_over_the_rainbow");
 
         properties = new Properties();
         properties.put("iota.node.port", "15515");
         iotaAPI = new IotaAPI.Builder().config(properties).build();
-        assertEquals("Port should have been set to 15515", iotaAPI.getPort(),"15515");
+        assertEquals(iotaAPI.getPort(),"15515", "Port should have been set to 15515");
 
         properties = new Properties();
         properties.put("iota.node.protocol", "https");
         iotaAPI = new IotaAPI.Builder().config(properties).build();
-        assertEquals("Protocol should be set to https", iotaAPI.getProtocol(),"https");
+        assertEquals(iotaAPI.getProtocol(),"https", "Protocol should be set to https");
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldGetInputs() throws ArgumentException {
         // Address 0 should contain 1000
         GetBalancesAndFormatResponse res = iotaAPI.getInputs(TEST_SEED1, 2, 0, 10, 0);
 
         assertThat("Error on getInputs should have thrown", res, IsNull.notNullValue());
-        assertTrue("Res should have a balance(1000)",res.getTotalBalance() > 0);
+        assertTrue(res.getTotalBalance() > 0, "Res should have a balance(1000)");
         assertThat("Error on getInputs should have thrown", res.getInputs(), IsNull.notNullValue());
     }
 
     @Test
     public void shouldCreateANewAddressWithChecksum() throws ArgumentException {
         final GetNewAddressResponse res1 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 1, true, 0, 5);
-        assertEquals("Generated address should match original", res1.getAddresses().get(0), TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1);
+        assertEquals(res1.getAddresses().get(0), TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1, "Generated address should match original");
 
         final GetNewAddressResponse res2 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 2, true, 0, 5);
-        assertEquals("Generated address should match original", res2.getAddresses().get(0), TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2);
+        assertEquals(res2.getAddresses().get(0), TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, "Generated address should match original");
 
         final GetNewAddressResponse res3 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 3, true, 0, 5);
-        assertEquals("Generated address should match original", res3.getAddresses().get(0), TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_3);
+        assertEquals(res3.getAddresses().get(0), TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_3, "Generated address should match original");
     }
 
     @Test
     public void shouldCreateANewAddressWithoutChecksum() throws ArgumentException {
         final GetNewAddressResponse res1 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 1, false, 0, 5);
-        assertEquals("Generated address should match original", res1.getAddresses().get(0), TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_1);
+        assertEquals(res1.getAddresses().get(0), TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_1, "Generated address should match original");
 
         final GetNewAddressResponse res2 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 2, false, 0, 5);
-        assertEquals("Generated address should match original", res2.getAddresses().get(0), TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2);
+        assertEquals(res2.getAddresses().get(0), TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, "Generated address should match original");
 
         final GetNewAddressResponse res3 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 3, false, 0, 5);
-        assertEquals("Generated address should match original", res3.getAddresses().get(0), TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_3);
+        assertEquals(res3.getAddresses().get(0), TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_3, "Generated address should match original");
     }
 
     @Test
     public void shouldCreate100Addresses() throws ArgumentException {
         GetNewAddressResponse res = iotaAPI.getAddressesUnchecked(TEST_SEED1, 2, false, 0, 100);
-        assertEquals("Should have generated 100 addresses", res.getAddresses().size(), 100);
+        assertEquals(res.getAddresses().size(), 100);
     }
-    
+
     @Test
-    @Category(IntegrationTest.class)
-    public void shouldPrepareTransfer() {
+    @Tag("IntegrationTest")
+    public void shouldPrepareTransfer() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
 
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 100, TEST_MESSAGE, TEST_TAG));
         List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, null, null, false);
 
-        assertNotNull("prepareTransfers should throw an error on failure", trytes);
-        assertFalse("prepareTransfers should throw an error on failure", trytes.isEmpty());
+        assertNotNull(trytes, "prepareTransfers should throw an error on failure");
+        assertFalse(trytes.isEmpty(), "prepareTransfers should throw an error on failure");
 
         Transaction first = new Transaction(trytes.get(0));
-        assertEquals("prepareTransfers should have reversed bundle order for attachToTangle", first.getLastIndex(), first.getCurrentIndex());
+        assertEquals(first.getLastIndex(), first.getCurrentIndex(), "prepareTransfers should have reversed bundle order for attachToTangle");
     }
 
     @Test
-    @Category(IntegrationTest.class)
-    public void shouldPrepareTransferWithInputs(){
+    @Tag("IntegrationTest")
+    public void shouldPrepareTransferWithInputs() throws ArgumentException {
         List<Input> inputlist = new ArrayList<>();
         List<Transfer> transfers = new ArrayList<>();
 
@@ -200,15 +199,15 @@ public class IotaAPITest {
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
         List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, inputlist, null,true);
 
-        assertNotNull("prepareTransfers should throw an error on failure", trytes);
-        assertFalse("prepareTransfers should throw an error on failure", trytes.isEmpty());
+        assertNotNull(trytes, "prepareTransfers should throw an error on failure");
+        assertFalse(trytes.isEmpty(), "prepareTransfers should throw an error on failure");
 
         Transaction first = new Transaction(trytes.get(0));
-        assertEquals("prepareTransfers should have reversed bundle order for attachToTangle",first.getLastIndex(), first.getCurrentIndex());
+        assertEquals(first.getLastIndex(), first.getCurrentIndex(), "prepareTransfers should have reversed bundle order for attachToTangle");
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldFailTransfer() {
         try {
             List<Transfer> transfers = new ArrayList<>();
@@ -218,12 +217,13 @@ public class IotaAPITest {
 
             fail("prepareTransfers should have thrown an error due to lack of balance on the seed");
         } catch (IllegalStateException e){
-            assertEquals("Message should say that there is not enough balance", Constants.NOT_ENOUGH_BALANCE_ERROR, e.getMessage());
+            assertEquals(Constants.NOT_ENOUGH_BALANCE_ERROR, e.getMessage(), "Message should say that there is not enough balance");
         }
     }
 
+    //seed contains 0 balance -> wrong input fields as inputs arent valid
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldFailTransferWithInputs(){
         try {
             List<Input> inputlist = new ArrayList<>();
@@ -233,62 +233,62 @@ public class IotaAPITest {
 
             fail("prepareTransfer should have thrown an error on wrong/lack of inputs");
         } catch (ArgumentException e){
-            assertEquals("Message should say that the input is invalid", Constants.INVALID_ADDRESSES_INPUT_ERROR, e.getMessage());
+            assertEquals(Constants.INVALID_ADDRESSES_INPUT_ERROR, e.getMessage(), "Message should say that the input is invalid");
         }
     }
 
     @Test
-    @Category(IntegrationTest.class)
-    public void shouldGetLastInclusionState(){
+    @Tag("IntegrationTest")
+    public void shouldGetLastInclusionState() throws ArgumentException {
         GetInclusionStateResponse res = iotaAPI.getLatestInclusion(new String[]{TEST_HASH});
         assertThat("States should be an array of booleans", res.getStates(), IsNull.notNullValue());
-        assertTrue("Hash should have been seen as confirmed", res.getStates()[0]);
+        assertTrue(res.getStates()[0], "Hash should have been seen as confirmed");
     }
 
     @Test
-    @Category(IntegrationTest.class)
-    public void shouldFindTransactionObjects() {
+    @Tag("IntegrationTest")
+    public void shouldFindTransactionObjects() throws ArgumentException {
         List<Transaction> ftr = iotaAPI.findTransactionObjectsByAddresses(TEST_ADDRESSES);
         assertThat("findTransactionObjectsByAddresses should not return null on failure", ftr, IsNull.notNullValue());
 
-        assertTrue("findTransactionObjectsByAddresses should find multiple transactions", !ftr.isEmpty());
+        assertFalse(ftr.isEmpty(), "findTransactionObjectsByAddresses should find multiple transactions");
 
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldGetAccountData(){
         GetAccountDataResponse gad = iotaAPI.getAccountData(TEST_SEED3, 2, 0, true, 0, true, 0, 10, true, 0);
         assertThat("GetAccountDataResponse should not return null on failure", gad, IsNull.notNullValue());
     }
 
-    @Test(expected = ArgumentException.class)
+    @Test
     public void shouldNotGetBundle() throws ArgumentException {
-        iotaAPI.getBundle("SADASD");
+        assertThrows(ArgumentException.class, () -> iotaAPI.getBundle("SADASD"));
     }
 
     @Test
-    @Category(IntegrationTest.class)
-    public void shouldGetBundle(){
+    @Tag("IntegrationTest")
+    public void shouldGetBundle() throws ArgumentException {
         GetBundleResponse gbr = iotaAPI.getBundle(TEST_HASH);
         assertThat("GetBundleResponse should not return null on failure", gbr, IsNull.notNullValue());
     }
 
     @Test
-    @Category(IntegrationTest.class)
-    public void shouldCheckConsistency(){
+    @Tag("IntegrationTest")
+    public void shouldCheckConsistency() throws ArgumentException {
         GetNodeInfoResponse gni = iotaAPI.getNodeInfo();
         CheckConsistencyResponse ccr = iotaAPI.checkConsistency(gni.getLatestSolidSubtangleMilestone());
         assertThat("CheckConsistencyResponse should not return null on failure", ccr, IsNull.notNullValue());
-        assertTrue("Latest milestone should always be consistent", ccr.getState());
+        assertTrue(ccr.getState(), "Latest milestone should always be consistent");
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void shouldGetTransfers(){
         GetTransferResponse gtr = iotaAPI.getTransfers(TEST_SEED3, 2, 0, 0, false);
         assertThat("GetTransfers should return GetTransferResponse object on success", gtr.getTransfers(), IsNull.notNullValue());
-        assertTrue("GetTransfers should return more than 0 transfers", gtr.getTransfers().length > 0);
+        assertTrue(gtr.getTransfers().length > 0, "GetTransfers should return more than 0 transfers");
     }
 
     @Test
@@ -298,48 +298,39 @@ public class IotaAPITest {
     }
 
     @Test
-    public void shouldNotSendTrytes(){
-        try {
-            iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, null);
-            fail("Should have thrown an exception on attempting to attach wrong trytes");
-        } catch (ArgumentException | InternalException e) {
-            // ArgumentException for local PoW
-            // InternalException for remote PoW
-            //TODO: Validate message/return
-        }
-    } 
-
-    @Test()
-    @Category(IntegrationTest.class)
-    public void shouldGetTrytes(){
-        GetTrytesResponse res = iotaAPI.getTrytes(TEST_HASH);
-        assertEquals("getTrytes should send back 1 transaction trytes", 1, res.getTrytes().length);
+    public void shouldNotSendTrytes() throws ArgumentException {
+        assertThrows(ArgumentException.class, () ->
+                iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE, null));
     }
 
     @Test()
-    @Category(IntegrationTest.class)
-    public void shouldStoreAndBroadcast() throws ArgumentException {
+    @Tag("IntegrationTest")
+    public void shouldGetTrytes() throws ArgumentException {
+        GetTrytesResponse res = iotaAPI.getTrytes(TEST_HASH);
+        assertEquals(1, res.getTrytes().length, "getTrytes should send back 1 transaction trytes");
+    }
+
+    @Test()
+    @Tag("IntegrationTest")
+    public void shouldBroadcastAndStore() throws ArgumentException {
         List<Transaction> response = iotaAPI.sendTrytes(new String[]{TEST_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, null);
 
         BroadcastTransactionsResponse res = iotaAPI.storeAndBroadcast(response.get(0).toTrytes());
-        assertNotNull("storeAndBroadcast should not return null on fail", res);
+        assertNotNull(res, "storeAndBroadcast should not return null on fail");
     }
     
     @Test()
-    @Category(IntegrationTest.class)
-    public void shouldFailBeforeSnapshotTimeStamp(){
-        try {
+    @Tag("IntegrationTest")
+    public void shouldFailBeforeSnapshotTimeStamp() throws ArgumentException {
+        assertThrows(ArgumentException.class, () -> {
             iotaAPI.storeAndBroadcast(TEST_TRYTES);
-            fail("Transaction did not fail on old timestamp value");
-        } catch (ArgumentException e) {
-            assertTrue("Message should say that the input is invalid", e.getMessage().contains("Invalid trytes input"));
-        }
+        }, "Transaction did not fail on old timestamp value");
     }
 
     @Test
     public void shouldSendTrytes(){
         List<Transaction> response = iotaAPI.sendTrytes(new String[]{TEST_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, null);
-        assertEquals("Sending 1 transaction received unexpected amount", 1, response.size());
+        assertEquals(1, response.size(), "Sending 1 transaction received unexpected amount");
     }
 
     @Test
@@ -351,7 +342,7 @@ public class IotaAPITest {
             SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, true, null);
             fail("Transaction did not fail on spent address");
         } catch (ArgumentException e){
-            assertEquals("Message should say we try to use a used address", Constants.SENDING_TO_USED_ADDRESS_ERROR, e.getMessage());
+            assertEquals(Constants.SENDING_TO_USED_ADDRESS_ERROR, e.getMessage(), "Message should say we try to use a used address");
         }
     }
 
@@ -366,7 +357,7 @@ public class IotaAPITest {
         assertThat("Sending transfer should have returned multiple transactions", str.getTransactions(), IsNull.notNullValue());
         assertThat("Sending transfer should contain success information", str.getSuccessfully(), IsNull.notNullValue());
 
-        assertEquals("Returned transfers should have normal bundle order",0, str.getTransactions().get(0).getCurrentIndex());
+        assertEquals(0, str.getTransactions().get(0).getCurrentIndex(), "Returned transfers should have normal bundle order");
     }
 
     @Test

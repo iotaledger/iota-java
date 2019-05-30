@@ -1,11 +1,11 @@
 package org.iota.jota;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.iota.jota.pow.Kerl;
 import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.utils.Converter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class KerlTest {
     
