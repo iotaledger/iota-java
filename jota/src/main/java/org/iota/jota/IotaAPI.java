@@ -32,7 +32,7 @@ import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.error.BaseException;
-import org.iota.jota.account.errors.NotPromotableException;
+import org.iota.jota.error.NotPromotableException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;

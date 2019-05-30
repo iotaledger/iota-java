@@ -1,6 +1,4 @@
-package org.iota.jota.account.errors;
-
-import org.iota.jota.error.BaseException;
+package org.iota.jota.error;
 
 /**
  * This exception occurs as part of a `promoteTransaction` call if the transaction is not promotable.
