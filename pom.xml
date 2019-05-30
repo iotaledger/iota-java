@@ -78,7 +78,7 @@
         <!-- Please keep this, this is needed for test purposes,
         if the test runs on Jitpack these values will be adjusted -->
         <md-doclet-group>com.github.iotaledger</md-doclet-group>
-        <md-doclet-artifact>java-md-doclet</md-doclet-artifact>
+        <md-doclet-artifactId>java-md-doclet</md-doclet-artifactId>
         <md-doclet-version>2.1.1</md-doclet-version>
 
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
