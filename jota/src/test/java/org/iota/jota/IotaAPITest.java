@@ -8,9 +8,21 @@ import java.util.List;
 import java.util.Properties;
 
 import org.hamcrest.core.IsNull;
+import org.iota.jota.builder.AddressRequest;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.dto.response.*;
+import org.iota.jota.dto.response.CheckConsistencyResponse;
+import org.iota.jota.dto.response.GetAccountDataResponse;
+import org.iota.jota.dto.response.GetBalancesAndFormatResponse;
+import org.iota.jota.dto.response.GetBundleResponse;
+import org.iota.jota.dto.response.GetInclusionStateResponse;
+import org.iota.jota.dto.response.GetNewAddressResponse;
+import org.iota.jota.dto.response.GetNodeInfoResponse;
+import org.iota.jota.dto.response.GetTransferResponse;
+import org.iota.jota.dto.response.GetTrytesResponse;
+import org.iota.jota.dto.response.ReplayBundleResponse;
+import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
@@ -18,9 +30,22 @@ import org.iota.jota.model.Transfer;
 
 import org.iota.jota.pow.pearldiver.PearlDiverLocalPoW;
 
+import org.iota.jota.utils.Constants;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Let's do some integration test coverage against a devnet node
@@ -40,11 +65,11 @@ public class IotaAPITest {
     private static final String TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1 = "MALAZGDVZIAQQRTNYJDSZMY9VE9LAHQKTVCUOAGZUCX9IBUMODFFTMGUIUAXGLWZQ9CYRSLYBM9QBIBYAEIAOPKXEA";
     private static final String TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2 = "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZCCOZVXMTXC";
     private static final String TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_3 = "ASCZZOBQDMNHLELQKWJBMRETMHBTF9V9TNKYDIFW9PDXPUHPVVGHMSWPVMNJHSJF99QFCMNTPCPGS9DT9XAFKJVO9X";
-    
+
     private static final String TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_1 = "MALAZGDVZIAQQRTNYJDSZMY9VE9LAHQKTVCUOAGZUCX9IBUMODFFTMGUIUAXGLWZQ9CYRSLYBM9QBIBYA";
     private static final String TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2 = "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZC";
     private static final String TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_3 = "ASCZZOBQDMNHLELQKWJBMRETMHBTF9V9TNKYDIFW9PDXPUHPVVGHMSWPVMNJHSJF99QFCMNTPCPGS9DT9";
-    
+
     private static final String TEST_HASH = "AKK9DUFNOAAWCERFSUQTV9EOGFTBTSYYRQHEBQWRMDDBPYOS9UIEMQZEEVEQJZIWHKLRKCUJPOW9AC999";
 
     // Has non-0 trits in the value area which exceeds max IOTA supply
@@ -59,7 +84,7 @@ public class IotaAPITest {
     private static final int DEPTH = 9;
 
     private static final String[] TEST_ADDRESSES = new String[]{
-              "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZCCOZVXMTXC"
+            "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZCCOZVXMTXC"
             , "P9UDUZMN9DEXCRQEKLJYSBSBZFCHOBPJSDKMLCCVJDOVOFDWMNBZRIRRZJGINOUMPJBMYYZEGRTIDUABDODCNSCYJD"
             , "MIMVJEYREIIZLXOXQROMPJFCIX9NFVXD9ZQMNZERPI9OJIJFUWQ9WCTMKXEEPHYPWEZPHLJBJOFH9YTRBGCCKGIWYW"
             , "FOJHXRVJRFMJTFDUWJYYZXCZIJXKQALLXMLKHZFDMHWTIBBXUKSNSUYJLKYRQBNXKRSUXZHDTPWXYD9YFHA9AWOMPX"
@@ -145,85 +170,68 @@ public class IotaAPITest {
 
     @Test
     public void shouldCreateANewAddressWithChecksum() throws ArgumentException {
-        final GetNewAddressResponse res1 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 1, true, 0, 5);
-        assertEquals(res1.getAddresses().get(0), TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1, "Generated address should match original");
+        AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED1, 1).checksum(true).amount(5).build();
+        final GetNewAddressResponse res1 = iotaAPI.getAddressesUnchecked(addressRequest);
+        assertEquals(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1, res1.getAddresses().get(0));
 
-        final GetNewAddressResponse res2 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 2, true, 0, 5);
-        assertEquals(res2.getAddresses().get(0), TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, "Generated address should match original");
+        AddressRequest secondAddressRequest = new AddressRequest.Builder(TEST_SEED1, 2).checksum(true).amount(5).build();
+        final GetNewAddressResponse res2 = iotaAPI.getAddressesUnchecked(secondAddressRequest);
+        assertEquals(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, res2.getAddresses().get(0));
 
-        final GetNewAddressResponse res3 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 3, true, 0, 5);
-        assertEquals(res3.getAddresses().get(0), TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_3, "Generated address should match original");
+        AddressRequest thirdAddressRequest = new AddressRequest.Builder(TEST_SEED1, 3).checksum(true).amount(5).build();
+        final GetNewAddressResponse res3 = iotaAPI.getAddressesUnchecked(thirdAddressRequest);
+        assertEquals(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_3, res3.getAddresses().get(0));
     }
 
     @Test
     public void shouldCreateANewAddressWithoutChecksum() throws ArgumentException {
-        final GetNewAddressResponse res1 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 1, false, 0, 5);
-        assertEquals(res1.getAddresses().get(0), TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_1, "Generated address should match original");
+        AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED1, 1).amount(5).build();
+        final GetNewAddressResponse res1 = iotaAPI.getAddressesUnchecked(addressRequest);
+        assertEquals(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_1, res1.getAddresses().get(0));
 
-        final GetNewAddressResponse res2 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 2, false, 0, 5);
-        assertEquals(res2.getAddresses().get(0), TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, "Generated address should match original");
+        AddressRequest secondAddressRequest = new AddressRequest.Builder(TEST_SEED1, 2).amount(5).build();
+        final GetNewAddressResponse res2 = iotaAPI.getAddressesUnchecked(secondAddressRequest);
+        assertEquals(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, res2.getAddresses().get(0));
 
-        final GetNewAddressResponse res3 = iotaAPI.getAddressesUnchecked(TEST_SEED1, 3, false, 0, 5);
-        assertEquals(res3.getAddresses().get(0), TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_3, "Generated address should match original");
+        AddressRequest thirdAddressRequest = new AddressRequest.Builder(TEST_SEED1, 3).amount(5).build();
+        final GetNewAddressResponse res3 = iotaAPI.getAddressesUnchecked(thirdAddressRequest);
+        assertEquals(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_3, res3.getAddresses().get(0));
     }
 
     @Test
     public void shouldCreate100Addresses() throws ArgumentException {
-        GetNewAddressResponse res = iotaAPI.getAddressesUnchecked(TEST_SEED1, 2, false, 0, 100);
+        AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED1, 2).amount(100).build();
+        GetNewAddressResponse res = iotaAPI.getAddressesUnchecked(addressRequest);
         assertEquals(100, res.getAddresses().size());
     }
 
     @Test
-    public void generateNewAddressesWithWrongSeedShouldFail() {
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
-                iotaAPI.generateNewAddresses("wrong", 2, false, 0, 0));
-        assertEquals("Invalid seed provided.", exception.getMessage());
+    public void generateNewAddressesWithZeroIndexAndZeroAmountShouldGenerateOneAddresses() {
+        AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED1, 2).amount(0).build();
+        GetNewAddressResponse addressResponse = iotaAPI.generateNewAddresses(addressRequest);
+        assertEquals(1, addressResponse.getAddresses().size());
     }
 
     @Test
-    public void generateNewAddressesWithWrongSecurityLevelShouldFail() {
-        ArgumentException argumentException = assertThrows(ArgumentException.class, () ->
-                iotaAPI.generateNewAddresses(TEST_SEED1, -1, false, 0, 0));
-        assertEquals("[Invalid security level provided.]", argumentException.getMessage());
-    }
-
-    @Test
-    public void generateNewAddressesWithNegativeIndexAndZeroAmountShouldFail() {
-        ArgumentException argumentException = assertThrows(ArgumentException.class, () ->
-                iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, -1, 0));
-        assertEquals("[Invalid input provided.]", argumentException.getMessage());
-    }
-
-    @Test
-    public void generateNewAddressesWithZeroIndexAndNegativeAmountShouldFail() {
-        ArgumentException argumentException = assertThrows(ArgumentException.class, () ->
-                iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, 0, -1));
-        assertEquals("[Invalid input provided.]", argumentException.getMessage());
-    }
-
-    @Test
-    public void generateNewAddressesWithZeroIndexAndZeroAmountShouldGenerateNoAddresses() {
-        GetNewAddressResponse addressResponse = iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, 0, 0);
-        assertEquals(0, addressResponse.getAddresses().size());
-    }
-
-    @Test
-    public void generateNewAddressesWithZeroAmountShouldGenerateNoAddresses() {
-        GetNewAddressResponse addressResponse = iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, 1, 0);
-        assertEquals(0, addressResponse.getAddresses().size());
+    public void generateNewAddressesWithZeroAmountShouldGenerateOneAddresses() {
+        AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED1, 2).amount(0).index(1).build();
+        GetNewAddressResponse addressResponse = iotaAPI.generateNewAddresses(addressRequest);
+        assertEquals(1, addressResponse.getAddresses().size());
     }
 
     @Test
     public void generateNewAddresses() {
-        GetNewAddressResponse firstAddressResponse = iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, 0, 1);
+        AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED1, 2).amount(1).build();
+        GetNewAddressResponse firstAddressResponse = iotaAPI.generateNewAddresses(addressRequest);
         assertEquals(1, firstAddressResponse.getAddresses().size());
         assertNotNull(firstAddressResponse.getAddresses().get(0));
     }
 
     @Test
     public void generateNewAddressesWithSameIndexAndOneAmountShouldGenerateSameAddress() {
-        GetNewAddressResponse firstAddressResponse = iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, 0, 1);
-        GetNewAddressResponse secondAddressResponse = iotaAPI.generateNewAddresses(TEST_SEED1, 2, false, 0, 1);
+        AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED1, 2).amount(1).build();
+        GetNewAddressResponse firstAddressResponse = iotaAPI.generateNewAddresses(addressRequest);
+        GetNewAddressResponse secondAddressResponse = iotaAPI.generateNewAddresses(addressRequest);
         assertEquals(1, firstAddressResponse.getAddresses().size());
         assertEquals(1, secondAddressResponse.getAddresses().size());
         assertEquals(firstAddressResponse.getAddresses().get(0), secondAddressResponse.getAddresses().get(0));
@@ -234,7 +242,7 @@ public class IotaAPITest {
     public void shouldPrepareTransfer() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
 
-        transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 100, TEST_MESSAGE, TEST_TAG));
+        transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 5, TEST_MESSAGE, TEST_TAG));
         List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, null, null, false);
 
         assertNotNull(trytes, "prepareTransfers should throw an error on failure");
@@ -247,15 +255,15 @@ public class IotaAPITest {
     @Test
     @Tag("IntegrationTest")
     public void shouldPrepareTransferWithInputs() throws ArgumentException {
-        List<Input> inputlist = new ArrayList<>();
+        List<Input> inputList;
         List<Transfer> transfers = new ArrayList<>();
 
         GetBalancesAndFormatResponse rsp = iotaAPI.getInputs(TEST_SEED1, 2, 0, 10, 0);
-        
-        inputlist.addAll(rsp.getInputs());
+
+        inputList  = new ArrayList<>(rsp.getInputs());
 
         transfers.add(new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 1, TEST_MESSAGE, TEST_TAG));
-        List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, inputlist, null,true);
+        List<String> trytes = iotaAPI.prepareTransfers(TEST_SEED1, 2, transfers, null, inputList, null, true);
 
         assertNotNull(trytes, "prepareTransfers should throw an error on failure");
         assertFalse(trytes.isEmpty(), "prepareTransfers should throw an error on failure");
@@ -363,14 +371,16 @@ public class IotaAPITest {
                 iotaAPI.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE, null));
     }
 
-    @Test()
+    @Test
     @Tag("IntegrationTest")
     public void shouldGetTrytes() throws ArgumentException {
-        GetTrytesResponse res = iotaAPI.getTrytes(TEST_HASH);
-        assertEquals(1, res.getTrytes().length, "getTrytes should send back 1 transaction trytes");
+        GetTrytesResponse trytes = iotaAPI.getTrytes(TEST_HASH);
+        assertNotNull(trytes);
+        assertEquals(1, trytes.getTrytes().length, "getTrytes should send back 1 transaction trytes");
     }
 
-    @Test()
+    @Disabled
+    @Test
     @Tag("IntegrationTest")
     public void shouldBroadcastAndStore() throws ArgumentException {
         List<Transaction> response = iotaAPI.sendTrytes(new String[]{TEST_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, null);
@@ -378,8 +388,8 @@ public class IotaAPITest {
         BroadcastTransactionsResponse res = iotaAPI.storeAndBroadcast(response.get(0).toTrytes());
         assertNotNull(res, "storeAndBroadcast should not return null on fail");
     }
-    
-    @Test()
+
+    @Test
     @Tag("IntegrationTest")
     public void shouldFailBeforeSnapshotTimeStamp() throws ArgumentException {
         assertThrows(ArgumentException.class, () -> {
@@ -413,7 +423,8 @@ public class IotaAPITest {
     public void shouldSendTransferWithoutInputs(){
         List<Transfer> transfers = new ArrayList<>();
 
-        String address = iotaAPI.getNextAvailableAddress(TEST_SEED1, 2, true).first();
+        AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED1, 2).checksum(true).build();
+        String address = iotaAPI.generateNewAddresses(addressRequest).first();
         transfers.add(new Transfer(address, 1, TEST_MESSAGE, TEST_TAG));
 
         SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, true, null);
@@ -426,18 +437,19 @@ public class IotaAPITest {
     @Test
     @Tag("IntegrationTest")
     public void shouldSendTransferWithInputs(){
-        List<Input> inputlist = new ArrayList<>();
+        List<Input> inputList = new ArrayList<>();
         List<Transfer> transfers = new ArrayList<>();
 
         GetBalancesAndFormatResponse rsp = iotaAPI.getInputs(TEST_SEED3, 2, 0, 0, 1);
 
-        inputlist.addAll(rsp.getInputs());
+        inputList.addAll(rsp.getInputs());
 
-        String address = iotaAPI.getNextAvailableAddress(TEST_SEED3, 2, true).first();
+        AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED3, 2).checksum(true).build();
+        String address = iotaAPI.generateNewAddresses(addressRequest).first();
         transfers.add(new Transfer(address, 1, TEST_MESSAGE, TEST_TAG));
 
         // validatInputs to true would mean we have to spent all balance in once. Now we double spent but its devnet
-        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED3, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, inputlist, null, false, true, null);
+        SendTransferResponse str = iotaAPI.sendTransfer(TEST_SEED3, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, inputList, null, false, true, null);
         assertThat("Sending transfer should have returned multiple transactions", str.getTransactions(), IsNull.notNullValue());
         assertThat("Sending transfer should contain success information", str.getSuccessfully(), IsNull.notNullValue());
     }

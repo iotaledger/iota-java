@@ -1,17 +1,17 @@
 package org.iota.jota.utils;
 
-import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.IntPredicate;
-
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transfer;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.IntPredicate;
+
+import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
 
 /**
  * 
@@ -19,16 +19,6 @@ import org.iota.jota.model.Transfer;
  */
 public class InputValidator {
     
-    /**
-     * Determines whether the specified string is a isSeed.
-     *
-     * @param seed The seed to validate.
-     * @return <code>true</code> if the specified string is a seed; otherwise, <code>false</code>.
-     **/
-    public static boolean isSeed(String seed) {
-        return seed.length() <= Constants.SEED_LENGTH_MAX && isTrytes(seed);
-    }
-
     /**
      * Determines whether the specified string is an address. 
      * Address must contain a checksum to be valid
@@ -378,11 +368,22 @@ public class InputValidator {
      * @return <code>true</code> if the specified seed is valid; otherwise, <code>false</code>.
      **/
     public static boolean isValidSeed(String seed) {
-        if (seed.length() > Constants.SEED_LENGTH_MAX) {
-            return false;
+        return seed.length() <= Constants.SEED_LENGTH_MAX && isTrytes(seed);
+    }
+
+    /**
+     * Checks that the specified seed reference is a valid seed.
+     *
+     * @param seed The seed to validate.
+     * @return {@code seed} if valid seed
+     * @throws IllegalArgumentException if {@code seed} is invalid
+     * @see #isValidSeed(String)
+     */
+    public static String requireValidSeed(String seed) {
+        if (isValidSeed(seed)) {
+            return seed;
         }
-        
-        return isTrytes(seed);
+        throw new IllegalArgumentException("Provided seed is invalid.");
     }
     
     /**
@@ -476,6 +477,21 @@ public class InputValidator {
      */
     public static boolean isValidSecurityLevel(int level) {
        return level >= Constants.MIN_SECURITY_LEVEL && level <= Constants.MAX_SECURITY_LEVEL;
+    }
+
+    /**
+     * Checks that the specified security level reference is a valid security level.
+     *
+     * @param securityLevel The security level to validate.
+     * @return {@code securityLevel} if valid security level
+     * @throws IllegalArgumentException if {@code securityLevel} is invalid
+     * @see #isValidSecurityLevel(int)
+     */
+    public static int requireValidSecurityLevel(int securityLevel) {
+        if (isValidSecurityLevel(securityLevel)) {
+            return securityLevel;
+        }
+        throw new IllegalArgumentException("Value is not within the specified security level range");
     }
 
     public static boolean isTrits(int[] trits) {
