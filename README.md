@@ -119,6 +119,9 @@ You'll have a .jar file called `jota-[VERSION]-jar-with-dependencies.jar`, depen
 ## Getting Started
 
 After you've [downloaded the library](#downloading-the-library), you can connect to an IRI node to send transactions to it and interact with the ledger.
+An extended guide can be found on our [documentation website](https://docs.iota.org/docs/iota-java/0.1/README), we strongly recommend you to go here for starting 
+off. A quick starting tutorial is shown below.
+
 
 To connect to a local IRI node, do the following:
 
@@ -139,6 +142,7 @@ GetNodeInfoResponse response = api.getNodeInfo();
 ```
 
 **Note:** To separate your IRI node configuration from the implementation, you can also specify your IRI node configuration in a [**Java `.properties` file**](https://en.wikipedia.org/wiki/.properties) or as command line flags. These options are useful if you develop an open-source app which is deployed on a CI and don't want contributors to see the internal IRI node configuration.
+To make the API read from this file, add the configuration to the builder like so: `.config(new FileConfig("node_config.properties"))`
 
 **Example .properties files**
 
