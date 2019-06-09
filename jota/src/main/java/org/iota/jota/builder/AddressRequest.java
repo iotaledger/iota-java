@@ -4,7 +4,7 @@ import org.iota.jota.utils.InputValidator;
 
 /**
  * This class is used to obtain a new address from the network.
- *
+ * 
  * To get next available address simple create an instance like this
  * <blockquote><pre>
  * AddressRequest addressRequest = new AddressRequest.Builder(seed, security).build();
@@ -12,36 +12,11 @@ import org.iota.jota.utils.InputValidator;
  */
 public class AddressRequest {
 
-    /**
-     * Tryte-encoded seed. It should be noted that this seed is not transferred.
-     */
     private final String seed;
-
-    /**
-     * Security level to be used for the private key / address. Can be 1, 2 or 3.
-     */
     private final int securityLevel;
-
-    /**
-     * Key index to start search from.
-     */
     private final int index;
-
-    /**
-     * Adds 9-tryte address checksum. The checksum is required for all an API call.
-     */
     private final boolean checksum;
-
-    /**
-     * Total number of addresses to generate.
-     * If this is set to 0, we will generate until the first unspent address is found, and stop.
-     * If amount is negative, we count back from index.
-     */
     private final int amount;
-
-    /**
-     * If <code>true</code>, it returns all addresses, even those who were determined to be spent from
-     */
     private final boolean addSpendAddresses;
 
     private AddressRequest(Builder builder) {
@@ -61,26 +36,45 @@ public class AddressRequest {
         private boolean checksum = false;
         private boolean addSpendAddresses = false;
 
+        /**
+         * Constructor to instantiate a {@link AddressRequest} instance.
+         *
+         * @param seed          Tryte-encoded seed. It should be noted that this seed is not transferred.
+         * @param securityLevel Security level to be used for the private key / address. Can be 1, 2 or 3.
+         */
         public Builder(String seed, int securityLevel) {
             this.seed = InputValidator.requireValidSeed(seed);
             this.securityLevel = InputValidator.requireValidSecurityLevel(securityLevel);
         }
 
+        /**
+         * Total number of addresses to generate.
+         * If this is set to 0, we will generate until the first unspent address is found, and stop.
+         */
         public Builder amount(int amount) {
             this.amount = amount;
             return this;
         }
 
+        /**
+         * Key index to start search from.
+         */
         public Builder index(int index) {
             this.index = index;
             return this;
         }
 
+        /**
+         * Adds 9-tryte address checksum. The checksum is required for all an API call.
+         */
         public Builder checksum(boolean checksum) {
             this.checksum = checksum;
             return this;
         }
 
+        /**
+         * If <code>true</code>, it returns all addresses, even those who were determined to be spent from
+         */
         public Builder addSpendAddresses(boolean addSpendAddresses) {
             this.addSpendAddresses = addSpendAddresses;
             return this;

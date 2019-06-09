@@ -45,10 +45,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -112,8 +109,8 @@ public class IotaAPI extends IotaAPICore {
         final FindTransactionResponse response = findTransactionsByAddresses(address);
 
         if (response.getHashes().length == 0) {
-            WereAddressesSpentFromResponse spent = wereAddressesSpentFrom(address);
-            return spent.getStates().length > 0 && !spent.getStates()[0];
+            Boolean state = checkWereAddressSpentFrom(address);
+            return !state;
         }
 
         return false;
