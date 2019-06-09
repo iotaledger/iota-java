@@ -458,7 +458,7 @@ public class IotaAPICore {
 
         String[] addressesWithoutChecksum = removeChecksumFromAddresses(addresses);
 
-        return service.getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addressesWithoutChecksum, tips));
+        return getNodeFor(IotaAPICommand.GET_BALANCES).getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addressesWithoutChecksum, tips));
     }
 
     /**
@@ -514,7 +514,7 @@ public class IotaAPICore {
 
         String[] addressesWithoutChecksum = removeChecksumFromAddresses(addresses);
 
-        return getNodeFor(IotaAPICommand.WERE_ADDRESSES_SPENT_FROM).wereAddressesSpentFrom(IotaWereAddressesSpentFromRequest.create(addresses));
+        return getNodeFor(IotaAPICommand.WERE_ADDRESSES_SPENT_FROM).wereAddressesSpentFrom(IotaWereAddressesSpentFromRequest.create(addressesWithoutChecksum));
     }
     
     /**
@@ -733,7 +733,7 @@ public class IotaAPICore {
     }
 
     private void validateTags(String[] tags) {
-        if (!InputValidator.isTagArrayValid(tags)) {
+        if (!InputValidator.areValidTags(tags)) {
             throw new ArgumentException(INVALID_TAG_INPUT_ERROR);
         }
     }
