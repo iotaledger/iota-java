@@ -16,7 +16,7 @@ public class SeedRandomGeneratorTest {
     @Test
     public void shouldGenerateNewSeed() {
         String generatedSeed = SeedRandomGenerator.generateNewSeed();
-        assertTrue(InputValidator.isSeed(generatedSeed));
+        assertTrue(InputValidator.isValidSeed(generatedSeed));
         assertEquals(generatedSeed.length(), Constants.SEED_LENGTH_MAX);
     }
 }
