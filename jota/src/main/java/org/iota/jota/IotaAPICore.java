@@ -586,7 +586,8 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
         }
 
-        return getNodeFor(IotaAPICommand.ATTACH_TO_TANGLE).attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
+        IotaAttachToTangleRequest attachToTangleRequest = IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes);
+        return getNodeFor(IotaAPICommand.ATTACH_TO_TANGLE).attachToTangle(attachToTangleRequest);
     }
     
     /**
