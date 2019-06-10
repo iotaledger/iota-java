@@ -1,5 +1,19 @@
 package org.iota.jota;
 
+import static org.iota.jota.utils.Constants.INVALID_BUNDLE_HASH_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_APPROVE_DEPTH_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_ATTACHED_TRYTES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_HASHES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_TAG_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_THRESHOLD_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_TRYTES_INPUT_ERROR;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.iota.jota.connection.Connection;
 import org.iota.jota.dto.request.*;
 import org.iota.jota.dto.response.*;
@@ -61,7 +75,7 @@ public class IotaAPICore {
     ApiOptions getOptions() {
         return options;
     }
-    
+
     public boolean addNode(Connection n) {
         try {
             synchronized (nodes) {
@@ -224,37 +238,30 @@ public class IotaAPICore {
      * @throws ArgumentException If any of the parameters are not empty but have invalid values
      */
     public FindTransactionResponse findTransactions(String[] addresses, String[] tags, String[] approvees, String[] bundles) throws ArgumentException {
-        if (null != addresses && addresses.length > 0 ) {
-            if (!InputValidator.isAddressesArrayValid(addresses)) {
-                throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
-            }
-            
-            for (int i = 0; i < addresses.length; i++) {
-                addresses[i] = Checksum.removeChecksum(addresses[i]);
-            }
+
+        String[] addressesWithoutChecksum;
+        if (ArrayUtils.isNotEmpty(addresses)) {
+            validateAddresses(addresses);
+            addressesWithoutChecksum = removeChecksumFromAddresses(addresses);
+        } else {
+            addressesWithoutChecksum = addresses;
         }
-        
-        if (null != tags && tags.length > 0 ) {
-            if (!InputValidator.isStringArrayValid(tags)) {
-                throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
-            }
-            
-            if (!InputValidator.areValidTags(tags)) {
-                throw new ArgumentException(INVALID_TAG_INPUT_ERROR);
-            }
+
+        if (ArrayUtils.isNotEmpty(tags)) {
+            validateTags(tags);
         }
-        
-        if (null != bundles && bundles.length > 0  && !InputValidator.isArrayOfHashes(bundles)) {
-            throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
+
+        if (ArrayUtils.isNotEmpty(bundles)) {
+            validateBundles(bundles);
         }
-        
-        if (null != approvees && approvees.length > 0  && !InputValidator.isStringArrayValid(approvees)) {
-            throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
+
+        if (ArrayUtils.isNotEmpty(approvees)) {
+            validateApprovees(approvees);
         }
         
         final IotaFindTransactionsRequest findTransRequest = IotaFindTransactionsRequest
                 .createFindTransactionRequest()
-                .byAddresses(addresses)
+                .byAddresses(addressesWithoutChecksum)
                 .byTags(tags)
                 .byApprovees(approvees)
                 .byBundles(bundles);
@@ -271,13 +278,8 @@ public class IotaAPICore {
      * @throws ArgumentException If one of the addresses is invalid
      */
     public FindTransactionResponse findTransactionsByAddresses(String... addresses) throws ArgumentException {
-        if (!InputValidator.isStringArrayValid(addresses)) {
-            throw new ArgumentException(ARRAY_NULL_OR_EMPTY);
-        }
-        
-        if (!InputValidator.isAddressesArrayValid(addresses)) {
-            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
-        }
+        validateAddresses(addresses);
+
         return findTransactions(addresses, null, null, null);
     }
 
@@ -308,7 +310,7 @@ public class IotaAPICore {
     /**
      * Find the transactions by digests
      * Deprecated: Use {@link #findTransactionsByTags} instead
-     * 
+     *
      * @param digests A List of digests. Must be hashed tags (digest)
      * @return The transaction hashes which are returned depend on the input.
      * @throws ArgumentException The request was considered wrong in any way by the node
@@ -451,16 +453,12 @@ public class IotaAPICore {
         if (null != tips && !InputValidator.isArrayOfHashes(tips)) {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
-        
-        if (null == addresses || addresses.length == 0 || !InputValidator.isAddressesArrayValid(addresses)) {
-            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
-        }
-        
-        for (int i = 0; i < addresses.length; i++) {
-            addresses[i] = Checksum.removeChecksum(addresses[i]);
-        }
-        
-        return getNodeFor(IotaAPICommand.GET_BALANCES).getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addresses, tips));
+
+        validateAddresses(addresses);
+
+        String[] addressesWithoutChecksum = removeChecksumFromAddresses(addresses);
+
+        return getNodeFor(IotaAPICommand.GET_BALANCES).getBalances(IotaGetBalancesRequest.createIotaGetBalancesRequest(threshold, addressesWithoutChecksum, tips));
     }
 
     /**
@@ -512,15 +510,11 @@ public class IotaAPICore {
      * @throws ArgumentException when an address is invalid
      */
     public WereAddressesSpentFromResponse wereAddressesSpentFrom(String... addresses) throws ArgumentException {
-        if (null == addresses || addresses.length == 0 || !InputValidator.isAddressesArrayValid(addresses)) {
-            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
-        }
-        
-        for (int i = 0; i < addresses.length; i++) {
-            addresses[i] = Checksum.removeChecksum(addresses[i]);
-        }
+        validateAddresses(addresses);
 
-        return getNodeFor(IotaAPICommand.WERE_ADDRESSES_SPENT_FROM).wereAddressesSpentFrom(IotaWereAddressesSpentFromRequest.create(addresses));
+        String[] addressesWithoutChecksum = removeChecksumFromAddresses(addresses);
+
+        return getNodeFor(IotaAPICommand.WERE_ADDRESSES_SPENT_FROM).wereAddressesSpentFrom(IotaWereAddressesSpentFromRequest.create(addressesWithoutChecksum));
     }
     
     /**
@@ -537,7 +531,6 @@ public class IotaAPICore {
 
         return getNodeFor(IotaAPICommand.CHECK_CONSISTENCY).checkConsistency(IotaCheckConsistencyRequest.create(tails));
     }
-
 
     /**
      * <p>
@@ -593,7 +586,8 @@ public class IotaAPICore {
             throw new ArgumentException(INVALID_TRYTES_INPUT_ERROR);
         }
 
-        return getNodeFor(IotaAPICommand.ATTACH_TO_TANGLE).attachToTangle(IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes));
+        IotaAttachToTangleRequest attachToTangleRequest = IotaAttachToTangleRequest.createAttachToTangleRequest(trunkTransaction, branchTransaction, minWeightMagnitude, trytes);
+        return getNodeFor(IotaAPICommand.ATTACH_TO_TANGLE).attachToTangle(attachToTangleRequest);
     }
     
     /**
@@ -654,21 +648,21 @@ public class IotaAPICore {
         
         final String[] resultTrytes = new String[trytes.length];
         String previousTransaction = null;
-        
+
         try {
             for (int i = 0; i < resultTrytes.length; i++) {
                 Transaction txn = new Transaction(trytes[i]);
                 txn.setTrunkTransaction(previousTransaction == null ? trunkTransaction : previousTransaction);
                 txn.setBranchTransaction(previousTransaction == null ? branchTransaction : trunkTransaction);
-    
+
                 if (txn.getTag().isEmpty() || txn.getTag().matches("9*")) {
                     txn.setTag(txn.getObsoleteTag());
                 }
-                
+
                 txn.setAttachmentTimestamp(System.currentTimeMillis());
                 txn.setAttachmentTimestampLowerBound(0);
                 txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
-    
+
                 resultTrytes[i] = pow.performPoW(txn.toTrytes(), minWeightMagnitude);
                 previousTransaction = new Transaction(resultTrytes[i], SpongeFactory.create(SpongeFactory.Mode.CURLP81)).getHash();
             }
@@ -723,6 +717,40 @@ public class IotaAPICore {
         return getNodeFor(IotaAPICommand.STORE_TRANSACTIONS).storeTransactions(IotaStoreTransactionsRequest.createStoreTransactionsRequest(trytes));
     }
 
+    private void validateAddresses(String[] addresses) {
+        if (ArrayUtils.isEmpty(addresses) || !InputValidator.isAddressesArrayValid(addresses)) {
+            throw new ArgumentException(INVALID_ADDRESSES_INPUT_ERROR);
+        }
+    }
+
+    private String[] removeChecksumFromAddresses(String[] addresses) {
+        String[] addressesWithoutChecksum = new String[addresses.length];
+
+        for (int i = 0; i < addresses.length; i++) {
+            addressesWithoutChecksum[i] = Checksum.removeChecksum(addresses[i]);
+        }
+
+        return addressesWithoutChecksum;
+    }
+
+    private void validateTags(String[] tags) {
+        if (!InputValidator.areValidTags(tags)) {
+            throw new ArgumentException(INVALID_TAG_INPUT_ERROR);
+        }
+    }
+
+    private void validateBundles(String[] bundles) {
+        if (!InputValidator.isArrayOfHashes(bundles)) {
+            throw new ArgumentException(INVALID_BUNDLE_HASH_ERROR);
+        }
+    }
+
+    private void validateApprovees(String[] bundles) {
+        if (!InputValidator.isArrayOfHashes(bundles)) {
+            throw new ArgumentException(INVALID_BUNDLE_HASH_ERROR);
+        }
+    }
+
     /**
      * Gets the protocol.
      * Deprecated - Nodes could not have a protocol. Get specific connection and check url
@@ -730,7 +758,7 @@ public class IotaAPICore {
      */
     @Deprecated
     public String getProtocol() {
-        //Should be carefull, its still possible to not display the protocol if url doesn't contain :
+        //Should be careful, its still possible to not display the protocol if url doesn't contain :
         //Will never break because a split on not found character returns the entire string in [0]
         return getNodeFor(null).url().getProtocol();
     }
@@ -764,11 +792,10 @@ public class IotaAPICore {
         builder.append(System.getProperty("line.separator"));
         builder.append("Registered nodes: ");
         builder.append(System.getProperty("line.separator"));
-        for (Connection n : nodes) {
-            builder.append(n.toString());
-            builder.append(System.getProperty("line.separator"));
-        }
-        
+        nodes.forEach(node -> builder
+                .append(node.toString())
+                .append(System.getProperty("line.separator")));
+
         return builder.toString();
     }
 }
