@@ -1,6 +1,6 @@
 package org.iota.jota.pow.pearldiver;
 
-import org.iota.jota.IotaLocalPoW;
+import org.iota.jota.pow.IotaLocalPoW;
 import org.iota.jota.utils.Converter;
 
 /**

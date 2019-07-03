@@ -128,11 +128,11 @@ public class IotaAPICore {
         getOptions().setCustomCurl(localPoW);
     }
     
-    public IotaLocalPoW getLocalPoW() {
+    public IotaPoW getLocalPoW() {
         return getOptions().getLocalPoW();
     }
     
-    public void setLocalPoW(IotaLocalPoW localPoW) {
+    public void setLocalPoW(IotaPoW localPoW) {
         getOptions().setLocalPoW(localPoW);
     }
 
@@ -569,7 +569,7 @@ public class IotaAPICore {
      * @throws ArgumentException when the provided transaction trytes are invalid
      */
     public GetAttachToTangleResponse attachToTangle(String trunkTransaction, String branchTransaction, Integer minWeightMagnitude, String... trytes) throws ArgumentException {
-        IotaLocalPoW pow = getOptions().getLocalPoW();
+    	IotaPoW pow = getOptions().getLocalPoW();
         if (pow != null) {
             return attachToTangleLocalPow(trunkTransaction, branchTransaction, minWeightMagnitude, pow, trytes);
         }
@@ -628,7 +628,7 @@ public class IotaAPICore {
      * @throws ArgumentException when the provided transaction trytes are invalid
      */
     public GetAttachToTangleResponse attachToTangleLocalPow(String trunkTransaction, String branchTransaction,
-            Integer minWeightMagnitude, IotaLocalPoW pow, String... trytes) {
+            Integer minWeightMagnitude, IotaPoW pow, String... trytes) {
         if (pow == null) {
             log.warn("Called local POW without POW defined, switching to remote POW");
             return attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes);
