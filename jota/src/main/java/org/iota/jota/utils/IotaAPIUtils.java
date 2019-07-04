@@ -1,16 +1,18 @@
 package org.iota.jota.utils;
 
-import static org.iota.jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import org.iota.jota.builder.AddressRequest;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.pow.ICurl;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.iota.jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
 
 /**
  * Client Side computation service.
@@ -46,6 +48,20 @@ public class IotaAPIUtils {
             address = Checksum.addChecksum(address);
         }
         return address;
+    }
+
+    /**
+     * Generates a new address
+     *
+     * @param addressRequest {@link AddressRequest}
+     * @param index    The index to start search from. If the index is provided, the generation of the address is not deterministic.
+     * @param curl     The curl instance.
+     * @return An String with address.
+     * @throws ArgumentException is thrown when the specified input is not valid.
+     */
+    public static String newAddress(AddressRequest addressRequest, int index, ICurl curl) throws ArgumentException {
+        return newAddress(addressRequest.getSeed(), addressRequest.getSecurityLevel(), index,
+                addressRequest.isChecksum(), curl);
     }
 
     /**
@@ -133,6 +149,7 @@ public class IotaAPIUtils {
         for (Transaction tx : bundle.getTransactions()) {
             bundleTrytes.add(tx.toTrytes());
         }
+        Collections.reverse(bundleTrytes);
         return bundleTrytes;
     }
 }

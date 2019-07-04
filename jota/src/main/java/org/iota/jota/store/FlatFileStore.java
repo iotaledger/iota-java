@@ -68,6 +68,7 @@ public class FlatFileStore implements Store {
         inputStream.close();
     }
     
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected Map<String, Serializable> loadFromInputStream(InputStream stream){
         Map<String, Serializable> store = new HashMap<String, Serializable>();
         try {

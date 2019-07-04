@@ -1,6 +1,6 @@
 package org.iota.jota.dto.request;
 
-import org.iota.jota.IotaAPICommands;
+import org.iota.jota.IotaAPICommand;
 
 /**
  * This class represents the core API request 'getTrytes'.
@@ -15,7 +15,7 @@ public class IotaGetTrytesRequest extends IotaCommandRequest {
      * @param hashes
      */
     private IotaGetTrytesRequest(final String... hashes) {
-        super(IotaAPICommands.GET_TRYTES);
+        super(IotaAPICommand.GET_TRYTES);
         this.hashes = hashes;
     }
 

@@ -1,15 +1,15 @@
 package org.iota.jota.account.deposits;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.Date;
 
 import org.iota.jota.account.deposits.methods.DepositFactory;
 import org.iota.jota.account.deposits.methods.MagnetMethod;
 import org.iota.jota.account.deposits.methods.QRMethod;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DepositFactoryTest extends DepositTest {
     
@@ -17,14 +17,14 @@ public class DepositFactoryTest extends DepositTest {
     
     DepositFactory factory;
     
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         deposit = new ConditionalDepositAddress(
                 new DepositRequest(new Date(0), false, 1), 
                 depositAddress);
     }
     
-    @Before
+    @BeforeEach
     public void before() {
         factory = DepositFactory.get();
         factory.addMethod(new QRMethod());

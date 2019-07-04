@@ -57,7 +57,7 @@ public class IotaDefaultConfig extends IotaClientConfig {
         public static final AccountStore STORE = new AccountFileStore();
         
         public static final int CONNECTION_TIMEOUT = 500;
-        public static final int SECURITY_LEVEL = Constants.MIN_SECURITY_LEVEL;
+        public static final int SECURITY_LEVEL = Constants.MAX_SECURITY_LEVEL;
         public static final int DEPTH = 3;
         public static final int MWM = 14;
         

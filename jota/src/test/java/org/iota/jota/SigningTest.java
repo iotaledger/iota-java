@@ -1,8 +1,5 @@
 package org.iota.jota;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 
 import org.iota.jota.error.ArgumentException;
@@ -14,7 +11,10 @@ import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.Signing;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author schierlm@gmx.de

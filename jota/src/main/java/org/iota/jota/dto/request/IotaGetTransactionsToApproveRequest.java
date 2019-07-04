@@ -1,6 +1,6 @@
 package org.iota.jota.dto.request;
 
-import org.iota.jota.IotaAPICommands;
+import org.iota.jota.IotaAPICommand;
 
 /**
  * This class represents the core API request 'getTransactionsToApprove'.
@@ -17,7 +17,7 @@ public class IotaGetTransactionsToApproveRequest extends IotaCommandRequest {
      * @param reference
      */
     private IotaGetTransactionsToApproveRequest(final Integer depth, final String reference) {
-        super(IotaAPICommands.GET_TRANSACTIONS_TO_APPROVE);
+        super(IotaAPICommand.GET_TRANSACTIONS_TO_APPROVE);
         this.depth = depth;
         this.reference = reference;
     }
