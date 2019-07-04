@@ -31,7 +31,7 @@ public class AddressRequest {
     public static class Builder {
         private final String seed;
         private final int securityLevel;
-        private int amount = 1;
+        private int amount = 0;
         private int index = 0;
         private boolean checksum = false;
         private boolean addSpendAddresses = false;

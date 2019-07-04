@@ -110,10 +110,10 @@ public class IotaAPI extends IotaAPICore {
 
         if (response.getHashes().length == 0) {
             Boolean state = checkWereAddressSpentFrom(address);
-            return !state;
+            return state;
         }
 
-        return false;
+        return true;
     }
 
     private String getFirstUnusedAddress(String seed, int securityLevel, int index, boolean checksum) {
