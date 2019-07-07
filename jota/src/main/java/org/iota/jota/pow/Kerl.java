@@ -23,7 +23,7 @@ public class Kerl extends JCurl {
     private static int INT_LENGTH = BYTE_LENGTH / 4;
 
     Kerl() {
-        super(SpongeFactory.Mode.CURLP81);
+        super(SpongeFactory.Mode.CURL_P81);
         this.keccak = new Keccak.Digest384();
         this.byte_state = new byte[BYTE_HASH_LENGTH];
         this.trit_state = new int[HASH_LENGTH];
@@ -197,12 +197,12 @@ public class Kerl extends JCurl {
 
     private static int bigintAdd(int[] base, final int rh) {
         Pair<Integer, Boolean> res = fullAdd(base[0], rh, false);
-        base[0] = res.low;
+        base[0] = res.getLeft();
 
         int j = 1;
-        while (res.hi) {
+        while (res.getRight()) {
             res = fullAdd(base[j], 0, true);
-            base[j] = res.low;
+            base[j] = res.getLeft();
             j += 1;
         }
 
@@ -215,8 +215,8 @@ public class Kerl extends JCurl {
         Pair<Integer, Boolean> ret;
         for (int i = 0; i < INT_LENGTH; i++) {
             ret = fullAdd(lh[i], rh[i], carry);
-            out[i] = ret.low;
-            carry = ret.hi;
+            out[i] = ret.getLeft();
+            carry = ret.getRight();
         }
 
         if (carry) {
@@ -242,8 +242,8 @@ public class Kerl extends JCurl {
         Pair<Integer, Boolean> ret;
         for (int i = 0; i < INT_LENGTH; i++) {
             ret = fullAdd(lh[i], ~rh[i], noborrow);
-            out[i] = ret.low;
-            noborrow = ret.hi;
+            out[i] = ret.getLeft();
+            noborrow = ret.getRight();
         }
 
         if (!noborrow) {

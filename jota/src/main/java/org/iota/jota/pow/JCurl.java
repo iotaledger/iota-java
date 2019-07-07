@@ -31,11 +31,11 @@ public class JCurl implements ICurl {
 
     public JCurl(boolean pair, SpongeFactory.Mode mode) {
         switch (mode) {
-            case CURLP27: {
+            case CURL_P27: {
                 numberOfRounds = NUMBER_OF_ROUNDSP27;
             }
             break;
-            case CURLP81: {
+            case CURL_P81: {
                 numberOfRounds = NUMBER_OF_ROUNDSP81;
             }
             break;
@@ -56,11 +56,11 @@ public class JCurl implements ICurl {
 
     public JCurl(SpongeFactory.Mode mode) {
         switch (mode) {
-            case CURLP27: {
+            case CURL_P27: {
                 numberOfRounds = NUMBER_OF_ROUNDSP27;
             }
             break;
-            case CURLP81: {
+            case CURL_P81: {
                 numberOfRounds = NUMBER_OF_ROUNDSP81;
             }
             break;
@@ -219,8 +219,8 @@ public class JCurl implements ICurl {
     public void absorb(Pair<long[], long[]> pair, int offset, int length) {
         int o = offset, l = length;
         do {
-            System.arraycopy(pair.low, o, stateLow, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
-            System.arraycopy(pair.hi, o, stateHigh, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
+            System.arraycopy(pair.getLeft(), o, stateLow, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
+            System.arraycopy(pair.getRight(), o, stateHigh, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
             pairTransform();
             o += HASH_LENGTH;
         } while ((l -= HASH_LENGTH) > 0);
@@ -228,8 +228,8 @@ public class JCurl implements ICurl {
 
     public Pair<long[], long[]> squeeze(Pair<long[], long[]> pair, int offset, int length) {
         int o = offset, l = length;
-        long[] low = pair.low;
-        long[] hi = pair.hi;
+        long[] low = pair.getLeft();
+        long[] hi = pair.getRight();
         do {
             System.arraycopy(stateLow, 0, low, o, l < HASH_LENGTH ? l : HASH_LENGTH);
             System.arraycopy(stateHigh, 0, hi, o, l < HASH_LENGTH ? l : HASH_LENGTH);
@@ -246,6 +246,6 @@ public class JCurl implements ICurl {
      */
     @Override
     public ICurl clone() {
-        return new JCurl(SpongeFactory.Mode.CURLP81);
+        return new JCurl(SpongeFactory.Mode.CURL_P81);
     }
 }

@@ -290,7 +290,7 @@ public class IotaAPICore {
 
         return getNodeFor(IotaAPICommand.FIND_TRANSACTIONS).findTransactions(findTransRequest);
     }
-    
+
     public IotaCustomResponse callIxi(String module, String... args) throws ArgumentException {
         final IotaCustomRequest findTransRequest = IotaCustomRequest.createCustomRequest(module, args);
 
@@ -692,7 +692,7 @@ public class IotaAPICore {
                 txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
 
                 resultTrytes[i] = pow.performPoW(txn.toTrytes(), minWeightMagnitude);
-                previousTransaction = new Transaction(resultTrytes[i], SpongeFactory.create(SpongeFactory.Mode.CURLP81)).getHash();
+                previousTransaction = new Transaction(resultTrytes[i], SpongeFactory.create(SpongeFactory.Mode.CURL_P81)).getHash();
             }
             Collections.reverse(Arrays.asList(resultTrytes));
         } catch (Exception e) {

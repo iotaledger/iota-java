@@ -351,7 +351,7 @@ public class IotaAPI extends IotaAPICore {
         final List<Transaction> trx = new ArrayList<>();
 
         for (String tryte : res.getTrytes()) {
-            trx.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURLP81)));
+            trx.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURL_P81)));
         }
         
         return trx;
@@ -378,7 +378,7 @@ public class IotaAPI extends IotaAPICore {
         final List<Transaction> trxs = new ArrayList<>();
 
         for (final String tryte : trytesResponse.getTrytes()) {
-            trxs.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURLP81)));
+            trxs.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURL_P81)));
         }
         return trxs;
     }
@@ -1155,7 +1155,7 @@ public class IotaAPI extends IotaAPICore {
                 throw new ArgumentException(Constants.INVALID_BUNDLE_ERROR);
             }
 
-            Transaction trx = new Transaction(gtr.getTrytes()[0], SpongeFactory.create(SpongeFactory.Mode.CURLP81));
+            Transaction trx = new Transaction(gtr.getTrytes()[0], SpongeFactory.create(SpongeFactory.Mode.CURL_P81));
             if (trx.getBundle() == null) {
                 throw new ArgumentException(Constants.INVALID_TRYTES_INPUT_ERROR);
             }
@@ -1459,7 +1459,7 @@ public class IotaAPI extends IotaAPICore {
         List<String> inputAddresses = new ArrayList<>();
 
         for (String trx : trytes) {
-            Transaction transaction = new Transaction(trx, SpongeFactory.create(SpongeFactory.Mode.CURLP81));
+            Transaction transaction = new Transaction(trx, SpongeFactory.create(SpongeFactory.Mode.CURL_P81));
             addresses.add(Checksum.addChecksum(transaction.getAddress()));
             inputTransactions.add(transaction);
         }
