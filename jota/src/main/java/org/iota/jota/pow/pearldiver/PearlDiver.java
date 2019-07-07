@@ -1,6 +1,6 @@
 package org.iota.jota.pow.pearldiver;
 
-import static org.iota.jota.pow.JCurl.NUMBER_OF_ROUNDSP81;
+import static org.iota.jota.pow.JCurl.NUMBER_OF_ROUNDS_P81;
 import static org.iota.jota.pow.pearldiver.PearlDiver.State.CANCELLED;
 import static org.iota.jota.pow.pearldiver.PearlDiver.State.COMPLETED;
 import static org.iota.jota.pow.pearldiver.PearlDiver.State.RUNNING;
@@ -221,7 +221,7 @@ public class PearlDiver {
                                   final long[] curlScratchpadLow, final long[] curlScratchpadHigh) {
 
         int curlScratchpadIndex = 0;
-        for (int round = 0; round < NUMBER_OF_ROUNDSP81; round++) {
+        for (int round = 0; round < NUMBER_OF_ROUNDS_P81; round++) {
             System.arraycopy(curlStateLow, 0, curlScratchpadLow, 0, CURL_STATE_LENGTH);
             System.arraycopy(curlStateHigh, 0, curlScratchpadHigh, 0, CURL_STATE_LENGTH);
 

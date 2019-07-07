@@ -6,6 +6,7 @@ import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.store.AccountFileStore;
 import org.iota.jota.account.store.AccountStoreImpl;
 import org.iota.jota.dto.response.GetNodeInfoResponse;
+import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.store.JsonFlatFileStore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +43,7 @@ public class IotaAccountTest {
         file = File.createTempFile("client", "account");
 
         when(MOCK_API.getNodeInfo()).thenReturn(mock(GetNodeInfoResponse.class));
+        when(MOCK_API.getCurl()).thenReturn(SpongeFactory.create(SpongeFactory.Mode.KERL));
     }
 
     @AfterEach
