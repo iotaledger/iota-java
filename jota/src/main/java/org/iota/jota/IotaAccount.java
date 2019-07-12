@@ -299,8 +299,8 @@ public class IotaAccount implements Account, EventListener {
      * {@inheritDoc}
      */
     @Override
-    public long usableBalance() throws AccountError {
-        return accountManager.getUsableBalance();
+    public long availableBalance() throws AccountError {
+        return accountManager.getAvailableBalance();
     }
 
     /**
