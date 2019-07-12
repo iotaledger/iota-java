@@ -75,7 +75,7 @@ public class IotaAccountIntegrationTest {
         assertTrue(account.loaded, "Account should be loaded after build");
         assertEquals(TEST_SEED_ID, account.getId(), "Account ID should be set to the seed id ");
         assertTrue(account.isNew(), "Should be a new account");
-        assertEquals(0, account.usableBalance(), "New accounts should have 0 balance");
+        assertEquals(0, account.availableBalance(), "New accounts should have 0 balance");
         assertEquals(0, account.totalBalance(), "New accounts should have 0 balance");
     }
 
