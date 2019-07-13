@@ -12,8 +12,12 @@ public class Hash implements Serializable {
     private static final long serialVersionUID = -5040410304130966841L;
     
     private String hash;
-    private String hashCheckSum;
+    private transient String hashCheckSum;
     
+    /**
+     * Used in json de/construction
+     */
+    @SuppressWarnings("unused")
     private Hash() {
         
     }

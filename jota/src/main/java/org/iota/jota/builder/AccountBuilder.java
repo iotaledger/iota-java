@@ -6,6 +6,8 @@ import org.iota.jota.account.AccountOptions;
 import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.clock.Clock;
 import org.iota.jota.account.clock.SystemClock;
+import org.iota.jota.account.errors.AccountError;
+import org.iota.jota.account.plugins.Plugin;
 import org.iota.jota.account.seedprovider.SeedProvider;
 import org.iota.jota.account.seedprovider.SeedProviderImpl;
 import org.iota.jota.config.options.AccountConfig;
@@ -16,6 +18,9 @@ import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.InputValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -42,6 +47,8 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     private int mwm, depth, securityLevel;
     
     private Clock clock;
+
+    private List<Plugin> plugins;
     
     /**
      * Start of the builder. Every Account needs to be started with at least a seed.
@@ -98,17 +105,42 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     }
     
     public AccountBuilder store(AccountStore store) {
-        this.store = store;
+        if (null != store) {
+            this.store = store;
+        } else {
+            throw new AccountError("Cannot set store to null");
+        }
         return this;
     }
     
     public AccountBuilder api(IotaAPI api) {
-        this.api = api;
+        if (null != api) {
+            this.api = api;
+        } else {
+            throw new AccountError("Cannot set api to null");
+        }
         return this;
     }
     
     public AccountBuilder clock(Clock clock) {
-        this.clock = clock;
+        if (null != clock) {
+            this.clock = clock;
+        } else {
+            throw new AccountError("Cannot set clock to null");
+        }
+        return this;
+    }
+    
+    public AccountBuilder plugin(Plugin plugin){
+        if (null != plugin) {
+            if (plugins == null) {
+                plugins = new ArrayList<>();
+            }
+
+            plugins.add(plugin);
+        } else {
+            throw new AccountError("Attempted to add null as a plugin");
+        }
         return this;
     }
 
@@ -119,19 +151,19 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
             if (config != null) {
                 //calculate Account specific values
                 
-                if (0 == getMwm()) {
+                if (0 == getMwm() && config.getMwm() != 0) {
                     mwm(config.getMwm());
                 }
                 
-                if (0 == getDepth()) {
+                if (0 == getDepth() && config.getDepth() != 0) {
                     depth(config.getDepth());
                 }
                 
-                if (0 == getSecurityLevel()) {
+                if (0 == getSecurityLevel() && config.getSecurityLevel() != 0) {
                     securityLevel(config.getSecurityLevel());
                 }
                 
-                if (null == store) {
+                if (null == store && config.getStore() != null) {
                     store(config.getStore());
                 }
                 
@@ -187,5 +219,10 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     @Override
     public Clock getTime() {
         return clock;
+    }
+
+    @Override
+    public List<Plugin> getPlugins() {
+        return plugins;
     }
 }

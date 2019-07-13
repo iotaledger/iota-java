@@ -22,7 +22,7 @@ public class ApiOptions implements ApiConfig, ApiBuilderSettings {
     private String legacyHost;
 
     private ICurl customCurl;
-    private IotaLocalPoW localPoW;
+    private IotaPoW localPoW;
     
     //Nodes are not active
     private List<Connection> nodes;
@@ -93,12 +93,12 @@ public class ApiOptions implements ApiConfig, ApiBuilderSettings {
     }
 
     @Override
-    public IotaLocalPoW getLocalPoW() {
+    public IotaPoW getLocalPoW() {
         return localPoW;
     }
 
 
-    public void setLocalPoW(IotaLocalPoW localPoW) {
+    public void setLocalPoW(IotaPoW localPoW) {
         this.localPoW = localPoW;
     }
     

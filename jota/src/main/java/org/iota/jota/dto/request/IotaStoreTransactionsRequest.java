@@ -1,6 +1,6 @@
 package org.iota.jota.dto.request;
 
-import org.iota.jota.IotaAPICommands;
+import org.iota.jota.IotaAPICommand;
 
 /**
  * This class represents the core API request 'getTransactionsToApprove'.
@@ -17,7 +17,7 @@ public class IotaStoreTransactionsRequest extends IotaCommandRequest {
      * @param trytes
      */
     private IotaStoreTransactionsRequest(final String... trytes) {
-        super(IotaAPICommands.STORE_TRANSACTIONS);
+        super(IotaAPICommand.STORE_TRANSACTIONS);
         this.trytes = trytes;
     }
 

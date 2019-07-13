@@ -2,6 +2,7 @@ package org.iota.jota;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,30 +25,35 @@ import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.deposits.StoredDepositAddress;
 import org.iota.jota.account.errors.AccountError;
 import org.iota.jota.account.errors.AccountLoadError;
+import org.iota.jota.account.errors.SendException;
 import org.iota.jota.account.event.AccountEvent;
 import org.iota.jota.account.event.EventListener;
 import org.iota.jota.account.event.EventManager;
-import org.iota.jota.account.event.Plugin;
 import org.iota.jota.account.event.events.EventAccountError;
+import org.iota.jota.account.event.events.EventAttachingToTangle;
+import org.iota.jota.account.event.events.EventDoingProofOfWork;
 import org.iota.jota.account.event.events.EventNewInput;
 import org.iota.jota.account.event.events.EventSentTransfer;
 import org.iota.jota.account.event.events.EventShutdown;
 import org.iota.jota.account.event.impl.EventManagerImpl;
 import org.iota.jota.account.inputselector.InputSelectionStrategy;
 import org.iota.jota.account.inputselector.InputSelectionStrategyImpl;
-import org.iota.jota.account.promoter.PromoterReattacherImpl;
+import org.iota.jota.account.plugins.Plugin;
+import org.iota.jota.account.plugins.promoter.PromoterReattacherImpl;
+import org.iota.jota.account.plugins.transferchecker.IncomingTransferCheckerImpl;
+import org.iota.jota.account.plugins.transferchecker.OutgoingTransferCheckerImpl;
 import org.iota.jota.account.seedprovider.SeedProvider;
-import org.iota.jota.account.transferchecker.IncomingTransferCheckerImpl;
-import org.iota.jota.account.transferchecker.OutgoingTransferCheckerImpl;
 import org.iota.jota.builder.AccountBuilder;
 import org.iota.jota.config.options.AccountConfig;
 import org.iota.jota.config.types.FileConfig;
+import org.iota.jota.dto.response.GetAttachToTangleResponse;
+import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
 import org.iota.jota.error.ArgumentException;
-import org.iota.jota.error.SendException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
+import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.types.Address;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Recipient;
@@ -58,11 +64,14 @@ import org.iota.jota.utils.InputValidator;
 import org.iota.jota.utils.IotaAPIUtils;
 import org.iota.jota.utils.TrytesConverter;
 import org.iota.jota.utils.thread.TaskService;
+import org.iota.mddoclet.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 public class IotaAccount implements Account, EventListener {
+
+    private static final String ACC_START_FAILED = "Failed to load accounts. Check the error log";
     
     private static final Logger log = LoggerFactory.getLogger(IotaAccount.class);
     
@@ -84,7 +93,7 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * 
-     * @param builder
+     * @param options
      */
     public IotaAccount(AccountOptions options) {
         this.options = options;
@@ -101,7 +110,7 @@ public class IotaAccount implements Account, EventListener {
         if (loaded) {
             start();
         } else {
-            throw new AccountLoadError("Failed to load accounts. Check the error log");
+            throw new AccountLoadError(ACC_START_FAILED);
         }
     }
     
@@ -111,8 +120,6 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * Constructs a IotaAccount with a config based on environment variables or default values.
-     * If no environment variable is defined, will use {@value org.iota.jota.config.types.FileConfig#DEFAULT_CONFIG_NAME}
-     * The default storage will be at {@value jota.config.IotaFileStore#DEFAULT_STORE}
      * 
      * @param seed
      * @throws Exception If the config did not load for whatever reason
@@ -123,7 +130,6 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * Constructs a IotaAccount with a config based on environment variables or default values.
-     * If no environment variable is defined, will use {@value org.iota.jota.config.types.FileConfig#DEFAULT_CONFIG_NAME}
      * 
      * @param seed
      * @param store The method we use for storing key/value data
@@ -175,17 +181,6 @@ public class IotaAccount implements Account, EventListener {
     
     private String buildAccountId() {
         return IotaAPIUtils.newAddress(getSeed().getSeed().toString(), 2, 0, false, getApi().getCurl());
-        /*
-        // Sha256 impl of account id, might be used later over the sec-2 address
-        MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            return null;
-        }
-        byte[] hash = digest.digest(getSeed().getSeed().getTrytesString().getBytes(StandardCharsets.UTF_8));
-        String sha256hex = new String(Hex.encode(hash));
-        return sha256hex;*/
     }
 
     public void load(String accountId, AccountState state) throws AccountError {
@@ -206,6 +201,12 @@ public class IotaAccount implements Account, EventListener {
         addTask(new PromoterReattacherImpl(eventManager, getApi(), accountManager, options));
         addTask(new IncomingTransferCheckerImpl(eventManager, getApi(), accountManager, addressService, balanceCache, true));
         addTask(new OutgoingTransferCheckerImpl(eventManager, getApi(), accountManager));
+        
+        if (options.getPlugins() != null) {
+            for (Plugin customPlugin : options.getPlugins()) {
+                addTask(customPlugin);
+            }
+        }
         
         shutdownHook();
         
@@ -243,6 +244,7 @@ public class IotaAccount implements Account, EventListener {
             for (Plugin task : tasks) {
                 getEventManager().unRegisterListener(task);
                 task.shutdown();
+                task.setAccount(null);
             }
             
             if (clearTasks) {
@@ -255,6 +257,7 @@ public class IotaAccount implements Account, EventListener {
         synchronized (tasks) {
             if (task != null) {
                 try {
+                    task.setAccount(this);
                     task.load();
                     getEventManager().registerListener(task);
                     tasks.add(task);
@@ -345,10 +348,20 @@ public class IotaAccount implements Account, EventListener {
     @Override
     public void updateSettings(AccountOptions newSettings) throws AccountError {
         shutdown();
-        unload(true);
+        unload(false);
         options = newSettings;
-        load();
-        start();
+
+        try {
+            load();
+
+            if (!start()) {
+                throw new AccountError(ACC_START_FAILED);
+            }
+        } catch (AccountError e){
+            EventAccountError event = new EventAccountError(e);
+            eventManager.emit(event);
+            throw e;
+        }
     }
     
     public Future<Bundle> send(String address, long amount, String message, String tag){
@@ -356,17 +369,18 @@ public class IotaAccount implements Account, EventListener {
     }
     
     /**
-     * Future always completed
+     * Sends a transfer using the accounts balance to the provided address.
+     * You must call <code>.get()</code> on the future in order to start this transfer.
      * 
-     * @param address
-     * @param amount
-     * @param message
-     * @param tag
-     * @return
-     * @throws ArgumentException
+     * @param address The receiver of this transfer
+     * @param amount The amount we are sending to the address
+     * @param message An optional message for this transfer
+     * @param tag An optional tag for this transfer
+     * @return The bundle we sent
      */
+    @Document
     public Future<Bundle> send(String address, long amount, Optional<String> message, 
-                               Optional<String> tag) throws ArgumentException {
+                               Optional<String> tag) {
         FutureTask<Bundle> task = new FutureTask<Bundle>(() -> {
             if (!loaded) {
                 return null;
@@ -398,7 +412,7 @@ public class IotaAccount implements Account, EventListener {
                 Transfer transfer = new Transfer(address, amount, tryteMsg, tryteTag);
                 
                 List<Input> inputs = accountManager.getInputAddresses(amount);
-                
+               
                 AtomicLong totalValue = new AtomicLong(0);
                 inputs.stream().forEach(input -> totalValue.addAndGet(input.getBalance()));
                 
@@ -411,19 +425,17 @@ public class IotaAccount implements Account, EventListener {
             
                 List<String> trytes = prepareTransfers(transfer, inputs, remainder);
                 
-                List<Transaction> transferResponse = getApi().sendTrytes(
-                        trytes.toArray(new String[trytes.size()]), 
-                        options.getDepth(), options.getMwm(), null
-                    );
-                
+                //Reversed order, end is tail
+                List<Transaction> transferResponse = sendTrytes(null, trytes.toArray(new String[0]));
+
+                Trytes[] bundleTrytes = new Trytes[transferResponse.size()];
+                for (int i=0; i<transferResponse.size(); i++){
+                    bundleTrytes[i] = new Trytes(transferResponse.get(i).toTrytes());
+                }
+
                 accountManager.addPendingTransfer(
-                        new Hash(transferResponse.get(0).getHash()), 
-                        transferResponse.stream()
-                            .map(Transaction::toTrytes)
-                            .map(Trytes::new)
-                            .toArray(Trytes[]::new),
-                        1
-                    );
+                        new Hash(transferResponse.get(0).getHash()),
+                        bundleTrytes,1);
                 
                 Bundle bundle = new Bundle(transferResponse, transferResponse.size());
                 EventSentTransfer event = new EventSentTransfer(bundle);
@@ -434,8 +446,6 @@ public class IotaAccount implements Account, EventListener {
                 // TODO: Throw accounts error
                 EventAccountError event = new EventAccountError(e);
                 eventManager.emit(event);
-                
-                log.error(e.getMessage());
                 return null;
             }
         });
@@ -445,6 +455,7 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * Future always completed
+     * 
      * {@inheritDoc}
      */
     @Override
@@ -456,7 +467,7 @@ public class IotaAccount implements Account, EventListener {
     public Future<ConditionalDepositAddress> newDepositRequest(DepositRequest request, ExpireCondition... otherConditions) throws AccountError {
         FutureTask<ConditionalDepositAddress> task = new FutureTask<ConditionalDepositAddress>(() -> {
             if (request.getMultiUse() && request.getExpectedAmount() != 0) {
-                throw new AccountError("Cannot use multi-use and amount simultaniously");
+                throw new AccountError("Cannot use multi-use and amount simultaneously");
             }
             
             Address address = accountManager.getNextAddress();
@@ -476,6 +487,7 @@ public class IotaAccount implements Account, EventListener {
     
     /**
      * Future always completed
+     * 
      * {@inheritDoc}
      */
     @Override
@@ -554,8 +566,7 @@ public class IotaAccount implements Account, EventListener {
             try {
                 //Trytes of one bundle
                 List<String> trytes = prepareTransfers(transfers);
-                List<Transaction> transferResponse = getApi().sendTrytes(
-                        trytes.toArray(new String[trytes.size()]), options.getDepth(), options.getMwm(), null);
+                List<Transaction> transferResponse = sendTrytes(null, trytes.toArray(new String[0]));
                 
                 Bundle bundle = new Bundle(transferResponse, transferResponse.size());
                 EventSentTransfer event = new EventSentTransfer(bundle);
@@ -625,7 +636,6 @@ public class IotaAccount implements Account, EventListener {
         
         Bundle bundle = new Bundle();
         List<String> signatureFragments = prepareBundle(bundle, transfers);
-        
         try {
             List<String> output = IotaAPIUtils.signInputsAndReturn(
                     getSeed().getSeed().getTrytesString(), inputs, bundle, signatureFragments, getApi().getCurl());
@@ -671,6 +681,7 @@ public class IotaAccount implements Account, EventListener {
         for (Transaction trx : trxb) {
             bundleTrytes.add(trx.toTrytes());
         }
+        Collections.reverse(bundleTrytes);
         return bundleTrytes;
     }
 
@@ -717,6 +728,42 @@ public class IotaAccount implements Account, EventListener {
             bundle.addEntry(signatureMessageLength, transfer.getAddress(), transfer.getValue(), transfer.getTag(), timestamp);
         }
         return signatureFragments;
+    }
+    
+    private List<Transaction> sendTrytes(Hash reference, String... trytes) {
+        GetTransactionsToApproveResponse txs = getApi().getTransactionsToApprove(options.getDepth(), 
+                reference == null ? null : reference.getHash());
+
+        EventAttachingToTangle attach = new EventAttachingToTangle(trytes);
+        getEventManager().emit(attach);
+        
+        GetAttachToTangleResponse res;
+        // attach to tangle - do pow
+        if (getApi().getOptions().getLocalPoW() != null) {
+            EventDoingProofOfWork eventPow = new EventDoingProofOfWork(trytes);
+            getEventManager().emit(eventPow);
+            
+            res = getApi().attachToTangleLocalPow(txs.getTrunkTransaction(), txs.getBranchTransaction(), 
+                    options.getMwm(), getApi().getOptions().getLocalPoW(), trytes);
+        } else {
+            res = getApi().attachToTangle(txs.getTrunkTransaction(), txs.getBranchTransaction(), 
+                    options.getMwm(), trytes);
+        }
+        
+        
+        try {
+            getApi().storeAndBroadcast(res.getTrytes());
+        } catch (ArgumentException e) {
+            return new ArrayList<>();
+        }
+
+        final List<Transaction> trx = new ArrayList<>();
+
+        for (String tryte : res.getTrytes()) {
+            trx.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURLP81)));
+        }
+        
+        return trx;
     }
     
     /**
@@ -778,9 +825,10 @@ public class IotaAccount implements Account, EventListener {
     
     @AccountEvent
     private void onError(EventAccountError error) {
-        log.error(error.getMessage(), error.getCause());
-        
-        error.getException().printStackTrace();
+        if (error.shouldLog()) {
+            log.error(error.getMessage(), error.getCause());
+            error.getException().printStackTrace();
+        }
     }
     
     @Override

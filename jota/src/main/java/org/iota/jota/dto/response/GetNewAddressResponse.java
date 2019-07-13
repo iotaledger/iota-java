@@ -7,6 +7,9 @@ import java.util.List;
  **/
 public class GetNewAddressResponse extends AbstractResponse {
 
+    /**
+     * containing an array of strings with the specified number of addresses
+     */
     private List<String> addresses;
 
     /**

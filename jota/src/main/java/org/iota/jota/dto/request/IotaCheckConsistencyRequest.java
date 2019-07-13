@@ -1,6 +1,6 @@
 package org.iota.jota.dto.request;
 
-import org.iota.jota.IotaAPICommands;
+import org.iota.jota.IotaAPICommand;
 
 /**
  * This class represents the core api request 'checkConsistency'.
@@ -14,7 +14,7 @@ public class IotaCheckConsistencyRequest extends IotaCommandRequest {
      * @param tails
      */
     private IotaCheckConsistencyRequest(final String... tails) {
-        super(IotaAPICommands.CHECK_CONSISTENCY);
+        super(IotaAPICommand.CHECK_CONSISTENCY);
         this.tails = tails;
     }
 

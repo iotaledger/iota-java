@@ -1,6 +1,6 @@
 package org.iota.jota.dto.request;
 
-import org.iota.jota.IotaAPICommands;
+import org.iota.jota.IotaAPICommand;
 
 /**
  * This class represents the core api request 'findTransactions'.
@@ -16,7 +16,7 @@ public class IotaFindTransactionsRequest extends IotaCommandRequest {
      * Initializes a new instance of the IotaFindTransactionsRequest class.
      */
     private IotaFindTransactionsRequest() {
-        super(IotaAPICommands.FIND_TRANSACTIONS);
+        super(IotaAPICommand.FIND_TRANSACTIONS);
     }
 
     /**

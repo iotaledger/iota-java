@@ -24,4 +24,8 @@ public class ArgumentException extends BaseException {
     public ArgumentException(String msg) {
         super(msg);
     }
+
+    public ArgumentException(String msg, Exception e) {
+        super(msg, e);
+    }
 }

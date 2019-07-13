@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iota.jota.IotaAPICore;
-import org.iota.jota.IotaLocalPoW;
+import org.iota.jota.IotaPoW;
 import org.iota.jota.config.options.ApiConfig;
 import org.iota.jota.config.options.ApiSettings;
 import org.iota.jota.config.types.IotaDefaultConfig;
@@ -32,7 +32,7 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
     int timeout = 0;
     
     // If this is null, no local PoW is done, therefore no default value
-    IotaLocalPoW localPoW;
+    IotaPoW localPoW;
     ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
     
     public ApiBuilder() {
@@ -40,10 +40,14 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
     }
     
     /**
+     * Generates values for options which were not assigned through the builder.
+     * Starts by checking a optionally set config using {@link #config(org.iota.jota.config.Config)}
+     * THen checks Environment, and in the end goes to {@link IotaDefaultConfig} for defaults
      * 
-     * @return
-     * @throws Exception
+     * @return The builder
+     * @throws Exception When we failed to load env configs or a url was malformed
      */
+    @SuppressWarnings("deprecation")
     protected T generate() throws Exception {
         for (ApiConfig config : getConfigs()) {
             if (config != null) {
@@ -115,7 +119,7 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
         return (T) this;
     }
 
-    public T localPoW(IotaLocalPoW localPoW) {
+    public T localPoW(IotaPoW localPoW) {
         this.localPoW = localPoW;
         return (T) this;
     }
@@ -137,7 +141,7 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
         return port;
     }
 
-    public IotaLocalPoW getLocalPoW() {
+    public IotaPoW getLocalPoW() {
         return localPoW;
     }
 

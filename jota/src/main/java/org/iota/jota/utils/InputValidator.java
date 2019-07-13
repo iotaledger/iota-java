@@ -1,33 +1,23 @@
 package org.iota.jota.utils;
 
-import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.IntPredicate;
-
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transfer;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.IntPredicate;
+
+import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
+
 /**
  * 
  * This class provides methods to validate the parameters of different iota API methods
  */
 public class InputValidator {
-    
-    /**
-     * Determines whether the specified string is a isSeed.
-     *
-     * @param seed The seed to validate.
-     * @return <code>true</code> if the specified string is a seed; otherwise, <code>false</code>.
-     **/
-    public static boolean isSeed(String seed) {
-        return seed.length() <= Constants.SEED_LENGTH_MAX && isTrytes(seed);
-    }
 
     /**
      * Determines whether the specified string is an address. 
@@ -57,7 +47,7 @@ public class InputValidator {
      * This is because Curl addresses always are with a 0 trit on the end.
      * So we validate if we actually send to a proper address, to prevent having to double spent
      * 
-     * @param address The trytes to check
+     * @param trytes The trytes to check
      * @return <code>true</code> if the specified trytes end with 0, otherwise <code>false</code>.
      */
     public static boolean hasTrailingZeroTrit(String trytes) {
@@ -147,7 +137,7 @@ public class InputValidator {
     public static boolean isTrytesOfExactLength(String trytes, int length) {
         return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
     }
-    
+
     /**
      * Determines whether the specified string contains only characters from the trytes alphabet (see <see cref="Constants.TryteAlphabet"/>).
      * Alias of {@link #isTrytesOfExactLength(String, int)}
@@ -182,12 +172,11 @@ public class InputValidator {
     }
 
     /**
-     * Determines whether the specified string array contains only trytes, and 
-     * Deprecated - Use isArrayOfRawTransactionTrytes
+     * Determines whether the specified string array contains only trytes
+     *
      * @param trytes The trytes array to validate.
      * @return <code>true</code> if the specified array contains only valid trytes otherwise, <code>false</code>.
      **/
-    @Deprecated
     public static boolean isArrayOfTrytes(String[] trytes) {
         return isArrayOfTrytes(trytes, Constants.TRANSACTION_LENGTH);
     }
@@ -199,6 +188,12 @@ public class InputValidator {
      * @return <code>true</code> if the specified array contains only valid trytes otherwise, <code>false</code>.
      **/
     public static boolean isArrayOfRawTransactionTrytes(String[] trytes) {
+        for (String tr : trytes) {
+            // This part of the value trits exceed iota max supply when used
+            if (!InputValidator.isNinesTrytes(tr.substring(2279, 2295), 16)) {
+                return false;
+            }
+        }
         return isArrayOfTrytes(trytes, Constants.TRANSACTION_LENGTH);
     }
     
@@ -217,7 +212,7 @@ public class InputValidator {
         }
         return true;
     }
-    
+
     /**
      * Checks if the array is not null and not empty
      * @param data The array with data
@@ -290,15 +285,31 @@ public class InputValidator {
     }
     
     /**
-     * Checks if the tag is valid.
+     * Checks if the tag is valid. The string must not be empty and must contain trytes.
      * 
      * @param tag The tag to validate.
      * @return <code>true</code> if the specified tag is valid; otherwise, <code>false</code>.
+     * @see #isTrytes(String)
      */
     public static boolean isValidTag(String tag) {
         return tag != null && tag.length() <= Constants.TAG_LENGTH && isTrytes(tag);
     }
-    
+
+    /**
+     * Checks if the tags are valid.
+     *
+     * @param tags The tags to validate.
+     * @return <code>true</code> if all the tags are valid; otherwise, <code>false</code>.
+     */
+    public static boolean areValidTags(String... tags) {
+        for (String tag : tags){
+            if (!isValidTag(tag)){
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Checks if the inputs are valid. 
      *
@@ -358,11 +369,22 @@ public class InputValidator {
      * @return <code>true</code> if the specified seed is valid; otherwise, <code>false</code>.
      **/
     public static boolean isValidSeed(String seed) {
-        if (seed.length() > Constants.SEED_LENGTH_MAX) {
-            return false;
+        return seed.length() <= Constants.SEED_LENGTH_MAX && isTrytes(seed);
+    }
+
+    /**
+     * Checks that the specified seed reference is a valid seed.
+     *
+     * @param seed The seed to validate.
+     * @return {@code seed} if valid seed
+     * @throws IllegalArgumentException if {@code seed} is invalid
+     * @see #isValidSeed(String)
+     */
+    public static String requireValidSeed(String seed) {
+        if (isValidSeed(seed)) {
+            return seed;
         }
-        
-        return isTrytes(seed);
+        throw new IllegalArgumentException("Provided seed is invalid.");
     }
     
     /**
@@ -456,6 +478,21 @@ public class InputValidator {
      */
     public static boolean isValidSecurityLevel(int level) {
        return level >= Constants.MIN_SECURITY_LEVEL && level <= Constants.MAX_SECURITY_LEVEL;
+    }
+
+    /**
+     * Checks that the specified security level reference is a valid security level.
+     *
+     * @param securityLevel The security level to validate.
+     * @return {@code securityLevel} if valid security level
+     * @throws IllegalArgumentException if {@code securityLevel} is invalid
+     * @see #isValidSecurityLevel(int)
+     */
+    public static int requireValidSecurityLevel(int securityLevel) {
+        if (isValidSecurityLevel(securityLevel)) {
+            return securityLevel;
+        }
+        throw new IllegalArgumentException("Value is not within the specified security level range");
     }
 
     public static boolean isTrits(int[] trits) {

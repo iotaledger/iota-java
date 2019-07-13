@@ -1,10 +1,11 @@
 package org.iota.jota;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.utils.Checksum;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ChecksumTest {
 
@@ -23,6 +24,6 @@ public class ChecksumTest {
 
     @Test
     public void shouldIsValidChecksum() throws ArgumentException {
-        assertEquals(Checksum.isValidChecksum(TEST_ADDRESS_WITH_CHECKSUM), true);
+        assertTrue(Checksum.isValidChecksum(TEST_ADDRESS_WITH_CHECKSUM));
     }
 }

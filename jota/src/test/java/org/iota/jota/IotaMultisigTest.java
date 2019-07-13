@@ -1,11 +1,8 @@
 package org.iota.jota;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.iota.jota.category.IntegrationTest;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
@@ -16,9 +13,11 @@ import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.Multisig;
 import org.iota.jota.utils.Signing;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IotaMultisigTest {
 
@@ -30,13 +29,13 @@ public class IotaMultisigTest {
 
     private IotaAPI iotaClient;
 
-    @Before
+    @BeforeEach
     public void createApiClientInstance() throws Exception {
         iotaClient = new IotaAPI.Builder().config(new FileConfig()).build();
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void basicMultiSigTest() throws ArgumentException {
         Multisig ms = new Multisig();
 
@@ -61,7 +60,7 @@ public class IotaMultisigTest {
 
         System.out.println("Is a valid multisig address " + isValidMultisigAddress);
 
-        assertTrue("Address is not a valid multisigAddress", isValidMultisigAddress);
+        assertTrue(isValidMultisigAddress, "Address is not a valid multisigAddress");
         List<Transfer> transfers = new ArrayList<>();
         transfers.add(new Transfer(RECEIVE_ADDRESS, 999, "", TEST_TAG));
 
@@ -78,7 +77,7 @@ public class IotaMultisigTest {
 
         System.out.println(bundle.getTransactions().get(0).getBundle());
         boolean isValidSignature = sgn.validateSignatures(bundle, multiSigAddress);
-        assertTrue("MultiSignature not valid", isValidSignature);
+        assertTrue(isValidSignature, "MultiSignature not valid");
         System.out.println("Result of multi-signature validation is " + isValidSignature);
     }
 }

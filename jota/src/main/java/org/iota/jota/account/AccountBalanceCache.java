@@ -1,10 +1,5 @@
 package org.iota.jota.account;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
-
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.addressgenerator.AddressGeneratorService;
 import org.iota.jota.account.deposits.DepositRequest;
@@ -14,6 +9,11 @@ import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Input;
 import org.iota.jota.types.Address;
 import org.iota.jota.types.Hash;
+
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 public class AccountBalanceCache {
     
@@ -74,7 +74,7 @@ public class AccountBalanceCache {
     
     private void addInput(Input input, DepositRequest balance) {
         cachedIndexMap.put(input, balance);
-        totalBalance += input.getBalance();
+        totalBalance += balance.getExpectedAmount();
     }
 
     public Entry<Input, DepositRequest> getByAddress(Address address){

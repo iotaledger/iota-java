@@ -12,6 +12,10 @@ public class ConditionalDepositAddress implements Serializable {
     
     private Hash depositAddress;
     
+    /**
+     * Used in json de/construction
+     */
+    @SuppressWarnings("unused")
     private ConditionalDepositAddress() {
         
     }

@@ -9,25 +9,25 @@ import static net.jadler.Jadler.port;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractMockServer {
 
     IotaAPI iotaAPI;
     
-    public AbstractMockServer() {
-        
+    AbstractMockServer() {
+        // nothing to do here
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
 
         initJadler();
         iotaAPI = new IotaAPI.Builder().protocol("http").host("localhost").port(port()).build();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         closeJadler();
     }
@@ -38,11 +38,11 @@ public abstract class AbstractMockServer {
             REQUEST, RESPONSE
         }
 
-        private IotaAPICommands command;
+        private IotaAPICommand command;
         private String requestFileName;
         private String responseFileName;
 
-        public ApiMock command(IotaAPICommands command) {
+        public ApiMock command(IotaAPICommand command) {
             this.command = command;
             return this;
         }
@@ -66,7 +66,7 @@ public abstract class AbstractMockServer {
                     .withStatus(200);
         }
 
-        private String getBody(IotaAPICommands command, String file, HttpOperation httpOperation) {
+        private String getBody(IotaAPICommand command, String file, HttpOperation httpOperation) {
             try {
                 String filePath = String.format("/http/%s/%s/%s.json", command.command(), httpOperation.name().toLowerCase(), file);
                 return IOUtils.toString(this.getClass().getResourceAsStream(filePath), defaultCharset());

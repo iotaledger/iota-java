@@ -19,6 +19,10 @@ public class Trits implements Serializable {
     //Mongodb bson parsing doesnt support arrays...
     private List<Integer> trits;
     
+    /**
+     * Used in json de/construction
+     */
+    @SuppressWarnings("unused")
     private Trits() {
         
     }

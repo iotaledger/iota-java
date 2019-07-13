@@ -1,6 +1,6 @@
 package org.iota.jota.dto.request;
 
-import org.iota.jota.IotaAPICommands;
+import org.iota.jota.IotaAPICommand;
 
 /**
  * This class represents the core api request 'getNodeInfo', 'getNeighbors' and 'interruptAttachToTangle'.
@@ -14,7 +14,7 @@ public class IotaCommandRequest {
      * 
      * @param command
      */
-    protected IotaCommandRequest(IotaAPICommands command) {
+    protected IotaCommandRequest(IotaAPICommand command) {
         this.command = command.command();
     }
     
@@ -32,7 +32,7 @@ public class IotaCommandRequest {
      * @return The Node info.
      */
     public static IotaCommandRequest createNodeInfoRequest() {
-        return new IotaCommandRequest(IotaAPICommands.GET_NODE_INFO);
+        return new IotaCommandRequest(IotaAPICommand.GET_NODE_INFO);
     }
 
     /**
@@ -41,7 +41,7 @@ public class IotaCommandRequest {
      * @return The tips of the node.
      */
     public static IotaCommandRequest createGetTipsRequest() {
-        return new IotaCommandRequest(IotaAPICommands.GET_TIPS);
+        return new IotaCommandRequest(IotaAPICommand.GET_TIPS);
     }
 
     /**
@@ -50,7 +50,7 @@ public class IotaCommandRequest {
      * @return The list of neighbors.
      */
     public static IotaCommandRequest createGetNeighborsRequest() {
-        return new IotaCommandRequest(IotaAPICommands.GET_NEIGHBORS);
+        return new IotaCommandRequest(IotaAPICommand.GET_NEIGHBORS);
     }
 
     /**
@@ -59,6 +59,6 @@ public class IotaCommandRequest {
      * @return The interrupted attach command
      */
     public static IotaCommandRequest createInterruptAttachToTangleRequest() {
-        return new IotaCommandRequest(IotaAPICommands.INTERRUPT_ATTACHING_TO_TANGLE);
+        return new IotaCommandRequest(IotaAPICommand.INTERRUPT_ATTACHING_TO_TANGLE);
     }
 }

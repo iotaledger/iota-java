@@ -22,8 +22,13 @@ public class EnvironmentStore implements Store {
 
     @Override
     public <T extends Serializable> T  get(String key, T def) {
-        T value = (T) System.getenv(key);
-        return value != null ? value : def;
+        try {
+            @SuppressWarnings("unchecked")
+            T value = (T) System.getenv(key);
+            return value != null ? value : def;
+        } catch (ClassCastException e) {
+            return def;
+        }
     }
 
     @Override
@@ -41,10 +46,11 @@ public class EnvironmentStore implements Store {
         return "Environment variables";
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public Map<String, Serializable> getAll() {
-        //TODO: Make nicer
-        return (Map<String, Serializable>)((Map)System.getenv());
+        //TODO: Make nicer, But String is already Serializable
+        return (Map)System.getenv();
     }
 
     @Override

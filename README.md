@@ -69,7 +69,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
 
     ```gradle
     dependencies {
-        compile 'com.github.iotaledger:iota-java:1.0.0-beta4'
+        compile 'com.github.iotaledger:iota-java:1.0.0-beta5'
     }
     ```
     
@@ -96,7 +96,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
     ```
     
 3. Change the value of the `<version>` tag to either a release number or the first 10 characters of a Git commit hash:
-`<version>51adea1b25</version>` or `<version>1.0.0-beta4</version>`
+`<version>e4fd314b3e</version>` or `<version>1.0.0-beta5</version>`
 
 **Note:** Find the latest version on the [Jitpack](https://jitpack.io/#iotaledger/iota-java) page.
 
@@ -119,6 +119,9 @@ You'll have a .jar file called `jota-[VERSION]-jar-with-dependencies.jar`, depen
 ## Getting Started
 
 After you've [downloaded the library](#downloading-the-library), you can connect to an IRI node to send transactions to it and interact with the ledger.
+An extended guide can be found on our [documentation website](https://docs.iota.org/docs/iota-java/0.1/README), we strongly recommend you to go here for starting 
+off. A quick starting tutorial is shown below.
+
 
 To connect to a local IRI node, do the following:
 
@@ -139,6 +142,7 @@ GetNodeInfoResponse response = api.getNodeInfo();
 ```
 
 **Note:** To separate your IRI node configuration from the implementation, you can also specify your IRI node configuration in a [**Java `.properties` file**](https://en.wikipedia.org/wiki/.properties) or as command line flags. These options are useful if you develop an open-source app which is deployed on a CI and don't want contributors to see the internal IRI node configuration.
+To make the API read from this file, add the configuration to the builder like so: `.config(new FileConfig("node_config.properties"))`
 
 **Example .properties files**
 
@@ -175,9 +179,10 @@ Here are some of the most commonly used API functions:
 ## Examples
 
 We have a list of test cases on the [`src/test/java` directory][tests] that you can use as a reference when developing apps with IOTA.
-A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/jota/IotaAPITest.java).
+A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/org/iota/jota/IotaAPITest.java).
 
 ## Change logs:
+- Changes in [**1.0.0-beta5**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta4...1.0.0-beta5)
 - Changes in [**1.0.0-beta4**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta3...1.0.0-beta4)
 - Changes in [**1.0.0-beta3**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta2...1.0.0-beta3)
 - Changes in [**1.0.0-beta2**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta1...1.0.0-beta2)
@@ -193,7 +198,7 @@ A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-ja
 ## Supporting the project
 
 If the IOTA Java client library has been useful to you and you feel like contributing, consider posting a [bug report](https://github.com/iotaledger/iota-java/issues/new-issue), feature request or a [pull request](https://github.com/iotaledger/iota-java/pulls/).  
-We have some [basic contribution guidelines](contribution-guidelines.md) to keep our code base stable and consistent.
+We have some [basic contribution guidelines](CONTRIBUTING.md) to keep our code base stable and consistent.
 
 ## Joining the Discussion
 
@@ -201,7 +206,7 @@ If you want to get involved in the community, need help with getting setup, have
 
 ## License
 
-The Apache 2.0 license can be found [here](license).
+The Apache 2.0 license can be found [here](LICENSE).
 
 [iota-logo]: https://avatars0.githubusercontent.com/u/20126597?s=200&v=4
 [codacy]: https://www.codacy.com/app/kwek20/iota-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iotaledger/iota-java&amp;utm_campaign=Badge_Grade
@@ -222,6 +227,6 @@ The Apache 2.0 license can be found [here](license).
 [pull-requests]: https://github.com/iotaledger/iota-java/pulls
 [new-pull-request]: https://github.com/iotaledger/iota-java/compare
 [contribution-guidelines]: https://github.com/iotaledger/iota-java/blob/master/CONTRIBUTING.md
-[tests]: https://github.com/iotaledger/iota-java/tree/master/jota/src/test/java/jota
+[tests]: https://github.com/iotaledger/iota-java/tree/master/jota/src/test/java/org/iota/jota
 [iota-discord]: https://discord.gg/7Gu2mG5
 [iota-forum]: https://forum.iota.org/

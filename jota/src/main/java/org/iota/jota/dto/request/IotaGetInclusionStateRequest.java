@@ -2,7 +2,7 @@ package org.iota.jota.dto.request;
 
 import java.util.Collection;
 
-import org.iota.jota.IotaAPICommands;
+import org.iota.jota.IotaAPICommand;
 
 /**
  * This class represents the core API request 'getInclusionStates'.
@@ -18,7 +18,7 @@ public class IotaGetInclusionStateRequest extends IotaCommandRequest {
      * @param tips
      */
     private IotaGetInclusionStateRequest(final String[] transactions, final String[] tips) {
-        super(IotaAPICommands.GET_INCLUSIONS_STATES);
+        super(IotaAPICommand.GET_INCLUSIONS_STATES);
         this.transactions = transactions;
         this.tips = tips;
     }

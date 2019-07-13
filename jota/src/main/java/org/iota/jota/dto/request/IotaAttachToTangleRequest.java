@@ -1,6 +1,8 @@
 package org.iota.jota.dto.request;
 
-import org.iota.jota.IotaAPICommands;
+import org.iota.jota.IotaAPICommand;
+
+import java.util.Arrays;
 
 /**
  * This class represents the core API request 'attachToTangle'.
@@ -23,7 +25,7 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
      * @param trytes
      */
     private IotaAttachToTangleRequest(final String trunkTransaction, final String branchTransaction, final Integer minWeightMagnitude, final String... trytes) {
-        super(IotaAPICommands.ATTACH_TO_TANGLE);
+        super(IotaAPICommand.ATTACH_TO_TANGLE);
         this.trunkTransaction = trunkTransaction;
         this.branchTransaction = branchTransaction;
         this.minWeightMagnitude = minWeightMagnitude;
@@ -113,5 +115,15 @@ public class IotaAttachToTangleRequest extends IotaCommandRequest {
      */
     public void setTrytes(String[] trytes) {
         this.trytes = trytes;
+    }
+
+    @Override
+    public String toString() {
+        return "IotaAttachToTangleRequest{" +
+                "trunkTransaction='" + trunkTransaction + '\'' +
+                ", branchTransaction='" + branchTransaction + '\'' +
+                ", minWeightMagnitude=" + minWeightMagnitude +
+                ", trytes=" + Arrays.toString(trytes) +
+                '}';
     }
 }

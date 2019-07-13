@@ -23,6 +23,10 @@ public class BaseException extends RuntimeException {
 
     public BaseException(String msg, Exception cause) {
         super(msg, cause);
+        if (messages == null) {
+            messages = new ArrayList<>();
+        }
+        messages.add(msg);
     }
 
     public BaseException(Collection<String> messages) {
@@ -36,6 +40,9 @@ public class BaseException extends RuntimeException {
 
     @Override
     public String getMessage() {
+        if (messages != null && messages.size() == 1){
+            return messages.toArray()[0].toString();
+        }
         return Arrays.toString(messages.toArray());
     }
 }

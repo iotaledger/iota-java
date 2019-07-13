@@ -1,7 +1,9 @@
 package org.iota.jota.dto.response;
 
+import org.iota.jota.dto.request.IotaWereAddressesSpentFromRequest;
+
 /**
- * Response of {@link jota.dto.request.IotaWereAddressesSpentFromRequest}.
+ * Response of {@link IotaWereAddressesSpentFromRequest}.
  **/
 public class WereAddressesSpentFromResponse extends AbstractResponse {
 
