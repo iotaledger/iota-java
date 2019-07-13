@@ -24,7 +24,7 @@ Please report any issues in our [issue tracker](https://github.com/iotaledger/io
 | [Examples](#examples)|
 | [Change logs](#change-logs)|
 |[Supporting the project](#supporting-the-project)|
-|[Joining the discussion](#joining-the-ussion)|
+|[Joining the discussion](#joining-the-discussion)|
 | [License](#license)
 
 ## Prerequisites
