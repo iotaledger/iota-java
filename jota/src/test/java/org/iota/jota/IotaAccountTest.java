@@ -60,7 +60,7 @@ public class IotaAccountTest {
         assertTrue(account.loaded, "Account should be loaded after build");
         assertEquals(TEST_SEED_ID, account.getId(), "Account ID should be set to the seed id ");
         assertTrue(account.isNew(), "Should be a new account");
-        assertEquals(0, account.usableBalance(), "New accounts should have 0 balance");
+        assertEquals(0, account.availableBalance(), "New accounts should have 0 balance");
         assertEquals(0, account.totalBalance(), "New accounts should have 0 balance");
     }
 
@@ -75,20 +75,20 @@ public class IotaAccountTest {
         assertTrue(account.loaded, "Account should be loaded after build");
         assertEquals(TEST_SEED_ID, account.getId(), "Account ID should be set to the seed id");
         assertFalse(account.isNew(), "Should not be a new account");
-        assertEquals(0, account.usableBalance(), "Account should have 0 usable balance");
+        assertEquals(0, account.availableBalance(), "Account should have 0 usable balance");
         assertEquals(5, account.totalBalance(), "Account should have 5 total balance");
 
         Date timeOut = new Date(Long.MAX_VALUE);
         ConditionalDepositAddress cda = account.newDepositAddress(timeOut, false, 10).get();
 
-        assertEquals(0, account.usableBalance(), "Account should have 0 usable balance");
+        assertEquals(0, account.availableBalance(), "Account should have 0 usable balance");
         assertEquals(15, account.totalBalance(), "Account should have 15 total balance");
         assertEquals( "GGAOVJJKOHECPAR9GQBFOISLYUXSRXXXPT9GEYBTRBBMTJAN9CMH9EVVRYDGXUTDMECGXKFWPYAXUO9QD", cda.getDepositAddress().getHash(),
                 "Should have generated address at index 5");
     }
 
     @Test
-    void usableBalance() {
+    void availableBalance() {
         // Force CDA to have received
         mockBalance(ADDR_0_SEC_3, 5l);
 
@@ -98,7 +98,7 @@ public class IotaAccountTest {
 
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(MOCK_API).build();
 
-        assertEquals(5, account.usableBalance(), "Account should have 5 usable balance");
+        assertEquals(5, account.availableBalance(), "Account should have 5 usable balance");
         assertEquals(5, account.totalBalance(), "Account should have 5 total balance");
     }
     

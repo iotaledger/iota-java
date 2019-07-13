@@ -142,8 +142,8 @@ public class AccountStateManager {
      * Returns the total balance of addresses which have their deposit conditions fulfilled
      * @return The usable account balance (You are able to send this)
      */
-    public long getUsableBalance() {
-        return inputSelector.getUsableBalance();
+    public long getAvailableBalance() {
+        return inputSelector.getAvailableBalance();
     }
 
     public boolean isNew() {

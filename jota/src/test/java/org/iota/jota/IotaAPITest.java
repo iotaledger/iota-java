@@ -347,7 +347,7 @@ public class IotaAPITest {
     @Test
     @Tag("IntegrationTest")
     public void shouldGetTransfers(){
-        GetTransferResponse gtr = iotaAPI.getTransfers(TEST_SEED3, 2, 0, 0, false);
+        GetTransferResponse gtr = iotaAPI.getTransfers(TEST_SEED3, 2, 0, 10, false);
         assertThat("GetTransfers should return GetTransferResponse object on success", gtr.getTransfers(), IsNull.notNullValue());
         assertTrue(gtr.getTransfers().length > 0, "GetTransfers should return more than 0 transfers");
     }

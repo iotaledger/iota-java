@@ -14,5 +14,5 @@ public interface InputSelectionStrategy {
      */
     List<Input> getInput(long requiredValue, boolean balanceCheck );
 
-    long getUsableBalance();
+    long getAvailableBalance();
 }

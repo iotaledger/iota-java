@@ -79,7 +79,7 @@ public interface Account extends TaskService {
      * @throws AccountError When we failed to get the balance
      */
     @Document
-    long usableBalance() throws AccountError;
+    long availableBalance() throws AccountError;
     
     /**
      * Uses all stored CDAs to determine the current total balance.
