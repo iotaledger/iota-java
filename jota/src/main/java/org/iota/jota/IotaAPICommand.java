@@ -21,7 +21,8 @@ public enum IotaAPICommand {
     BROADCAST_TRANSACTIONS("broadcastTransactions"),
     STORE_TRANSACTIONS("storeTransactions"),
     CHECK_CONSISTENCY("checkConsistency"),
-    WERE_ADDRESSES_SPENT_FROM("wereAddressesSpentFrom");
+    WERE_ADDRESSES_SPENT_FROM("wereAddressesSpentFrom"),
+    CUSTOM_IXI("IXI");
 
     private String command;
 

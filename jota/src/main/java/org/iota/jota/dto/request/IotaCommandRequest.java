@@ -17,6 +17,14 @@ public class IotaCommandRequest {
     protected IotaCommandRequest(IotaAPICommand command) {
         this.command = command.command();
     }
+    
+    /**
+     * Initializes a new instance of the IotaCommandRequest class.
+     * @param command variable command name, used in ixi modules
+     */
+    protected IotaCommandRequest(String command) {
+        this.command = command;
+    }
 
     /**
      * Get information about the node.
