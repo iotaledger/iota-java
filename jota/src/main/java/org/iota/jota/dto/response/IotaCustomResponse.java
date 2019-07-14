@@ -15,7 +15,9 @@ public class IotaCustomResponse extends AbstractResponse {
     }
     
     public Object getArg(String name) {
-        if (!hasArg(name)) return null;
+        if (!hasArg(name)) {
+            return null;
+        }
         
         return ixi.get(name);
     }
