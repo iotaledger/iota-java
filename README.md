@@ -13,7 +13,7 @@ This is the **official** Java client library, which allows you to do the followi
 * Interact with an IRI node
 
 This is beta software, so there may be performance and stability issues.
-Please report any issues in our [issue tracker](https://github.com/iotaledger/iota-java/issues/new-issue).
+Please report any issues in our [issue tracker](https://github.com/iotaledger/iota-java/issues/new/choose).
 
 |Table of contents|
 |:----|
