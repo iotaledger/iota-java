@@ -4,19 +4,19 @@ package org.iota.jota.utils;
  * Created by paul on 4/15/17.
  */
 public class Pair<S, T> {
-    private S left;
-    private T right;
+    private S low;
+    private T hi;
 
     public Pair(S k, T v) {
-        this.left = k;
-        this.right = v;
+        this.low = k;
+        this.hi = v;
     }
 
-    public S getLeft() {
-        return left;
+    public S getLow() {
+        return low;
     }
 
-    public T getRight() {
-        return right;
+    public T getHi() {
+        return hi;
     }
 }

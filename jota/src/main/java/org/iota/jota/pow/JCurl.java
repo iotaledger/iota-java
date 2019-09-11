@@ -203,8 +203,8 @@ public class JCurl implements ICurl {
     public void absorb(Pair<long[], long[]> pair, int offset, int length) {
         int o = offset, l = length;
         do {
-            System.arraycopy(pair.getLeft(), o, stateLow, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
-            System.arraycopy(pair.getRight(), o, stateHigh, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
+            System.arraycopy(pair.getLow(), o, stateLow, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
+            System.arraycopy(pair.getHi(), o, stateHigh, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
             pairTransform();
             o += HASH_LENGTH;
         } while ((l -= HASH_LENGTH) > 0);
@@ -212,8 +212,8 @@ public class JCurl implements ICurl {
 
     public Pair<long[], long[]> squeeze(Pair<long[], long[]> pair, int offset, int length) {
         int o = offset, l = length;
-        long[] low = pair.getLeft();
-        long[] hi = pair.getRight();
+        long[] low = pair.getLow();
+        long[] hi = pair.getHi();
         do {
             System.arraycopy(stateLow, 0, low, o, l < HASH_LENGTH ? l : HASH_LENGTH);
             System.arraycopy(stateHigh, 0, hi, o, l < HASH_LENGTH ? l : HASH_LENGTH);

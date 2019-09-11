@@ -197,12 +197,12 @@ public class Kerl extends JCurl {
 
     private static int bigintAdd(int[] base, final int rh) {
         Pair<Integer, Boolean> res = fullAdd(base[0], rh, false);
-        base[0] = res.getLeft();
+        base[0] = res.getLow();
 
         int j = 1;
-        while (res.getRight()) {
+        while (res.getHi()) {
             res = fullAdd(base[j], 0, true);
-            base[j] = res.getLeft();
+            base[j] = res.getLow();
             j += 1;
         }
 
@@ -215,8 +215,8 @@ public class Kerl extends JCurl {
         Pair<Integer, Boolean> ret;
         for (int i = 0; i < INT_LENGTH; i++) {
             ret = fullAdd(lh[i], rh[i], carry);
-            out[i] = ret.getLeft();
-            carry = ret.getRight();
+            out[i] = ret.getLow();
+            carry = ret.getHi();
         }
 
         if (carry) {
@@ -242,8 +242,8 @@ public class Kerl extends JCurl {
         Pair<Integer, Boolean> ret;
         for (int i = 0; i < INT_LENGTH; i++) {
             ret = fullAdd(lh[i], ~rh[i], noborrow);
-            out[i] = ret.getLeft();
-            noborrow = ret.getRight();
+            out[i] = ret.getLow();
+            noborrow = ret.getHi();
         }
 
         if (!noborrow) {
