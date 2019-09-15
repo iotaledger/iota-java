@@ -760,7 +760,7 @@ public class IotaAccount implements Account, EventListener {
         final List<Transaction> trx = new ArrayList<>();
 
         for (String tryte : res.getTrytes()) {
-            trx.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURLP81)));
+            trx.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURL_P81)));
         }
         
         return trx;

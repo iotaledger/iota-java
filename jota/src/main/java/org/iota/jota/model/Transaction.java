@@ -131,10 +131,10 @@ public class Transaction {
 
     /**
      * Initializes a new instance of the Signature class.
-     * Default Mode.CURLP81 is being used
+     * Default Mode.CURL_P81 is being used
      */
     public Transaction() {
-        customCurl = SpongeFactory.create(SpongeFactory.Mode.CURLP81);
+        customCurl = SpongeFactory.create(SpongeFactory.Mode.CURL_P81);
     }
 
     /**
@@ -523,7 +523,7 @@ public class Transaction {
         int[] transactionTrits = Converter.trits(trytes);
         int[] hash = new int[Constants.HASH_LENGTH_TRITS];
 
-        ICurl curl = customCurl != null ? customCurl.clone() : SpongeFactory.create(SpongeFactory.Mode.CURLP81);
+        ICurl curl = customCurl != null ? customCurl.clone() : SpongeFactory.create(SpongeFactory.Mode.CURL_P81);
         // generate the correct transaction hash
         curl.reset();
         curl.absorb(transactionTrits, 0, transactionTrits.length);

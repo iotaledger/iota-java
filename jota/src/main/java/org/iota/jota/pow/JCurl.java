@@ -2,6 +2,7 @@ package org.iota.jota.pow;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.Pair;
@@ -13,14 +14,11 @@ import org.iota.jota.utils.Pair;
  */
 public class JCurl implements ICurl {
 
-    /**
-     * The hash length.
-     */
     public static final int HASH_LENGTH = 243;
     private static final int STATE_LENGTH = 3 * HASH_LENGTH;
 
-    public static final int NUMBER_OF_ROUNDSP81 = 81;
-    public static final int NUMBER_OF_ROUNDSP27 = 27;
+    public static final int NUMBER_OF_ROUNDS_P81 = 81;
+    public static final int NUMBER_OF_ROUNDS_P27 = 27;
     private final int numberOfRounds;
 
     private static final int[] TRUTH_TABLE = {1, 0, -1, 2, 1, -1, 0, 2, -1, 1, 0};
@@ -28,48 +26,35 @@ public class JCurl implements ICurl {
     private final long[] stateHigh;
     private final int[] scratchpad = new int[STATE_LENGTH];
     private int[] state;
+    private final SpongeFactory.Mode mode;
 
-    public JCurl(boolean pair, SpongeFactory.Mode mode) {
+    JCurl(SpongeFactory.Mode mode, boolean pair) {
+        this.mode = Objects.requireNonNull(mode, "Mode must not be null.");
         switch (mode) {
-            case CURLP27: {
-                numberOfRounds = NUMBER_OF_ROUNDSP27;
-            }
-            break;
-            case CURLP81: {
-                numberOfRounds = NUMBER_OF_ROUNDSP81;
-            }
-            break;
+            case CURL_P27:
+                this.numberOfRounds = NUMBER_OF_ROUNDS_P27;
+                break;
+            case CURL_P81:
+                this.numberOfRounds = NUMBER_OF_ROUNDS_P81;
+                break;
             default:
                 throw new NoSuchElementException("Only Curl-P-27 and Curl-P-81 are supported.");
         }
+
         if (pair) {
-            stateHigh = new long[STATE_LENGTH];
-            stateLow = new long[STATE_LENGTH];
-            state = null;
-            set();
+            this.stateHigh = new long[STATE_LENGTH];
+            this.stateLow = new long[STATE_LENGTH];
+            this.state = null;
+            fillStateLowAndStateHigh();
         } else {
-            state = new int[STATE_LENGTH];
-            stateHigh = null;
-            stateLow = null;
+            this.state = new int[STATE_LENGTH];
+            this.stateHigh = null;
+            this.stateLow = null;
         }
     }
 
-    public JCurl(SpongeFactory.Mode mode) {
-        switch (mode) {
-            case CURLP27: {
-                numberOfRounds = NUMBER_OF_ROUNDSP27;
-            }
-            break;
-            case CURLP81: {
-                numberOfRounds = NUMBER_OF_ROUNDSP81;
-            }
-            break;
-            default:
-                throw new NoSuchElementException("Only Curl-P-27 and Curl-P-81 are supported.");
-        }
-        state = new int[STATE_LENGTH];
-        stateHigh = null;
-        stateLow = null;
+    JCurl(SpongeFactory.Mode mode) {
+        this(mode, false);
     }
 
     /**
@@ -138,7 +123,7 @@ public class JCurl implements ICurl {
 
     public JCurl reset(boolean pair) {
         if (pair) {
-            set();
+            fillStateLowAndStateHigh();
         } else {
             reset();
         }
@@ -192,7 +177,7 @@ public class JCurl implements ICurl {
         this.state = state;
     }
 
-    private void set() {
+    private void fillStateLowAndStateHigh() {
         Arrays.fill(stateLow, Converter.HIGH_LONG_BITS);
         Arrays.fill(stateHigh, Converter.HIGH_LONG_BITS);
     }
@@ -215,12 +200,11 @@ public class JCurl implements ICurl {
         }
     }
 
-
     public void absorb(Pair<long[], long[]> pair, int offset, int length) {
         int o = offset, l = length;
         do {
-            System.arraycopy(pair.low, o, stateLow, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
-            System.arraycopy(pair.hi, o, stateHigh, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
+            System.arraycopy(pair.getLow(), o, stateLow, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
+            System.arraycopy(pair.getHi(), o, stateHigh, 0, l < HASH_LENGTH ? l : HASH_LENGTH);
             pairTransform();
             o += HASH_LENGTH;
         } while ((l -= HASH_LENGTH) > 0);
@@ -228,8 +212,8 @@ public class JCurl implements ICurl {
 
     public Pair<long[], long[]> squeeze(Pair<long[], long[]> pair, int offset, int length) {
         int o = offset, l = length;
-        long[] low = pair.low;
-        long[] hi = pair.hi;
+        long[] low = pair.getLow();
+        long[] hi = pair.getHi();
         do {
             System.arraycopy(stateLow, 0, low, o, l < HASH_LENGTH ? l : HASH_LENGTH);
             System.arraycopy(stateHigh, 0, hi, o, l < HASH_LENGTH ? l : HASH_LENGTH);
@@ -239,13 +223,9 @@ public class JCurl implements ICurl {
         return new Pair<>(low, hi);
     }
 
-    /**
-     * Clones this instance.
-     *
-     * @return A new instance.
-     */
     @Override
     public ICurl clone() {
-        return new JCurl(SpongeFactory.Mode.CURLP81);
+        return new JCurl(mode);
     }
+
 }

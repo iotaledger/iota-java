@@ -1,8 +1,5 @@
 package org.iota.jota.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -12,6 +9,9 @@ import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.Signing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * This class represents a Bundle, a set of transactions.
@@ -20,7 +20,7 @@ import org.iota.jota.utils.Signing;
 public class Bundle implements Comparable<Bundle> {
 
     /**
-     * Use {@link Constants#NULL_HASH } instead
+     * Use {@link Constants#NULL_HASH } instead, will be removed in a future release.
      */
     @Deprecated
     public static final String EMPTY_HASH = Constants.NULL_HASH;
@@ -87,7 +87,7 @@ public class Bundle implements Comparable<Bundle> {
     
     public String getBundleHash() {
         if (getLength() == 0) {
-            return EMPTY_HASH;
+            return Constants.NULL_HASH;
         }
         
         return transactions.get(0).getBundle();
@@ -218,17 +218,28 @@ public class Bundle implements Comparable<Bundle> {
         }
     }
 
-
     /**
      * Normalized the bundle.
      *
      * @param bundleHash The bundle hash.
      * @return normalizedBundle A normalized bundle hash.
+     * @deprecated will be removed in a future release, replaced by {@link #normalizedBundle(String, ICurl)}
      */
+    @Deprecated
     public int[] normalizedBundle(String bundleHash) {
-        return new Signing().normalizedBundle(bundleHash);
+        return normalizedBundle(bundleHash, SpongeFactory.create(SpongeFactory.Mode.KERL));
     }
 
+    /**
+     * Normalized the bundle.
+     *
+     * @param bundleHash The bundle hash.
+     * @param curl       Hashing function that should be used to normalize.
+     * @return normalizedBundle A normalized bundle hash.
+     */
+    public int[] normalizedBundle(String bundleHash, ICurl curl) {
+        return new Signing(curl).normalizedBundle(bundleHash);
+    }
 
     /**
      * Compares the current object with another object of the same type.
