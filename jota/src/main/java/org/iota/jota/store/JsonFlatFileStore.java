@@ -49,17 +49,15 @@ public class JsonFlatFileStore extends FlatFileStore {
 
     @Override
     protected Map<String, Serializable> loadFromInputStream(InputStream stream){
-        Map<String, Serializable> store;
         try {
-            store = objectMapper.readValue(stream, new TypeReference<Map<String, AccountState>>(){});
+            return objectMapper.readValue(stream, new TypeReference<Map<String, AccountState>>(){});
         } catch (IOException e) {
             if (e.getClass().equals(MismatchedInputException.class)) {
-                store = new HashMap<>();
+                return new HashMap<>();
             } else {
                 throw new RuntimeException(e);
             }
         }
-        return store;
     }
     
     @Override
