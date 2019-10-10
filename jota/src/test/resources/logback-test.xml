@@ -1,0 +1,17 @@
+<configuration>
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are  by default assigned the type
+			 ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<root level="WARN">
+		<appender-ref ref="CONSOLE" />
+	</root>
+
+	<logger name="org.iota.jota" level="WARN"/>
+
+</configuration>
