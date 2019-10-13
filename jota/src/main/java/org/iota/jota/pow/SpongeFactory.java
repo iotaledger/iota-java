@@ -3,6 +3,19 @@ package org.iota.jota.pow;
 import java.util.Objects;
 
 /**
+ * Factory for creating an instance of a hashing function implementation,
+ * based on the passed-in {@link SpongeFactory.Mode}.
+ *
+ * Currently supported mode (hashing functions):
+ * <ol>
+ *     <li>Curl P81</li>
+ *     <li>Curl P27</li>
+ *     <li>Kerl</li>
+ * </ol>
+ *
+ * @see <a href="https://github.com/iotaledger/iota.curl.java">IOTA CURL.</a>
+ * @see <a href="https://github.com/iotaledger/kerl">IOTA Kerl.</a>
+ *
  * Created by paul on 7/27/17.
  */
 public class SpongeFactory {
