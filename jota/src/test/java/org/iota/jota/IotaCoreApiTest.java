@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
+
 import org.hamcrest.core.IsNull;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.dto.response.AddNeighborsResponse;
@@ -28,8 +30,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
 
 public class IotaCoreApiTest {
 
@@ -165,7 +165,7 @@ public class IotaCoreApiTest {
     @Test // very long execution
     @Tag("IntegrationTest")
     public void shouldGetTransactionsToApprove() throws ArgumentException {
-        GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(15, null);
+        GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(4, null);
         assertThat(res.getTrunkTransaction(), IsNull.notNullValue());
         assertThat(res.getBranchTransaction(), IsNull.notNullValue());
     }
@@ -200,7 +200,7 @@ public class IotaCoreApiTest {
                 () -> proxy.findTransactions(
                         new String[]{Checksum.addChecksum(test)}, new String[]{test},
                         new String[]{test}, new String[]{test}));
-        assertEquals("[Invalid tag provided.]", argumentException.getMessage());
+        assertEquals("Invalid tag provided.", argumentException.getMessage());
     }
 
     @Test
