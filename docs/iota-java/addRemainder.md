@@ -41,7 +41,7 @@ Uses input, and adds to the bundle, untill `totalValue` is reached. If there is 
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<String> response = iotaAPI.addRemainder("YOUR9SECRET9SEED9999999...", 3, new List<Input>(new Input[]{inputs, inputs}), bundle, "TAG9EVSFKPCCAZOIJCKI9AEGDMZ", 115, "NAUGMCFRLKESDQJPABDF9ZPBCXQWYRMQZCDJEROLOD9DE9JGRWVUYYVRRJHVSVYVLHBXWVJS9HIWOBAPF", new List<String>(new String[]{"XUYCXJBOKBEWGAARZJKXNHMTI ... AOIQWVEROWDIPO9T9GQZOWBYG", "LGNGZAZKFZCTUVAUGTBQKDPLU ... KLUPDHIEPPWVBOIBQU9VAPSFI"}));
+    List<String> response = iotaAPI.addRemainder("YOUR9SECRET9SEED9999999...", 3, new List<Input>(new Input[]{inputs, inputs}), bundle, "TAG9TIGHDELJXFHN9KLKZHVGBST", 284, "LTWUDWCICFHSWYOXMBWXEYQGBJNAKHCXIQGSTOQOTJR9DBOOVYGZ9NLHAK9FGCSXWKTBPBBMOVZMJBHKJ", new List<String>(new String[]{"PSDFHESDBFMKIEGSKIYHTIQEC ... BDVYKAQWWAGBZBPSFVKWBY9YB", "PSXXTETHXPZPIUQNMCORDIOOG ... QCFIIPMYGROYCQAMKSNIUDJPG"}));
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

@@ -24,8 +24,7 @@ Updates the settings of the account in a synchronized manner by shutting down al
  
  ```Java
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
-IotaAccount account = new IotaAccount.Builder("MY9SEED9..")
-                .api(iotaAPI)                .build()
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
     account.updateSettings(newsettings);
 } catch (AccountError e) { 

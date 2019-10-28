@@ -36,7 +36,7 @@ Prepares transfer by generating bundle, finding and signing inputs.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<String> response = iotaAPI.prepareTransfers("YOUR9SECRET9SEED9999999...", 3, new List<Transfer>(new Transfer[]{transfers, transfers}), "KHFXVYBEJJVPBGQWBFSSUVLDSEERKSHALKZ9UFGBRMLJZSGVFOOVGCIF9EG9QLPV9KLVYXKVTLIUKYUM9", new List<Input>(new Input[]{inputs, inputs}), new List<Transaction>(new Transaction[]{tips, tips}), true);
+    List<String> response = iotaAPI.prepareTransfers("YOUR9SECRET9SEED9999999...", 3, new List<Transfer>(new Transfer[]{transfers, transfers}), "MFBOZVTQZLNUATPTH9VWMXAQESBVZLOZSIRJDPGVDOVQXKWBVFOOXJNSESJF9XDMEBSEJPFXQZ9VXO9TR", new List<Input>(new Input[]{inputs, inputs}), new List<Transaction>(new Transaction[]{tips, tips}), false);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

@@ -27,7 +27,7 @@ Check if a list of addresses was ever spent from, in the current epoch, or in pr
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    boolean[] response = iotaAPI.checkWereAddressSpentFrom(new String[]{"9KISOKFUUNAIEENBGWBUYDAAZKFVPSMQNSOOEYTKBOJRR9LRXCHGBPCIZJUPWYUYNFGUEZRGLPX9MMQGY", "S9MYALBTYKR9MVUURUXUFEYNIBWERZVPF9A9GNFVQBYCTNXMLHAELTMEUUGRTPOCXTBQKMR9ETNHWXNSC"});
+    boolean[] response = iotaAPI.checkWereAddressSpentFrom(new String[]{"LFR9BZETOYCK99HAUF9QCKHNFKWRSGMUSWCBES99LBQNLA9FPZHZWOXALDUYBUUYSSCVECENJXIKVKFOT", "RUIZBLTGKNUQN9K9MFTODKMM9VXLKWAHVYATRFIC9COFBMXO9POVTRVBSZAEICJSFFAHWZLPMU9AEWKIE"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

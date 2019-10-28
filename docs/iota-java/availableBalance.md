@@ -21,8 +21,7 @@ Runs the input selection with the CDAs in order to determine the usable balance 
  
  ```Java
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
-IotaAccount account = new IotaAccount.Builder("MY9SEED9..")
-                .api(iotaAPI)                .build()
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
     long response = account.availableBalance();
 } catch (AccountError e) { 

@@ -21,10 +21,9 @@ Sends the specified amounts to the given recipient.
  
  ```Java
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
-IotaAccount account = new IotaAccount.Builder("MY9SEED9..")
-                .api(iotaAPI)                .build()
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
-    Future<Bundle> response = account.send(new Recipient(115, "hi", "TAG", QRLFRCQIHYXGGVAMXPDQJPBQNDKKUWYCXTBFORJZUZCEJJXGQHSZNVJXEXIZKYQNNMWZPCWEZQIHQAZKA));
+    Future<Bundle> response = account.send(new Recipient(257, "hi", "TAG", OOPIXBREIZGCFQSCQCGHEYHETHXFOMZALVLNPNSQJQSLLEZTR9SEVKPLQ9HZPKWASSWAWWA9DPXBEHRYP));
 } catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 

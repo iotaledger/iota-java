@@ -21,6 +21,7 @@ Wrapper function: Runs prepareTransfers, as well as attachToTangle. We then broa
     
 ## Output
 [SendTransferResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/SendTransferResponse.java), which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -51,7 +52,7 @@ Wrapper function: Runs prepareTransfers, as well as attachToTangle. We then broa
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    SendTransferResponse response = iotaAPI.sendTransfer("YOUR9SECRET9SEED9999999...", 3, 15, 18, new List<Transfer>(new Transfer[]{transfers, transfers}), new List<Input>(new Input[]{inputs, inputs}), "QFFBNKZJ9VKIYSNIHSBVTZI9TRUZLKKLORKR9KRLYKATIXJ9VSK9EFPMLYBINTXVAAJQYKQHFIDN9LVNH", true, VTHFUYRYYENDUHU9KFHDMQGF9AIGFEHZSPNXWFFPTOKEPHLGYVRBTGLKTTPVPD9NJNMDQG9ADFOZUQTVS, new List<Transaction>(new Transaction[]{tips, tips}));
+    SendTransferResponse response = iotaAPI.sendTransfer("YOUR9SECRET9SEED9999999...", 3, 15, 18, new List<Transfer>(new Transfer[]{transfers, transfers}), new List<Input>(new Input[]{inputs, inputs}), "HUFXOTMRAISYFPAIYTBE9QDZIUURWCQLOOASYZWD9SKSKJIQNWDKOSWMJWQAIIUGRYIAVZAIFNYWJYGKS", true, 9LOBIDVNZUQESJVBWEQAYFEPPHTXBXKQCKMNMTYGMS9AMVMIDSNG9VCPPXJVQIFHRQFUHYKCFSNHDMSFD, new List<Transaction>(new Transaction[]{tips, tips}));
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

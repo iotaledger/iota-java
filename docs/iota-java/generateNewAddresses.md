@@ -12,6 +12,7 @@ Generates new addresses, meaning addresses which were not spend from, according 
     
 ## Output
 [GetNewAddressResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetNewAddressResponse.java), which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |

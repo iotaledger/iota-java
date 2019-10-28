@@ -33,7 +33,7 @@ Wrapper method: stores and broadcasts the specified trytes.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    BroadcastTransactionsResponse response = iotaAPI.storeAndBroadcast(new String[]{"PSPXKQWRYF9DKSEIKSPTXQZQV ... EQFNPDTDRCN9ZAQVOTIRODCQY", "DVMTOMBVJYQWY9HQLCZVUWQWG ... NHCIAWPXJJBZORLNWBPOIMXTE"});
+    BroadcastTransactionsResponse response = iotaAPI.storeAndBroadcast(new String[]{"B9TITZVUJIUKHFSCZTVDBCJRO ... N9MPUYIYWHHI99GVPCS9IOTKK", "XUTHPELTJB9DSPTNNBOYOMZQF ... VBVPVIXICSWQLJISBMTJEYWWB"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

@@ -12,6 +12,7 @@ Gets the associated bundle transactions of a single transaction. Does validation
     
 ## Output
 [GetBundleResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBundleResponse.java), which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -30,7 +31,7 @@ Gets the associated bundle transactions of a single transaction. Does validation
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetBundleResponse response = iotaAPI.getBundle("HBVIRLMBDRSCNPNRTYHANHCDKFNFFC9I9ZCZTOSKZLZDAYYCAKPQBYOUTXBGLHTO9VJYRKPNNXIKZWF9D");
+    GetBundleResponse response = iotaAPI.getBundle("OBMROAQCOJMZPCNIGHUMLJDDYVKWRBWYBINHTKWVIKVDBUOEYOUMTNFJIVXCEZCYPVZK9YQMKRQATUTWW");
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

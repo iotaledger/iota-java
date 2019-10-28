@@ -12,6 +12,7 @@ Wrapper function: Finds transactions, gets trytes and turns it into [Transaction
     
 ## Output
 List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)>, which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | long attachmentTimestampLowerBound |  |
@@ -49,7 +50,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.findTransactionObjectsByApprovees(new String[]{"PCALTVSYNKITLTJJCFT9UQQLDVTFDPHCUGHML9VIJUJBIWGXTJAWBFST9XOEEQZRVBOZMOSEZRFYWTWUN", "NVUFNKGSJLGS9ONWRUBZIPQ9TYLHUDBUQTCANMQNMWNWMIWXXI9JLFPW9QYOHKHIIBZRCBDJVAIBTKEPP"});
+    List<Transaction> response = iotaAPI.findTransactionObjectsByApprovees(new String[]{"WSOLQGWRUZEPMZUKRDVDADHVESYRLOWOEHCWONIIT9HSPBZLEGQNYIHVKLMIEZYTPADXJYBOVNNYCPCYJ", "MFZMSUNPKPLDMTWQSPIMULPIZGBENUCSHYORAVNQPTKGKIXLTPUVPJHNJQLRNZHNZXOFGUUMIHDZPWNWP"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

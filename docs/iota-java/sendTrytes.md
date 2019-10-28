@@ -15,6 +15,7 @@ Wrapper method: Gets transactions to approve, attaches to Tangle, broadcasts and
     
 ## Output
 List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)>, which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | long attachmentTimestampLowerBound |  |
@@ -59,7 +60,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.sendTrytes(new String[]{"PUTUMXUROJZWAMKSYHLXWEURZ ... YNEYOAIBLDQRWKYEHRAYTXGCS", "VTCES9XJNETADWBQNTVRZHRZS ... FW9FLQBMJMADKKVM9IZCSPNZJ"}, 15, 18, "UWIRJLYPUDL9PMNTIBVWDCJEKKAAYQWDGNZA99TGOAYAIWDRWJXVJLWJQEKDYWYRCYZJKLOPFHKHFDVBM");
+    List<Transaction> response = iotaAPI.sendTrytes(new String[]{"KHBAKNKVUQYRBTUXKMOZ9ZOXU ... UTVBLAGC9KWSGIJAWLQERGMUW", "YWDXHAAOVNHHOH9EGNQA9OMUT ... NYACHEEEZCAWHCD9CQZZKXJZS"}, 15, 18, "SPLXLNCQUEEATUPIJ9GTNNJTIHSEGEMWLXSY9ZLAXODMCEYVYLDVZOTXMDPVDBTTUFYQMRAR9FOFWZOSL");
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

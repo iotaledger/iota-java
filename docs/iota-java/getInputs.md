@@ -17,6 +17,7 @@ Gets the inputs of a seed If start, end and threshold are 0, checks everything u
     
 ## Output
 [GetBalancesAndFormatResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBalancesAndFormatResponse.java), which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -41,7 +42,7 @@ Gets the inputs of a seed If start, end and threshold are 0, checks everything u
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetBalancesAndFormatResponse response = iotaAPI.getInputs("YOUR9SECRET9SEED9999999...", 3, 213, 309, 100, new String[]{"OTNNEUALEMGJYMPIQJDAYFFEWLGIDF9PJSHKQLKIITFLRCTCQECHWTNYRT9BWKKLDWOXLGAERMIGCBFPJ", "HFRWZEOWNSI9VF9CYX9RWVRSZKHKWTZFMAWUK9HLPSPCKMEKTQKGLUFRWXKLPKWURPG9AYDPFCWDEJMBH"});
+    GetBalancesAndFormatResponse response = iotaAPI.getInputs("YOUR9SECRET9SEED9999999...", 3, 657, 715, 100, new String[]{"P9FIGJYGRQILJLVICUANYBZJIODPOSPDNAKOXGXZGNLCTUZMJXMSHZMQXFDJNB9XIOBDNROZPWCSZKDOP", "UYBDJMWUXCJJMLJXWHDUPFAIOIW9IYW9BBXISXIQWPRBEPBEGFRMGJUEXCS9QSDCIMCC9RLDQVETHL9IJ"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

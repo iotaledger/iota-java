@@ -15,6 +15,7 @@ Replays a transfer by doing Proof of Work again. This will make a new, but ident
     
 ## Output
 [ReplayBundleResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/ReplayBundleResponse.java), which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -38,7 +39,7 @@ Replays a transfer by doing Proof of Work again. This will make a new, but ident
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    ReplayBundleResponse response = iotaAPI.replayBundle("CQPBPJNAESD9BDOYSUIBNNBJWHYFZICHESTTQPDDVBN9WLIGXC9F9CWJGYPBZLQOIECPUSFBTFKWBS9PZ", 15, 18, "BMSCSWHGSXUDFHCGGNHRUXCSBTGSCJAZZWSWLGTBXWW9HPTPGXAFVUWUGMMXPVDTAMXLFWZAJFOIHGI9U");
+    ReplayBundleResponse response = iotaAPI.replayBundle("YFENZOSJNJNIYMHZKOIDHQXV9EPHCWSBLSNYJGPALZP9TTIEN9XJBDJMPREXI9NHGNXE9FTISHLOSXMHC", 15, 18, "BRBTTVNVOMFVINOGFKZENREFYKVLJXJVKNA9SSD9JRWBEIRPTZGJIQHSZELP9XANLFXKURHLWHSJFH9JW");
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

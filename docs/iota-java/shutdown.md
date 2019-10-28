@@ -20,8 +20,7 @@ Shutdowns the account’s inner event loop and shutdowns all plugins.  Will grac
  
  ```Java
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
-IotaAccount account = new IotaAccount.Builder("MY9SEED9..")
-                .api(iotaAPI)                .build()
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
     account.shutdown();
 } catch (AccountError e) { 

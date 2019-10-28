@@ -12,6 +12,7 @@ Wrapper function: runs getNodeInfo and getInclusionStates Uses the latest milest
     
 ## Output
 [GetInclusionStateResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetInclusionStateResponse.java), which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -36,7 +37,7 @@ Wrapper function: runs getNodeInfo and getInclusionStates Uses the latest milest
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetInclusionStateResponse response = iotaAPI.getLatestInclusion(new String[]{"ZNHSWMAMVRCER9KZFWTXR9HBXGZZAFQRCWILTXWBOZGMAEVME9MMZOWQISJSUWDECDEWIALTX9JVEXAB9", "PFICGDBTYS99QMTNH9IZFIOGSAPDALIODODWVHQRQUBXMYKIGITTFLAOASDAJEZH9PHWDCSOIPUONFTOS"});
+    GetInclusionStateResponse response = iotaAPI.getLatestInclusion(new String[]{"NFJQS9XEJCWEYEMQHIPJKHJGIASPGVYTGNCCVEPVUVIVQSMXIHRZFBKFUNJFVSFMITOFDEJWIQDKCWNFA", "GRRTTPUSUEVLOJSVMZAONAMUSXBAMWIBUTTLAINOTUZYMSTFLRAJHVGINQMPYOHEDCOVSCDU9KZTRCNKB"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

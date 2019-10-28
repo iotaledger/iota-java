@@ -21,6 +21,7 @@ Similar to getTransfers, just that it returns additional account data
     
 ## Output
 [GetAccountDataResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetAccountDataResponse.java), which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -46,7 +47,7 @@ Similar to getTransfers, just that it returns additional account data
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetAccountDataResponse response = iotaAPI.getAccountData("YOUR9SECRET9SEED9999999...", 3, 816, true, 3, false, 728, 758, true, 100);
+    GetAccountDataResponse response = iotaAPI.getAccountData("YOUR9SECRET9SEED9999999...", 3, 476, false, 145, false, 344, 775, true, 100);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

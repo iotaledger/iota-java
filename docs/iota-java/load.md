@@ -20,8 +20,7 @@ Loads the account’s inner event loop to accept commands and provided plugins u
  
  ```Java
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
-IotaAccount account = new IotaAccount.Builder("MY9SEED9..")
-                .api(iotaAPI)                .build()
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
     account.load();
 } catch (AccountError e) { 

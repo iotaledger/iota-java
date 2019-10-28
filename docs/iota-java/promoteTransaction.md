@@ -15,6 +15,7 @@ Attempts to promote a transaction using a provided bundle and, if successful, re
     
 ## Output
 List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)>, which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | long attachmentTimestampLowerBound |  |
@@ -63,7 +64,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.promoteTransaction("TLKF9UKMUS9DBAYKEHCTUSYWW9ZHSXMDBRNSYCA9UWXEYZMBAKPVIGDKHGAIUNUULRCYTUZAWAGCJNKAO", 15, 18, bundle);
+    List<Transaction> response = iotaAPI.promoteTransaction("EELIGC9OMGOGXVNDVOA9D9GBVGPICDB9BXOZXQK9DDDPYQCSQEBTKIYTPKVHC9ZDUFHTFYUWGM9RKHIZL", 15, 18, bundle);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

@@ -32,7 +32,7 @@
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    iotaAPI.validateTransfersAddresses("YOUR9SECRET9SEED9999999...", 3, new List<String>(new String[]{"JVIZPAYHRSPUGVYJZVAEXCS9T ... GLYSLMPTIYDLORWSKKS9OAMTO", "TYQSQREWLSFQKTSZQFJMPMMNB ... XDGRMBIJGOVVKMPAOSMCMRAPZ"}));
+    iotaAPI.validateTransfersAddresses("YOUR9SECRET9SEED9999999...", 3, new List<String>(new String[]{"KGLWWPR9MHFREICQFUHIXCDLZ ... FAWKSGCDTVLXVUNBZUH9CTALY", "UMTQBVHXUSDZRWG9PXFXVDWZG ... ROSBBTESUBUVXGSFOCPBNDEQB"}));
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

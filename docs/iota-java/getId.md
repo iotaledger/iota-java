@@ -21,8 +21,7 @@ Returns the accountâ€™s unique identifier which is a sha256 hash of the accountâ
  
  ```Java
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
-IotaAccount account = new IotaAccount.Builder("MY9SEED9..")
-                .api(iotaAPI)                .build()
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
     String response = account.getId();
 } catch (AccountError e) { 
