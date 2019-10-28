@@ -23,14 +23,11 @@ Updates the settings of the account in a synchronized manner by shutting down al
  ## Example
  
  ```Java
- Account account = new IotaAccount.Builder().build();
-
+ IotaAPI iotaAPI = new IotaAPI.Builder().build();
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..")
+                .api(iotaAPI)                .build()
 try { 
-    // Note: This function does not exist
-    AccountSettings settings = getMyNewSettings();
-    account.updateSettings(settings);
-
-    // We now have our account with new settings applied
+    account.updateSettings(newsettings);
 } catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 

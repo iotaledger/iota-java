@@ -1,5 +1,5 @@
 
-# [getTransfers](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L274)
+# [getTransfers](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L183)
  [GetTransferResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetTransferResponse.java) getTransfers(String seed , int security , Integer start , Integer end , Boolean inclusionStates)
 
 Finds all the bundles for all the addresses based on this seed and security.
@@ -24,7 +24,7 @@ Finds all the bundles for all the addresses based on this seed and security.
 ## Exceptions
 | Exceptions     | Description |
 |:---------------|:--------|
-| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when <tt>start</tt> and <tt>end</tt> are more then 500 apart |
+| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when `start` and `end` are more then 500 apart |
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | Invalid security index |
 | IllegalStateException | When the seed is invalid |
 
@@ -35,7 +35,7 @@ Finds all the bundles for all the addresses based on this seed and security.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetTransferResponse response = iotaAPI.getTransfers("NIJTKADLAFUTBSHXPCUXGKGAVQAGBYZQLA9MLKAIEU9PHUMLWTWIBHQEFMLCTULZCMJAFBMEKHAOCBTGB", "562", "714", "954", "true");
+    GetTransferResponse response = iotaAPI.getTransfers("YOUR9SECRET9SEED9999999...", 3, 715, 554, true);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

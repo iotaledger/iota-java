@@ -9,7 +9,7 @@ Returns the accountâ€™s unique identifier which is a sha256 hash of the accountâ
 ## Output
 | Return type | Description |
 |--|--|
-| String | the account ID |
+| String  | the account ID |
 
 ## Exceptions
 | Exceptions     | Description |
@@ -20,10 +20,11 @@ Returns the accountâ€™s unique identifier which is a sha256 hash of the accountâ
  ## Example
  
  ```Java
- Account account = new IotaAccount.Builder().build();
-
+ IotaAPI iotaAPI = new IotaAPI.Builder().build();
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..")
+                .api(iotaAPI)                .build()
 try { 
-    String id = account.getId();
+    String response = account.getId();
 } catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 

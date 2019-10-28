@@ -1,5 +1,5 @@
 
-# [findTransactionsObjectsByHashes](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L454)
+# [findTransactionsObjectsByHashes](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L370)
  List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> findTransactionsObjectsByHashes(String[] hashes)
 
 Wrapper function: get trytes and turns into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects. Gets the trytes and transaction object from a list of transaction hashes.
@@ -41,7 +41,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [getTrytes(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L378) | Returns the raw transaction data (trytes) of a specific transaction. These trytes can then be easily converted into the actual transaction object. You can use [Transaction(String)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java#L145) for conversion to an object. |
+| [getTrytes(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L408) | Returns the raw transaction data (trytes) of a specific transaction. These trytes can then be easily converted into the actual transaction object. You can use [Transaction(String)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java#L145) for conversion to an object. |
 
  ## Example
  
@@ -49,7 +49,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.findTransactionsObjectsByHashes(["HBYVBSPIIUITVMY9SEYFMBKVKJRRGKPATGJOPGHVNRMLUBKZIIRVVAPWPEC9OUU9MALDJSCVKSZOSJCUR", "RXVD9RRJEMXTYUUBEDOPRIQVYDVPET9YSS9ETDSUSRWYOXNDKHBEDXHRSCZOS9VBIQVRIRLOGDGW9SEXC"]);
+    List<Transaction> response = iotaAPI.findTransactionsObjectsByHashes(new String[]{"AWJBFHNHAIFIURZBAPOLGDGRXNEAHVOEJGJSIBSRPPJABNMTHQCVCYNETHLNVNU9IGULOJZEYRLKPDRLA", "VAFBW9TNXACWOAJNKUIDYNZSRFMABFKSL99PRWWQWYEOUSRTNQFSRGDOSWIBBJYFWZGNWMBUAOPRZMCTY"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

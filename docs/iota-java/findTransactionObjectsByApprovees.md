@@ -1,5 +1,5 @@
 
-# [findTransactionObjectsByApprovees](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L516)
+# [findTransactionObjectsByApprovees](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L435)
  List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> findTransactionObjectsByApprovees(String[] approvees)
 
 Wrapper function: Finds transactions, gets trytes and turns it into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects.
@@ -41,7 +41,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [findTransactionsByApprovees](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L304) | Find the transactions by approvees |
+| [findTransactionsByApprovees](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L334) | Find the transactions by approvees |
 
  ## Example
  
@@ -49,7 +49,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.findTransactionObjectsByApprovees(["VKXPUUA9QIRJCIPIOGOWCLTDHNPAM99NYWPKOCVDKJVES9EWQ9TN9IMIU9GRTANLI9QMZEBGNZTOR9OVB", "FQCOXX99V9HMBAKSFKJTMDYUPKNYLGFE9LAJMRFQIGTOQNGXWEXVGALCEHHTC9LFTQY9IRJWLZZFFAGUN"]);
+    List<Transaction> response = iotaAPI.findTransactionObjectsByApprovees(new String[]{"PCALTVSYNKITLTJJCFT9UQQLDVTFDPHCUGHML9VIJUJBIWGXTJAWBFST9XOEEQZRVBOZMOSEZRFYWTWUN", "NVUFNKGSJLGS9ONWRUBZIPQ9TYLHUDBUQTCANMQNMWNWMIWXXI9JLFPW9QYOHKHIIBZRCBDJVAIBTKEPP"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

@@ -16,7 +16,13 @@ Checks whether the state of the account is new.  An account is considered new if
  ## Example
  
  ```Java
- Account account = new IotaAccount.Builder().build();
- boolean isNewAccount = account.isNew();
- // Now we know!
+ IotaAPI iotaAPI = new IotaAPI.Builder().build();
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..")
+                .api(iotaAPI)                .build()
+try { 
+    boolean response = account.isNew();
+} catch (AccountError e) { 
+    // Handle error
+    e.printStackTrace(); 
+}
  ```

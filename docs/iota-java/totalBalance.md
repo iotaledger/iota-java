@@ -20,11 +20,11 @@ Uses all stored CDAs to determine the current total balance.
  ## Example
  
  ```Java
- Account account = new IotaAccount.Builder().build();
-
+ IotaAPI iotaAPI = new IotaAPI.Builder().build();
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..")
+                .api(iotaAPI)                .build()
 try { 
-    long totalBalance = account.totalBalance();
-    System.out.println("Look how rich I am: " + totalBalance)
+    long response = account.totalBalance();
 } catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 

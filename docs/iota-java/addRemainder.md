@@ -1,5 +1,5 @@
 
-# [addRemainder](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1598)
+# [addRemainder](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1529)
  List<String> addRemainder(String seed , int security , List<[Input](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Input.java)> inputs , [Bundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Bundle.java) bundle , String tag , long totalValue , String remainderAddress , List<String> signatureFragments)
 
 Uses input, and adds to the bundle, untill `totalValue` is reached. If there is a remainder left on the last input, a remainder transfer is added.
@@ -14,7 +14,7 @@ Uses input, and adds to the bundle, untill `totalValue` is reached. If there is 
 | bundle | [Bundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Bundle.java) | Required | The [Bundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Bundle.java) to be populated. |
 | tag | String | Required | The tag to add to each bundle entry (input and remainder) |
 | totalValue | long | Required | The total value of the desired transaction |
-| remainderAddress | String | Required | The address used for sending the remainder value (of the last input).   If this is `null`, [getNextAvailableAddress(String, int, boolean)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L115) is used. |
+| remainderAddress | String | Required | The address used for sending the remainder value (of the last input).   If this is `null`, [generateNewAddresses(AddressRequest)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L86) is used. |
 | signatureFragments | List<String> | Required | The signature fragments (message), used for signing.Should be 2187 characters long, can be padded with 9s. |
     
 ## Output
@@ -27,13 +27,13 @@ Uses input, and adds to the bundle, untill `totalValue` is reached. If there is 
 |:---------------|:--------|
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | When the seed is invalid |
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | When the security level is wrong. |
-| IllegalStateException | When the inputs do not contain enough balance to reach <tt>totalValue</tt>. |
+| IllegalStateException | When the inputs do not contain enough balance to reach `totalValue`. |
 
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [signInputsAndReturn(String, List, Bundle, List, org.iota.jota.pow.ICurl)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/utils/IotaAPIUtils.java#L64) | Finalizes and signs the bundle transactions. Bundle and inputs are assumed correct. |
-| [getNextAvailableAddress(String, int, boolean)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L115) | Checks all addresses until the first unspent address is found. Starts at index 0. |
+| [signInputsAndReturn(String, List, Bundle, List, org.iota.jota.pow.ICurl)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/utils/IotaAPIUtils.java#L79) | Finalizes and signs the bundle transactions. Bundle and inputs are assumed correct. |
+| [generateNewAddresses(AddressRequest)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L86) | Generates new addresses, meaning addresses which were not spend from, according to the connected node. Stops when [getAmount()](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/builder/AddressRequest.java#L104) of unspent addresses are found, starting from [getIndex()](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/builder/AddressRequest.java#L96) If [getAmount()](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/builder/AddressRequest.java#L104) is set to 0, we will generate until the first unspent address is found, and stop. |
 
  ## Example
  
@@ -41,7 +41,7 @@ Uses input, and adds to the bundle, untill `totalValue` is reached. If there is 
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<String> response = iotaAPI.addRemainder("GJRKVXECSQFPQOEMFNKWZLBKMYXUW9ZX9DCBBKFUFFICTCL9BXCWDEUQWHWRDYYSJEBYRRTJJZEVFXROV", "365", ["inputs", "inputs"], "bundle", "OVTBVZF9UHIMBKAE9NQZUNWZ9AUWGAMTKUPG9BOEOS9LFYYYXGPCOZWVXARKK9QXJJEQITVIODK9AZNOG", "totalvalue", "VIGLBXE9SWTYGJYDLSPNGVTRLIVRVGHXFMMZAIXNGFWZVQYXMQISB99MACJ9XUOVMSXALC99YPWAVCCJL", ["AFGGZR9I9GCPKYAE9PEWRIUDIUBQKQWUOR9BIL9QKUQOTAKTNKYLRTBQ9HL9NRULMPJIDEWIEAMWLLERI", "YHKJKHNRUFGRJ9CYZVFOJXLAWNWC9OEPXMTNPLNUBGKKFI9AOBWTNQZPARWILW9FHSUVRSLFNJNTLVI9K"]);
+    List<String> response = iotaAPI.addRemainder("YOUR9SECRET9SEED9999999...", 3, new List<Input>(new Input[]{inputs, inputs}), bundle, "TAG9EVSFKPCCAZOIJCKI9AEGDMZ", 115, "NAUGMCFRLKESDQJPABDF9ZPBCXQWYRMQZCDJEROLOD9DE9JGRWVUYYVRRJHVSVYVLHBXWVJS9HIWOBAPF", new List<String>(new String[]{"XUYCXJBOKBEWGAARZJKXNHMTI ... AOIQWVEROWDIPO9T9GQZOWBYG", "LGNGZAZKFZCTUVAUGTBQKDPLU ... KLUPDHIEPPWVBOIBQU9VAPSFI"}));
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

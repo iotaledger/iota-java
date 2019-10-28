@@ -1,5 +1,5 @@
 
-# [getBalanceAndFormat](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L892)
+# [getBalanceAndFormat](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L811)
  [GetBalancesAndFormatResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBalancesAndFormatResponse.java) getBalanceAndFormat(List<String> addresses , List<String> tips , long threshold , int start , [StopWatch](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/utils/StopWatch.java) stopWatch , int security)
 
 Gets the balances and formats the output.
@@ -36,7 +36,7 @@ Gets the balances and formats the output.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetBalancesAndFormatResponse response = iotaAPI.getBalanceAndFormat(["KPDMESXOHHAFXMFFXSMDSNEVDRVFLWOLCSRVGDUOXMCVZJLRVRBYFMU9HBLSIXSUXBAUVRZHDACNMZQUM", "HSXWTIUFLQBLXRZANMACHEURAPXRQFXCWCXSFOLBSOZBJFXRCBSLSZOREDUIQPRKHAOXMQHCXGPHWUBFU"], ["KJPIXGHCCYD9TQNYFEOENPHFFSNNJRMFACMHKONVTVRTYHXSERLNLKTRGRMZKYQBJHIPJUGEKWG9Q9TKG", "LCBRFWVVCNFHGPKFWHEEDFDIPAVMWOKYN9TAEUEZGIMAMQDVSSOAANDUBAARXVZJYPGSDCVQFCP9UWMTO"], "100", "725", "stopwatch", "627");
+    GetBalancesAndFormatResponse response = iotaAPI.getBalanceAndFormat(new List<String>(new String[]{"HZVJZWPBGKYXUSTVKHQQDO9CK9DH9AUGLQAKNVCDMGBATRLGJSCYPZVEHMJDMQJPCPBKKVJAO9BV9ZUHQ", "LGIPDIV9OUQUVLVGF9WJEMCCARDGKK9VIP9O9B9RYZCBACQOXN9RYZXKE9IFIJRFVJXXAHAJFJFJOHPAF"}), new List<String>(new String[]{"EDAGI9BECWRNHYPHVVWXCHYLGDDYTLCZPODUSC9GKXNGHUJUPCTTAXDXDGGLTBYHK9WB9ABHVALLGCJMK", "RGGKRAZZUNQ9GNUPJQAWZSLCZSWSB9NIGDFDERDXIATABSAVBJYBEKUBURHXIZXN9AJWBPIINXNHFZHDS"}), 100, 751, new Stopwatch(), 3);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

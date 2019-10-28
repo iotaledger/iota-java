@@ -19,11 +19,11 @@ Loads the account’s inner event loop to accept commands and provided plugins u
  ## Example
  
  ```Java
- Account account = new IotaAccount.Builder().build();
-
+ IotaAPI iotaAPI = new IotaAPI.Builder().build();
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..")
+                .api(iotaAPI)                .build()
 try { 
     account.load();
-    // Now the account is loaded and can be started using start()
 } catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 

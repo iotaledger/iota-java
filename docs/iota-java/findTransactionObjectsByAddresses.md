@@ -1,5 +1,5 @@
 
-# [findTransactionObjectsByAddresses](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L480)
+# [findTransactionObjectsByAddresses](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L396)
  List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> findTransactionObjectsByAddresses(String[] addresses)
 
 Wrapper function: Finds transactions, gets trytes and turns it into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects.
@@ -41,8 +41,8 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [findTransactionsByAddresses(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L273) | Find the transactions by addresses with checksum |
-| [findTransactionsObjectsByHashes](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L454) | Wrapper function: get trytes and turns into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects. Gets the trytes and transaction object from a list of transaction hashes. |
+| [findTransactionsByAddresses(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L308) | Find the transactions by addresses with checksum |
+| [findTransactionsObjectsByHashes](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L370) | Wrapper function: get trytes and turns into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects. Gets the trytes and transaction object from a list of transaction hashes. |
 
  ## Example
  
@@ -50,7 +50,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.findTransactionObjectsByAddresses(["AYZWDCHCJLLEAXMLMHR9OKZW9KXFQEJVMNNMQCFYAOMVRIIAOYNUVAINKORAFDADZRHFCYWIZVSHZFNLS", "ZHCFE9YXMOOHCHCKFRTCIXCXPTRFHIUITFSUEYORRLQVWKVQQUJTAALHEGJJIWAHEMZNSVDHPLCFTCGMV"]);
+    List<Transaction> response = iotaAPI.findTransactionObjectsByAddresses(new String[]{"BT9M9WIWRNWMSZKGFCNMDJQNBFAVQYSPQM9IHBSY9QKFLFICECXGWAUIVYD9LRTGVHJBQTNUTWNHOYCDK", "UVNZEDRMZINCHZHGLRHIYMTLTJAEBJVGRST9MCBZHNGOYICBWDCIRZYAG9LBYW9DJKAJXCXWKNMZBEYWJ"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 
