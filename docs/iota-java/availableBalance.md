@@ -20,16 +20,10 @@ Runs the input selection with the CDAs in order to determine the usable balance 
  ## Example
  
  ```Java
- Account account = new IotaAccount.Builder().build();
-
+ IotaAPI iotaAPI = new IotaAPI.Builder().build();
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
-    long balance = account.availableBalance();
-    
-    // Sweep your account balance to 1 address
-    Future<ConditionalDepositAddress> response = account.newDepositAddress(nextHour, false, balance);
-    ConditionalDepositAddress cda = response.get();
-
-    account.send(new Recipient(balance, "My sweep message", "IOTA9SWEEP9", cda.getDepositAddress())
+    long response = account.availableBalance();
 } catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 

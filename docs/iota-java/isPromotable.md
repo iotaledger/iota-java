@@ -1,5 +1,5 @@
 
-# [isPromotable](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1671)
+# [isPromotable](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1601)
  boolean isPromotable([Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) tail)
 
 Checks if a transaction hash is promotable
@@ -23,7 +23,7 @@ Checks if a transaction hash is promotable
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [checkConsistency(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L533) | Checks the consistency of the subtangle formed by the provided tails. |
+| [checkConsistency(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L555) | Checks the consistency of the subtangle formed by the provided tails. |
 
  ## Example
  
@@ -31,7 +31,7 @@ Checks if a transaction hash is promotable
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    boolean response = iotaAPI.isPromotable("tail");
+    boolean response = iotaAPI.isPromotable(tail);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

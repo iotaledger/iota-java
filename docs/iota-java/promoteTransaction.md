@@ -1,5 +1,5 @@
 
-# [promoteTransaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1738)
+# [promoteTransaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1668)
  List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> promoteTransaction(String tail , int depth , int minWeightMagnitude , [Bundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Bundle.java) bundle)
 
 Attempts to promote a transaction using a provided bundle and, if successful, returns the promoting Transactions. This is done by creating another transaction which points to the tail. This will effectively double the chances of the transaction to be picked, and this approved.
@@ -15,6 +15,7 @@ Attempts to promote a transaction using a provided bundle and, if successful, re
     
 ## Output
 List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)>, which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | long attachmentTimestampLowerBound |  |
@@ -40,22 +41,22 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
 | Exceptions     | Description |
 |:---------------|:--------|
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | When the bundle has no transaction |
-| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | When <tt>depth</tt> or <tt>minWeightMagnitude</tt> is lower than 0 |
-| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | When the <tt>tail</tt> hash is invalid |
-| [NotPromotableException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/account/errors/NotPromotableException.java) | When the transaction is not promotable |
+| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | When `depth` or `minWeightMagnitude` is lower than 0 |
+| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | When the `tail` hash is invalid |
+| [NotPromotableException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/NotPromotableException.java) | When the transaction is not promotable |
 
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [checkConsistency(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L533) | Checks the consistency of the subtangle formed by the provided tails. |
-| [getTransactionsToApprove(Integer, String)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L403) | Tip selection which returns `trunkTransaction` and `branchTransaction`. The input value `depth` determines how many milestones to go back for finding the transactions to approve. The higher your `depth` value, the more work you have to do as you are confirming more transactions. If the `depth` is too large (usually above 15, it depends on the node's configuration) an error will be returned. The `reference` is an optional hash of a transaction you want to approve. If it can't be found at the specified `depth` then an error will be returned. |
-| [attachToTangle(String, String, Integer, String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L578) |  Prepares the specified transactions (trytes) for attachment to the Tangle by doing Proof of Work. You need to supply `branchTransaction` as well as `trunkTransaction`. These are the tips which you're going to validate and reference with this transaction.  These are obtainable by the `getTransactionsToApprove` API call. 
+| [checkConsistency(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L555) | Checks the consistency of the subtangle formed by the provided tails. |
+| [getTransactionsToApprove(Integer, String)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L433) | Tip selection which returns `trunkTransaction` and `branchTransaction`. The input value `depth` determines how many milestones to go back for finding the transactions to approve. The higher your `depth` value, the more work you have to do as you are confirming more transactions. If the `depth` is too large (usually above 15, it depends on the node's configuration) an error will be returned. The `reference` is an optional hash of a transaction you want to approve. If it can't be found at the specified `depth` then an error will be returned. |
+| [attachToTangle(String, String, Integer, String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L599) |  Prepares the specified transactions (trytes) for attachment to the Tangle by doing Proof of Work. You need to supply `branchTransaction` as well as `trunkTransaction`. These are the tips which you're going to validate and reference with this transaction.  These are obtainable by the `getTransactionsToApprove` API call. 
   The returned value is a different set of tryte values which you can input into  `broadcastTransactions` and `storeTransactions`. 
   The last 243 trytes of the return value consist of the following:  * `trunkTransaction`
  * `branchTransaction`
  * `nonce`
    These are valid trytes which are then accepted by the network. |
-| [storeAndBroadcast(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L395) | Wrapper method: stores and broadcasts the specified trytes. |
+| [storeAndBroadcast(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L311) | Wrapper method: stores and broadcasts the specified trytes. |
 
  ## Example
  
@@ -63,7 +64,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.promoteTransaction("SEKFEWFLXVPQQORWSJHYVQZGOTINOCNLRUEDQGSTBSBBXQGVJWPSFYZRHLJEBXTKEIKNEAOGIRS9NHCSI", "15", "18", "bundle");
+    List<Transaction> response = iotaAPI.promoteTransaction("EELIGC9OMGOGXVNDVOA9D9GBVGPICDB9BXOZXQK9DDDPYQCSQEBTKIYTPKVHC9ZDUFHTFYUWGM9RKHIZL", 15, 18, bundle);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

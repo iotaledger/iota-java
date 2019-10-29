@@ -1,5 +1,5 @@
 
-# [getBalanceAndFormat](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L892)
+# [getBalanceAndFormat](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L811)
  [GetBalancesAndFormatResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBalancesAndFormatResponse.java) getBalanceAndFormat(List<String> addresses , List<String> tips , long threshold , int start , [StopWatch](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/utils/StopWatch.java) stopWatch , int security)
 
 Gets the balances and formats the output.
@@ -17,6 +17,7 @@ Gets the balances and formats the output.
     
 ## Output
 [GetBalancesAndFormatResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBalancesAndFormatResponse.java), which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -36,7 +37,7 @@ Gets the balances and formats the output.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetBalancesAndFormatResponse response = iotaAPI.getBalanceAndFormat(["KPDMESXOHHAFXMFFXSMDSNEVDRVFLWOLCSRVGDUOXMCVZJLRVRBYFMU9HBLSIXSUXBAUVRZHDACNMZQUM", "HSXWTIUFLQBLXRZANMACHEURAPXRQFXCWCXSFOLBSOZBJFXRCBSLSZOREDUIQPRKHAOXMQHCXGPHWUBFU"], ["KJPIXGHCCYD9TQNYFEOENPHFFSNNJRMFACMHKONVTVRTYHXSERLNLKTRGRMZKYQBJHIPJUGEKWG9Q9TKG", "LCBRFWVVCNFHGPKFWHEEDFDIPAVMWOKYN9TAEUEZGIMAMQDVSSOAANDUBAARXVZJYPGSDCVQFCP9UWMTO"], "100", "725", "stopwatch", "627");
+    GetBalancesAndFormatResponse response = iotaAPI.getBalanceAndFormat(new List<String>(new String[]{"VAMTBAMCJUVDGYJZHJEEDPWRGQEUVT9RIZQTBMTRUHBQQYWWVIMAFAHIKVPBKIINFDUAI9OXHSZGCTS9T", "UNHZZKMZTEOSWCWSQMOC9APL99UGLHFK9GAJGCOYGOAIMDVUIZF9M9KCLNUSGGUEMYSKTYSPNMZKUZCOH"}), new List<String>(new String[]{"QKKLAGPKEGOYKSJIPJ9OBCEUMNIDQDMBUZSJHNMWMASYCHLXEVXKMB9BDYRRPT9GCTJXISBGBDSRLEIGY", "WKEXYDXSKIQAKMOTOSHPXKTONGQLORRSRNQODPQCSQCTDDFGWQEXSXUIWBTKWYESSWOPCSMAIBHVQ9B9N"}), 100, 851, new Stopwatch(), 3);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

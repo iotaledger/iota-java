@@ -1,5 +1,5 @@
 
-# [getAccountData](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L993)
+# [getAccountData](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L912)
  [GetAccountDataResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetAccountDataResponse.java) getAccountData(String seed , int security , int index , boolean checksum , int total , boolean returnAll , int start , int end , boolean inclusionStates , long threshold)
 
 Similar to getTransfers, just that it returns additional account data
@@ -21,6 +21,7 @@ Similar to getTransfers, just that it returns additional account data
     
 ## Output
 [GetAccountDataResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetAccountDataResponse.java), which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -33,12 +34,12 @@ Similar to getTransfers, just that it returns additional account data
 | Exceptions     | Description |
 |:---------------|:--------|
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when the specified security level is not valid. |
-| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when <tt>start</tt> and <tt>end</tt> are invalid |
+| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when `start` and `end` are invalid |
 
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [getTransfers(String, int, Integer, Integer, Boolean)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L274) | Finds all the bundles for all the addresses based on this seed and security. |
+| [getTransfers(String, int, Integer, Integer, Boolean)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L183) | Finds all the bundles for all the addresses based on this seed and security. |
 
  ## Example
  
@@ -46,7 +47,7 @@ Similar to getTransfers, just that it returns additional account data
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetAccountDataResponse response = iotaAPI.getAccountData("GMPXWHYRJRCEJQPOZFWEJJNRIPXXGEOZBRFGRILQJIOFVKURVAUHTVHGGXQWXJYPBSXGNZNUHYKSUEDJV", "85", "408", "false", "562", "false", "829", "579", "true", "100");
+    GetAccountDataResponse response = iotaAPI.getAccountData("YOUR9SECRET9SEED9999999...", 3, 476, false, 145, false, 344, 775, true, 100);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 
