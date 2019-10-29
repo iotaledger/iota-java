@@ -13,7 +13,7 @@ This is the **official** Java client library, which allows you to do the followi
 * Interact with an IRI node
 
 This is beta software, so there may be performance and stability issues.
-Please report any issues in our [issue tracker](https://github.com/iotaledger/iota-java/issues/new-issue).
+Please report any issues in our [issue tracker](https://github.com/iotaledger/iota-java/issues/new/choose).
 
 |Table of contents|
 |:----|
@@ -69,7 +69,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
 
     ```gradle
     dependencies {
-        compile 'com.github.iotaledger:iota-java:1.0.0-beta6'
+        compile 'com.github.iotaledger:iota-java:1.0.0-beta7'
     }
     ```
     
@@ -96,7 +96,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
     ```
     
 3. Change the value of the `<version>` tag to either a release number or the first 10 characters of a Git commit hash:
-`<version>efdc784d8a9ef</version>` or `<version>1.0.0-beta6</version>`
+`<version>efdc784d8a9ef</version>` or `<version>1.0.0-beta7</version>`
 
 **Note:** Find the latest version on the [Jitpack](https://jitpack.io/#iotaledger/iota-java) page.
 
@@ -182,6 +182,7 @@ We have a list of test cases on the [`src/test/java` directory][tests] that you 
 A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/org/iota/jota/IotaAPITest.java).
 
 ## Change logs:
+- Changes in [**1.0.0-beta7**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta6...1.0.0-beta7)
 - Changes in [**1.0.0-beta6**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta5...1.0.0-beta6)
 - Changes in [**1.0.0-beta5**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta4...1.0.0-beta5)
 - Changes in [**1.0.0-beta4**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta3...1.0.0-beta4)
@@ -203,7 +204,7 @@ We have some [basic contribution guidelines](CONTRIBUTING.md) to keep our code b
 
 ## Joining the Discussion
 
-If you want to get involved in the community, need help with getting setup, have any issues related with the library or just want to discuss blockchain, distributed ledgers, and IoT with other people, feel free to join our [Discord](https://discordapp.com/invite/fNGZXvh).  
+If you want to get involved in the community, need help with getting setup, have any issues related with the library or just want to discuss blockchain, distributed ledgers, and IoT with other people, feel free to join our [Discord](https://discord.iota.org/).  
 
 ## License
 
@@ -229,5 +230,5 @@ The Apache 2.0 license can be found [here](LICENSE).
 [new-pull-request]: https://github.com/iotaledger/iota-java/compare
 [contribution-guidelines]: https://github.com/iotaledger/iota-java/blob/master/CONTRIBUTING.md
 [tests]: https://github.com/iotaledger/iota-java/tree/master/jota/src/test/java/org/iota/jota
-[iota-discord]: https://discord.gg/7Gu2mG5
+[iota-discord]: https://discord.iota.org/
 [iota-forum]: https://forum.iota.org/

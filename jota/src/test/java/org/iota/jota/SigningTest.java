@@ -38,16 +38,17 @@ public class SigningTest {
 
     @Test
     public void testAddressGeneration() throws ArgumentException {
-        assertEquals(FIRST_ADDR, IotaAPIUtils.newAddress(TEST_SEED, 2, 0, true, null));
-        assertEquals(SIXTH_ADDR, IotaAPIUtils.newAddress(TEST_SEED, 2, 5, true, null));
+        ICurl curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
+        assertEquals(FIRST_ADDR, IotaAPIUtils.newAddress(TEST_SEED, 2, 0, true, curl));
+        assertEquals(SIXTH_ADDR, IotaAPIUtils.newAddress(TEST_SEED, 2, 5, true, curl));
 
-        assertEquals(ADDR_I0_S1, IotaAPIUtils.newAddress(ADDR_SEED, 1, 0, false, null));
-        assertEquals(ADDR_I0_S2, IotaAPIUtils.newAddress(ADDR_SEED, 2, 0, false, null));
-        assertEquals(ADDR_I0_S3, IotaAPIUtils.newAddress(ADDR_SEED, 3, 0, false, null));
+        assertEquals(ADDR_I0_S1, IotaAPIUtils.newAddress(ADDR_SEED, 1, 0, false, curl));
+        assertEquals(ADDR_I0_S2, IotaAPIUtils.newAddress(ADDR_SEED, 2, 0, false, curl));
+        assertEquals(ADDR_I0_S3, IotaAPIUtils.newAddress(ADDR_SEED, 3, 0, false, curl));
 
-        assertEquals(ADDR_LS_I0_S1, IotaAPIUtils.newAddress(ADDR_SEED + ADDR_SEED, 1, 0, false, null));
-        assertEquals(ADDR_LS_I0_S2, IotaAPIUtils.newAddress(ADDR_SEED + ADDR_SEED, 2, 0, false, null));
-        assertEquals(ADDR_LS_I0_S3, IotaAPIUtils.newAddress(ADDR_SEED + ADDR_SEED, 3, 0, false, null));
+        assertEquals(ADDR_LS_I0_S1, IotaAPIUtils.newAddress(ADDR_SEED + ADDR_SEED, 1, 0, false, curl));
+        assertEquals(ADDR_LS_I0_S2, IotaAPIUtils.newAddress(ADDR_SEED + ADDR_SEED, 2, 0, false, curl));
+        assertEquals(ADDR_LS_I0_S3, IotaAPIUtils.newAddress(ADDR_SEED + ADDR_SEED, 3, 0, false, curl));
     }
 
     @Test
@@ -72,7 +73,7 @@ public class SigningTest {
         // address of our test seed
         // (but remove the checksum) with the key of our fifth address
         String hashToSign = removeChecksum(FIRST_ADDR);
-        Signing signing = new Signing();
+        Signing signing = new Signing(SpongeFactory.create(SpongeFactory.Mode.KERL));
         final int[] key = signing.key(Converter.trits(TEST_SEED), 5, 2);
         int[] normalizedHash = new Bundle().normalizedBundle(hashToSign);
         int[] signature = signing.signatureFragment(Arrays.copyOfRange(normalizedHash, 0, 27), Arrays.copyOfRange(key, 0, 6561));
@@ -83,7 +84,7 @@ public class SigningTest {
 
     @Test
     public void testKeyLength() throws ArgumentException {
-        Signing signing = new Signing();
+        Signing signing = new Signing(SpongeFactory.create(SpongeFactory.Mode.KERL));
         int[] key = signing.key(Converter.trits(TEST_SEED), 5, 1);
         assertEquals(Constants.KEY_LENGTH, key.length);
         key = signing.key(Converter.trits(TEST_SEED), 5, 2);
@@ -94,7 +95,7 @@ public class SigningTest {
 
     @Test
     public void testVerifying() throws ArgumentException {
-        assertTrue(new Signing().validateSignatures(removeChecksum(SIXTH_ADDR), new String[]{SIGNATURE1, SIGNATURE2}, removeChecksum(FIRST_ADDR)));
+        assertTrue(new Signing(SpongeFactory.create(SpongeFactory.Mode.KERL)).validateSignatures(removeChecksum(SIXTH_ADDR), new String[]{SIGNATURE1, SIGNATURE2}, removeChecksum(FIRST_ADDR)));
     }
 
     private String removeChecksum(String address) throws ArgumentException {

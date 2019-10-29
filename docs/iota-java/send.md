@@ -1,17 +1,14 @@
 
-# [send](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAccount.java#L362)
- Future<[Bundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Bundle.java)> send(String address , long amount , Optional<String> message , Optional<String> tag)
+# [send](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/account/Account.java#L57)
+ Future<[Bundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Bundle.java)> send([Recipient](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/types/Recipient.java) recipient)
 
-Sends a transfer using the accounts balance to the provided address. You must call `.get()` on the future in order to start this transfer.
+Sends the specified amounts to the given recipient.
 > **Important note:** This API is currently in Beta and is subject to change. Use of these APIs in production applications is not supported.
 
 ## Input
 | Parameter       | Type | Required or Optional | Description |
 |:---------------|:--------|:--------| :--------|
-| address | String | Required | The receiver of this transfer |
-| amount | long | Required | The amount we are sending to the address |
-| message | Optional<String> | Optional | An optional message for this transfer |
-| tag | Optional<String> | Optional | An optional tag for this transfer |
+| recipient | [Recipient](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/types/Recipient.java) | Required | Information about the receiving end of the transactions |
     
 ## Output
 | Return type | Description |
@@ -24,10 +21,10 @@ Sends a transfer using the accounts balance to the provided address. You must ca
  
  ```Java
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
-
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
-    Future<Bundle> response = iotaAPI.send("ULZKRIHQJOCEKOALVSBZWPITMFPQBEOIQEEEX9YSCNIKRMJQZMRCRTXVNVLNBACXSBZKBNV9Q9YTNVIDR", "amount", ["LFBYDTLR9IDKDP9PT9MQISLPINAWSNCIYKNENBBZRYRDQWQZGEXFWAQKTPEQRHTUNSHLMEOJRX9FIQLVI", "PHCPPRKSOPQXZRHVRSKTCUUAWDXTIDDEGDHNBKVLZUQROZZJLFUY9JDYIEMUQAWOGITRJWPRUICD9XHZH"], ["ZTBOIUJHGRMWIZNFEB9WIWHSVE9QTNUIV9SWCCZSIANVTHHNQMAWKHPJATVHXVIMGISUFQKCFYIOUJNAU", "OEOWFNQPBJVDOUAOGRMORHLORZFWXINOSKBHUZEAQVUROOTVUHSWDFMYYL9WIAGNXQWXWCYVFEYBHKFDJ"]);
-} catch (ArgumentException e) { 
+    Future<Bundle> response = account.send(new Recipient(257, "hi", "TAG", OOPIXBREIZGCFQSCQCGHEYHETHXFOMZALVLNPNSQJQSLLEZTR9SEVKPLQ9HZPKWASSWAWWA9DPXBEHRYP));
+} catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 
 }

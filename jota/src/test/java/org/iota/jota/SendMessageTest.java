@@ -1,5 +1,8 @@
 package org.iota.jota;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +15,6 @@ import org.iota.jota.model.Transfer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SendMessageTest {
 
     private static final String TEST_SEED1 = "IHDEENZYITYVYSPKAURUZAQKGVJEREFDJMYTANNXXGPZ9GJWTEOJJ9IPMXOGZNQLSNMFDSQOTZAEETUEA";
@@ -22,7 +22,7 @@ public class SendMessageTest {
     private static final String TEST_MESSAGE = "JUSTANOTHERJOTATEST";
     private static final String TEST_TAG = "JOTASPAM9999999999999999999";
     private static final int MIN_WEIGHT_MAGNITUDE = 14;
-    private static final int DEPTH = 9;
+    private static final int DEPTH = 4;
 
     private IotaAPI iotaClient;
 

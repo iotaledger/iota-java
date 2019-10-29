@@ -19,11 +19,10 @@ Shutdowns the account’s inner event loop and shutdowns all plugins.  Will grac
  ## Example
  
  ```Java
- Account account = new IotaAccount.Builder().build();
-
+ IotaAPI iotaAPI = new IotaAPI.Builder().build();
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
     account.shutdown();
-    // Account has been stopped
 } catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 

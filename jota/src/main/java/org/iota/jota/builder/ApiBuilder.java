@@ -96,17 +96,36 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
         customCurl = curl;
         return (T) this;
     }
-
-    public T host(String host) {
+    
+    /**
+     * Sets the legacy host field
+     * 
+     * @param host The host to set
+     * @param check if we should check if the address is valid (network check)
+     * @return The builder instance
+     */
+    public T host(String host, boolean check) {
         try {
             // Throws exception if invalid
-            InetAddress.getByName(host);
+            if (check) {
+                InetAddress.getByName(host);
+            }
             this.host = host;
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
         
         return (T) this;
+    }
+
+    /**
+     * Sets the legacy host field after checking if the address is valid (network check)
+     * 
+     * @param host The host to set
+     * @return The builder instance
+     */
+    public T host(String host) {
+        return host(host, true);
     }
 
     public T port(int port) {

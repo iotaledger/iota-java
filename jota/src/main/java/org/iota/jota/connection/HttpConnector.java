@@ -11,6 +11,7 @@ import org.iota.jota.dto.request.IotaAttachToTangleRequest;
 import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
 import org.iota.jota.dto.request.IotaCheckConsistencyRequest;
 import org.iota.jota.dto.request.IotaCommandRequest;
+import org.iota.jota.dto.request.IotaCustomRequest;
 import org.iota.jota.dto.request.IotaFindTransactionsRequest;
 import org.iota.jota.dto.request.IotaGetBalancesRequest;
 import org.iota.jota.dto.request.IotaGetInclusionStateRequest;
@@ -32,6 +33,7 @@ import org.iota.jota.dto.response.GetTipsResponse;
 import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
 import org.iota.jota.dto.response.GetTrytesResponse;
 import org.iota.jota.dto.response.InterruptAttachingToTangleResponse;
+import org.iota.jota.dto.response.IotaCustomResponse;
 import org.iota.jota.dto.response.RemoveNeighborsResponse;
 import org.iota.jota.dto.response.StoreTransactionsResponse;
 import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
@@ -357,6 +359,12 @@ public class HttpConnector implements Connection {
     @Override
     public WereAddressesSpentFromResponse wereAddressesSpentFrom(IotaWereAddressesSpentFromRequest request) throws ArgumentException {
         final Call<WereAddressesSpentFromResponse> res = service.wereAddressesSpentFrom(request);
+        return wrapCheckedException(res).body();
+    }
+
+    @Override
+    public IotaCustomResponse customRequest(IotaCustomRequest customRequest) {
+        final Call<IotaCustomResponse> res = service.customRequest(customRequest);
         return wrapCheckedException(res).body();
     }
 }

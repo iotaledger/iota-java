@@ -1,5 +1,15 @@
 package org.iota.jota;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.IntStream;
+
 import org.apache.commons.lang3.StringUtils;
 import org.iota.jota.builder.AddressRequest;
 import org.iota.jota.builder.ApiBuilder;
@@ -38,16 +48,6 @@ import org.iota.jota.utils.StopWatch;
 import org.iota.mddoclet.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * IotaAPI Builder. Usage:
@@ -215,8 +215,8 @@ public class IotaAPI extends IotaAPICore {
     /**
      * Internal function to get the formatted bundles of a list of addresses.
      *
-     * @param addresses       Array of addresses.
-     * @param inclusionStates If <code>true</code>, it also gets the inclusion state of each bundle.
+     * @param addresses       If <code>true</code>, it also gets the inclusion state of each bundle.
+     * @param inclusionStates Array of addresses.
      * @return All the transaction bundles for the addresses, or <code>null</code> when our thread gets interrupted
      * @throws ArgumentException When the addresses are invalid
      * @throws IllegalStateException When inclusion state/confirmed could not be determined (<tt>null</tt> returned)
@@ -351,7 +351,7 @@ public class IotaAPI extends IotaAPICore {
         final List<Transaction> trx = new ArrayList<>();
 
         for (String tryte : res.getTrytes()) {
-            trx.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURLP81)));
+            trx.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURL_P81)));
         }
         
         return trx;
@@ -378,7 +378,7 @@ public class IotaAPI extends IotaAPICore {
         final List<Transaction> trxs = new ArrayList<>();
 
         for (final String tryte : trytesResponse.getTrytes()) {
-            trxs.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURLP81)));
+            trxs.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURL_P81)));
         }
         return trxs;
     }
@@ -1155,7 +1155,7 @@ public class IotaAPI extends IotaAPICore {
                 throw new ArgumentException(Constants.INVALID_BUNDLE_ERROR);
             }
 
-            Transaction trx = new Transaction(gtr.getTrytes()[0], SpongeFactory.create(SpongeFactory.Mode.CURLP81));
+            Transaction trx = new Transaction(gtr.getTrytes()[0], SpongeFactory.create(SpongeFactory.Mode.CURL_P81));
             if (trx.getBundle() == null) {
                 throw new ArgumentException(Constants.INVALID_TRYTES_INPUT_ERROR);
             }
@@ -1459,7 +1459,7 @@ public class IotaAPI extends IotaAPICore {
         List<String> inputAddresses = new ArrayList<>();
 
         for (String trx : trytes) {
-            Transaction transaction = new Transaction(trx, SpongeFactory.create(SpongeFactory.Mode.CURLP81));
+            Transaction transaction = new Transaction(trx, SpongeFactory.create(SpongeFactory.Mode.CURL_P81));
             addresses.add(Checksum.addChecksum(transaction.getAddress()));
             inputTransactions.add(transaction);
         }

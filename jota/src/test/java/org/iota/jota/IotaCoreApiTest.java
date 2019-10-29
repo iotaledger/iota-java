@@ -1,18 +1,39 @@
 package org.iota.jota;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Collections;
 
 import org.hamcrest.core.IsNull;
 import org.iota.jota.config.types.FileConfig;
-import org.iota.jota.dto.response.*;
+import org.iota.jota.dto.response.AddNeighborsResponse;
+import org.iota.jota.dto.response.FindTransactionResponse;
+import org.iota.jota.dto.response.GetBalancesResponse;
+import org.iota.jota.dto.response.GetInclusionStateResponse;
+import org.iota.jota.dto.response.GetNeighborsResponse;
+import org.iota.jota.dto.response.GetNodeInfoResponse;
+import org.iota.jota.dto.response.GetTipsResponse;
+import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
+import org.iota.jota.dto.response.GetTrytesResponse;
+import org.iota.jota.dto.response.RemoveNeighborsResponse;
+import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.utils.Checksum;
-import org.junit.jupiter.api.*;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IotaCoreApiTest {
+
+    private static final Logger log = LoggerFactory.getLogger(IotaCoreApiTest.class);
 
     private static final String TEST_BUNDLE = "XZKJUUMQOYUQFKMWQZNTFMSS9FKJLOEV9DXXXWPMQRTNCOUSUQNTBIJTVORLOQPLYZOTMLFRHYKMTGZZU";
     private static final String TEST_ADDRESS_UNSPENT = "D9UZTBEAT9DMZKMCPEKSBEOWPAUFWKOXWPO9LOHZVTE9HAVTAKHWAIXCJKDJFGUOBOULUFTJZKWTEKCHDAPJEJXEDD";
@@ -134,7 +155,7 @@ public class IotaCoreApiTest {
     @Test
     @Tag("IntegrationTest")
     public void shouldGetInclusionStates() throws ArgumentException {
-        System.out.println(proxy.getNodeInfo().getLatestSolidSubtangleMilestone());
+        log.debug(proxy.getNodeInfo().getLatestSolidSubtangleMilestone());
         GetInclusionStateResponse res = proxy.getInclusionStates(
                 new String[]{TEST_HASH}, 
                 new String[]{proxy.getNodeInfo().getLatestSolidSubtangleMilestone()});
@@ -144,7 +165,7 @@ public class IotaCoreApiTest {
     @Test // very long execution
     @Tag("IntegrationTest")
     public void shouldGetTransactionsToApprove() throws ArgumentException {
-        GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(15, null);
+        GetTransactionsToApproveResponse res = proxy.getTransactionsToApprove(4, null);
         assertThat(res.getTrunkTransaction(), IsNull.notNullValue());
         assertThat(res.getBranchTransaction(), IsNull.notNullValue());
     }
@@ -179,7 +200,7 @@ public class IotaCoreApiTest {
                 () -> proxy.findTransactions(
                         new String[]{Checksum.addChecksum(test)}, new String[]{test},
                         new String[]{test}, new String[]{test}));
-        assertEquals("[Invalid tag provided.]", argumentException.getMessage());
+        assertEquals("Invalid tag provided.", argumentException.getMessage());
     }
 
     @Test

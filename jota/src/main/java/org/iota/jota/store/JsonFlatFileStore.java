@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,11 +35,6 @@ public class JsonFlatFileStore extends FlatFileStore {
         super(location);
         loadJson();
     }
-
-    public JsonFlatFileStore(URI location) {
-        super(location);
-        loadJson();
-    }
     
     private void loadJson() {
         objectMapper = new ObjectMapper();
@@ -49,17 +44,16 @@ public class JsonFlatFileStore extends FlatFileStore {
 
     @Override
     protected Map<String, Serializable> loadFromInputStream(InputStream stream){
-        Map<String, Serializable> store;
         try {
-            store = objectMapper.readValue(stream, new TypeReference<Map<String, AccountState>>(){});
+            return Collections.unmodifiableMap(objectMapper.readValue(stream,
+                    new TypeReference<Map<String, AccountState>>() {}));
         } catch (IOException e) {
             if (e.getClass().equals(MismatchedInputException.class)) {
-                store = new HashMap<>();
+                return new HashMap<>();
             } else {
                 throw new RuntimeException(e);
             }
         }
-        return store;
     }
     
     @Override

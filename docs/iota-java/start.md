@@ -20,13 +20,10 @@ Starts the account event loop
  ## Example
  
  ```Java
- Account account = new IotaAccount.Builder().build();
-
+ IotaAPI iotaAPI = new IotaAPI.Builder().build();
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
-    boolean started = iotaAPI.start();
-    if (started){
-        // All went okay, and the accounts can be used
-    }
+    boolean response = account.start();
 } catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 

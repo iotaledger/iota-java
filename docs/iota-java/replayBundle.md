@@ -1,5 +1,5 @@
 
-# [replayBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1059)
+# [replayBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L985)
  [ReplayBundleResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/ReplayBundleResponse.java) replayBundle(String tailTransactionHash , int depth , int minWeightMagnitude , String reference)
 
 Replays a transfer by doing Proof of Work again. This will make a new, but identical transaction which now also can be approved. If any of the replayed transactions gets approved, the others stop getting approved.
@@ -15,6 +15,7 @@ Replays a transfer by doing Proof of Work again. This will make a new, but ident
     
 ## Output
 [ReplayBundleResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/ReplayBundleResponse.java), which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -24,13 +25,13 @@ Replays a transfer by doing Proof of Work again. This will make a new, but ident
 ## Exceptions
 | Exceptions     | Description |
 |:---------------|:--------|
-| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when the <tt>tailTransactionHash</tt> is invalid |
+| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when the `tailTransactionHash` is invalid |
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when the bundle is invalid or not found |
 
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [sendTrytes(String[], int, int, String)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L425) | Wrapper method: Gets transactions to approve, attaches to Tangle, broadcasts and stores. |
+| [sendTrytes(String[], int, int, String)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L341) | Wrapper method: Gets transactions to approve, attaches to Tangle, broadcasts and stores. |
 
  ## Example
  
@@ -38,7 +39,7 @@ Replays a transfer by doing Proof of Work again. This will make a new, but ident
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    ReplayBundleResponse response = iotaAPI.replayBundle("LUKKXQVUTINZFCGWLQPVBYLRSAGABLTPLRUPRPGFHFSFABHGCNEEJDMYI9EFWZNMABYFDXXORDHEUVUMG", "15", "18", "IYEBCPYKEWXEFIBJCOWA9AWNLDRLIPOJAXJGMNXJDUBTYDMHWKMWDHDGRQLYRKTNIYNDSIULAVLNKIUKF");
+    ReplayBundleResponse response = iotaAPI.replayBundle("YFENZOSJNJNIYMHZKOIDHQXV9EPHCWSBLSNYJGPALZP9TTIEN9XJBDJMPREXI9NHGNXE9FTISHLOSXMHC", 15, 18, "BRBTTVNVOMFVINOGFKZENREFYKVLJXJVKNA9SSD9JRWBEIRPTZGJIQHSZELP9XANLFXKURHLWHSJFH9JW");
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

@@ -1,5 +1,5 @@
 
-# [initiateTransfer](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1347)
+# [initiateTransfer](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1273)
  List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> initiateTransfer(int securitySum , String inputAddress , String remainderAddress , List<[Transfer](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transfer.java)> transfers , List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> tips , boolean testMode)
 
 Prepares transfer by generating the bundle with the corresponding cosigner transactions. Does not contain signatures.
@@ -17,6 +17,7 @@ Prepares transfer by generating the bundle with the corresponding cosigner trans
     
 ## Output
 List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)>, which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | long attachmentTimestampLowerBound |  |
@@ -44,7 +45,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when an address is invalid. |
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when the security level is wrong. |
 | IllegalStateException | when a transfer fails because their is not enough balance to perform the transfer. |
-| IllegalStateException | When a <tt>remainderAddress</tt> is required, but not supplied |
+| IllegalStateException | When a `remainderAddress` is required, but not supplied |
 | RuntimeException | When the total value from the transfers is not 0 |
 
 
@@ -54,7 +55,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.initiateTransfer("134", "ZBOHQCMQQDVCWSEGHDOBUIRLHWJRBAQLMR9ZRVHQUWHCVBEIFSNVBTHNVKOC99EDYTQMLMIQQLSYGKTXY", "BTWEILLZQW9TTNWHBAQINWYEEYUSCSROKM9DMVWXZI9WAAPCZQSGZAMJFSKPBVX9CTQRMCDFPL9KKOVGM", ["transfers", "transfers"], ["tips", "tips"], "false");
+    List<Transaction> response = iotaAPI.initiateTransfer(272, "WPGX9BLUCWEJXEVLTGXLREOILSSRYGNJNXUUUHUWYXN9PAFAWJKYZFOUTHGABLEBBKEIKQAXYMYFC9LST", "HLCSQIVLQLIWYSAJNUPGILDCUUUPHMGSKEWSXECSP99RMWLU9UUIQPRTCWZHWVQPWAXZAZIMSQCHOHYOQ", new List<Transfer>(new Transfer[]{transfers, transfers}), new List<Transaction>(new Transaction[]{tips, tips}), false);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

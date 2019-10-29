@@ -1,5 +1,5 @@
 
-# [checkWereAddressSpentFrom](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1022)
+# [checkWereAddressSpentFrom](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L948)
  boolean[] checkWereAddressSpentFrom(String[] addresses)
 
 Check if a list of addresses was ever spent from, in the current epoch, or in previous epochs. Addresses must have a checksum.
@@ -27,7 +27,7 @@ Check if a list of addresses was ever spent from, in the current epoch, or in pr
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    boolean response = iotaAPI.checkWereAddressSpentFrom(["WXBYKDMRDYKCQBJWZZFPNHKZLYINE9TLYSETXLOFXQKRUKDVRGWFQHVPSNHJMNIHU9QVPLPQKSNXRBLAV", "JYWRGZDJJCRUOUVZJKNWGMEWOLJEEQLHAIVM9D9GWEZN9YJZWYLOBGUCBBWIMEUQDYZG9HPVAZZDSVLSP"]);
+    boolean[] response = iotaAPI.checkWereAddressSpentFrom(new String[]{"LFR9BZETOYCK99HAUF9QCKHNFKWRSGMUSWCBES99LBQNLA9FPZHZWOXALDUYBUUYSSCVECENJXIKVKFOT", "RUIZBLTGKNUQN9K9MFTODKMM9VXLKWAHVYATRFIC9COFBMXO9POVTRVBSZAEICJSFFAHWZLPMU9AEWKIE"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

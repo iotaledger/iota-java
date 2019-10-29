@@ -1,22 +1,52 @@
 package org.iota.jota;
 
-import static org.iota.jota.utils.Constants.INVALID_BUNDLE_HASH_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_APPROVE_DEPTH_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_ATTACHED_TRYTES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_BUNDLE_HASH_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_HASHES_INPUT_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_TAG_INPUT_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_THRESHOLD_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_TRYTES_INPUT_ERROR;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.iota.jota.connection.Connection;
-import org.iota.jota.dto.request.*;
-import org.iota.jota.dto.response.*;
+import org.iota.jota.dto.request.IotaAttachToTangleRequest;
+import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
+import org.iota.jota.dto.request.IotaCheckConsistencyRequest;
+import org.iota.jota.dto.request.IotaCommandRequest;
+import org.iota.jota.dto.request.IotaCustomRequest;
+import org.iota.jota.dto.request.IotaFindTransactionsRequest;
+import org.iota.jota.dto.request.IotaGetBalancesRequest;
+import org.iota.jota.dto.request.IotaGetInclusionStateRequest;
+import org.iota.jota.dto.request.IotaGetTransactionsToApproveRequest;
+import org.iota.jota.dto.request.IotaGetTrytesRequest;
+import org.iota.jota.dto.request.IotaNeighborsRequest;
+import org.iota.jota.dto.request.IotaStoreTransactionsRequest;
+import org.iota.jota.dto.request.IotaWereAddressesSpentFromRequest;
+import org.iota.jota.dto.response.AddNeighborsResponse;
+import org.iota.jota.dto.response.BroadcastTransactionsResponse;
+import org.iota.jota.dto.response.CheckConsistencyResponse;
+import org.iota.jota.dto.response.FindTransactionResponse;
+import org.iota.jota.dto.response.GetAttachToTangleResponse;
+import org.iota.jota.dto.response.GetBalancesResponse;
+import org.iota.jota.dto.response.GetInclusionStateResponse;
+import org.iota.jota.dto.response.GetNeighborsResponse;
+import org.iota.jota.dto.response.GetNodeInfoResponse;
+import org.iota.jota.dto.response.GetTipsResponse;
+import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
+import org.iota.jota.dto.response.GetTrytesResponse;
+import org.iota.jota.dto.response.InterruptAttachingToTangleResponse;
+import org.iota.jota.dto.response.IotaCustomResponse;
+import org.iota.jota.dto.response.RemoveNeighborsResponse;
+import org.iota.jota.dto.response.StoreTransactionsResponse;
+import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.pow.ICurl;
@@ -25,14 +55,6 @@ import org.iota.jota.utils.Checksum;
 import org.iota.jota.utils.InputValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import static org.iota.jota.utils.Constants.*;
 
 /**
  * 
@@ -267,6 +289,12 @@ public class IotaAPICore {
                 .byBundles(bundles);
 
         return getNodeFor(IotaAPICommand.FIND_TRANSACTIONS).findTransactions(findTransRequest);
+    }
+
+    public IotaCustomResponse callIxi(String module, String... args) throws ArgumentException {
+        final IotaCustomRequest findTransRequest = IotaCustomRequest.createCustomRequest(module, args);
+
+        return getNodeFor(IotaAPICommand.CUSTOM_IXI).customRequest(findTransRequest);
     }
 
     /**
@@ -664,7 +692,7 @@ public class IotaAPICore {
                 txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
 
                 resultTrytes[i] = pow.performPoW(txn.toTrytes(), minWeightMagnitude);
-                previousTransaction = new Transaction(resultTrytes[i], SpongeFactory.create(SpongeFactory.Mode.CURLP81)).getHash();
+                previousTransaction = new Transaction(resultTrytes[i], SpongeFactory.create(SpongeFactory.Mode.CURL_P81)).getHash();
             }
             Collections.reverse(Arrays.asList(resultTrytes));
         } catch (Exception e) {

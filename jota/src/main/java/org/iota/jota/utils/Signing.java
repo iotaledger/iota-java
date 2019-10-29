@@ -1,45 +1,29 @@
 package org.iota.jota.utils;
 
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.model.Bundle;
+import org.iota.jota.model.Transaction;
+import org.iota.jota.pow.ICurl;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 import static org.iota.jota.pow.JCurl.HASH_LENGTH;
 import static org.iota.jota.utils.Constants.INVALID_INDEX_INPUT_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_SEED_INPUT_ERROR;
 import static org.iota.jota.utils.Constants.KEY_LENGTH;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import org.iota.jota.error.ArgumentException;
-import org.iota.jota.model.Bundle;
-import org.iota.jota.model.Transaction;
-import org.iota.jota.pow.ICurl;
-import org.iota.jota.pow.SpongeFactory;
-
-
 public class Signing {
-    
 
-    private ICurl curl;
+    private final ICurl curl;
 
-    
-    public Signing() {
-        this(Optional.empty());
-    }
-    
     public Signing(ICurl curl) {
-        this(curl != null ? Optional.of(curl) : Optional.empty());
+        this.curl = Objects.requireNonNull(curl, "Curl must not be null.");
     }
      
-    /**
-     *
-     * @param curl
-     */
-    public Signing(Optional<ICurl> curl) {
-        this.curl = curl == null || !curl.isPresent() ? SpongeFactory.create(SpongeFactory.Mode.KERL) : curl.get();
-    }
-    
     /**
      * Returns the sub-seed trits given a seed and an index
      * @param inSeed the seed
@@ -111,16 +95,15 @@ public class Signing {
             throw new ArgumentException(INVALID_SEED_INPUT_ERROR);
         }
 
-        int[] seed = subseed(inSeed, index);
-        
-        ICurl curl = this.getICurlObject(SpongeFactory.Mode.KERL);
-        curl.reset();
-        curl.absorb(seed, 0, seed.length);
-        // seed[0..HASH_LENGTH] contains subseed
-        curl.squeeze(seed, 0, seed.length);
-        curl.reset();
-        // absorb subseed
-        curl.absorb(seed, 0, seed.length);
+        final int[] seed = subseed(inSeed, index);
+
+        final ICurl curl = getClonedCurl();
+        curl.reset()
+                .absorb(seed, 0, seed.length)
+                .squeeze(seed, 0, seed.length);
+
+        curl.reset()
+                .absorb(seed, 0, seed.length);
 
         final int[] key = new int[security * HASH_LENGTH * 27];
         final int[] buffer = new int[seed.length];
@@ -134,6 +117,7 @@ public class Signing {
                 offset += HASH_LENGTH;
             }
         }
+
         return key;
     }
 
@@ -143,11 +127,13 @@ public class Signing {
      * @return the address trits
      */
     public int[] address(int[] digests) {
-        int[] address = new int[HASH_LENGTH];
-        ICurl curl = this.getICurlObject(SpongeFactory.Mode.KERL);
+        final int[] address = new int[HASH_LENGTH];
+        final ICurl curl = getClonedCurl();
+
         curl.reset()
                 .absorb(digests)
                 .squeeze(address);
+
         return address;
     }
 
@@ -158,15 +144,15 @@ public class Signing {
      * @throws ArgumentException if the security level is invalid
      */
     public int[] digests(int[] key) throws ArgumentException {
-        int security = (int) Math.floor(key.length / KEY_LENGTH);
+        final int security = (int) Math.floor(key.length / KEY_LENGTH);
         if (!InputValidator.isValidSecurityLevel(security)) {
             throw new ArgumentException(INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
-        
-        int[] digests = new int[security * HASH_LENGTH];
-        int[] keyFragment = new int[KEY_LENGTH];
 
-        ICurl curl = this.getICurlObject(SpongeFactory.Mode.KERL);
+        final int[] digests = new int[security * HASH_LENGTH];
+        final int[] keyFragment = new int[KEY_LENGTH];
+
+        final ICurl curl = getClonedCurl();
         for (int i = 0; i < Math.floor(key.length / KEY_LENGTH); i++) {
             System.arraycopy(key, i * KEY_LENGTH, keyFragment, 0, KEY_LENGTH);
 
@@ -182,6 +168,7 @@ public class Signing {
             curl.absorb(keyFragment, 0, keyFragment.length);
             curl.squeeze(digests, i * HASH_LENGTH, HASH_LENGTH);
         }
+
         return digests;
     }
 
@@ -192,8 +179,8 @@ public class Signing {
      * @return The digest
      */
     public int[] digest(int[] normalizedBundleFragment, int[] signatureFragment) {
-        curl.reset();
-        ICurl jCurl = this.getICurlObject(SpongeFactory.Mode.KERL);
+        ICurl curl = getClonedCurl();
+        ICurl jCurl = getClonedCurl();
         int[] buffer = new int[HASH_LENGTH];
 
         for (int i = 0; i < 27; i++) {
@@ -210,9 +197,10 @@ public class Signing {
 
         return buffer;
     }
-    
+
     public int[] signatureFragment(int[] normalizedBundleFragment, int[] keyFragment) {
-        int[] signatureFragment = keyFragment.clone();
+        final int[] signatureFragment = keyFragment.clone();
+        final ICurl curl = getClonedCurl();
 
         for (int i = 0; i < 27; i++) {
 
@@ -227,12 +215,11 @@ public class Signing {
     }
 
     public Boolean validateSignatures(Bundle signedBundle, String inputAddress) {
+        final List<String> signatureFragments = new ArrayList<>();
         String bundleHash = "";
-        Transaction trx;
-        List<String> signatureFragments = new ArrayList<>();
 
         for (int i = 0; i < signedBundle.getTransactions().size(); i++) {
-            trx = signedBundle.getTransactions().get(i);
+            final Transaction trx = signedBundle.getTransactions().get(i);
 
             if (trx.getAddress().equals(inputAddress)) {
                 bundleHash = trx.getBundle();
@@ -251,10 +238,11 @@ public class Signing {
 
 
     public Boolean validateSignatures(String expectedAddress, String[] signatureFragments, String bundleHash) {
-        Bundle bundle = new Bundle();
+        final Bundle bundle = new Bundle();
+        final ICurl curl = getClonedCurl();
 
-        int[][] normalizedBundleFragments = new int[3][27];
-        int[] normalizedBundleHash = bundle.normalizedBundle(bundleHash);
+        final int[][] normalizedBundleFragments = new int[3][27];
+        final int[] normalizedBundleHash = bundle.normalizedBundle(bundleHash, curl);
 
         // Split hash into 3 fragments
         for (int i = 0; i < 3; i++) {
@@ -263,22 +251,17 @@ public class Signing {
 
         // Get digests
         int[] digests = new int[signatureFragments.length * HASH_LENGTH];
-
         for (int i = 0; i < signatureFragments.length; i++) {
 
             int[] digestBuffer = digest(normalizedBundleFragments[i % 3], Converter.trits(signatureFragments[i]));
 
             System.arraycopy(digestBuffer, 0, digests, i * HASH_LENGTH, HASH_LENGTH);
         }
-        String address = Converter.trytes(address(digests));
 
+        String address = Converter.trytes(address(digests));
         return (expectedAddress.equals(address));
     }
     
-    private ICurl getICurlObject(SpongeFactory.Mode mode) {
-    	return SpongeFactory.create(mode);
-    }
-
     /**
      * Normalizes the given bundle hash, with resulting digits summing to zero.
      * It returns a slice with the tryte decimal representation without any 13/M values.
@@ -321,6 +304,10 @@ public class Signing {
         }
 
         return normalizedBundle;
+    }
+
+    private ICurl getClonedCurl() {
+        return curl.clone();
     }
 }
 

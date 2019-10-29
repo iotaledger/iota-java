@@ -38,15 +38,15 @@ public class EventManagerImpl implements EventManager {
                     //TODO: Create and use fields in annotation
                     //AccountEvent annotInstance = listener.hi.getAnnotation(AccountEvent.class);
                     
-                    boolean accessible = listener.hi.isAccessible();
+                    boolean accessible = listener.getHi().isAccessible();
                     if (!accessible) {
-                        listener.hi.setAccessible(true);
+                        listener.getHi().setAccessible(true);
                     }
                     
-                    listener.hi.invoke(listener.low, event);
+                    listener.getHi().invoke(listener.getLow(), event);
                     
                     if (!accessible) {
-                        listener.hi.setAccessible(false);
+                        listener.getHi().setAccessible(false);
                     }
                 } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                     e.printStackTrace();
@@ -110,7 +110,7 @@ public class EventManagerImpl implements EventManager {
                 
                 while (pairIterator.hasNext()) {
                     Pair<EventListener, Method> pair = pairIterator.next();
-                    if (pair.low.equals(listener)) {
+                    if (pair.getLow().equals(listener)) {
                         pairIterator.remove();
                         size--;
                     }

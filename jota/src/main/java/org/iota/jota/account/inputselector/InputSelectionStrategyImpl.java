@@ -55,7 +55,7 @@ public class InputSelectionStrategyImpl extends AccountPlugin implements InputSe
     }
 
     @Override
-    public long getUsableBalance() {
+    public long getAvailableBalance() {
         synchronized(cache) {
             long balance = cache.getStream()
                 .filter(entry -> isUsable(entry.getKey(), entry.getValue())) // remove unwanted inputs

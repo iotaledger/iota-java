@@ -1,5 +1,5 @@
 
-# [getInputs](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L771)
+# [getInputs](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L690)
  [GetBalancesAndFormatResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBalancesAndFormatResponse.java) getInputs(String seed , int security , int start , int end , long threshold , String[] tips)
 
 Gets the inputs of a seed If start, end and threshold are 0, checks everything until an address with nothing is found. Addresses are all with checksum appended
@@ -17,6 +17,7 @@ Gets the inputs of a seed If start, end and threshold are 0, checks everything u
     
 ## Output
 [GetBalancesAndFormatResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBalancesAndFormatResponse.java), which contains the following fields:
+
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -28,12 +29,12 @@ Gets the inputs of a seed If start, end and threshold are 0, checks everything u
 |:---------------|:--------|
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | If the seed is invalid |
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | If the security level is wrong. |
-| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when <tt>start</tt> and <tt>end</tt> are more then 500 apart |
+| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when `start` and `end` are more then 500 apart |
 
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [getBalanceAndFormat(List, List, long, int, StopWatch, int)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L892) | Gets the balances and formats the output. |
+| [getBalanceAndFormat(List, List, long, int, StopWatch, int)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L811) | Gets the balances and formats the output. |
 
  ## Example
  
@@ -41,7 +42,7 @@ Gets the inputs of a seed If start, end and threshold are 0, checks everything u
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetBalancesAndFormatResponse response = iotaAPI.getInputs("VOINACFSQEEGNPVHSWEVFOTCZVJMST9TFLJW9FWSGPMLZJOVFSQYFSGQYYZQLISTJHQYOOBRFGHUNXU9R", "491", "817", "132", "100", ["WODEXHYNOR9KGLGJ9UVHURLABC9CWRXDPEKGHYKOBMFGXYPOHLCJJTFAKPXVD99RINOWYBLVEAOZPKHRN", "GGLMERBGBQHFKTDGPUNMJNHPJCJYMVAYQNLZOQWLBMOXEXZAUCXGPWIKUJWHYGPHOJKFPPFW9YEUTHRDK"]);
+    GetBalancesAndFormatResponse response = iotaAPI.getInputs("YOUR9SECRET9SEED9999999...", 3, 657, 715, 100, new String[]{"P9FIGJYGRQILJLVICUANYBZJIODPOSPDNAKOXGXZGNLCTUZMJXMSHZMQXFDJNB9XIOBDNROZPWCSZKDOP", "UYBDJMWUXCJJMLJXWHDUPFAIOIW9IYW9BBXISXIQWPRBEPBEGFRMGJUEXCS9QSDCIMCC9RLDQVETHL9IJ"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

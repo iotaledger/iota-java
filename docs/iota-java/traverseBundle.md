@@ -1,5 +1,5 @@
 
-# [traverseBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1223)
+# [traverseBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1149)
  [Bundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Bundle.java) traverseBundle(String trunkTx , String bundleHash , [Bundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Bundle.java) bundle)
 
 Traverses the Bundle by going down the trunkTransactions until the bundle hash of the transaction changes.  In case the input transaction hash is not a tail, we return an error.
@@ -20,7 +20,7 @@ Traverses the Bundle by going down the trunkTransactions until the bundle hash o
 ## Exceptions
 | Exceptions     | Description |
 |:---------------|:--------|
-| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when <tt>trunkTx</tt> is invalid, or has no transactions |
+| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when `trunkTx` is invalid, or has no transactions |
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when a transaction in the bundle has no reference to the bundle |
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when the first transaction in the bundle is not a tail |
 
@@ -31,7 +31,7 @@ Traverses the Bundle by going down the trunkTransactions until the bundle hash o
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    Bundle response = iotaAPI.traverseBundle("RFOATBYOQD9ULUIF9SVITEUFJAYPJMUBILVHESVHQBXNFFHMBBZOYMOUYWKPONQWIGDHZPCIGGBYYNSBA", "ODTRSZLCAWVR9NRCWCWCOEJDBFYDYZSEOUSCQUTATGCEGEXTPFKULHMGCIMCULLOEE9VGF9CWVJNIVMJJ", "bundle");
+    Bundle response = iotaAPI.traverseBundle("EYNEUPN9LBCPURHKHXUEETYSDKNXUUWB9LUZFEU9ZLBBGL9Q9TNG9FYFHYVZM9LT9RMRZTMCKSZJYEIBX", "ATFTUXGOXESQMPPUOQFURSSUWOLQEVBRNQCXQBBGYWOLIXOFZWJARWZJSXRVVQGNWUGXDYPUQ9GOHXT9U", bundle);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

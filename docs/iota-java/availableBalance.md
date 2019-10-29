@@ -1,6 +1,6 @@
 
-# [usableBalance](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/account/Account.java#L82)
- long usableBalance()
+# [availableBalance](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/account/Account.java#L82)
+ long availableBalance()
 
 Runs the input selection with the CDAs in order to determine the usable balance for funding transfers.
 > **Important note:** This API is currently in Beta and is subject to change. Use of these APIs in production applications is not supported.
@@ -20,16 +20,10 @@ Runs the input selection with the CDAs in order to determine the usable balance 
  ## Example
  
  ```Java
- Account account = new IotaAccount.Builder().build();
-
+ IotaAPI iotaAPI = new IotaAPI.Builder().build();
+IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
-    long balance = account.usableBalance();
-    
-    // Sweep your account balance to 1 address
-    Future<ConditionalDepositAddress> response = account.newDepositAddress(nextHour, false, balance);
-    ConditionalDepositAddress cda = response.get();
-
-    account.send(new Recipient(balance, "My sweep message", "IOTA9SWEEP9", cda.getDepositAddress())
+    long response = account.availableBalance();
 } catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 
