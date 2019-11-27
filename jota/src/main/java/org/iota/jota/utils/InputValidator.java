@@ -44,7 +44,7 @@ public class InputValidator {
      * According to the following issue:
      * https://github.com/iotaledger/trinity-wallet/issues/866
      * 
-     * This is because Curl addresses always are with a 0 trit on the end.
+     * This is because Kerl addresses always are with a 0 trit on the end.
      * So we validate if we actually send to a proper address, to prevent having to double spent
      * 
      * @param trytes The trytes to check
