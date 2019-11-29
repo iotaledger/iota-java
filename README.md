@@ -74,7 +74,18 @@ To download the IOTA Java client library and its dependencies, you can use one o
     ```
     
 ### Downloading the library with Maven
+#### Through Maven central
+1. Add the following repository to your root `pom.xml` file:
+    ```xml
+    <dependency>
+        <groupId>org.iota</groupId>
+        <artifactId>jota</artifactId>
+        <classifier>jar-with-dependencies</classifier>
+        <version>1.0.0-beta7</version>
+    </dependency>
+    ```
 
+#### Through Jitpack
 1. Add the following repository to your root `pom.xml` file:
     ```xml
     <repositories>
@@ -108,7 +119,8 @@ To download the IOTA Java client library and its dependencies, you can use one o
     * jota
     * jota-parent
 
-2. Reference the jota directory in your project
+2. Import and reference the jota directory in your project
+For example in Eclipse: `right mouse on your project -> Properties -> Java Build Path -> Projects -> Add 'jota'`
 
 3. In the jota directory, run the following command:
 
