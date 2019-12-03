@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
 import org.iota.jota.account.deposits.DepositRequest;
 import org.iota.jota.account.errors.MagnetError;
@@ -36,7 +37,7 @@ public class MagnetMethod implements DepositMethod<String> {
             + CONDITION_AMOUNT + "=%d";
 
     public MagnetMethod() {
-        this.curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
+        this.curl = SpongeFactory.create(SpongeFactory.Mode.CURL_P81);
     }
     
     public void setCurl(ICurl curl) {
@@ -67,7 +68,7 @@ public class MagnetMethod implements DepositMethod<String> {
         Map<String, List<String>> paramsMap = collectParams(uri);
 
         long timeOut = parseLong(getParam(CONDITION_EXPIRES, paramsMap, "0"));
-        boolean multiUse = Boolean.getBoolean(getParam(CONDITION_MULTI_USE, paramsMap, "false"));
+        boolean multiUse = parseBoolean(getParam(CONDITION_MULTI_USE, paramsMap, "false"));
         long expectedAmount = parseLong(getParam(CONDITION_AMOUNT, paramsMap, "0"));
         
         if (!magnetChecksum(address.substring(0, 81), timeOut, multiUse, expectedAmount)
@@ -81,6 +82,10 @@ public class MagnetMethod implements DepositMethod<String> {
                 new Hash(address.substring(0, 81)));
         
         return conditions;
+    }
+
+    private boolean parseBoolean(String param) {
+        return BooleanUtils.toBoolean(param) || param.equals("1");
     }
 
     private long parseLong(String param) {
@@ -161,9 +166,9 @@ public class MagnetMethod implements DepositMethod<String> {
         System.arraycopy(addressTrits, 0, totalTrits, 0, addressRest);
         
         //Add fields to trits input
-        System.arraycopy(timeoutTrits, 0, totalTrits, addressRest + 27 - timeoutTrits.length, timeoutTrits.length);
+        System.arraycopy(timeoutTrits, 0, totalTrits, addressRest, timeoutTrits.length);
         totalTrits[addressRest + 27] = multiUse ? 1 : 0;
-        System.arraycopy(amountTrits, 0, totalTrits, addressRest + 27 + 1 + 81 - amountTrits.length, amountTrits.length);
+        System.arraycopy(amountTrits, 0, totalTrits, addressRest + 27 + 1, amountTrits.length);
 
         //Make checksum trits
         int[] checksumTrits = calculateChecksum(totalTrits);
