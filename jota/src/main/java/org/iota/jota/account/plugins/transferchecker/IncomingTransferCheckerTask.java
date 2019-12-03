@@ -1,5 +1,8 @@
 package org.iota.jota.account.plugins.transferchecker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.event.Event;
@@ -13,9 +16,6 @@ import org.iota.jota.types.Address;
 import org.iota.jota.utils.BundleValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class IncomingTransferCheckerTask implements Runnable {
 
@@ -113,7 +113,7 @@ public class IncomingTransferCheckerTask implements Runnable {
             skipFirst = false;
         } catch (Exception e) {
             // Thread got interrupted or http call closed, could be a problem so we log
-            log.warn(e.getMessage());
+            log.warn(e.getMessage(), e);
         }
     }
 

@@ -721,7 +721,7 @@ public class IotaAPICore {
      * @throws ArgumentException when the provided transaction trytes are invalid
      */
     public BroadcastTransactionsResponse broadcastTransactions(String... trytes) throws ArgumentException {
-        if (!InputValidator.isArrayOfRawTransactionTrytes(trytes)) {
+        if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
             throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR);
         }
 
@@ -738,7 +738,7 @@ public class IotaAPICore {
      * @throws ArgumentException when the provided transaction trytes are invalid
      */
     public StoreTransactionsResponse storeTransactions(String... trytes) throws ArgumentException {
-        if (!InputValidator.isArrayOfRawTransactionTrytes(trytes)) {
+        if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
             throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR);
         }
         

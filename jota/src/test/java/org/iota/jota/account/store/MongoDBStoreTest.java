@@ -1,5 +1,8 @@
 package org.iota.jota.account.store;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -18,9 +21,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 @Disabled
 public class MongoDBStoreTest {
     
@@ -29,10 +29,11 @@ public class MongoDBStoreTest {
 
     @BeforeEach
     public void setUp() {
+        int PORT = 12345;
         // Want to run this test? Update it with your mongodb details locally for now
-        this.store = new MongoStore("databasename", IotaDefaultConfig.Defaults.TABLE_NAME, 
-                "url", 1337);
-        //store.addCredentials("username", "password");
+        this.store = new MongoStore("database", IotaDefaultConfig.Defaults.TABLE_NAME, 
+                "url", PORT);
+        store.addCredentials("user", "pass");
     }
     
     @AfterEach
@@ -41,7 +42,6 @@ public class MongoDBStoreTest {
         store.shutdown();
     }
     
-    @Disabled
     @Test
     public void testConnection() {
         try {
@@ -51,7 +51,6 @@ public class MongoDBStoreTest {
         }
     }
     
-    @Disabled
     @Test
     public void depositRequestTest() throws Exception{
         store.start();

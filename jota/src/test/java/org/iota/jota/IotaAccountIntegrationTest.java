@@ -1,5 +1,14 @@
 package org.iota.jota;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.concurrent.ExecutionException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.iota.jota.account.deposits.ConditionalDepositAddress;
@@ -18,14 +27,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.concurrent.ExecutionException;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-
 public class IotaAccountIntegrationTest {
     
     private static String lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lorem lorem, tristique vel pharetra in, consectetur sed ex. Maecenas sit amet porttitor mauris, in ullamcorper augue. Etiam pellentesque in velit ut pellentesque. Cras dignissim quam ut imperdiet pellentesque. Proin ac ullamcorper mi. Integer suscipit sagittis augue, quis elementum dui venenatis ut. Phasellus id elit malesuada, convallis libero eget, fringilla sem. In tincidunt semper massa, nec dictum velit hendrerit et. Maecenas venenatis, felis ut eleifend elementum, enim mauris pulvinar mi, mattis posuere dolor nunc quis metus.\n" + 
@@ -34,7 +35,8 @@ public class IotaAccountIntegrationTest {
             "Interdum et malesuada fames ac ante ipsum primis in faucibus. Aliquam condimentum sapien ac lacinia varius. Proin sollicitudin sem ligula. Morbi suscipit maximus lorem ut aliquet. Vestibulum at feugiat orci. Maecenas condimentum vitae est vitae pretium. Etiam nec metus ut purus ullamcorper sodales at nec quam. Proin eleifend ante felis, et molestie mauris tincidunt ut. Fusce sit amet est tempus, luctus risus ac, imperdiet mi. Aliquam hendrerit leo orci. Mauris sed nisi ut mauris iaculis condimentum vitae fringilla libero. Praesent egestas ultricies nisl, interdum vehicula ipsum lobortis et. Praesent vitae pulvinar lacus, sed vestibulum dui. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec accumsan fermentum euismod.\n" + 
             "Morbi auctor massa et sem vulputate feugiat. In hac habitasse platea dictumst. Integer ullamcorper ipsum nec orci ultrices consectetur. Nullam id placerat odio, et eleifend lacus. Phasellus id mi ornare, blandit massa sit amet, rhoncus leo. Vestibulum pharetra bibendum lorem, quis efficitur odio consectetur sit amet. Nunc leo diam, interdum ac magna id, ornare porta nunc. Morbi lectus nibh, rutrum in rutrum sit amet, fermentum ut risus. Mauris tempor eget tortor ac iaculis. Suspendisse laoreet ullamcorper turpis, a rutrum diam ornare quis. Proin ac diam sodales risus volutpat pulvinar. Vestibulum scelerisque lorem ac leo auctor, sit amet fringilla dolor viverra. Fusce vel pretium magna. Etiam id dui fermentum, tristique arcu sed, finibus nisi.";
  
-
+    private static int MWM = 9;
+    
     private static final String TEST_SEED = "IJEEPFTJEFGFRDTSQGLGEAUZPUJFP9LDMDOOYUNOZFJ9JMJFALJATJGHEUPHHFVTFDYSGZNKMRK9EQKWG";
     private static final String TEST_SEED_ID = "J9SPZIPMIHEGZEBNDLMBTVVTCGQREQXZFXUYTJTYVQCR9TUZWZDBSJBOZLTTLJYXCGGVAIEQFPWLNUGHD";
     private static final String ADDR_1_SEC_3 = "TAKWNELREDNHLFYCQ9LMGZVYGTPTABFDEPQZILJAYAZSSCPXMEGCVAH9AHTJRDPVDCGIH9APCWG9KBSGA9VKXRLMU9";
@@ -67,7 +69,7 @@ public class IotaAccountIntegrationTest {
         store = new AccountFileStore(file);
         IotaAccount account = new IotaAccount.Builder(TEST_SEED)
                 .securityLevel(3)
-                .mwm(9)
+                .mwm(MWM)
                 .store(store)
                 .api(iotaAPI)
                 .build();
@@ -85,7 +87,7 @@ public class IotaAccountIntegrationTest {
         JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), new NullOutputStream());
         store = new AccountFileStore(json);
         
-        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
+        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(MWM).store(store).api(iotaAPI).build();
         
         Bundle sent = account.sendZeroValue("Another IOTA Accounts test run at " + new Date().toString(), 
                 "IOTA9ACCOUNTS", 
@@ -100,7 +102,7 @@ public class IotaAccountIntegrationTest {
         JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), new NullOutputStream());
         store = new AccountFileStore(json);
         
-        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
+        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(MWM).store(store).api(iotaAPI).build();
         
         Bundle sent = account.sendZeroValue(lorem, "IOTA9ACCOUNTS", 
                 account.getAccountManager().getNextAddress().getAddress().getHashCheckSum()).get();
@@ -115,7 +117,7 @@ public class IotaAccountIntegrationTest {
         JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), new NullOutputStream());
         store = new AccountFileStore(json);
         
-        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
+        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(MWM).store(store).api(iotaAPI).build();
         
         Date timeOut = new Date(Long.MAX_VALUE);
         ConditionalDepositAddress cda = account.newDepositAddress(timeOut, false, 10).get();
@@ -134,7 +136,7 @@ public class IotaAccountIntegrationTest {
         JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-test.store"), new NullOutputStream());
         store = new AccountFileStore(json);
         
-        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
+        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(MWM).store(store).api(iotaAPI).build();
         
         Date timeOut = new Date(Long.MAX_VALUE);
         ConditionalDepositAddress cda = account.newDepositAddress(timeOut, false, 10).get();
@@ -153,7 +155,7 @@ public class IotaAccountIntegrationTest {
         JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-testMulti.store"), new NullOutputStream());
         store = new AccountFileStore(json);
         
-        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
+        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(MWM).store(store).api(iotaAPI).build();
         
         Date timeOut = new Date(Long.MAX_VALUE);
         ConditionalDepositAddress cda = account.newDepositAddress(timeOut, false, 10).get();
@@ -172,7 +174,7 @@ public class IotaAccountIntegrationTest {
         JsonFlatFileStore json = new JsonFlatFileStore(this.getClass().getResourceAsStream("/accounts/client-testMulti.store"), new NullOutputStream());
         store = new AccountFileStore(json);
         
-        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(iotaAPI).build();
+        IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(MWM).store(store).api(iotaAPI).build();
         
         Date timeOut = new Date(Long.MAX_VALUE);
         ConditionalDepositAddress cda = account.newDepositAddress(timeOut, false, 10).get();

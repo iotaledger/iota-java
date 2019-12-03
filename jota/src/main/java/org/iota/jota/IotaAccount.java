@@ -754,7 +754,7 @@ public class IotaAccount implements Account, EventListener {
         try {
             getApi().storeAndBroadcast(res.getTrytes());
         } catch (ArgumentException e) {
-            return new ArrayList<>();
+            throw new AccountError(e);
         }
 
         final List<Transaction> trx = new ArrayList<>();

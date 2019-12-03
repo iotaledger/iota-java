@@ -147,7 +147,7 @@ public class FlatFileStore implements Store {
     
     @Override
     public String toString() {
-        return file.getName();
+        return "FlatFileStore: [" + (file != null ? file.getName() : inputStream.toString()) + "]";
     }
 
     @Override
