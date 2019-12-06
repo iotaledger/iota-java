@@ -112,8 +112,11 @@ public class IncomingTransferCheckerTask implements Runnable {
 
             skipFirst = false;
         } catch (Exception e) {
-            // Thread got interrupted or http call closed, could be a problem so we log
-            log.warn(e.getMessage(), e);
+            // http call closed?, could be a problem so we log, could also be a timeout
+            if (!Thread.interrupted()) {
+                System.out.println("EHUGFSIF");
+                log.warn(e.getMessage(), e);
+            }
         }
     }
 

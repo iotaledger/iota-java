@@ -1,6 +1,7 @@
 package org.iota.jota.connection;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
@@ -262,6 +263,11 @@ public class HttpConnector implements Connection {
 
             return res;
         } catch (IOException e) {
+            if (e instanceof InterruptedIOException) {
+                // We shut down the app 
+                return null;             
+            }
+            
             log.error("Execution of the API call raised exception. IOTA Node not reachable?", e);
             throw new IllegalStateException(e.getMessage());
         }

@@ -282,7 +282,9 @@ public class IotaAPI extends IotaAPICore {
                     }
                     // If error returned from getBundle, simply ignore it because the bundle was most likely incorrect
                 } catch (ArgumentException e) {
-                    log.warn(Constants.GET_BUNDLE_RESPONSE_ERROR);
+                    if (!Thread.interrupted()) {
+                        log.warn(Constants.GET_BUNDLE_RESPONSE_ERROR);
+                    }
                 }
             });
         } catch (InterruptedException e) {
