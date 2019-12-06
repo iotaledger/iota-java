@@ -7,6 +7,7 @@ package org.iota.jota;
 public enum IotaAPICommand {
 
     GET_NODE_INFO("getNodeInfo"),
+    GET_NODE_API_CONFIGURATION("getNodeAPIConfiguration"),
     GET_NEIGHBORS("getNeighbors"),
     ADD_NEIGHBORS("addNeighbors"),
     REMOVE_NEIGHBORS("removeNeighbors"),

@@ -32,10 +32,10 @@ public class GetNewAddressResponse extends AbstractResponse {
     }
     
     /**
-     * Gets the first address, for quick access
+     * Gets the first address, for quick access, or <code>null</code> if there is none
      * @return The address
      */
     public String first() {
-        return addresses.get(0);
+        return addresses.size() > 0 ? addresses.get(0) : null;
     }
 }

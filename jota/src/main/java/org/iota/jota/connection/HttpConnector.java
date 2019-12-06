@@ -28,6 +28,7 @@ import org.iota.jota.dto.response.GetAttachToTangleResponse;
 import org.iota.jota.dto.response.GetBalancesResponse;
 import org.iota.jota.dto.response.GetInclusionStateResponse;
 import org.iota.jota.dto.response.GetNeighborsResponse;
+import org.iota.jota.dto.response.GetNodeAPIConfigurationResponse;
 import org.iota.jota.dto.response.GetNodeInfoResponse;
 import org.iota.jota.dto.response.GetTipsResponse;
 import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
@@ -269,6 +270,12 @@ public class HttpConnector implements Connection {
     @Override
     public GetNodeInfoResponse getNodeInfo(IotaCommandRequest request) throws ArgumentException {
         final Call<GetNodeInfoResponse> res = service.getNodeInfo(IotaCommandRequest.createNodeInfoRequest());
+        return wrapCheckedException(res).body();
+    }
+    
+    @Override
+    public GetNodeAPIConfigurationResponse getNodeAPIConfiguration(IotaCommandRequest request) throws ArgumentException {
+        final Call<GetNodeAPIConfigurationResponse> res = service.getNodeAPIConfiguration(IotaCommandRequest.createGetNodeAPIConfiguration());
         return wrapCheckedException(res).body();
     }
 

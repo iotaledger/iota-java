@@ -21,6 +21,7 @@ import org.iota.jota.dto.response.GetAttachToTangleResponse;
 import org.iota.jota.dto.response.GetBalancesResponse;
 import org.iota.jota.dto.response.GetInclusionStateResponse;
 import org.iota.jota.dto.response.GetNeighborsResponse;
+import org.iota.jota.dto.response.GetNodeAPIConfigurationResponse;
 import org.iota.jota.dto.response.GetNodeInfoResponse;
 import org.iota.jota.dto.response.GetTipsResponse;
 import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
@@ -39,7 +40,6 @@ import retrofit2.http.POST;
 /**
  * IOTA API Proxy Service definition using Retrofit2
  *
- * @author davassi
  */
 public interface IotaNodeHTTPService {
 
@@ -55,7 +55,18 @@ public interface IotaNodeHTTPService {
     @Headers({CONTENT_TYPE_HEADER, USER_AGENT_HEADER})
     @POST("./")
     Call<GetNodeInfoResponse> getNodeInfo(@Body IotaCommandRequest request);
-
+    
+    
+    /**
+     * Returns information about the node API Configuration.
+     * <p>g
+     * {@code curl http://localhost:14265 -X POST -H 'X-IOTA-API-Version: 1.4.1' -H 'Content-Type: application/json'}
+     * {@code -d '{"command": "GetNodeAPIConfiguration"}'}
+     */
+    @Headers({CONTENT_TYPE_HEADER, USER_AGENT_HEADER})
+    @POST("./")
+    Call<GetNodeAPIConfigurationResponse> getNodeAPIConfiguration(@Body IotaCommandRequest request);
+    
     /**
      * Get the list of neighbors from the node.
      * <p>
