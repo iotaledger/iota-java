@@ -25,7 +25,7 @@ public class FileConfigTest {
         FileConfig config = new FileConfig(store);
         
         assertEquals(500, config.getConnectionTimeout());
-        assertEquals("client_new.store", config.getStore().toString());
+        assertEquals("FlatFileStore: [client_new.store]", config.getStore().toString());
         assertEquals(15, config.getMwm());
         assertEquals(5, config.getDepth());
         assertEquals(3, config.getSecurityLevel());

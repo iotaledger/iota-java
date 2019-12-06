@@ -1,5 +1,8 @@
 package org.iota.jota.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.iota.jota.IotaAPI;
 import org.iota.jota.IotaAccount;
 import org.iota.jota.account.AccountOptions;
@@ -18,9 +21,6 @@ import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.InputValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 

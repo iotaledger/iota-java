@@ -282,7 +282,9 @@ public class IotaAPI extends IotaAPICore {
                     }
                     // If error returned from getBundle, simply ignore it because the bundle was most likely incorrect
                 } catch (ArgumentException e) {
-                    log.warn(Constants.GET_BUNDLE_RESPONSE_ERROR);
+                    if (!Thread.interrupted()) {
+                        log.warn(Constants.GET_BUNDLE_RESPONSE_ERROR);
+                    }
                 }
             });
         } catch (InterruptedException e) {
@@ -519,9 +521,6 @@ public class IotaAPI extends IotaAPICore {
         //  and prepare the signatureFragments, message and tag
         for (final Transfer transfer : transfers) {
 
-            // remove the checksum of the address
-           transfer.setAddress(Checksum.removeChecksum(transfer.getAddress()));
-
             int signatureMessageLength = 1;
 
             // If message longer than 2187 trytes, increase signatureMessageLength (add 2nd transaction)
@@ -566,7 +565,10 @@ public class IotaAPI extends IotaAPICore {
             long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
 
             // Add first entry to the bundle
-            bundle.addEntry(signatureMessageLength, transfer.getAddress(), transfer.getValue(), tag, timestamp);
+            bundle.addEntry(signatureMessageLength, 
+                    Checksum.removeChecksum(transfer.getAddress()), 
+                    transfer.getValue(), 
+                    tag, timestamp);
             // Sum up total value
             totalValue += transfer.getValue();
         }
@@ -1303,10 +1305,6 @@ public class IotaAPI extends IotaAPICore {
         //  Iterate over all transfers, get totalValue
         //  and prepare the signatureFragments, message and tag
         for (final Transfer transfer : transfers) {
-
-            // remove the checksum of the address
-            transfer.setAddress(Checksum.removeChecksum(transfer.getAddress()));
-
             int signatureMessageLength = 1;
 
             // If message longer than 2187 trytes, increase signatureMessageLength (add next transaction)
@@ -1354,7 +1352,7 @@ public class IotaAPI extends IotaAPICore {
             long timestamp = (long) Math.floor(Calendar.getInstance().getTimeInMillis() / 1000);
 
             // Add first entry to the bundle
-            bundle.addEntry(signatureMessageLength, transfer.getAddress(), transfer.getValue(), tag, timestamp);
+            bundle.addEntry(signatureMessageLength, Checksum.removeChecksum(transfer.getAddress()), transfer.getValue(), tag, timestamp);
             // Sum up total value
             totalValue += transfer.getValue();
         }
