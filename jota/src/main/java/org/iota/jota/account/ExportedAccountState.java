@@ -9,6 +9,10 @@ public class ExportedAccountState {
     private String id;
     
     private AccountState state;
+    
+    public ExportedAccountState() {
+        
+    }
 
     public ExportedAccountState(Date exportedDate, String id, AccountState state) {
         this.exportedDate = exportedDate;
@@ -26,5 +30,10 @@ public class ExportedAccountState {
 
     public AccountState getState() {
         return state;
+    }
+
+    @Override
+    public String toString() {
+        return "ExportedAccountState [exportedDate=" + exportedDate + ", id=" + id + ", state=" + state + "]";
     }
 }
