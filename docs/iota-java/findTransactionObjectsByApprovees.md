@@ -1,5 +1,5 @@
 
-# [findTransactionObjectsByApprovees](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L435)
+# [findTransactionObjectsByApprovees](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L437)
  List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> findTransactionObjectsByApprovees(String[] approvees)
 
 Wrapper function: Finds transactions, gets trytes and turns it into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects.
@@ -12,7 +12,6 @@ Wrapper function: Finds transactions, gets trytes and turns it into [Transaction
     
 ## Output
 List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)>, which contains the following fields:
-
 | Return type | Description |
 |--|--|
 | long attachmentTimestampLowerBound |  |
@@ -42,7 +41,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [findTransactionsByApprovees](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L334) | Find the transactions by approvees |
+| [findTransactionsByApprovees](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L345) | Find the transactions by approvees |
 
  ## Example
  
@@ -50,7 +49,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.findTransactionObjectsByApprovees(new String[]{"WSOLQGWRUZEPMZUKRDVDADHVESYRLOWOEHCWONIIT9HSPBZLEGQNYIHVKLMIEZYTPADXJYBOVNNYCPCYJ", "MFZMSUNPKPLDMTWQSPIMULPIZGBENUCSHYORAVNQPTKGKIXLTPUVPJHNJQLRNZHNZXOFGUUMIHDZPWNWP"});
+    List<Transaction> response = iotaAPI.findTransactionObjectsByApprovees(new String[]{"TMIPRULGWLBQOUSQCFCMMOXUZNWBDSSXIJAXUVFFYWDJIGIRLQHUXJJAORAYPBAUYNCEHMDLIJRLYFNPJ", "LUWGMJBHQZYWGUGAYYUYCQ9KYFMA9MDFW9OWIHAYMZNRYPJETBVXQAQQAJXDVLCQHG9BSTTVWHPJHKKKW"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

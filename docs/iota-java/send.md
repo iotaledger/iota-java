@@ -23,7 +23,7 @@ Sends the specified amounts to the given recipient.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
-    Future<Bundle> response = account.send(new Recipient(257, "hi", "TAG", OOPIXBREIZGCFQSCQCGHEYHETHXFOMZALVLNPNSQJQSLLEZTR9SEVKPLQ9HZPKWASSWAWWA9DPXBEHRYP));
+    Future<Bundle> response = account.send(new Recipient(264, "hi", "TAG", KPSDRZBWBYESGZQQVQWZYLVXVY9QRINZSM9JU9KQQYFYJJUNENX9VWMTFA9HOJOWHYTBPVRZZJ99HCLPM));
 } catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 
