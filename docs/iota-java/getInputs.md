@@ -1,5 +1,5 @@
 
-# [getInputs](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L690)
+# [getInputs](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L692)
  [GetBalancesAndFormatResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBalancesAndFormatResponse.java) getInputs(String seed , int security , int start , int end , long threshold , String[] tips)
 
 Gets the inputs of a seed If start, end and threshold are 0, checks everything until an address with nothing is found. Addresses are all with checksum appended
@@ -17,7 +17,6 @@ Gets the inputs of a seed If start, end and threshold are 0, checks everything u
     
 ## Output
 [GetBalancesAndFormatResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBalancesAndFormatResponse.java), which contains the following fields:
-
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -34,7 +33,7 @@ Gets the inputs of a seed If start, end and threshold are 0, checks everything u
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [getBalanceAndFormat(List, List, long, int, StopWatch, int)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L811) | Gets the balances and formats the output. |
+| [getBalanceAndFormat(List, List, long, int, StopWatch, int)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L813) | Gets the balances and formats the output. |
 
  ## Example
  
@@ -42,7 +41,7 @@ Gets the inputs of a seed If start, end and threshold are 0, checks everything u
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetBalancesAndFormatResponse response = iotaAPI.getInputs("YOUR9SECRET9SEED9999999...", 3, 657, 715, 100, new String[]{"P9FIGJYGRQILJLVICUANYBZJIODPOSPDNAKOXGXZGNLCTUZMJXMSHZMQXFDJNB9XIOBDNROZPWCSZKDOP", "UYBDJMWUXCJJMLJXWHDUPFAIOIW9IYW9BBXISXIQWPRBEPBEGFRMGJUEXCS9QSDCIMCC9RLDQVETHL9IJ"});
+    GetBalancesAndFormatResponse response = iotaAPI.getInputs("YOUR9SECRET9SEED9999999...", 3, 946, 608, 100, new String[]{"HVHKRBAGNHGINEHQN9GKXVHXXKVLINJSIAKVBJZLVATZXAEORPRHDZHTZNPBNKDGVOEDPA9ANZFPBHPIT", "ZMUG9ZYRNGICRIGIJQFNOM9BSP9BHBKUAOZOVP9PBAPIQRKDEITGHOWFY99AFZUFUAAILS9UJQHGIIISD"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

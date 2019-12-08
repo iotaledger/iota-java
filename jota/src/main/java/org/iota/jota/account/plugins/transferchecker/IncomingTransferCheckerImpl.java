@@ -1,5 +1,10 @@
 package org.iota.jota.account.plugins.transferchecker;
 
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.AccountBalanceCache;
 import org.iota.jota.account.AccountStateManager;
@@ -16,11 +21,6 @@ import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.types.Address;
 import org.iota.jota.utils.thread.UnboundScheduledExecutorService;
-
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements IncomingTransferChecker {
     
@@ -70,7 +70,6 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
                 continue;
             }
             Address address = addressGen.get(entry.getKey());
-            
             addUnconfirmedBundle(address);
         }
         

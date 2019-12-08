@@ -1,17 +1,17 @@
 package org.iota.jota.utils;
 
-import org.apache.commons.lang3.Range;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.iota.jota.error.ArgumentException;
-import org.iota.jota.model.Input;
-import org.iota.jota.model.Transfer;
+import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
+import static org.iota.jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.IntPredicate;
 
-import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
-import static org.iota.jota.utils.Constants.INVALID_TRANSFERS_INPUT_ERROR;
+import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.model.Input;
+import org.iota.jota.model.Transfer;
 
 /**
  * 
@@ -44,7 +44,7 @@ public class InputValidator {
      * According to the following issue:
      * https://github.com/iotaledger/trinity-wallet/issues/866
      * 
-     * This is because Curl addresses always are with a 0 trit on the end.
+     * This is because Kerl addresses always are with a 0 trit on the end.
      * So we validate if we actually send to a proper address, to prevent having to double spent
      * 
      * @param trytes The trytes to check
@@ -135,7 +135,7 @@ public class InputValidator {
      * @return <code>true</code> if the specified trytes are trytes otherwise, <code>false</code>.
      **/
     public static boolean isTrytesOfExactLength(String trytes, int length) {
-        return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
+        return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length + ",") + "}$");
     }
 
     /**
@@ -158,7 +158,7 @@ public class InputValidator {
      * @return <code>true</code> if the specified string consist only of '9'; otherwise, <code>false</code>.
      **/
     public static boolean isNinesTrytes(String trytes, int length) {
-        return trytes.matches("^[9]{" + (length == 0 ? "0," : length) + "}$");
+        return trytes.matches("^[9]{" + (length == 0 ? "0," : length + ",") + "}$");
     }
 
     /**

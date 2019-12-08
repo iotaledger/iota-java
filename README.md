@@ -69,12 +69,23 @@ To download the IOTA Java client library and its dependencies, you can use one o
 
     ```gradle
     dependencies {
-        compile 'com.github.iotaledger:iota-java:1.0.0-beta7'
+        compile 'com.github.iotaledger:iota-java:1.0.0-beta8'
     }
     ```
     
 ### Downloading the library with Maven
+#### Through Maven central
+1. Add the following repository to your root `pom.xml` file:
+    ```xml
+    <dependency>
+        <groupId>org.iota</groupId>
+        <artifactId>jota</artifactId>
+        <classifier>jar-with-dependencies</classifier>
+        <version>1.0.0-beta8</version>
+    </dependency>
+    ```
 
+#### Through Jitpack
 1. Add the following repository to your root `pom.xml` file:
     ```xml
     <repositories>
@@ -96,7 +107,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
     ```
     
 3. Change the value of the `<version>` tag to either a release number or the first 10 characters of a Git commit hash:
-`<version>efdc784d8a9ef</version>` or `<version>1.0.0-beta7</version>`
+`<version>efdc784d8a9ef</version>` or `<version>1.0.0-beta8</version>`
 
 **Note:** Find the latest version on the [Jitpack](https://jitpack.io/#iotaledger/iota-java) page.
 
@@ -108,7 +119,8 @@ To download the IOTA Java client library and its dependencies, you can use one o
     * jota
     * jota-parent
 
-2. Reference the jota directory in your project
+2. Import and reference the jota directory in your project
+For example in Eclipse: `right mouse on your project -> Properties -> Java Build Path -> Projects -> Add 'jota'`
 
 3. In the jota directory, run the following command:
 
@@ -181,7 +193,60 @@ Here are some of the most commonly used API functions:
 We have a list of test cases on the [`src/test/java` directory][tests] that you can use as a reference when developing apps with IOTA.
 A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/org/iota/jota/IotaAPITest.java).
 
+### Creating and broadcasting transactions
+This example shows you how to create and send a transaction to an IRI node by calling the `prepareTransfers()` method and piping the prepared bundle to the `sendTrytes()` method.
+
+```java
+String fromAddr = "G9OPCBSQZO9GUNOYLLJYY ... JCF9TCDSZAU9VSOCZPC";
+String toAddr =   "TKGLOMEGTJWXIKDTF9CAV ... 9Q9RHCNDXTLGJYJPYM9";
+
+// difficulty of the proof of work required to attach a transaction on the tangle
+int mwm = 14;
+
+// how many milestones back to start the random walk from
+int depth = 3;
+
+// create a transfer to the given recipient address
+// optionally define a message and tag
+List<Transfer> transfers = new LinkedList<>();
+transfers.add(new Transfer(toAddr, 80, "MESSAGE", "TAG"));
+
+// create inputs for the transfer, this address contains 100 iota
+List<Input> inputs = new LinkedList<>();
+inputs.add(new Input(fromAddr, 100, 0, Constants.MAX_SECURITY_LEVEL));
+
+// create an address for the remainder.
+// in this case we will have 20 iotas as the remainder, since we spend 1000 from our input
+// address and only send 80 to the recipient.
+String remainder = api.generateNewAddresses(
+            new AddressRequest.Builder(seed, Constants.MAX_SECURITY_LEVEL).amount(1).checksum(true).build()
+        ).first();
+
+// Prepare the transfer by creating a bundle with the given transfers and inputs.
+// The result are trytes ready for PoW.
+List<String> trytes = api.prepareTransfers(seed, 3, transfers, remainder , inputs, null, false);
+
+// You can decrease your chance of sending to a spent address by checking the address before
+// broadcasting your bundle.
+WereAddressesSpentFromResponse spent = api.wereAddressesSpentFrom(transfers.get(0).getAddress());
+if (spent.getStates()[0]) {
+    System.out.println("Recipient address is spent from, aborting transfer");
+    return;
+}
+
+// at this point the bundle trytes are signed.
+// now we need to:
+// 1. select two tips
+// 2. do proof-of-work
+// 3. broadcast the bundle
+// 4. store the bundle
+// sendTrytes() conveniently does the steps above for us.
+List<Transaction> bundle = api.sendTrytes(trytes.toArray(new String[0]), depth, mwm, null);
+System.out.println("broadcasted bundle with tail tx hash: " + bundle.get(0));
+```
+
 ## Change logs:
+- Changes in [**1.0.0-beta8**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta7...1.0.0-beta8)
 - Changes in [**1.0.0-beta7**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta6...1.0.0-beta7)
 - Changes in [**1.0.0-beta6**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta5...1.0.0-beta6)
 - Changes in [**1.0.0-beta5**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta4...1.0.0-beta5)

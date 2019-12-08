@@ -83,6 +83,10 @@ public class BundleValidator {
             curl = SpongeFactory.create(customCurlMode.get());
         }
         
+        if (bundle == null) {
+            throw new ArgumentException(INVALID_BUNDLE_ERROR);
+        }
+        
         int totalSum = 0;
         int lastIndex = bundle.getLength() - 1;
         

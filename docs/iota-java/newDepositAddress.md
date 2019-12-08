@@ -15,7 +15,6 @@ Allocates a new CDA in the underlying store. Note: Specifying both multi-use and
     
 ## Output
 Future<[ConditionalDepositAddress](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/account/deposits/ConditionalDepositAddress.java)>, which contains the following fields:
-
 | Return type | Description |
 |--|--|
 | [DepositRequest](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/account/deposits/DepositRequest.java) request | The information about this deposit |
@@ -34,7 +33,7 @@ Future<[ConditionalDepositAddress](https://github.com/iotaledger/iota-java/blob/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
-    Future<ConditionalDepositAddress> response = account.newDepositAddress(timeout, true, 491, new ExpireCondition[]{null, null});
+    Future<ConditionalDepositAddress> response = account.newDepositAddress(timeout, true, 322, new ExpireCondition[]{null, null});
 } catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 

@@ -34,6 +34,15 @@ public class IotaCommandRequest {
     public static IotaCommandRequest createNodeInfoRequest() {
         return new IotaCommandRequest(IotaAPICommand.GET_NODE_INFO);
     }
+    
+    /**
+     * Get information about the API configuration.
+     *
+     * @return THe node API configuration
+     */
+    public static IotaCommandRequest createGetNodeAPIConfiguration() {
+        return new IotaCommandRequest(IotaAPICommand.GET_NODE_API_CONFIGURATION);
+    }
 
     /**
      * Gets the tips of the node.

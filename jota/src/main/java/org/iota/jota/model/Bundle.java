@@ -1,5 +1,8 @@
 package org.iota.jota.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -8,9 +11,7 @@ import org.iota.jota.pow.SpongeFactory;
 import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.Signing;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.iota.jota.utils.TrytesConverter;
 
 
 /**
@@ -92,6 +93,20 @@ public class Bundle implements Comparable<Bundle> {
         
         return transactions.get(0).getBundle();
         
+    }
+    
+    public String getMessage() {
+        StringBuilder str = new StringBuilder();
+        
+        for (Transaction t : getTransactions()) {
+            if (t.getValue() == 0) {
+                str.append(t.getSignatureFragments());
+            }
+        }
+        if (str.length() % 2 != 0) {
+            str.deleteCharAt(str.length() - 1);
+        }
+        return TrytesConverter.trytesToAscii(str.toString());
     }
     
     public void addTransaction(Transaction transaction) {

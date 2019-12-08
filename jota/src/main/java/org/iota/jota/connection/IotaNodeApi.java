@@ -21,6 +21,7 @@ import org.iota.jota.dto.response.GetAttachToTangleResponse;
 import org.iota.jota.dto.response.GetBalancesResponse;
 import org.iota.jota.dto.response.GetInclusionStateResponse;
 import org.iota.jota.dto.response.GetNeighborsResponse;
+import org.iota.jota.dto.response.GetNodeAPIConfigurationResponse;
 import org.iota.jota.dto.response.GetNodeInfoResponse;
 import org.iota.jota.dto.response.GetTipsResponse;
 import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
@@ -41,6 +42,12 @@ public interface IotaNodeApi {
      */
     GetNodeInfoResponse getNodeInfo(IotaCommandRequest request) throws ArgumentException;
 
+    /**
+     * Returns information about the node API configuration.
+     * @throws Exception 
+     */
+    GetNodeAPIConfigurationResponse getNodeAPIConfiguration(IotaCommandRequest request);
+    
     /**
      * Get the list of neighbors from the node.
      * @throws Exception 

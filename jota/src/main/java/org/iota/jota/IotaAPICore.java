@@ -38,6 +38,7 @@ import org.iota.jota.dto.response.GetAttachToTangleResponse;
 import org.iota.jota.dto.response.GetBalancesResponse;
 import org.iota.jota.dto.response.GetInclusionStateResponse;
 import org.iota.jota.dto.response.GetNeighborsResponse;
+import org.iota.jota.dto.response.GetNodeAPIConfigurationResponse;
 import org.iota.jota.dto.response.GetNodeInfoResponse;
 import org.iota.jota.dto.response.GetTipsResponse;
 import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
@@ -182,6 +183,16 @@ public class IotaAPICore {
      */
     public GetNodeInfoResponse getNodeInfo() throws ArgumentException {
         return getNodeFor(IotaAPICommand.GET_NODE_INFO).getNodeInfo(IotaCommandRequest.createNodeInfoRequest());
+    }
+    
+    /**
+     * Returns information about this node.
+     *
+     * @return {@link GetNodeInfoResponse}
+     * @throws ArgumentException The request was considered wrong in any way by the node
+     */
+    public GetNodeAPIConfigurationResponse getNodeAPIConfiguration() throws ArgumentException {
+        return getNodeFor(IotaAPICommand.GET_NODE_API_CONFIGURATION).getNodeAPIConfiguration(IotaCommandRequest.createGetNodeAPIConfiguration());
     }
 
     /**
@@ -721,7 +732,7 @@ public class IotaAPICore {
      * @throws ArgumentException when the provided transaction trytes are invalid
      */
     public BroadcastTransactionsResponse broadcastTransactions(String... trytes) throws ArgumentException {
-        if (!InputValidator.isArrayOfRawTransactionTrytes(trytes)) {
+        if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
             throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR);
         }
 
@@ -738,7 +749,7 @@ public class IotaAPICore {
      * @throws ArgumentException when the provided transaction trytes are invalid
      */
     public StoreTransactionsResponse storeTransactions(String... trytes) throws ArgumentException {
-        if (!InputValidator.isArrayOfRawTransactionTrytes(trytes)) {
+        if (!InputValidator.isArrayOfAttachedTrytes(trytes)) {
             throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR);
         }
         
