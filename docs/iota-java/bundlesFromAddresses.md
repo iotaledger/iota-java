@@ -29,7 +29,7 @@ Internal function to get the formatted bundles of a list of addresses.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    Bundle[] response = iotaAPI.bundlesFromAddresses(false, new String[]{"UTSPUMBBRHRCVMPKAWDRXIFUYHOYLJGTZ9DTRIQJFD9UFDYCNLFQBV9LTOMGASNPWVFMCAMKVKOCVNZKG", "WAZEFGAKXRACVFNEP9JXYPASTZVBYXF9UNHKUHRUDWDBETAJYD9OFWBOJON9FDQRRBTVXZMCMMTLZLRWH"});
+    Bundle[] response = iotaAPI.bundlesFromAddresses(false, new String[]{"RMQYYPYZKJQOWHDJPXDFUB9NYFWDUNNUBHIQRYUZBYGHKMDDWFLURDCIUVYHGVNQJMFQSPCUNETZFPIPZ", "WALYAJHFLXYTGDTSRTEJZCDKIMAKJZSKEFVBVPUYYFSQDWUXP9TFGXOYSFVQTRZBDTRKYBYMKBJIDWNLZ"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

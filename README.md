@@ -69,7 +69,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
 
     ```gradle
     dependencies {
-        compile 'com.github.iotaledger:iota-java:1.0.0-beta7'
+        compile 'com.github.iotaledger:iota-java:1.0.0-beta8'
     }
     ```
     
@@ -81,7 +81,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
         <groupId>org.iota</groupId>
         <artifactId>jota</artifactId>
         <classifier>jar-with-dependencies</classifier>
-        <version>1.0.0-beta7</version>
+        <version>1.0.0-beta8</version>
     </dependency>
     ```
 
@@ -107,7 +107,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
     ```
     
 3. Change the value of the `<version>` tag to either a release number or the first 10 characters of a Git commit hash:
-`<version>efdc784d8a9ef</version>` or `<version>1.0.0-beta7</version>`
+`<version>efdc784d8a9ef</version>` or `<version>1.0.0-beta8</version>`
 
 **Note:** Find the latest version on the [Jitpack](https://jitpack.io/#iotaledger/iota-java) page.
 
@@ -246,6 +246,7 @@ System.out.println("broadcasted bundle with tail tx hash: " + bundle.get(0));
 ```
 
 ## Change logs:
+- Changes in [**1.0.0-beta8**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta7...1.0.0-beta8)
 - Changes in [**1.0.0-beta7**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta6...1.0.0-beta7)
 - Changes in [**1.0.0-beta6**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta5...1.0.0-beta6)
 - Changes in [**1.0.0-beta5**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta4...1.0.0-beta5)

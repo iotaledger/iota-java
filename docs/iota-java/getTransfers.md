@@ -16,7 +16,6 @@ Finds all the bundles for all the addresses based on this seed and security.
     
 ## Output
 [GetTransferResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetTransferResponse.java), which contains the following fields:
-
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -36,7 +35,7 @@ Finds all the bundles for all the addresses based on this seed and security.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetTransferResponse response = iotaAPI.getTransfers("YOUR9SECRET9SEED9999999...", 3, 576, 928, true);
+    GetTransferResponse response = iotaAPI.getTransfers("YOUR9SECRET9SEED9999999...", 3, 978, 649, false);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

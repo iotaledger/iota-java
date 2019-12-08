@@ -1,5 +1,5 @@
 
-# [getLatestInclusion](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1073)
+# [getLatestInclusion](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1075)
  [GetInclusionStateResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetInclusionStateResponse.java) getLatestInclusion(String[] hashes)
 
 Wrapper function: runs getNodeInfo and getInclusionStates Uses the latest milestone as tip
@@ -12,7 +12,6 @@ Wrapper function: runs getNodeInfo and getInclusionStates Uses the latest milest
     
 ## Output
 [GetInclusionStateResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetInclusionStateResponse.java), which contains the following fields:
-
 | Return type | Description |
 |--|--|
 | Long duration | Gets the duration. |
@@ -26,8 +25,8 @@ Wrapper function: runs getNodeInfo and getInclusionStates Uses the latest milest
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [getNodeInfo()](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L183) | Returns information about this node. |
-| [getInclusionStates(String[], String[])](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L384) |  Get the inclusion states of a set of transactions. This is for determining if a transaction was accepted and confirmed by the network or not. You can search for multiple tips (and thus, milestones) to get past inclusion states of transactions. 
+| [getNodeInfo()](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L184) | Returns information about this node. |
+| [getInclusionStates(String[], String[])](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L395) |  Get the inclusion states of a set of transactions. This is for determining if a transaction was accepted and confirmed by the network or not. You can search for multiple tips (and thus, milestones) to get past inclusion states of transactions. 
   This API call returns a list of boolean values in the same order as the submitted transactions. Boolean values will be `true` for confirmed transactions, otherwise `false`. 
  |
 
@@ -37,7 +36,7 @@ Wrapper function: runs getNodeInfo and getInclusionStates Uses the latest milest
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetInclusionStateResponse response = iotaAPI.getLatestInclusion(new String[]{"NFJQS9XEJCWEYEMQHIPJKHJGIASPGVYTGNCCVEPVUVIVQSMXIHRZFBKFUNJFVSFMITOFDEJWIQDKCWNFA", "GRRTTPUSUEVLOJSVMZAONAMUSXBAMWIBUTTLAINOTUZYMSTFLRAJHVGINQMPYOHEDCOVSCDU9KZTRCNKB"});
+    GetInclusionStateResponse response = iotaAPI.getLatestInclusion(new String[]{"YCEOHHTBCNAXZSJLTNVIAGUWRIPDSBGNOVAHWBOOIZZSVGIVCQLOP9PACVSHGKQLKSIXGFG9KFZHLU9E9", "RMHXEATVMZUYDEWAHHPLYZ9HLUWE9UKMWLH9GGWJBZNWG9DIOCIIEMKFS9SHWUAOEBU9WJHTRXFDKUIYX"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 
