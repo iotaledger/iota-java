@@ -18,7 +18,8 @@ public class MemoryStore implements Store {
     }
     
     public MemoryStore(Map<String, Serializable> store) {
-        this.store = store;
+        // Copy to ensure writeability
+        this.store = new ConcurrentHashMap<String, Serializable>(store);
     }
 
     @Override
