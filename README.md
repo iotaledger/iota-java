@@ -6,9 +6,11 @@
 <h2 align="center">The official Java client library for interacting with the Tangle</h2>
 
 <p align="center">
-    <a href="https://docs.iota.org/docs/client-libraries/0.1/getting-started/java-quickstart">
-    <img src="https://img.shields.io/badge/Developer%20documentation%20portal-blue.svg"
+    <a href="https://docs.iota.org/docs/client-libraries/0.1/getting-started/js-quickstart">
+    <img src="https://img.shields.io/badge/Documentation%20portal-blue.svg?style=for-the-badge"
          alt="Developer documentation portal">
+      </p>
+  <p>
     <a href="https://iotaledger.github.io/iota-java/javadoc/">
     <img src="https://img.shields.io/badge/javadoc-reference-informational.svg"
          alt="Auto-generated docs">
