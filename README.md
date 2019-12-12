@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/Documentation%20portal-blue.svg?style=for-the-badge"
          alt="Developer documentation portal">
       </p>
-  <p>
+  <p align="center">
     <a href="https://iotaledger.github.io/iota-java/javadoc/">
     <img src="https://img.shields.io/badge/javadoc-reference-informational.svg"
          alt="Auto-generated docs">
