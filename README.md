@@ -225,7 +225,7 @@ A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-ja
 If the IOTA Java client library has been useful to you and you feel like contributing, consider posting a [bug report](https://github.com/iotaledger/iota-java/issues/new-issue), feature request or a [pull request](https://github.com/iotaledger/iota-java/pulls/).  
 We have some [basic contribution guidelines](CONTRIBUTING.md) to keep our code base stable and consistent.
 
-## Joining the Discussion
+## Joining the discussion
 
 If you want to get involved in the community, need help with getting setup, have any issues related with the library or just want to discuss blockchain, distributed ledgers, and IoT with other people, feel free to join our [Discord](https://discord.iota.org/).  
 
