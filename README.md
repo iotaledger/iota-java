@@ -38,6 +38,7 @@
 ## About
 
 This is the **official** Java client library, which allows you to do the following:
+
 * Create transactions
 * Read transactions
 * Sign transactions
