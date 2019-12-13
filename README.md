@@ -56,8 +56,6 @@ To use the IOTA Java client library, your computer must have the following minim
 
 The IOTA Java client library is available on [**jitpack.io**][jitpack].
 
-### Dependencies
-
 To install the IOTA Java client library and its dependencies, you can use one of the following options:
 
 * Download the library with Gradle
