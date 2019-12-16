@@ -142,17 +142,17 @@ You'll have a .jar file called `jota-[VERSION]-jar-with-dependencies.jar`, depen
 
 ## Getting Started
 
-After you've [installing the library](#installation), you can connect to an IRI node to send transactions to it and interact with the ledger.
-An extended guide can be found on our [documentation portal](https://docs.iota.org/docs/client-libraries/0.1/getting-started/java-quickstart), we strongly recommend you to go here for starting off. A quick starting tutorial is shown below.
+After you've [installed the library](#installation), you can connect to an IRI node to send transactions to it and interact with the Tangle.
+An extended guide can be found on our [documentation portal](https://docs.iota.org/docs/client-libraries/0.1/getting-started/java-quickstart), we strongly recommend you to go here for starting off. A quick start tutorial is shown below.
 
-To connect to a local IRI node, do the following:
+To connect to a local IRI node on port 14265, do the following:
 
 ```java
 IotaAPI api = new IotaAPI.Builder().build();
 GetNodeInfoResponse response = api.getNodeInfo();
 ```
 
-To connect to a remote IRI node, do the following:
+To connect to a remote IRI node on port 14265, do the following:
 
 ```java
 IotaAPI api = new IotaAPI.Builder()
@@ -200,8 +200,57 @@ Here are some of the most commonly used API functions:
 
 ## Examples
 
-We have a list of test cases on the [`src/test/java` directory][tests] that you can use as a reference when developing apps with IOTA.
+We have a list of test cases in the [`src/test/java` directory][tests] that you can use as a reference when developing apps with IOTA.
 A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/org/iota/jota/IotaAPITest.java).
+
+Here's how you could send 1 IOTA token to an address, using the core library:
+
+```java
+class SendTokens {
+    public static void main(String[] args) throws ArgumentException {
+
+        // Connect to a node
+        IotaAPI api = new IotaAPI.Builder()
+            .protocol("https")
+            .host("nodes.devnet.thetangle.org")
+            .port(443)
+            .build();
+        
+        // Define the network settings
+        int depth = 3;
+        int minimumWeightMagnitude = 9;
+
+        // Replace this seed with the one that owns the address you used to get free test tokens
+        String mySeed = "JBN9ZRCOH9YRUGSWIQNZWAIFEZUBDUGTFPVRKXWPAUCEQQFS9NHPQLXCKZKRHVCCUZNF9CZZWKXRZVCWQ";
+
+        // Define the security level of the seed's address from which you want to withdraw
+        int securityLevel = 2;
+
+        // Define an address to which to send IOTA tokens
+        String address = "ZLGVEQ9JUZZWCZXLWVNTHBDX9G9KZTJP9VEERIIFHY9SIQKYBVAHIMLHXPQVE9IXFDDXNHQINXJDRPFDXNYVAPLZAW";
+        // Define an input transaction object
+        // that sends 1 i to your new address
+        int value = 1;
+
+        Transfer Transaction = new Transfer(address, value);
+        
+        ArrayList<Transfer> transfers = new ArrayList<Transfer>();
+
+        transfers.add(Transaction);
+        
+        // Create a bundle from the transfers list
+        // and send the transactions to the node
+        try {
+            System.out.printf("Sending 1 i to %s", address);
+            SendTransferResponse response = api.sendTransfer(mySeed, securityLevel, depth, minimumWeightMagnitude, transfers, null, null, true, false, null);
+            System.out.println(response.getTransactions());
+        } catch (ArgumentException e) { 
+            // Handle error
+            e.printStackTrace(); 
+         }
+    }
+}
+```
 
 ## Change logs
 
