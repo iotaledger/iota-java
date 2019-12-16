@@ -203,7 +203,7 @@ Here are some of the most commonly used API functions:
 We have a list of test cases in the [`src/test/java` directory][tests] that you can use as a reference when developing apps with IOTA.
 A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/org/iota/jota/IotaAPITest.java).
 
-Here's how you could send a zero-value transaction, using the library:
+Here's how you could send a zero-value transaction, using the library. For the guide, see the [documentation portal](https://docs.iota.org/docs/client-libraries/0.1/how-to-guides/java/send-your-first-bundle).
 
 ```java
 class SendData {
