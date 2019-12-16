@@ -203,10 +203,10 @@ Here are some of the most commonly used API functions:
 We have a list of test cases in the [`src/test/java` directory][tests] that you can use as a reference when developing apps with IOTA.
 A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/org/iota/jota/IotaAPITest.java).
 
-Here's how you could send 1 IOTA token to an address, using the library:
+Here's how you could send a zero-value transaction, using the library:
 
 ```java
-class SendTokens {
+class SendData {
     public static void main(String[] args) throws ArgumentException {
 
         // Connect to a node
@@ -215,34 +215,41 @@ class SendTokens {
             .host("nodes.devnet.thetangle.org")
             .port(443)
             .build();
-        
-        // Define the network settings
+
         int depth = 3;
         int minimumWeightMagnitude = 9;
 
-        // Replace this seed with the one that owns the address you used to get free test tokens
-        String mySeed = "JBN9ZRCOH9YRUGSWIQNZWAIFEZUBDUGTFPVRKXWPAUCEQQFS9NHPQLXCKZKRHVCCUZNF9CZZWKXRZVCWQ";
+        // Even though a seed is not necessary because zero value transactions are not signed,
+        // the library requires a seed to send a transaction.
+        // This seed can be any random string of 81 trytes
+        String myRandomSeed = SeedRandomGenerator.generateNewSeed();
 
-        // Define the security level of the seed's address from which you want to withdraw
+        // Define any security level (like the seed, this is not used)
         int securityLevel = 2;
 
-        // Define an address to which to send IOTA tokens
+        // Define an address.
+        // This does not need to belong to anyone or have IOTA tokens.
+        // It must only contain a maximum of 81 trytes
+        // or 90 trytes with a valid checksum
         String address = "ZLGVEQ9JUZZWCZXLWVNTHBDX9G9KZTJP9VEERIIFHY9SIQKYBVAHIMLHXPQVE9IXFDDXNHQINXJDRPFDXNYVAPLZAW";
-        // Define an input transaction object
-        // that sends 1 i to your new address
-        int value = 1;
+        // This is a zero-value transaction
+        int value = 0;
+        // Define a message to send.
+        // This message must include only ASCII characters.
+        String message = TrytesConverter.asciiToTrytes("Hello world");
+        String tag = "HELLOWORLD";
 
-        Transfer Transaction = new Transfer(address, value);
+        Transfer zeroValueTransaction = new Transfer(address, value, message, tag);
         
         ArrayList<Transfer> transfers = new ArrayList<Transfer>();
 
-        transfers.add(Transaction);
+        transfers.add(zeroValueTransaction);
         
         // Create a bundle from the transfers list
-        // and send the transactions to the node
-        try {
-            System.out.printf("Sending 1 i to %s", address);
-            SendTransferResponse response = api.sendTransfer(mySeed, securityLevel, depth, minimumWeightMagnitude, transfers, null, null, true, false, null);
+        // and send the transaction to the node
+        try { 
+            // Since we don't send any value, we can skip validation of inputs
+            SendTransferResponse response = api.sendTransfer(myRandomSeed, securityLevel, depth, minimumWeightMagnitude, transfers, null, null, false, false, null);
             System.out.println(response.getTransactions());
         } catch (ArgumentException e) { 
             // Handle error
