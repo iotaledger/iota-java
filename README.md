@@ -158,7 +158,7 @@ To connect to a remote IRI node on port 14265, do the following:
 IotaAPI api = new IotaAPI.Builder()
         .protocol("http")
         .host("URL OF THE REMOTE IRI NODE")
-        .port("14265")
+        .port(14265)
         .build();
 GetNodeInfoResponse response = api.getNodeInfo();
 ```
