@@ -1,31 +1,51 @@
-# IOTA Java client library
+<h1 align="center">
+  <br>
+  <a href="https://docs.iota.org/docs/client-libraries/0.1/getting-started/java-quickstart"><img src="iota-java.png"></a>
+</h1>
 
-[![Codacy Badge][codacy-badge]][codacy]
-[![JitPack][jitpack-badge]][jitpack]
-[![Build Status][travis-badge]][travis]
-[![License][license-badge]][license]  
-[![IOTA IRI compatibility][iota-iri-badge]][iota-iri]
-[![IOTA API coverage][iota-api-badge]][iota-api]
+<h2 align="center">The official Java client library for interacting with the Tangle</h2>
+
+<p align="center">
+    <a href="https://docs.iota.org/docs/client-libraries/0.1/getting-started/java-quickstart" style="text-decoration:none;">
+    <img src="https://img.shields.io/badge/Documentation%20portal-blue.svg?style=for-the-badge"
+         alt="Developer documentation portal">
+      </p>
+<p align="center">
+  <a href="https://iotaledger.github.io/iota-java/javadoc/" style="text-decoration:none;"><img src="https://img.shields.io/badge/javadoc-reference-informational.svg" alt="Auto-generated docs"></a>
+  <a href="https://discord.iota.org/" style="text-decoration:none;"><img src="https://img.shields.io/badge/Discord-9cf.svg?logo=discord" alt="Discord"></a>
+    <a href="https://iota.stackexchange.com/" style="text-decoration:none;"><img src="https://img.shields.io/badge/StackExchange-9cf.svg?logo=stackexchange" alt="StackExchange"></a>
+    <a href="https://github.com/iotaledger/iota-java/blob/dev/LICENSE" style="text-decoration:none;"><img src="https://img.shields.io/github/license/iotaledger/iota-java.svg" alt="Apache 2.0 license"></a>
+    <a href="https://docs.iota.org/docs/node-software/0.1/iri/references/api-reference" style="text-decoration:none;"><img src="https://img.shields.io/badge/Node%20API%20coverage-18/18%20commands-green.svg" alt="Supported IRI API endpoints"></a>
+    <a href="https://www.codacy.com/app/kwek20/iota-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iotaledger/iota-java&amp;utm_campaign=Badge_Grade" style="text-decoration:none;"><img src="https://api.codacy.com/project/badge/Grade/92feea51a15c4e589386c269475b8761" alt="Code quality"></a>
+  <a href="https://jitpack.io/#iotaledger/iota-java" style="text-decoration:none;"><img src="https://jitpack.io/v/iotaledger/iota-java.svg" alt="Latest release"></a>
+    <a href="https://travis-ci.org/iotaledger/iota-java" style="text-decoration:none;"><img src="https://travis-ci.org/iotaledger/iota-java.svg?branch=dev" alt="Build status"></a>
+</p>
+      
+<p align="center">
+  <a href="#about">About</a> ◈
+  <a href="#prerequisites">Prerequisites</a> ◈
+  <a href="#installation">Installation</a> ◈
+  <a href="#getting-started">Getting started</a> ◈
+  <a href="#api-reference">API reference</a> ◈
+  <a href="#examples">Examples</a> ◈
+  <a href="#change-logs">Change logs</a> ◈
+  <a href="#supporting-the-project">Supporting the project</a> ◈
+  <a href="#joining-the-discussion">Joining the discussion</a> 
+</p>
+
+---
+
+## About
 
 This is the **official** Java client library, which allows you to do the following:
+
 * Create transactions
+* Read transactions
 * Sign transactions
-* Interact with an IRI node
+* Generate addresses
 
 This is beta software, so there may be performance and stability issues.
 Please report any issues in our [issue tracker](https://github.com/iotaledger/iota-java/issues/new/choose).
-
-|Table of contents|
-|:----|
-| [Prerequisites](#prerequisites)
-| [Downloading the library](#downloading-the-library)|
-| [Getting started](#getting-started) |
-| [API reference](#api-reference)|
-| [Examples](#examples)|
-| [Change logs](#change-logs)|
-|[Supporting the project](#supporting-the-project)|
-|[Joining the discussion](#joining-the-discussion)|
-| [License](#license)
 
 ## Prerequisites
 
@@ -33,27 +53,17 @@ To use the IOTA Java client library, your computer must have the following minim
 
 * Java 6 (or higher)
 
-## Downloading the library
+## Installation
 
 The IOTA Java client library is available on [**jitpack.io**][jitpack].
 
-### Dependencies
-
-The IOTA Java client library uses the following third-party libraries:
-
-* [Retrofit 2](https://square.github.io/retrofit/) type-safe HTTP client: `2.3.0`
-* [Simple Logging Facade for Java](http://www.slf4j.org/): `1.7.25`
-* [Apache Commons Lang](http://commons.apache.org/proper/commons-lang/): `3.6`
-* [Apache Commons IO](http://commons.apache.org/proper/commons-io/): `2.5`
-* [Legion of the Bouncy Castle](https://www.bouncycastle.org/java.html) Java cryptography APIs: `1.58`
-
-To download the IOTA Java client library and its dependencies, you can use one of the following options:
+To install the IOTA Java client library and its dependencies, you can use one of the following options:
 
 * Download the library with Gradle
 * Download the library with Maven
 * Download the library manually
 
-### Downloading the library with Gradle
+### Gradle
 
  1. Add the following repository to your root `build.gradle` file (**not** your module `build.gradle` file):
 
@@ -73,7 +83,8 @@ To download the IOTA Java client library and its dependencies, you can use one o
     }
     ```
     
-### Downloading the library with Maven
+### Maven
+
 #### Through Maven central
 1. Add the following repository to your root `pom.xml` file:
     ```xml
@@ -86,6 +97,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
     ```
 
 #### Through Jitpack
+
 1. Add the following repository to your root `pom.xml` file:
     ```xml
     <repositories>
@@ -111,7 +123,7 @@ To download the IOTA Java client library and its dependencies, you can use one o
 
 **Note:** Find the latest version on the [Jitpack](https://jitpack.io/#iotaledger/iota-java) page.
 
-### Downloading the library manually
+### Manual installation
 
 1. Clone or download the [GitHub repository](https://github.com/iotaledger/iota-java).
 
@@ -130,25 +142,23 @@ You'll have a .jar file called `jota-[VERSION]-jar-with-dependencies.jar`, depen
 
 ## Getting Started
 
-After you've [downloaded the library](#downloading-the-library), you can connect to an IRI node to send transactions to it and interact with the ledger.
-An extended guide can be found on our [documentation website](https://docs.iota.org/docs/iota-java/0.1/README), we strongly recommend you to go here for starting 
-off. A quick starting tutorial is shown below.
+After you've [installed the library](#installation), you can connect to an IRI node to send transactions to it and interact with the Tangle.
+An extended guide can be found on our [documentation portal](https://docs.iota.org/docs/client-libraries/0.1/getting-started/java-quickstart), we strongly recommend you to go here for starting off. A quick start tutorial is shown below.
 
-
-To connect to a local IRI node, do the following:
+To connect to a local IRI node on port 14265, do the following:
 
 ```java
 IotaAPI api = new IotaAPI.Builder().build();
 GetNodeInfoResponse response = api.getNodeInfo();
 ```
 
-To connect to a remote IRI node, do the following:
+To connect to a remote IRI node on port 14265, do the following:
 
 ```java
 IotaAPI api = new IotaAPI.Builder()
         .protocol("http")
         .host("URL OF THE REMOTE IRI NODE")
-        .port("14265")
+        .port(14265)
         .build();
 GetNodeInfoResponse response = api.getNodeInfo();
 ```
@@ -190,62 +200,67 @@ Here are some of the most commonly used API functions:
 
 ## Examples
 
-We have a list of test cases on the [`src/test/java` directory][tests] that you can use as a reference when developing apps with IOTA.
+We have a list of test cases in the [`src/test/java` directory][tests] that you can use as a reference when developing apps with IOTA.
 A good starter is the [`IotaAPITest` case](https://github.com/iotaledger/iota-java/blob/master/jota/src/test/java/org/iota/jota/IotaAPITest.java).
 
-### Creating and broadcasting transactions
-This example shows you how to create and send a transaction to an IRI node by calling the `prepareTransfers()` method and piping the prepared bundle to the `sendTrytes()` method.
+Here's how you could send a zero-value transaction, using the library. For the guide, see the [documentation portal](https://docs.iota.org/docs/client-libraries/0.1/how-to-guides/java/send-your-first-bundle).
 
 ```java
-String fromAddr = "G9OPCBSQZO9GUNOYLLJYY ... JCF9TCDSZAU9VSOCZPC";
-String toAddr =   "TKGLOMEGTJWXIKDTF9CAV ... 9Q9RHCNDXTLGJYJPYM9";
+class SendData {
+    public static void main(String[] args) throws ArgumentException {
 
-// difficulty of the proof of work required to attach a transaction on the tangle
-int mwm = 14;
+        // Connect to a node
+        IotaAPI api = new IotaAPI.Builder()
+            .protocol("https")
+            .host("nodes.devnet.thetangle.org")
+            .port(443)
+            .build();
 
-// how many milestones back to start the random walk from
-int depth = 3;
+        int depth = 3;
+        int minimumWeightMagnitude = 9;
 
-// create a transfer to the given recipient address
-// optionally define a message and tag
-List<Transfer> transfers = new LinkedList<>();
-transfers.add(new Transfer(toAddr, 80, "MESSAGE", "TAG"));
+        // Even though a seed is not necessary because zero value transactions are not signed,
+        // the library requires a seed to send a transaction.
+        // This seed can be any random string of 81 trytes
+        String myRandomSeed = SeedRandomGenerator.generateNewSeed();
 
-// create inputs for the transfer, this address contains 100 iota
-List<Input> inputs = new LinkedList<>();
-inputs.add(new Input(fromAddr, 100, 0, Constants.MAX_SECURITY_LEVEL));
+        // Define any security level (like the seed, this is not used)
+        int securityLevel = 2;
 
-// create an address for the remainder.
-// in this case we will have 20 iotas as the remainder, since we spend 1000 from our input
-// address and only send 80 to the recipient.
-String remainder = api.generateNewAddresses(
-            new AddressRequest.Builder(seed, Constants.MAX_SECURITY_LEVEL).amount(1).checksum(true).build()
-        ).first();
+        // Define an address.
+        // This does not need to belong to anyone or have IOTA tokens.
+        // It must only contain a maximum of 81 trytes
+        // or 90 trytes with a valid checksum
+        String address = "ZLGVEQ9JUZZWCZXLWVNTHBDX9G9KZTJP9VEERIIFHY9SIQKYBVAHIMLHXPQVE9IXFDDXNHQINXJDRPFDXNYVAPLZAW";
+        // This is a zero-value transaction
+        int value = 0;
+        // Define a message to send.
+        // This message must include only ASCII characters.
+        String message = TrytesConverter.asciiToTrytes("Hello world");
+        String tag = "HELLOWORLD";
 
-// Prepare the transfer by creating a bundle with the given transfers and inputs.
-// The result are trytes ready for PoW.
-List<String> trytes = api.prepareTransfers(seed, 3, transfers, remainder , inputs, null, false);
+        Transfer zeroValueTransaction = new Transfer(address, value, message, tag);
+        
+        ArrayList<Transfer> transfers = new ArrayList<Transfer>();
 
-// You can decrease your chance of sending to a spent address by checking the address before
-// broadcasting your bundle.
-WereAddressesSpentFromResponse spent = api.wereAddressesSpentFrom(transfers.get(0).getAddress());
-if (spent.getStates()[0]) {
-    System.out.println("Recipient address is spent from, aborting transfer");
-    return;
+        transfers.add(zeroValueTransaction);
+        
+        // Create a bundle from the transfers list
+        // and send the transaction to the node
+        try { 
+            // Since we don't send any value, we can skip validation of inputs
+            SendTransferResponse response = api.sendTransfer(myRandomSeed, securityLevel, depth, minimumWeightMagnitude, transfers, null, null, false, false, null);
+            System.out.println(response.getTransactions());
+        } catch (ArgumentException e) { 
+            // Handle error
+            e.printStackTrace(); 
+         }
+    }
 }
-
-// at this point the bundle trytes are signed.
-// now we need to:
-// 1. select two tips
-// 2. do proof-of-work
-// 3. broadcast the bundle
-// 4. store the bundle
-// sendTrytes() conveniently does the steps above for us.
-List<Transaction> bundle = api.sendTrytes(trytes.toArray(new String[0]), depth, mwm, null);
-System.out.println("broadcasted bundle with tail tx hash: " + bundle.get(0));
 ```
 
-## Change logs:
+## Change logs
+
 - Changes in [**1.0.0-beta8**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta7...1.0.0-beta8)
 - Changes in [**1.0.0-beta7**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta6...1.0.0-beta7)
 - Changes in [**1.0.0-beta6**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta5...1.0.0-beta6)
@@ -267,28 +282,11 @@ System.out.println("broadcasted bundle with tail tx hash: " + bundle.get(0));
 If the IOTA Java client library has been useful to you and you feel like contributing, consider posting a [bug report](https://github.com/iotaledger/iota-java/issues/new-issue), feature request or a [pull request](https://github.com/iotaledger/iota-java/pulls/).  
 We have some [basic contribution guidelines](CONTRIBUTING.md) to keep our code base stable and consistent.
 
-## Joining the Discussion
+## Joining the discussion
 
 If you want to get involved in the community, need help with getting setup, have any issues related with the library or just want to discuss blockchain, distributed ledgers, and IoT with other people, feel free to join our [Discord](https://discord.iota.org/).  
 
-## License
 
-The Apache 2.0 license can be found [here](LICENSE).
-
-[iota-logo]: https://avatars0.githubusercontent.com/u/20126597?s=200&v=4
-[codacy]: https://www.codacy.com/app/kwek20/iota-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iotaledger/iota-java&amp;utm_campaign=Badge_Grade
-[codacy-badge]: https://api.codacy.com/project/badge/Grade/92feea51a15c4e589386c269475b8761
-[jitpack]: https://jitpack.io/#iotaledger/iota-java
-[jitpack-badge]: https://jitpack.io/v/iotaledger/iota-java.svg
-[travis]: https://travis-ci.org/iotaledger/iota-java
-[travis-badge]: https://travis-ci.org/iotaledger/iota-java.svg?branch=master
-[license]: https://github.com/iotaledger/iota-java/blob/master/LICENSE
-[license-badge]: https://img.shields.io/github/license/iotaledger/iota-java.svg
-[iota-iri]: https://github.com/iotaledger/iri/tree/v1.6.1
-[iota-iri-badge]: https://img.shields.io/badge/IOTA%20IRI%20compatibility-v1.6.1-blue.svg
-[iota-api]: https://iota.readme.io/reference
-[iota-api-badge]: https://img.shields.io/badge/IOTA%20API%20coverage-15/15%20commands-green.svg
-[javadoc]: https://iotaledger.github.io/iota-java/javadoc/
 [issues]: https://github.com/iotaledger/iota-java/issues
 [new-issue]: https://github.com/iotaledger/iota-java/issues/new
 [pull-requests]: https://github.com/iotaledger/iota-java/pulls
