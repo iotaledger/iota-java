@@ -41,7 +41,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [findTransactionsByTags(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L372) | Find the transactions by tags |
+| [findTransactionsByTags(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L360) | Find the transactions by tags |
 | [findTransactionsObjectsByHashes](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L372) | Wrapper function: get trytes and turns into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects. Gets the trytes and transaction object from a list of transaction hashes. |
 
  ## Example
@@ -50,7 +50,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.findTransactionObjectsByTag(new String[]{"TAG9RQWWNKCLKYYTNHKEZSFPDNJ", "TAG9LIZMXWNNLW9NXEEWAXDWYJE"});
+    List<Transaction> response = iotaAPI.findTransactionObjectsByTag(new String[]{"TAG9DKZQQPWFFFFLKPTHDMWZYTT", "TAG9Y9RDVC99ZLXVPIBY9WMTUCZ"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

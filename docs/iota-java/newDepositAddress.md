@@ -33,7 +33,7 @@ Future<[ConditionalDepositAddress](https://github.com/iotaledger/iota-java/blob/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 IotaAccount account = new IotaAccount.Builder("MY9SEED9..").api(iotaAPI).build()
 try { 
-    Future<ConditionalDepositAddress> response = account.newDepositAddress(timeout, true, 322, new ExpireCondition[]{null, null});
+    Future<ConditionalDepositAddress> response = account.newDepositAddress(timeout, true, 739, new ExpireCondition[]{null, null});
 } catch (AccountError e) { 
     // Handle error
     e.printStackTrace(); 
