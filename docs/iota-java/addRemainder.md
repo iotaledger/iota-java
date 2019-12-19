@@ -1,5 +1,5 @@
 
-# [addRemainder](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1527)
+# [addRemainder](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1528)
  List<String> addRemainder(String seed , int security , List<[Input](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Input.java)> inputs , [Bundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Bundle.java) bundle , String tag , long totalValue , String remainderAddress , List<String> signatureFragments)
 
 Uses input, and adds to the bundle, untill `totalValue` is reached. If there is a remainder left on the last input, a remainder transfer is added.
@@ -41,7 +41,7 @@ Uses input, and adds to the bundle, untill `totalValue` is reached. If there is 
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<String> response = iotaAPI.addRemainder("YOUR9SECRET9SEED9999999...", 3, new List<Input>(new Input[]{inputs, inputs}), bundle, "TAG9QXJKVCMJTZKDLKBDJOFUNBG", 694, "YSSJTOKAUD9OVFEGQUPN9GRHEZAOUFGYUMJAVWTK9RVSTXGJMH9JPSLIWDPVXFXMIVIFCFF9DENNVILDV", new List<String>(new String[]{"IANOICEWWXZAPDVKYHHVFHBCP ... ZGCSQDTXDPRTRPHHTZOFCRPYA", "LYSKNTDRWDLVCFXDHVKSDDVPY ... SWCBVCPPELYHKWUGEFWMZUFER"}));
+    List<String> response = iotaAPI.addRemainder("YOUR9SECRET9SEED9999999...", 3, new List<Input>(new Input[]{inputs, inputs}), bundle, "TAG9ABDOZDTYHY9ALNTRW9WCINN", 515, "M9LNVCAWCXEYRAZQKONSQSWTCVZCMKEDDBUBEBRKLCETDNNNSYF9L9QEVSATNONEBRBQBN9EOUPOGGUTP", new List<String>(new String[]{"KULNMSVMUAJJISRYBTEMGETHR ... LXLRMKDLRTFHPKYINRXIUUVMU", "EKOFHDI9IRIAC9OHQWVSTXMRG ... SCFMG9SFYDDFMISXTRDBIODLX"}));
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

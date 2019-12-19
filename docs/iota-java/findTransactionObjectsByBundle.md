@@ -1,6 +1,6 @@
 
-# [findTransactionObjectsByAddresses](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L398)
- List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> findTransactionObjectsByAddresses(String[] addresses)
+# [findTransactionObjectsByBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L456)
+ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> findTransactionObjectsByBundle(String[] bundles)
 
 Wrapper function: Finds transactions, gets trytes and turns it into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects.
 > **Important note:** This API is currently in Beta and is subject to change. Use of these APIs in production applications is not supported.
@@ -8,7 +8,7 @@ Wrapper function: Finds transactions, gets trytes and turns it into [Transaction
 ## Input
 | Parameter       | Type | Required or Optional | Description |
 |:---------------|:--------|:--------| :--------|
-| addresses | String[] | Required | The addresses we should get the transactions for, must contain checksums |
+| bundles | String[] | Required | The bundles for which we will get all its transactions |
     
 ## Output
 List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)>, which contains the following fields:
@@ -41,8 +41,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [findTransactionsByAddresses(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L304) | Find the transactions by addresses with checksum |
-| [findTransactionsObjectsByHashes](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L372) | Wrapper function: get trytes and turns into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects. Gets the trytes and transaction object from a list of transaction hashes. |
+| [findTransactionsByBundles](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L319) | Find the transactions by bundles |
 
  ## Example
  
@@ -50,7 +49,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.findTransactionObjectsByAddresses(new String[]{"VCSNM9QDBSPEWCTMAENLINILBOCCYIOQCPAPXUP9IOEGKJEU9DDBNVBMZQVZCFW9XXSSZGK9DKTNKWKEW", "JDTOMEHWOGSBSFX9NXFSPWCZFZVBBXRJUHSRCZEQPJ9AG9AGYKJMAZ9VOXLVYNIDDAMGUVRAHXLWXMVSI"});
+    List<Transaction> response = iotaAPI.findTransactionObjectsByBundle(new String[]{"MKGOCXRXMVANORMTJYFRLNBAGGUH9DAJGDJLAYGJIERYUHXPPWWRFNWGFAJCQCTUEGGCLSBDVGKHTS9UW", "IDMKCKPYABMGSFONQPLHUZXCEEWVJMZCBSLUQCJTFREAOZKHNRSERVYLWUVVZRVONSSPVHNKL9XZZOCQE"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

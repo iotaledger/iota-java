@@ -1,5 +1,5 @@
 
-# [replayBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L987)
+# [replayBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L988)
  [ReplayBundleResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/ReplayBundleResponse.java) replayBundle(String tailTransactionHash , int depth , int minWeightMagnitude , String reference)
 
 Replays a transfer by doing Proof of Work again. This will make a new, but identical transaction which now also can be approved. If any of the replayed transactions gets approved, the others stop getting approved.
@@ -38,7 +38,7 @@ Replays a transfer by doing Proof of Work again. This will make a new, but ident
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    ReplayBundleResponse response = iotaAPI.replayBundle("ZIWGSWCVJT9OTB9QXOVXFPNWI9AZJZQYH9QRSSFIPJYFV9JPQJWZNJICVRSFBORDCQQZNHLFAN9CLPIWJ", 15, 18, "XBHOCYL9W9NC9UVVLONGMUMOK9W9MHCJTKTDZSTBDYOYFPEWQTWEWRJFKJL9TORSRABFEJFLGPUYXRUYQ");
+    ReplayBundleResponse response = iotaAPI.replayBundle("DQXTUSEAKIZWUHROLLSXSXXRGFTEMUSLVJSGLFAOTJWEPZWHJRCBQRWWASMEJ9WAKRMA9YONQNWFKWPME", 15, 18, "KASVQPTTXQXGNTBYEZEAIWQLTNGUOMPKBSXJQYKXCEVKADVAOTAZESMRKRDGOIVEKGRSPBQXDVAMDQAWO");
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

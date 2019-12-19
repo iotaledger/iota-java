@@ -41,7 +41,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [findTransactionsByApprovees](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L345) | Find the transactions by approvees |
+| [findTransactionsByApprovees](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L332) | Find the transactions by approvees |
 
  ## Example
  
@@ -49,7 +49,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.findTransactionObjectsByApprovees(new String[]{"TMIPRULGWLBQOUSQCFCMMOXUZNWBDSSXIJAXUVFFYWDJIGIRLQHUXJJAORAYPBAUYNCEHMDLIJRLYFNPJ", "LUWGMJBHQZYWGUGAYYUYCQ9KYFMA9MDFW9OWIHAYMZNRYPJETBVXQAQQAJXDVLCQHG9BSTTVWHPJHKKKW"});
+    List<Transaction> response = iotaAPI.findTransactionObjectsByApprovees(new String[]{"HWFUORISLUWUYVQLM9GEVPKP9OYGHZFVLLLYVTNLVLAG9NO9CGC9CQBNXWAVNPWYJXSWFQA9GWLWNBVAF", "YTCZAHBLCETSLYLKIVKMWAJWSORFVBYWJKOHGKU9BTEYLK9FTLHVAWR9YGXRCZBYBZUDCLJIINVTTZNQG"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

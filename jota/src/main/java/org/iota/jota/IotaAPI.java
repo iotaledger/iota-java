@@ -452,6 +452,7 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException if addresses is not a valid array of hashes
      * @see #findTransactionsByBundles
      **/
+    @Document
     public List<Transaction> findTransactionObjectsByBundle(String... bundles) throws ArgumentException {
         FindTransactionResponse ftr = findTransactionsByBundles(bundles);
         if (ftr == null || ftr.getHashes() == null) {

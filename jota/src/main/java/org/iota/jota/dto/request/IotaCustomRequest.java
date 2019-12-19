@@ -1,21 +1,23 @@
 package org.iota.jota.dto.request;
 
+import java.util.Map;
+
 public class IotaCustomRequest extends IotaCommandRequest {
 
-    private String[] args;
+    private Map<String, Object> args;
 
     protected IotaCustomRequest(String command) {
         super(command);
     }
 
-    public static IotaCustomRequest createCustomRequest(String module, String[] args) {
+    public static IotaCustomRequest createCustomRequest(String module, Map<String, Object> params) {
         IotaCustomRequest customRequest = new IotaCustomRequest(module);
-        customRequest.args = args;
+        customRequest.args = params;
         
         return customRequest;
     }
     
-    public String[] getArgs() {
+    public Map<String, Object> getArgs() {
         return args;
     }
 
