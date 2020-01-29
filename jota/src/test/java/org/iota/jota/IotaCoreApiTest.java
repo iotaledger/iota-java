@@ -7,21 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collections;
-
 import org.hamcrest.core.IsNull;
 import org.iota.jota.config.types.FileConfig;
-import org.iota.jota.dto.response.AddNeighborsResponse;
-import org.iota.jota.dto.response.FindTransactionResponse;
-import org.iota.jota.dto.response.GetBalancesResponse;
-import org.iota.jota.dto.response.GetInclusionStateResponse;
-import org.iota.jota.dto.response.GetNeighborsResponse;
-import org.iota.jota.dto.response.GetNodeInfoResponse;
-import org.iota.jota.dto.response.GetTipsResponse;
-import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
-import org.iota.jota.dto.response.GetTrytesResponse;
-import org.iota.jota.dto.response.RemoveNeighborsResponse;
-import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
+import org.iota.jota.dto.response.*;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.utils.Checksum;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +18,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
 
 public class IotaCoreApiTest {
 
@@ -146,8 +136,7 @@ public class IotaCoreApiTest {
     @Tag("IntegrationTest")
     public void shouldNotGetInclusionStates(){
         ArgumentException argumentException = assertThrows(ArgumentException.class,
-                () -> proxy.getInclusionStates(new String[]{TEST_HASH},
-                        new String[]{"ZIJGAJ9AADLRPWNCYNNHUHRRAC9QOUDATEDQUMTNOTABUVRPTSTFQDGZKFYUUIE9ZEBIVCCXXXLKX9999"}),
+                () -> proxy.getInclusionStates(new String[]{TEST_HASH}),
                 "Failed to throw error on wrong bundle hash");
         assertTrue(argumentException.getMessage().startsWith("{\"error\":\"One of the tips is absent\",\"duration\":"));
     }
@@ -157,8 +146,7 @@ public class IotaCoreApiTest {
     public void shouldGetInclusionStates() throws ArgumentException {
         log.debug(proxy.getNodeInfo().getLatestSolidSubtangleMilestone());
         GetInclusionStateResponse res = proxy.getInclusionStates(
-                new String[]{TEST_HASH}, 
-                new String[]{proxy.getNodeInfo().getLatestSolidSubtangleMilestone()});
+                new String[]{TEST_HASH});
         assertThat(res.getStates(), IsNull.notNullValue());
     }
 
