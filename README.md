@@ -280,7 +280,8 @@ class SendData {
 ## Supporting the project
 
 If the IOTA Java client library has been useful to you and you feel like contributing, consider posting a [bug report](https://github.com/iotaledger/iota-java/issues/new-issue), feature request or a [pull request](https://github.com/iotaledger/iota-java/pulls/).  
-We have some [basic contribution guidelines](CONTRIBUTING.md) to keep our code base stable and consistent.
+
+We have some [basic contribution guidelines](.github/CONTRIBUTING.md) to keep our code base stable and consistent.
 
 ## Joining the discussion
 
