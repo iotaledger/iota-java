@@ -13,7 +13,11 @@ Briefly describe the bug.
 
 Which version of the library are you running?
 
-## Hardware Specification
+## IOTA network
+
+Which node are you connected to and which IOTA network is it in.
+
+## Hardware specification
 
 What hardware are you using?
 
