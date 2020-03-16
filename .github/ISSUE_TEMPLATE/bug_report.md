@@ -13,13 +13,23 @@ Briefly describe the bug.
 
 Which version of the library are you running?
 
+- Version:
+
 ## IOTA network
 
-Which node are you connected to and which IOTA network is it in.
+Which node are you connected to and which IOTA network is it in?
+
+- Node URL:
+- Network:
 
 ## Hardware specification
 
 What hardware are you using?
+
+- Operating system:
+- RAM:
+- Number of cores:
+- Device type:
 
 ## Steps To reproduce the bug
 
