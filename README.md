@@ -19,6 +19,7 @@
     <a href="https://www.codacy.com/app/kwek20/iota-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iotaledger/iota-java&amp;utm_campaign=Badge_Grade" style="text-decoration:none;"><img src="https://api.codacy.com/project/badge/Grade/92feea51a15c4e589386c269475b8761" alt="Code quality"></a>
   <a href="https://jitpack.io/#iotaledger/iota-java" style="text-decoration:none;"><img src="https://jitpack.io/v/iotaledger/iota-java.svg" alt="Latest release"></a>
     <a href="https://travis-ci.org/iotaledger/iota-java" style="text-decoration:none;"><img src="https://travis-ci.org/iotaledger/iota-java.svg?branch=dev" alt="Build status"></a>
+  <a href='https://sourcespy.com/github/iotaledgeriotajava'  style="text-decoration:none;" title='SourceSpy Dashboard'><img src='https://img.shields.io/badge/SourceSpy-dashboard-165cc5'/></a>
 </p>
       
 <p align="center">
