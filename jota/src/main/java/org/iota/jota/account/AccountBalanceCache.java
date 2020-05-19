@@ -61,7 +61,7 @@ public class AccountBalanceCache {
         long balance;
         if (request.hasTimeOut()) {
             // Not a remainder address, check balance
-            balance = api.getBalance(100, address.getAddress().getHashCheckSum());
+            balance = api.getBalance(address.getAddress().getHashCheckSum());
         } else {
             balance = request.getExpectedAmount();
         }
