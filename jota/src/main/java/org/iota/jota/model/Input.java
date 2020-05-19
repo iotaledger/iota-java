@@ -1,11 +1,7 @@
 package org.iota.jota.model;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 /**
  * This class represents an Input.
- *
  **/
 public class Input {
 
@@ -16,8 +12,8 @@ public class Input {
 
     /**
      * Initializes a new instance of the Input class.
-     * 
-     * @param address with checksum
+     *
+     * @param address  with checksum
      * @param balance
      * @param keyIndex
      * @param security
@@ -28,16 +24,6 @@ public class Input {
         this.keyIndex = keyIndex;
         this.security = security;
 
-    }
-
-    /**
-     * Returns a String that represents this object.
-     *
-     * @return Returns a string representation of this object.
-     */
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
     /**
@@ -152,5 +138,20 @@ public class Input {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Returns a String that represents this object.
+     *
+     * @return Returns a string representation of this object.
+     */
+    @Override
+    public String toString() {
+        return "Input{" +
+                "address='" + address + '\'' +
+                ", balance=" + balance +
+                ", keyIndex=" + keyIndex +
+                ", security=" + security +
+                '}';
     }
 }

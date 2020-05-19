@@ -2,8 +2,6 @@ package org.iota.jota.model;
 
 import java.util.List;
 
-import com.google.gson.Gson;
-
 /**
  * This class represents an Inputs.
  *
@@ -29,7 +27,10 @@ public class Inputs {
      */
     @Override
     public String toString() {
-        return new Gson().toJson(this);
+        return "Inputs{" +
+                "inputsList=" + inputsList +
+                ", totalBalance=" + totalBalance +
+                '}';
     }
 
     /**
