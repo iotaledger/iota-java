@@ -1,11 +1,11 @@
 package org.iota.jota.utils;
 
-import java.util.Arrays;
-
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.pow.ICurl;
 import org.iota.jota.pow.SpongeFactory;
+
+import java.util.Arrays;
 
 /**
  * @author pinpong
@@ -80,7 +80,7 @@ public class Multisig {
 
     public String getKey(String seed, int index, int security) throws ArgumentException {
 
-        return Converter.trytes(signingInstance.key(Converter.trits(seed, 81 * security), index, security));
+        return Converter.trytes(signingInstance.key(Converter.trits(seed, Constants.HASH_LENGTH_TRITS), index, security));
     }
 
     /**
