@@ -1,10 +1,10 @@
 package org.iota.jota.model;
 
-import com.google.gson.Gson;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * This class represents a Transfer.
- *
  */
 public class Transfer {
 
@@ -18,9 +18,9 @@ public class Transfer {
 
     /**
      * Initializes a new instance of the Transfer class.
-     * 
+     *
      * @param timestamp
-     * @param address, must contain checksums
+     * @param address,    must contain checksums
      * @param hash
      * @param persistence
      * @param value
@@ -40,7 +40,7 @@ public class Transfer {
 
     /**
      * Initializes a new instance of the Transfer class.
-     * 
+     *
      * @param address, must contain checksums
      * @param value
      */
@@ -53,7 +53,7 @@ public class Transfer {
 
     /**
      * Initializes a new instance of the Transfer class.
-     * 
+     *
      * @param address, must contain checksums
      * @param value
      * @param message
@@ -67,17 +67,7 @@ public class Transfer {
     }
 
     /**
-     * Returns a Json Object that represents this object.
-     *
-     * @return Returns a string representation of this object.
-     */
-    @Override
-    public String toString() {
-        return new Gson().toJson(this);
-    }
-
-    /**
-     * Get the addresswith checksum.
+     * Get the address with checksum.
      *
      * @return The address.
      */
@@ -200,5 +190,15 @@ public class Transfer {
      */
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    /**
+     * Returns a Json Object that represents this object.
+     *
+     * @return Returns a string representation of this object.
+     */
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

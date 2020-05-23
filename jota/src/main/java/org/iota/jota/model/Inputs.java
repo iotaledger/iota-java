@@ -1,8 +1,9 @@
 package org.iota.jota.model;
 
-import java.util.List;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-import com.google.gson.Gson;
+import java.util.List;
 
 /**
  * This class represents an Inputs.
@@ -29,7 +30,7 @@ public class Inputs {
      */
     @Override
     public String toString() {
-        return new Gson().toJson(this);
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
     /**
