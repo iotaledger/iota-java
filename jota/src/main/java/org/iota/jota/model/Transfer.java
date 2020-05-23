@@ -1,5 +1,8 @@
 package org.iota.jota.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 /**
  * This class represents a Transfer.
  */
@@ -196,14 +199,6 @@ public class Transfer {
      */
     @Override
     public String toString() {
-        return "Transfer{" +
-                "timestamp='" + timestamp + '\'' +
-                ", address='" + address + '\'' +
-                ", hash='" + hash + '\'' +
-                ", persistence=" + persistence +
-                ", value=" + value +
-                ", message='" + message + '\'' +
-                ", tag='" + tag + '\'' +
-                '}';
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

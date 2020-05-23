@@ -1,5 +1,8 @@
 package org.iota.jota.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 /**
  * This class represents an Input.
  **/
@@ -147,11 +150,6 @@ public class Input {
      */
     @Override
     public String toString() {
-        return "Input{" +
-                "address='" + address + '\'' +
-                ", balance=" + balance +
-                ", keyIndex=" + keyIndex +
-                ", security=" + security +
-                '}';
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }
