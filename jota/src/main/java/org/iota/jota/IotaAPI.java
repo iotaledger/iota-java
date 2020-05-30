@@ -2,34 +2,10 @@ package org.iota.jota;
 
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.IntStream;
-
 import org.apache.commons.lang3.StringUtils;
 import org.iota.jota.builder.AddressRequest;
 import org.iota.jota.builder.ApiBuilder;
-import org.iota.jota.dto.response.BroadcastTransactionsResponse;
-import org.iota.jota.dto.response.CheckConsistencyResponse;
-import org.iota.jota.dto.response.FindTransactionResponse;
-import org.iota.jota.dto.response.GetAccountDataResponse;
-import org.iota.jota.dto.response.GetAttachToTangleResponse;
-import org.iota.jota.dto.response.GetBalancesAndFormatResponse;
-import org.iota.jota.dto.response.GetBalancesResponse;
-import org.iota.jota.dto.response.GetBundleResponse;
-import org.iota.jota.dto.response.GetInclusionStateResponse;
-import org.iota.jota.dto.response.GetNewAddressResponse;
-import org.iota.jota.dto.response.GetNodeInfoResponse;
-import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
-import org.iota.jota.dto.response.GetTransferResponse;
-import org.iota.jota.dto.response.GetTrytesResponse;
-import org.iota.jota.dto.response.ReplayBundleResponse;
-import org.iota.jota.dto.response.SendTransferResponse;
-import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
+import org.iota.jota.dto.response.*;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.error.BaseException;
 import org.iota.jota.error.NotPromotableException;
@@ -38,16 +14,13 @@ import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.model.Transfer;
 import org.iota.jota.pow.SpongeFactory;
-import org.iota.jota.utils.BundleValidator;
-import org.iota.jota.utils.Checksum;
-import org.iota.jota.utils.Constants;
-import org.iota.jota.utils.InputValidator;
-import org.iota.jota.utils.IotaAPIUtils;
-import org.iota.jota.utils.Parallel;
-import org.iota.jota.utils.StopWatch;
+import org.iota.jota.utils.*;
 import org.iota.mddoclet.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * IotaAPI Builder. Usage:
@@ -1063,22 +1036,19 @@ public class IotaAPI extends IotaAPICore {
     }
 
     /**
-     * Wrapper function: runs getNodeInfo and getInclusionStates
-     * Uses the latest milestone as tip
+     * Deprecated: {@link #getInclusionStates(String...)} is now always with the latest milestone
+     * 
+     * Runs getInclusionStates
      * 
      * @param hashes The hashes.
      * @return {@link GetInclusionStateResponse}
      * @throws ArgumentException when one of the hashes is invalid
-     * @see #getNodeInfo()
-     * @see #getInclusionStates(String[], String[])
+     * @see #getInclusionStates(String...)
      */
+    @Deprecated
     @Document
     public GetInclusionStateResponse getLatestInclusion(String... hashes) throws ArgumentException {
-        GetNodeInfoResponse getNodeInfoResponse = getNodeInfo();
-
-        String[] latestMilestone = {getNodeInfoResponse.getLatestSolidSubtangleMilestone()};
-
-        return getInclusionStates(hashes, latestMilestone);
+        return getInclusionStates(hashes);
     }
 
     /**
