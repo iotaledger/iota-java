@@ -395,7 +395,6 @@ public class IotaAPICore {
      * <p>
      * Get the inclusion states of a set of transactions.
      * This is for determining if a transaction was accepted and confirmed by the network or not.
-     * You can search for multiple tips (and thus, milestones) to get past inclusion states of transactions.
      * </p>
      * <p>
      * This API call returns a list of boolean values in the same order as the submitted transactions.
@@ -403,25 +402,19 @@ public class IotaAPICore {
      * </p>
      *
      * @param transactions Array of transactions you want to get the inclusion state for.
-     * @param tips         Array of tips (including milestones) you want to search for the inclusion state.
      * @return {@link GetInclusionStateResponse}
      * @throws ArgumentException The request was considered wrong in any way by the node
      * @throws ArgumentException when a transaction hash is invalid
-     * @throws ArgumentException when a tip is invalid
      */
     @Document
-    public GetInclusionStateResponse getInclusionStates(String[] transactions, String[] tips) throws ArgumentException {
+    public GetInclusionStateResponse getInclusionStates(String... transactions) throws ArgumentException {
 
         if (!InputValidator.isArrayOfHashes(transactions)) {
             throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
         }
 
-        if (!InputValidator.isArrayOfHashes(tips)) {
-            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
-        }
-
         return getNodeFor(IotaAPICommand.GET_INCLUSIONS_STATES).getInclusionStates(IotaGetInclusionStateRequest
-                .createGetInclusionStateRequest(transactions, tips));
+                .createGetInclusionStateRequest(transactions));
     }
 
     /**

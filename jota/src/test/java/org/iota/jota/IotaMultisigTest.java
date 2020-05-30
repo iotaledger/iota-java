@@ -29,7 +29,7 @@ public class IotaMultisigTest {
     private static final String TEST_SEED2 = "FDSAG";
     private static final String REMAINDER_ADDRESS = "NZRALDYNVGJWUVLKDWFKJVNYLWQGCWYCURJIIZRLJIKSAIVZSGEYKTZRDBGJLOA9AWYJQB9IPWRAKUC9FBDRZJZXZG";
     private static final String RECEIVE_ADDRESS = "ZGHXPZYDKXPEOSQTAQOIXEEI9K9YKFKCWKYYTYAUWXK9QZAVMJXWAIZABOXHHNNBJIEBEUQRTBWGLYMTXPENVCJZBX";
-    private static final String TEST_TAG = "JOTASPAM9999999999999999999";
+    private static final String TEST_TAG = "JOTA9MULTI9SIG9TEST99999999";
 
     private IotaAPI iotaClient;
 
@@ -40,7 +40,7 @@ public class IotaMultisigTest {
 
     @Test
     @Tag("IntegrationTest")
-    public void basicMultiSigTest() throws ArgumentException {
+    public void basicMultiSigTestMaxSec() throws ArgumentException {
         Multisig ms = new Multisig();
 
         // First co-signer uses security level 3 and index 0 for the private key
@@ -75,6 +75,53 @@ public class IotaMultisigTest {
         bundle = ms.addSignature(bundle, multiSigAddress, ms.getKey(TEST_SEED1, 0, 3));
 
         bundle = ms.addSignature(bundle, multiSigAddress, ms.getKey(TEST_SEED2, 0, 3));
+
+
+        Signing sgn = new Signing(SpongeFactory.create(SpongeFactory.Mode.KERL));
+
+        log.debug("Bundle from transaction {}", bundle.getTransactions().get(0).getBundle());
+        boolean isValidSignature = sgn.validateSignatures(bundle, multiSigAddress);
+        assertTrue(isValidSignature, "MultiSignature not valid");
+        log.debug("Result of multi-signature validation is {}", isValidSignature);
+    }
+    
+    @Test
+    @Tag("IntegrationTest")
+    public void basicMultiSigTestMinSec() throws ArgumentException {
+        Multisig ms = new Multisig();
+
+        // First co-signer uses security level 1 and index 0 for the private key
+        String digestOne = ms.getDigest(TEST_SEED1, 1, 0);
+
+        // We initiate the multisig address generation by absorbing the key digest
+        String initiatedMultisigDigests = ms.addAddressDigest(digestOne, "");
+
+        // Second cosigner also uses security level 1 and index 0  for the private key
+        String digestTwo = ms.getDigest(TEST_SEED2, 1, 0);
+
+        // Add the multisig by absorbing the second cosigners key digest
+        String finalMultisigDigests = ms.addAddressDigest(digestTwo, initiatedMultisigDigests);
+
+        // finally we generate the multisig address itself
+        String multiSigAddress = ms.finalizeAddress(finalMultisigDigests);
+
+        log.debug("MultisigAddress = {}", multiSigAddress);
+
+        boolean isValidMultisigAddress = ms.validateAddress(multiSigAddress, new int[][]{Converter.trits(digestOne), Converter.trits(digestTwo)});
+
+        log.debug("Is a valid multisig address = {}", isValidMultisigAddress);
+
+        assertTrue(isValidMultisigAddress, "Address is not a valid multisigAddress");
+        List<Transfer> transfers = new ArrayList<>();
+        transfers.add(new Transfer(RECEIVE_ADDRESS, 999, "", TEST_TAG));
+
+        List<Transaction> trxs = iotaClient.initiateTransfer(2, Checksum.addChecksum(multiSigAddress), REMAINDER_ADDRESS, transfers, null, true);
+
+        Bundle bundle = new Bundle(trxs, trxs.size());
+
+        bundle = ms.addSignature(bundle, multiSigAddress, ms.getKey(TEST_SEED1, 0, 1));
+
+        bundle = ms.addSignature(bundle, multiSigAddress, ms.getKey(TEST_SEED2, 0, 1));
 
 
         Signing sgn = new Signing(SpongeFactory.create(SpongeFactory.Mode.KERL));
