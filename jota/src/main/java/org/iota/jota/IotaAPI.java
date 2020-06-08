@@ -583,7 +583,7 @@ public class IotaAPI extends IotaAPICore {
                     }
                 }
 
-                GetBalancesResponse balancesResponse = getBalances(100, inputsAddresses, tipHashes);
+                GetBalancesResponse balancesResponse = getBalances(inputsAddresses, tipHashes);
                 String[] balances = balancesResponse.getBalances();
 
                 List<Input> confirmedInputs = new ArrayList<>();
@@ -712,7 +712,7 @@ public class IotaAPI extends IotaAPICore {
                 String address = IotaAPIUtils.newAddress(seed, security, i, true, getCurl());
 
                 // Received input, this epoch or previous
-                GetBalancesResponse response = getBalances(100, Collections.singletonList(address), tipsList);
+                GetBalancesResponse response = getBalances(Collections.singletonList(address), tipsList);
                 long balance;
                 try {
                     balance = Long.parseLong(response.getBalances()[0]);
@@ -755,12 +755,36 @@ public class IotaAPI extends IotaAPICore {
      * The balances are returned as a list in the same order as the addresses were provided as input.
      * </p>
      *
+     * @param address   The addresses where we will find the balance for.
+     * @return {@link GetBalancesResponse}
+     * @throws ArgumentException The the request was considered wrong in any way by the node
+     */
+    public long getBalance(String address) throws ArgumentException {
+        GetBalancesResponse response = getBalances(Collections.singletonList(address));
+        try {
+            return Long.parseLong(response.getBalances()[0]);
+        } catch (NumberFormatException e) {
+            throw new ArgumentException(e.getMessage());
+        }
+    }
+
+    /**
+     * <p>
+     * The returned balance is based on the latest confirmed milestone.
+     * In addition to the balances, it also returns the referencing <tt>tips</tt> (or milestone),
+     * as well as the index with which the confirmed balance was determined.
+     * The balances are returned as a list in the same order as the addresses were provided as input.
+     * </p>
+     *
      * @param threshold The confirmation threshold between 0 and 100(inclusive).
      *                  Should be set to 100 for getting balance by counting only confirmed transactions.
      * @param address   The addresses where we will find the balance for.
      * @return {@link GetBalancesResponse}
      * @throws ArgumentException The the request was considered wrong in any way by the node
+     * @deprecated The threshold parameter is removed from the getBalances endpoint on IRI nodes.
+     * Alternative use {@link IotaAPI#getBalance(String)}
      */
+    @Deprecated
     public long getBalance(int threshold, String address) throws ArgumentException {
         GetBalancesResponse response = getBalances(threshold, new String[] { address }, null);
         try {
@@ -801,7 +825,7 @@ public class IotaAPI extends IotaAPICore {
             suppliedStopWatch = new StopWatch();
         }
 
-        GetBalancesResponse getBalancesResponse = getBalances(100, addresses, tips);
+        GetBalancesResponse getBalancesResponse = getBalances(addresses, tips);
         List<String> balances = Arrays.asList(getBalancesResponse.getBalances());
 
         // If threshold defined, keep track of whether reached or not
@@ -1345,7 +1369,7 @@ public class IotaAPI extends IotaAPICore {
             }
             
 
-            GetBalancesResponse balancesResponse = getBalances(100, Collections.singletonList(inputAddress), tipHashes);
+            GetBalancesResponse balancesResponse = getBalances(Collections.singletonList(inputAddress), tipHashes);
             String[] balances = balancesResponse.getBalances();
 
             long totalBalance = 0;
