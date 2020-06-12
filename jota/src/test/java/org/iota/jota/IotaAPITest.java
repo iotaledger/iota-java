@@ -8,26 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import org.hamcrest.core.IsNull;
 import org.iota.jota.builder.AddressRequest;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.config.types.IotaDefaultConfig;
-import org.iota.jota.dto.response.BroadcastTransactionsResponse;
-import org.iota.jota.dto.response.CheckConsistencyResponse;
-import org.iota.jota.dto.response.GetAccountDataResponse;
-import org.iota.jota.dto.response.GetBalancesAndFormatResponse;
-import org.iota.jota.dto.response.GetBundleResponse;
-import org.iota.jota.dto.response.GetInclusionStateResponse;
-import org.iota.jota.dto.response.GetNewAddressResponse;
-import org.iota.jota.dto.response.GetNodeInfoResponse;
-import org.iota.jota.dto.response.GetTransferResponse;
-import org.iota.jota.dto.response.GetTrytesResponse;
-import org.iota.jota.dto.response.ReplayBundleResponse;
-import org.iota.jota.dto.response.SendTransferResponse;
+import org.iota.jota.dto.response.*;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Input;
 import org.iota.jota.model.Transaction;
@@ -38,6 +23,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Let's do some integration test coverage against a devnet node
@@ -285,8 +274,16 @@ public class IotaAPITest {
 
     @Test
     @Tag("IntegrationTest")
-    public void shouldGetLastInclusionState() throws ArgumentException {
-        GetInclusionStateResponse res = iotaAPI.getLatestInclusion(new String[]{TEST_HASH});
+    public void shouldGetInclusionStates() throws ArgumentException {
+        GetInclusionStateResponse res = iotaAPI.getInclusionStates(new String[]{TEST_HASH});
+        assertThat("States should be an array of booleans", res.getStates(), IsNull.notNullValue());
+        assertTrue(res.getStates()[0], "Hash should have been seen as confirmed");
+    }
+    
+    @Test
+    @Tag("IntegrationTest")
+    public void shouldIsConfirmed() throws ArgumentException {
+        GetInclusionStateResponse res = iotaAPI.isConfirmed(new String[]{TEST_HASH});
         assertThat("States should be an array of booleans", res.getStates(), IsNull.notNullValue());
         assertTrue(res.getStates()[0], "Hash should have been seen as confirmed");
     }
