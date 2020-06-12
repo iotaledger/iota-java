@@ -1074,6 +1074,29 @@ public class IotaAPI extends IotaAPICore {
     public GetInclusionStateResponse getLatestInclusion(String... hashes) throws ArgumentException {
         return getInclusionStates(hashes);
     }
+    
+    /**
+     * <p>
+     * Get the inclusion states of a set of transactions.
+     * This is for determining if a transaction was accepted and confirmed by the network or not.
+     * </p>
+     * <p>
+     * This API call returns a list of boolean values in the same order as the submitted transactions.
+     * Boolean values will be <tt>true</tt> for confirmed transactions, otherwise <tt>false</tt>.
+     * </p>
+     * 
+     * This is command does the same as {@link #getInclusionStates(String...)} but a copy exists 
+     * for readability.
+     * 
+     * @param hashes The transaction hashes to check for
+     * @return {@link GetInclusionStateResponse}
+     * @throws ArgumentException when one of the hashes is invalid
+     * @see #getInclusionStates(String...)
+     */
+    @Document
+    public GetInclusionStateResponse isConfirmed(String... hashes) throws ArgumentException {
+        return getInclusionStates(hashes);
+    }
 
     /**
      * Wrapper function: Runs prepareTransfers, as well as attachToTangle.
