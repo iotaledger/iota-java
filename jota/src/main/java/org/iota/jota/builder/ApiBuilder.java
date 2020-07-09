@@ -84,7 +84,15 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
         }
         
         if (hasLegacyOptions()) {
-            nodes.add(new HttpConnector(protocol,  host,  port, timeout));
+            String path = "";
+            //Fix for a path, crude but works!
+            if (host.contains("/")) {
+                System.out.println(host);
+                path = host.substring(host.indexOf("/"));
+                host = host.substring(0, host.indexOf("/"));
+            }
+            
+            nodes.add(new HttpConnector(protocol,  host,  port, path, timeout));
         }
         
         return (T) this;

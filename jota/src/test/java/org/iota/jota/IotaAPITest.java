@@ -90,6 +90,13 @@ public class IotaAPITest {
     public void shouldAcceptUrlAsNode() throws MalformedURLException {
         Builder builder = new IotaAPI.Builder();
         IotaAPI api;
+
+        builder.host("iota.net/node/", false);
+        assertEquals(builder.getHost(), "iota.net/node/", "Host should have been accepted");
+        api = builder.build();
+        assertFalse(api.nodes.isEmpty(), "API should be created succesfully");
+
+        builder = new IotaAPI.Builder();
         
         builder.addNode(new HttpConnector("https://iota.net:14265/node/"));
         assertEquals(builder.getNodes().size(), 1, "URL should have been accepted");
