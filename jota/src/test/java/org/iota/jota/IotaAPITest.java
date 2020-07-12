@@ -9,9 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.hamcrest.core.IsNull;
+import org.iota.jota.IotaAPI.Builder;
 import org.iota.jota.builder.AddressRequest;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.config.types.IotaDefaultConfig;
+import org.iota.jota.connection.HttpConnector;
 import org.iota.jota.dto.response.*;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Input;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -82,7 +85,32 @@ public class IotaAPITest {
         iotaAPI = new IotaAPI.Builder().config(new FileConfig()).localPoW(new PearlDiverLocalPoW()).build();
         assertNotNull(iotaAPI, "An API should have been created");
     }
+    
+    @Test
+    public void shouldAcceptUrlAsNode() throws MalformedURLException {
+        Builder builder = new IotaAPI.Builder();
+        IotaAPI api;
 
+        builder.host("iota.net/node/", false);
+        assertEquals(builder.getHost(), "iota.net/node/", "Host should have been accepted");
+        api = builder.build();
+        assertFalse(api.nodes.isEmpty(), "API should be created succesfully");
+
+        builder = new IotaAPI.Builder();
+        
+        builder.addNode(new HttpConnector("https://iota.net:14265/node/"));
+        assertEquals(builder.getNodes().size(), 1, "URL should have been accepted");
+        api = builder.build();
+        assertFalse(api.nodes.isEmpty(), "API should be created succesfully");
+        
+        builder = new IotaAPI.Builder();
+        
+        builder.addNode(new HttpConnector("https", "iota.net", 14265, "/node/"));
+        assertEquals(builder.getNodes().size(), 1, "URL should have been accepted");
+        api = builder.build();
+        assertFalse(api.nodes.isEmpty(), "API should be created succesfully");
+    }
+    
     @SuppressWarnings("deprecation")
     @Test
     public void shouldCreateIotaApiProxyInstanceWithDefaultValues() {
