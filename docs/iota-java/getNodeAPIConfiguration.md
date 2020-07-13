@@ -1,5 +1,5 @@
 
-# [getNodeAPIConfiguration](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L164)
+# [getNodeAPIConfiguration](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L161)
  [GetNodeAPIConfigurationResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetNodeAPIConfigurationResponse.java) getNodeAPIConfiguration()
 
 Returns information about this node.

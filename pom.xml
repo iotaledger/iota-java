@@ -5,7 +5,7 @@
 
     <groupId>org.iota</groupId>
     <artifactId>jota-parent</artifactId>
-    <version>1.0.0-beta8</version>
+    <version>1.0.0-beta9</version>
     <packaging>pom</packaging>
     <name>JOTA</name>
     <description>JOTA library is a simple Java wrapper around IOTA Node's JSON-REST HTTP interface.</description>
@@ -78,7 +78,7 @@
 
         <!-- Please keep this, this is needed for test purposes,
         if the test runs on Jitpack these values will be adjusted -->
-        <md-doclet-group>com.github.iotaledger</md-doclet-group>
+        <md-doclet-group>org.iota</md-doclet-group>
         <md-doclet-artifactId>java-md-doclet</md-doclet-artifactId>
         <md-doclet-version>2.2</md-doclet-version>
 

@@ -1,5 +1,5 @@
 
-# [wereAddressesSpentFrom](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L547)
+# [wereAddressesSpentFrom](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L612)
  [WereAddressesSpentFromResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/WereAddressesSpentFromResponse.java) wereAddressesSpentFrom(String[] addresses)
 
 Check if a list of addresses was ever spent from, in the current epoch, or in previous epochs.
@@ -29,7 +29,7 @@ Check if a list of addresses was ever spent from, in the current epoch, or in pr
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    WereAddressesSpentFromResponse response = iotaAPI.wereAddressesSpentFrom(new String[]{"PFDSTQIZRRPNZVBNQTLRIXSIGDLLR9TZGVSXNREDAUMCYUAS9NZZZXCGY9UZEMMZCMBXLKIKNXHZRUEBG", "VIELNLTLAEKCHJTKNGHSGAKCFFLRVW9JFHZKPXRVKNWQDIWGIOWHFZZNTBNFMOXDMFFYMPWGHVVZITBJD"});
+    WereAddressesSpentFromResponse response = iotaAPI.wereAddressesSpentFrom(new String[]{"TKRPCG9HFYBUZAGAZVKKEZ9IQNIYHJCNUKVYVMNXQSFDLTOQPEFEFMFUMHDFQSGRKSFDIIZDIORNQJNHT", "C9BKKDECYDSNKSUTMDLLFRB9MSIQJQXIHLFNRCNHWKBLEJAZMDCXZDGLDQLDDZKIJRTIIZIDM9YMPTER9"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

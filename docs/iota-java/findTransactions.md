@@ -1,5 +1,5 @@
 
-# [findTransactions](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L248)
+# [findTransactions](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L245)
  [FindTransactionResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/FindTransactionResponse.java) findTransactions(String[] addresses , String[] tags , String[] approvees , String[] bundles)
 
  Find the transactions which match the specified input and return. All input values are lists, for which a list of return values (transaction hashes), in the same order, is returned for all individual elements. The input fields can either be `bundles`, `addresses`, `tags` or `approvees`. 
@@ -34,7 +34,7 @@
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    FindTransactionResponse response = iotaAPI.findTransactions(new String[]{"99IYUIAEJYWH9HWBDGBRBULXGVEDIBVKFODRDLRAVRKXLTXUKQVPJRCXCQSLQRAKMECRSZPLFVFCMHRWB", "BAJNKKDKKP9DMMS9VMVSEEGBCLW9OLGNJSKRECPMJCETRIKNJBFOFKNSDYRSTXLDLFIEMJCNRYRYQVUYY"}, new String[]{"TAG9HHMUPDCCJHTFIVMDTPVREYV", "TAG9A9TSRQEEGPIFRDCLSBPBP9W"}, new String[]{"RYYLBCWSLJCFYXGXNQNRSORDCQ9GTFEKREMJJUKJDRIURPVGGOGAYPWUBGGVNXQSWFEQMAQZHTDCPWJEI", "NBAVOQXXBBROPHQO9QBKBVVUPBAAKEQKJVIJ9NGMWFYXYKKPKEQXQUHBOFRAALW99UHIRRRTMLFFPPRIS"}, new String[]{"BV9ZYJAFMKABNA9CVRXGAIHLSPAQX9USLURNNXJRZTEBQ9RUQQGMAJRGTABHGNDUTAUZZZQWIGLZEWFQY", "SLNUHDVDINIJRYBKVXOXPLQPELDDQFOEYDJKLNZAMWYTYBZOHCIGOGSZXIGDJNMQZZWHYBBXSY9TXNSSZ"});
+    FindTransactionResponse response = iotaAPI.findTransactions(new String[]{"HYDQKLICCRNJIGUWADSCXKPGQDBGM9NAYFTXTWACGCCRFFNTSPCORYDTFL9HSPAFXDXVZQAFUHDPCVEZS", "RVPEUHEKB9KVINKVTPMCYZLAFCHEGLDQC9Y9ZHISAGKT9ECGCNELELJEQB9CGDCJASOW9KXHDS9BOUPTX"}, new String[]{"TAG9MTJDPURKDGT9AXPVQZBILBQ", "TAG9LOKRKWXSSHOJKA9WTNLOTZA"}, new String[]{"WFXPHUDKZSSMOCIZUKAWBWBZVQPSZFSHADAJQZYQVIKYZABDSRNLAMERJKTSY9N9LYRUQJHKFCDFWQY9E", "STAQJZMMTSPMUKUL9KPFFKHTZFGLFTFSIWLGXPQ9IOIHMJGJBQNWGCLQUTBLDQRLGVPXHOKSTTPFECGNK"}, new String[]{"ACPVHRXNKXQBTDUCGPEXAVOCJRFNRKFWNBZJFCQDORADTELDYXXBBNUDEYQXQRLIASHSNFMBIUCEXRCCB", "UEQGRYMVAIJJYCHSEDBJOQFVAXRPZZYDAQBURXBBUQNJCGWUKWFZOOLKENMA9GEGPCLROYJJVCDBVFKSA"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

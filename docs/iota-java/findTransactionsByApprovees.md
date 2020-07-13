@@ -1,5 +1,5 @@
 
-# [findTransactionsByApprovees](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L332)
+# [findTransactionsByApprovees](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L329)
  [FindTransactionResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/FindTransactionResponse.java) findTransactionsByApprovees(String[] approvees)
 
 Find the transactions by approvees
@@ -30,7 +30,7 @@ Find the transactions by approvees
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    FindTransactionResponse response = iotaAPI.findTransactionsByApprovees(new String[]{"EF9ERYFEAHNKEYSDEBRPOZOQMIY9RKRJRJPP9CYABUGOWLYGCCUCRTJGTUZTCYUEEPOYHGT9YXCITAJRY", "WEDEONNNVKJNIKMKHJEEBJHESTVNFQOFVVWVEENGCRYEQDU9KNEABRTHDEMIMUTWD9JK9RLUX9WSNYSOG"});
+    FindTransactionResponse response = iotaAPI.findTransactionsByApprovees(new String[]{"WRZKQIGAUPXYGMYAOXUHIHOMKCXOTBYYF9PGATBFBGQQWXML9Z9ACGDVUXORPBJFAPIEDLZVUZRSLWLCP", "LPDTYZZGJBRLXOSDVVDRPTLQYACLUOBOVYAU9OBRUMLLFVDQSMVGVRP9SMLDFABSNDFIZYLAVCACMOPW9"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

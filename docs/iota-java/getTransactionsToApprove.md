@@ -1,5 +1,5 @@
 
-# [getTransactionsToApprove](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L435)
+# [getTransactionsToApprove](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L423)
  [GetTransactionsToApproveResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetTransactionsToApproveResponse.java) getTransactionsToApprove(Integer depth , String reference)
 
 Tip selection which returns `trunkTransaction` and `branchTransaction`. The input value `depth` determines how many milestones to go back for finding the transactions to approve. The higher your `depth` value, the more work you have to do as you are confirming more transactions. If the `depth` is too large (usually above 15, it depends on the node's configuration) an error will be returned. The `reference` is an optional hash of a transaction you want to approve. If it can't be found at the specified `depth` then an error will be returned.
@@ -32,7 +32,7 @@ Tip selection which returns `trunkTransaction` and `branchTransaction`. The inpu
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetTransactionsToApproveResponse response = iotaAPI.getTransactionsToApprove(15, "BDOSJNKBHLCQINXWVENXMZTLLO9GRIFLRGSENIGWOMJZVLOZ9HWFWWMWCRP9FMSIETJKVAYQGNVJBRSFD");
+    GetTransactionsToApproveResponse response = iotaAPI.getTransactionsToApprove(15, "9QZYK9HDDDCM9FKUPSGCWN9XRLFIE9K9UUECDHFUUQEJAFFSKLJPHAUUXLOFFZ9SMZJLDVASLDXWIOTWT");
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

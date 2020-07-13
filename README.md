@@ -93,7 +93,7 @@ To install the IOTA Java client library and its dependencies, you can use one of
         <groupId>org.iota</groupId>
         <artifactId>jota</artifactId>
         <classifier>jar-with-dependencies</classifier>
-        <version>1.0.0-beta8</version>
+        <version>1.0.0-beta9</version>
     </dependency>
     ```
 
@@ -120,7 +120,7 @@ To install the IOTA Java client library and its dependencies, you can use one of
     ```
     
 3. Change the value of the `<version>` tag to either a release number or the first 10 characters of a Git commit hash:
-`<version>efdc784d8a9ef</version>` or `<version>1.0.0-beta8</version>`
+`<version>b703ef3c05f05</version>` or `<version>1.0.0-beta9</version>`
 
 **Note:** Find the latest version on the [Jitpack](https://jitpack.io/#iotaledger/iota-java) page.
 
@@ -262,6 +262,7 @@ class SendData {
 
 ## Change logs
 
+- Changes in [**1.0.0-beta9**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta8...1.0.0-beta9)
 - Changes in [**1.0.0-beta8**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta7...1.0.0-beta8)
 - Changes in [**1.0.0-beta7**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta6...1.0.0-beta7)
 - Changes in [**1.0.0-beta6**](https://github.com/iotaledger/iota-java/compare/1.0.0-beta5...1.0.0-beta6)

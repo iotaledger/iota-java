@@ -1,5 +1,5 @@
 
-# [getTrytes](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L409)
+# [getTrytes](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L397)
  [GetTrytesResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetTrytesResponse.java) getTrytes(String[] hashes)
 
 Returns the raw transaction data (trytes) of a specific transaction. These trytes can then be easily converted into the actual transaction object. You can use [Transaction(String)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java#L145) for conversion to an object.
@@ -30,7 +30,7 @@ Returns the raw transaction data (trytes) of a specific transaction. These tryte
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetTrytesResponse response = iotaAPI.getTrytes(new String[]{"FXZODREIAJEUTMA9YAJB9XNW9K9RBNRFJBWUCUSFGG9TNZTUCHHUIFFIAURNRRXYMHLXFXVDQPDOKHHZC", "YPKYGMRAIFFEUSPZZQMGQFRHRTVTDFKMCSXLHQLPPFQSZIVJHREYDAILPJIHDDQDYXLIOF9TCMBQHSWGN"});
+    GetTrytesResponse response = iotaAPI.getTrytes(new String[]{"TTDGOOSKHPO9YATHRJBM9VEBDREWSRZURHAGUFCTHYTODKTFASCKDEHMHMXCMPWIS9CV9DPFSMHESMAHR", "NDEJUMLFHBFTQJZSXBSVXBTLTQZWFVBTIDSXPHDYG9YNVE9AAYKKUUISRKKIBYBGYFEKUAVSYQCXBMZCX"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

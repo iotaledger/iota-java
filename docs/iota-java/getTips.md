@@ -1,5 +1,5 @@
 
-# [getTips](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L224)
+# [getTips](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L221)
  [GetTipsResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetTipsResponse.java) getTips()
 
 Returns all tips currently known by this node.

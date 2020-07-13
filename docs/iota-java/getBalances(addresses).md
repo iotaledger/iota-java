@@ -1,7 +1,6 @@
 
-# [getBalances](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L600)
-@Deprecated
- [GetBalancesResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBalancesResponse.java) getBalances(Integer threshold , List<String> addresses)
+# [getBalances](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L579)
+ [GetBalancesResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBalancesResponse.java) getBalances(List<String> addresses)
 
  Calculates the confirmed balance, as viewed by the latest solid milestone. In addition to the balances, it also returns the referencing `milestone`, and the index with which the confirmed balance was determined. The balances are returned as a list in the same order as the addresses were provided as input. 
 
@@ -10,7 +9,6 @@
 ## Input
 | Parameter       | Type | Required or Optional | Description |
 |:---------------|:--------|:--------| :--------|
-| threshold | Integer | Required | The confirmation threshold, should be set to 100. |
 | addresses | List<String> | Required | The list of addresses you want to get the confirmed balance from. Must contain the checksum. |
     
 ## Output
@@ -34,7 +32,7 @@
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetBalancesResponse response = iotaAPI.getBalances(100, new List<String>(new String[]{"BXXZEVETBHGGFY9ANQDREMN9AQDCVOMXVRNFVIINYLQ9HQBTMODITUCSABAFJWZEDCRMSDWDDKYIULOGG", "VSH9TEHHDJJRDIQGJMQQUBOTILCRKCGWSKDVSQCVGM9GWZGQOYPBZPEXRTKAIZDTFDJVQ9KPJAWYZZHZM"}));
+    GetBalancesResponse response = iotaAPI.getBalances(new List<String>(new String[]{"DQPXOWNJPIJXYRBDJLZPPCOFCKMAEXJMVOUZYPY9GWFBVMMJCUJQQNYLPEBJBQCOLEJPEZQYWVZBYJY9K", "BNOLEEPRZOFAYEPKXEMRXDZFSPJWTRCUBKDMPWKOVZGKCLMIC99KPITNNRXZHYVJLXHKY9URNUFVBHBLL"}));
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

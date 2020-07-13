@@ -1,5 +1,5 @@
 
-# [getAddressesUnchecked](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L158)
+# [getAddressesUnchecked](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L131)
  [GetNewAddressResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetNewAddressResponse.java) getAddressesUnchecked([AddressRequest](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/builder/AddressRequest.java) addressRequest)
 
 Generates `amount` of addresses, starting from `index` This does not mean that these addresses are safe to use (unspent)

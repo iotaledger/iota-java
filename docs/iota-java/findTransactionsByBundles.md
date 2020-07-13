@@ -1,5 +1,5 @@
 
-# [findTransactionsByBundles](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L319)
+# [findTransactionsByBundles](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L316)
  [FindTransactionResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/FindTransactionResponse.java) findTransactionsByBundles(String[] bundles)
 
 Find the transactions by bundles
@@ -30,7 +30,7 @@ Find the transactions by bundles
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    FindTransactionResponse response = iotaAPI.findTransactionsByBundles(new String[]{"MFXJXGOUOJCOWXABCVLFSMKRSNPQIYTCVIBH9MARPXJHNUAPVXITOQENNMJYAJVDUYPHLNJZFKGNPUZGH", "FHTFADVQFROCQHSNRFHPWIDPQFAAYJZIURVFXINMWJP9BYYT9UBDTZLPHHYQJSFYVTTNYGMNVNJWELXJX"});
+    FindTransactionResponse response = iotaAPI.findTransactionsByBundles(new String[]{"RLDXLTTJDKMKLYMIRGVWOZNJ9KBTUTJKSTNIXBWQFTGXQKTCWPJJ9RUP9WHZMADDMO9S9SHOFKGY9A9QH", "WNLUTUFSNMGDSXEE9IJDFBYUJGORUVFZUHUFB9HSETSBTVGTHIXRJYDWWDS9AVNIW9QOHEFJGBQMDTFKC"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

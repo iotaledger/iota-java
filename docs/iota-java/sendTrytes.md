@@ -1,5 +1,5 @@
 
-# [sendTrytes](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L343)
+# [sendTrytes](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L316)
  List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> sendTrytes(String[] trytes , int depth , int minWeightMagnitude , String reference)
 
 Wrapper method: Gets transactions to approve, attaches to Tangle, broadcasts and stores.
@@ -44,14 +44,14 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [broadcastTransactions(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L735) | Broadcast a list of transactions to all neighbors. The trytes to be used for this call should be valid, attached transaction trytes. These trytes are returned by `attachToTangle`, or by doing proof of work somewhere else. |
-| [attachToTangle(String, String, Integer, String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L608) |  Prepares the specified transactions (trytes) for attachment to the Tangle by doing Proof of Work. You need to supply `branchTransaction` as well as `trunkTransaction`. These are the tips which you're going to validate and reference with this transaction.  These are obtainable by the `getTransactionsToApprove` API call. 
-  The returned value is a different set of tryte values which you can input into  `broadcastTransactions` and `storeTransactions`. 
+| [broadcastTransactions(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L800) | Broadcast a list of transactions to all neighbors. The trytes to be used for this call should be valid, attached transaction trytes. These trytes are returned by `attachToTangle`, or by doing proof of work somewhere else. |
+| [attachToTangle(String, String, Integer, String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L673) |  Prepares the specified transactions (trytes) for attachment to the Tangle by doing Proof of Work. You need to supply `branchTransaction` as well as `trunkTransaction`. These are the tips which you're going to validate and reference with this transaction. These are obtainable by the `getTransactionsToApprove` API call. 
+  The returned value is a different set of tryte values which you can input into `broadcastTransactions` and `storeTransactions`. 
   The last 243 trytes of the return value consist of the following:  * `trunkTransaction`
  * `branchTransaction`
  * `nonce`
    These are valid trytes which are then accepted by the network. |
-| [storeAndBroadcast(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L313) | Wrapper method: stores and broadcasts the specified trytes. |
+| [storeAndBroadcast(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L286) | Wrapper method: stores and broadcasts the specified trytes. |
 
  ## Example
  
@@ -59,7 +59,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.sendTrytes(new String[]{"MUHKCNDAPZ9FOXLMVNXBSGTJH ... FGHOZAJIXAAZFPUZVQSEMJNIA", "TISCTCXYBRZECIZKTHXCZ9UZY ... VNDYHVFNTYLXNTSBQZEWIEQKI"}, 15, 18, "NTXHLGLJQDNER9JNUMRDZIQLHNDIXGBWZDVUJRJUELIFYHOZMMASBBOQKFTWTJUREEJBTHFEGVBIEDKNF");
+    List<Transaction> response = iotaAPI.sendTrytes(new String[]{"MGOLXEDPBPKYVDQRATMYTEPJL ... AX9FGDFF9XNEFMN9JHMSXZF9W", "UQYHAOVMPHSXABNYCMNKTZLPT ... ILMMCOG9CACBQHMGVOEHCFAMD"}, 15, 18, "LXRLEONWUERQCYIWNLPACFGGPDZCBJOUQHRUGS9VFXEHICRRCDYJMYUQGJDSW9TJMNGXRWXBFBZLUCKXG");
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

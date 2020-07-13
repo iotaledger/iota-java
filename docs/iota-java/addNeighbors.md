@@ -1,8 +1,8 @@
 
-# [addNeighbors](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L195)
+# [addNeighbors](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L192)
  [AddNeighborsResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/AddNeighborsResponse.java) addNeighbors(String[] uris)
 
-Temporarily add a list of neighbors to your node. The added neighbors will not be available after restart. Add the neighbors to your config file  or supply them in the `-n` command line option if you want to add them permanently. The URI (Unique Resource Identification) for adding neighbors is: **tcp://IPADDRESS:PORT**
+Temporarily add a list of neighbors to your node. The added neighbors will not be available after restart. Add the neighbors to your config file or supply them in the `-n` command line option if you want to add them permanently.  The URI (Unique Resource Identification) for adding neighbors is: **tcp://IPADDRESS:PORT**
 > **Important note:** This API is currently in Beta and is subject to change. Use of these APIs in production applications is not supported.
 
 ## Input

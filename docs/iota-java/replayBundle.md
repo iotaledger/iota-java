@@ -1,5 +1,5 @@
 
-# [replayBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L988)
+# [replayBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L985)
  [ReplayBundleResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/ReplayBundleResponse.java) replayBundle(String tailTransactionHash , int depth , int minWeightMagnitude , String reference)
 
 Replays a transfer by doing Proof of Work again. This will make a new, but identical transaction which now also can be approved. If any of the replayed transactions gets approved, the others stop getting approved.
@@ -30,7 +30,7 @@ Replays a transfer by doing Proof of Work again. This will make a new, but ident
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [sendTrytes(String[], int, int, String)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L343) | Wrapper method: Gets transactions to approve, attaches to Tangle, broadcasts and stores. |
+| [sendTrytes(String[], int, int, String)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L316) | Wrapper method: Gets transactions to approve, attaches to Tangle, broadcasts and stores. |
 
  ## Example
  
@@ -38,7 +38,7 @@ Replays a transfer by doing Proof of Work again. This will make a new, but ident
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    ReplayBundleResponse response = iotaAPI.replayBundle("DQXTUSEAKIZWUHROLLSXSXXRGFTEMUSLVJSGLFAOTJWEPZWHJRCBQRWWASMEJ9WAKRMA9YONQNWFKWPME", 15, 18, "KASVQPTTXQXGNTBYEZEAIWQLTNGUOMPKBSXJQYKXCEVKADVAOTAZESMRKRDGOIVEKGRSPBQXDVAMDQAWO");
+    ReplayBundleResponse response = iotaAPI.replayBundle("HAHMUYEABEIZOMAQKQAOUTE9ETOFQDZEZPSTKDJOXFEQHWPHSORUDISWALUSAOZYVSIDSNRDOVIREPOLL", 15, 18, "LWQCHQ9OPAZYEPLC9R9YZW9WSIRRQEKDXMDTXUDKFRNNTKXCVCSSYXM9ELGUZND9WZYINIOFXLNBRZXFS");
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

@@ -1,5 +1,5 @@
 
-# [callIxi](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L289)
+# [callIxi](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L286)
  [IotaCustomResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/IotaCustomResponse.java) callIxi(String module , Map<String, Object> params)
 
 Custom API call used to call IXI modules.
@@ -31,13 +31,7 @@ Custom API call used to call IXI modules.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    Map<String, Object> params = new HashMap<>();
-    params.put("customparam", "somevariable");
-    IotaCustomResponse res = api.callIxi("customixi.customcall", params);
-    System.out.println("Duration: " + res.getDuration());
-    for (String key : res.getIxi().keySet()) {
-        System.out.println(key + ": " + res.getArg(key));
-    }
+    IotaCustomResponse response = iotaAPI.callIxi("TAOTL9BR9HPYKZOGQUJPZVOKGDCQOAFKYFZKIVI9ZCWLCAKQPYDZAAJ9FAMBOTATZF9JWCZOFCMWAUOLQ", new Map<String>(new String[]{"GMSEPVFAEQIRRIVHDPZBOQLXXATFLNKWPQ9BZAH9YCQSSSAXPHIOPAZCANQBZODNBGREJCXVZ9VBQTDTV", "VCKZAAYMQ9VBJ9XMAPVTEXEA9ORODPGNUAVLBPGEROKWPLKVJQBMWDNRPFDVITNDMQY9UVGCSXLHKHSFG"}));
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

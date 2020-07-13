@@ -1,5 +1,5 @@
 
-# [findTransactionObjectsByBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L456)
+# [findTransactionObjectsByBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L429)
  List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> findTransactionObjectsByBundle(String[] bundles)
 
 Wrapper function: Finds transactions, gets trytes and turns it into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects.
@@ -41,7 +41,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [findTransactionsByBundles](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L319) | Find the transactions by bundles |
+| [findTransactionsByBundles](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L316) | Find the transactions by bundles |
 
  ## Example
  
@@ -49,7 +49,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.findTransactionObjectsByBundle(new String[]{"MKGOCXRXMVANORMTJYFRLNBAGGUH9DAJGDJLAYGJIERYUHXPPWWRFNWGFAJCQCTUEGGCLSBDVGKHTS9UW", "IDMKCKPYABMGSFONQPLHUZXCEEWVJMZCBSLUQCJTFREAOZKHNRSERVYLWUVVZRVONSSPVHNKL9XZZOCQE"});
+    List<Transaction> response = iotaAPI.findTransactionObjectsByBundle(new String[]{"LAIWZMGWEHVZRGRHNUVBXOALJWNICVPDFFKHPONXTJMSABOH9RNEAAXIUXZXXOHVYHNERHGSHANULOJOY", "PTNCILSJZXBD9QDBBOZFLDUKVJFSFEDBFRAWFLKSRHKIJKFYHBTBLAUVYCIJEFAAMZXDSIMDXJQIPBATF"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

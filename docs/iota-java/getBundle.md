@@ -1,5 +1,5 @@
 
-# [getBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L876)
+# [getBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L873)
  [GetBundleResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBundleResponse.java) getBundle(String transaction)
 
 Gets the associated bundle transactions of a single transaction. Does validation of signatures, total sum as well as bundle order.
@@ -30,7 +30,7 @@ Gets the associated bundle transactions of a single transaction. Does validation
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetBundleResponse response = iotaAPI.getBundle("GUQXLBNYXSEVNAPNJ9L9ADZIHBHRVEH9VZURPUHGQEVAFCWIDKQWTKYPOFALYZNOWGRJQURNQBGFGQDM9");
+    GetBundleResponse response = iotaAPI.getBundle("VTKYNRNFXJC9BWCJZHFXLRVWLFEVCMZGUTY9CLXRCPTCHSRCLDUEICCLNTWAYGZMEHEGRXXZIVCUUAL9P");
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

@@ -1,5 +1,5 @@
 
-# [checkConsistency](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L563)
+# [checkConsistency](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L628)
  [CheckConsistencyResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/CheckConsistencyResponse.java) checkConsistency(String[] tails)
 
 Checks the consistency of the subtangle formed by the provided tails.
@@ -30,7 +30,7 @@ Checks the consistency of the subtangle formed by the provided tails.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    CheckConsistencyResponse response = iotaAPI.checkConsistency(new String[]{"ULIYGFYFAVGNOWKTSJDRBIWUXHJGZDXDVLFJWKNFMJGDSLKEOLSSSWG9PHRHSPHWVHFIHMAUVDOWWSMPN", "CKBRRWMWKWYMXKVPOOVACNHLTLR9EOGWBAIAMNGO9JZOJCLIRJBAUEXCZ9QHYYOXKDCSOJLSMXRYLSFXN"});
+    CheckConsistencyResponse response = iotaAPI.checkConsistency(new String[]{"ZRJMXSYCCYEOASWAQ9IUBBMQJWGQERRMHDSUEJUNFUMYIOLJBALPYUBPCRPOFUFDLNTFXIEEAVBXHRGTX", "BNSOYBRJVWUQEYSBCZSEHYNWFLMDJ9KIUUSATBNAELQQHSSAGHHZJDVYETGGCODLEEIZOFYEJMABEVWUI"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

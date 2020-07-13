@@ -1,5 +1,5 @@
 
-# [getNeighbors](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L176)
+# [getNeighbors](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L173)
  [GetNeighborsResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetNeighborsResponse.java) getNeighbors()
 
 Returns the set of neighbors you are connected with, as well as their activity statistics (or counters). The activity counters are reset after restarting IRI.
