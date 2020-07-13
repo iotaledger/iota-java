@@ -1,9 +1,9 @@
 
-# [attachToTangle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L608)
+# [attachToTangle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L673)
  [GetAttachToTangleResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetAttachToTangleResponse.java) attachToTangle(String trunkTransaction , String branchTransaction , Integer minWeightMagnitude , String[] trytes)
 
- Prepares the specified transactions (trytes) for attachment to the Tangle by doing Proof of Work. You need to supply `branchTransaction` as well as `trunkTransaction`. These are the tips which you're going to validate and reference with this transaction.  These are obtainable by the `getTransactionsToApprove` API call. 
-  The returned value is a different set of tryte values which you can input into  `broadcastTransactions` and `storeTransactions`. 
+ Prepares the specified transactions (trytes) for attachment to the Tangle by doing Proof of Work. You need to supply `branchTransaction` as well as `trunkTransaction`. These are the tips which you're going to validate and reference with this transaction. These are obtainable by the `getTransactionsToApprove` API call. 
+  The returned value is a different set of tryte values which you can input into `broadcastTransactions` and `storeTransactions`. 
   The last 243 trytes of the return value consist of the following:  * `trunkTransaction`
  * `branchTransaction`
  * `nonce`
@@ -13,9 +13,9 @@
 ## Input
 | Parameter       | Type | Required or Optional | Description |
 |:---------------|:--------|:--------| :--------|
-| trunkTransaction | String | Required | A reference to an external transaction (tip) used as trunk. The transaction with index 0 will have this tip in its trunk. All other transactions reference the previous transaction in the bundle (Their index-1). |
-| branchTransaction | String | Required | A reference to an external transaction (tip) used as branch.  Each Transaction in the bundle will have this tip as their branch, except the last.  The last one will have the branch in its trunk. |
-| minWeightMagnitude | Integer | Required | The amount of work we should do to confirm this transaction.Each 0-trit on the end of the transaction represents 1 magnitude.A 9-tryte represents 3 magnitudes, since a 9 is represented by 3 0-trits.   Transactions with a different minWeightMagnitude are compatible. |
+| trunkTransaction | String | Required | A reference to an external transaction (tip) used as trunk.   The transaction with index 0 will have this tip in its trunk.   All other transactions reference the previous transaction in the bundle (Their index-1). |
+| branchTransaction | String | Required | A reference to an external transaction (tip) used as branch.   Each Transaction in the bundle will have this tip as their branch, except the last.   The last one will have the branch in its trunk. |
+| minWeightMagnitude | Integer | Required | The amount of work we should do to confirm this transaction.   Each 0-trit on the end of the transaction represents 1 magnitude.   A 9-tryte represents 3 magnitudes, since a 9 is represented by 3 0-trits.   Transactions with a different minWeightMagnitude are compatible. |
 | trytes | String[] | Required | The list of trytes to prepare for network attachment, by doing proof of work. |
     
 ## Output
@@ -38,7 +38,7 @@
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetAttachToTangleResponse response = iotaAPI.attachToTangle("RRSXEVDVMVKOGEQKUFWBMC9RWMCOKUAWALZTGM9LPMLJI9YWMMDUDTHEEYCCCVWTNSKMACASYYFVUDQL9", "YDQTZVCQTCBAJKTWRAGNFDTFHCWLIUYETWXTDIOPUDES9KHDCJLX9TPFEXOXZZUG9HXHWBETOIMHNBMFZ", 18, new String[]{"HUKVHVIHNEWTXKEQRALHL9CFJ ... AMO9XCEIYQBQIQPBKXENXTFGJ", "IW9LITHXLNDMUVPKNFOABAFOW ... QQUYIRBVKXEKFNXKQYLKNBNDD"});
+    GetAttachToTangleResponse response = iotaAPI.attachToTangle("FBTFLOILYWNA9PVDUWNE9SPX9EIK9JBQXDTQPRXOFQJQKZGBPWXQDZFICMHLIGGVNNANYRRORILNOUCCA", "LFSZUJXV9PUAPIPUKEZJKAARL9KASNDNIDF9ATELJBSZAKYEHKQEYQZGTOPFUJPOUVSZTMLWNFWFJVAKA", 18, new String[]{"SQUYGCCRJLCDUTLMZFURXXMIA ... HWRKYPLXANKUYOPBYTSMSZBNF", "NHWX9JCU9YHADD9R9YQCPUXCV ... UVFBPMPFRIU9KYFVCXCLNNJKV"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

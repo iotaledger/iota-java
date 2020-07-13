@@ -1,5 +1,5 @@
 
-# [findTransactionsByAddresses](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L304)
+# [findTransactionsByAddresses](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L301)
  [FindTransactionResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/FindTransactionResponse.java) findTransactionsByAddresses(String[] addresses)
 
 Find the transactions by addresses with checksum
@@ -30,7 +30,7 @@ Find the transactions by addresses with checksum
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    FindTransactionResponse response = iotaAPI.findTransactionsByAddresses(new String[]{"YFKPGRTWIUGYNLJFKNYOBVMSAANNM9RGFWUPIQZFDTLTJOCYGRWRSOWZRDIQNRYSNOPOUDPZKTZLWZAWP", "CABNRPMYNEPXMGCXYC99CIQMWPW9PLVALMPFOKWXDRFIAMIFTGOSINIMDPALDFZUOFMMECAIJZMWRIGCC"});
+    FindTransactionResponse response = iotaAPI.findTransactionsByAddresses(new String[]{"V9XGWHCWIIZABIVUHAQPPXPBOZUWEDKHRUYDOTSHZKECZWQAYDXEARNMRESKADNGQD9UHYOGFNAADJNVR", "QWILXTUPKNE9EQGIH9TDROMIHAUGEXWBWTCVLOTWLVWQYDBBYJX9FUDHPCVMLSMVWJEEFQ9EGFUQLXVAQ"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

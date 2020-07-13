@@ -1,5 +1,5 @@
 
-# [broadcastTransactions](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L735)
+# [broadcastTransactions](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L800)
  [BroadcastTransactionsResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/BroadcastTransactionsResponse.java) broadcastTransactions(String[] trytes)
 
 Broadcast a list of transactions to all neighbors. The trytes to be used for this call should be valid, attached transaction trytes. These trytes are returned by `attachToTangle`, or by doing proof of work somewhere else.
@@ -27,7 +27,7 @@ Broadcast a list of transactions to all neighbors. The trytes to be used for thi
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    BroadcastTransactionsResponse response = iotaAPI.broadcastTransactions(new String[]{"DXELUOEVEGVLFNTMTJUYWCLEU ... ZOXAMDGJRTAMORTGGSXR9YGDK", "TJCDHGEIDGSUINOJKTFGDELIT ... KCSPTGGBKJONJUEBOHASNYOTE"});
+    BroadcastTransactionsResponse response = iotaAPI.broadcastTransactions(new String[]{"CTTGZPZYWGTIFCOATTKASZDPX ... YNIXKJTKMXTEAKVSPXGGWMAVS", "VOGANNMOYEFITLNCMSAYZKNMC ... PQFPPCAHKHQ9YGWSWG9BZCVIB"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

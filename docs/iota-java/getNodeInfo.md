@@ -1,5 +1,5 @@
 
-# [getNodeInfo](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L153)
+# [getNodeInfo](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L150)
  [GetNodeInfoResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetNodeInfoResponse.java) getNodeInfo()
 
 Returns information about this node.

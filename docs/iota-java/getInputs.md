@@ -1,5 +1,5 @@
 
-# [getInputs](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L693)
+# [getInputs](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L666)
  [GetBalancesAndFormatResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetBalancesAndFormatResponse.java) getInputs(String seed , int security , int start , int end , long threshold , String[] tips)
 
 Gets the inputs of a seed If start, end and threshold are 0, checks everything until an address with nothing is found. Addresses are all with checksum appended
@@ -33,7 +33,7 @@ Gets the inputs of a seed If start, end and threshold are 0, checks everything u
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [getBalanceAndFormat(List, List, long, int, StopWatch, int)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L814) | Gets the balances and formats the output. |
+| [getBalanceAndFormat(List, List, long, int, StopWatch, int)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L811) | Gets the balances and formats the output. |
 
  ## Example
  
@@ -41,7 +41,7 @@ Gets the inputs of a seed If start, end and threshold are 0, checks everything u
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetBalancesAndFormatResponse response = iotaAPI.getInputs("YOUR9SECRET9SEED9999999...", 3, 95, 23, 100, new String[]{"PJRGWNWMTSLKBIFF99Q9QLKRXICHXX9VITXLYPNLQCCSDJFDEHXBJDKGHJQSFJNOOLSYNTAGUGUTKYPQN", "ZHEDFRUOBQDOEMBPXRGBDOSBVAU9YACVKYWSZXBRKLNHSLOJKRMERONIGP9OQZWSCT9NGMWHMPQQDCGQQ"});
+    GetBalancesAndFormatResponse response = iotaAPI.getInputs("YOUR9SECRET9SEED9999999...", 3, 54, 541, 100, new String[]{"C9WGBTNYMZHMND9APO9KQZWUPTVOIVBZVKG9EEROXDWEFOGKBMDCX9SPSWFEREP9RTQPICNWVGSOTSAO9", "MFWORJEJYKKTZSERJYYYPNISLMIURLASYNLHGBJSEAJZP9BHDF9TPMTYXMXD9LF9ITVPLYKYHEIQNWTFI"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

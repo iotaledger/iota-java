@@ -1,5 +1,5 @@
 
-# [interruptAttachingToTangle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L721)
+# [interruptAttachingToTangle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L786)
  [InterruptAttachingToTangleResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/InterruptAttachingToTangleResponse.java) interruptAttachingToTangle()
 
 Interrupts and completely aborts the `attachToTangle` process.

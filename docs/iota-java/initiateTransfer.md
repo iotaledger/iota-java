@@ -1,5 +1,5 @@
 
-# [initiateTransfer](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1276)
+# [initiateTransfer](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1293)
  List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> initiateTransfer(int securitySum , String inputAddress , String remainderAddress , List<[Transfer](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transfer.java)> transfers , List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> tips , boolean testMode)
 
 Prepares transfer by generating the bundle with the corresponding cosigner transactions. Does not contain signatures.
@@ -54,7 +54,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.initiateTransfer(111, "MVTQZAUALKNRV9OZLJCQQPCAOTNGWFAXZZXRHYPKGAUXP9YIDCNJQZTGIIJPEHZBTKMAN9UJERNSNQBOI", "BDOOI9DJMVANHAQEOTFYSPWYQDLNQZFE9RVZRDDJSAWVKBLCOMPQAVNFVMFSJHFDOZT9QCXJBXDOFYN9U", new List<Transfer>(new Transfer[]{transfers, transfers}), new List<Transaction>(new Transaction[]{tips, tips}), true);
+    List<Transaction> response = iotaAPI.initiateTransfer(527, "TEAPYGIONKLYSNCMJUVVKORUCSDGGBLWPXDF9UHGQU9UOHBTVXKLHZSMRAIMDREAZONIVJPRYDJPXOBJT", "JAV9IAYGWWLFDFKUIIVUCYKCBLBSRLQC9YLPJANFDOMJUOCMPCYGXRTDKC9EPQMZUCUKAYHFWFUWQDKDV", new List<Transfer>(new Transfer[]{transfers, transfers}), new List<Transaction>(new Transaction[]{tips, tips}), false);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

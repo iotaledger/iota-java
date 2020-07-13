@@ -1,5 +1,5 @@
 
-# [findTransactionObjectsByTag](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L418)
+# [findTransactionObjectsByTag](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L391)
  List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> findTransactionObjectsByTag(String[] tags)
 
 Wrapper function: Finds transactions, gets trytes and turns it into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects.
@@ -41,8 +41,8 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [findTransactionsByTags(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L360) | Find the transactions by tags |
-| [findTransactionsObjectsByHashes](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L372) | Wrapper function: get trytes and turns into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects. Gets the trytes and transaction object from a list of transaction hashes. |
+| [findTransactionsByTags(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L356) | Find the transactions by tags |
+| [findTransactionsObjectsByHashes](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L345) | Wrapper function: get trytes and turns into [Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java) objects. Gets the trytes and transaction object from a list of transaction hashes. |
 
  ## Example
  
@@ -50,7 +50,7 @@ List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<Transaction> response = iotaAPI.findTransactionObjectsByTag(new String[]{"TAG9DKZQQPWFFFFLKPTHDMWZYTT", "TAG9Y9RDVC99ZLXVPIBY9WMTUCZ"});
+    List<Transaction> response = iotaAPI.findTransactionObjectsByTag(new String[]{"TAG9ZTMIOWQANOUFNDJNPIIHZSS", "TAG9YAFGL9ALGOTQTKXWN9SRWST"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

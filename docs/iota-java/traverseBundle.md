@@ -1,5 +1,5 @@
 
-# [traverseBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1152)
+# [traverseBundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1169)
  [Bundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Bundle.java) traverseBundle(String trunkTx , String bundleHash , [Bundle](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Bundle.java) bundle)
 
 Traverses the Bundle by going down the trunkTransactions until the bundle hash of the transaction changes.  In case the input transaction hash is not a tail, we return an error.
@@ -31,7 +31,7 @@ Traverses the Bundle by going down the trunkTransactions until the bundle hash o
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    Bundle response = iotaAPI.traverseBundle("9KMVSCSOAGIDMS9SCMNDCTRHW9OFTMUAZHGPRTOWUAEETKRPKTG99TYBZ9XBM9THNWJYTEOZTAGWTZPRJ", "9MYMRXQTTKSIGPVUUQYFMJOHPGHAHSSYAENVJWJNIHRKSUWAKJZBUQIJEOMISUPDRESZIVYSRPAG9OD9K", bundle);
+    Bundle response = iotaAPI.traverseBundle("CJXUCJZNAQOYAK9KRFILHBMOHDXGMJEDOSLWWZXZRDHFGORBHPQVGLFRRRTJTXTCEWBHJXIOMJUCCXHMO", "XZSCYHFFLWLZOSMKEXBBSHVHNG9FITFDTVRMYFJ9IHDUENHFRKQZKPMIORTWYHRHPEWXKYSXXQHAYSQIL", bundle);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

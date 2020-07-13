@@ -1,5 +1,5 @@
 
-# [findTransactionsByTags](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L360)
+# [findTransactionsByTags](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L356)
  [FindTransactionResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/FindTransactionResponse.java) findTransactionsByTags(String[] tags)
 
 Find the transactions by tags
@@ -30,7 +30,7 @@ Find the transactions by tags
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    FindTransactionResponse response = iotaAPI.findTransactionsByTags(new String[]{"TAG99AQMIUVIHPTZHXAKUYLFSLZ", "TAG9DLJGRWUYHEYFQORDSPIHCDI"});
+    FindTransactionResponse response = iotaAPI.findTransactionsByTags(new String[]{"TAG9FGOUU9WQIQIWMKLKEKYYGSF", "TAG9BFDUXLTJWANPF9EBDIIQRNG"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

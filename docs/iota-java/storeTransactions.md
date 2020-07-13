@@ -1,5 +1,5 @@
 
-# [storeTransactions](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L753)
+# [storeTransactions](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L818)
  [StoreTransactionsResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/StoreTransactionsResponse.java) storeTransactions(String[] trytes)
 
 Stores transactions in the local storage. The trytes to be used for this call should be valid, attached transaction trytes. These trytes are returned by `attachToTangle`, or by doing proof of work somewhere else.
@@ -27,7 +27,7 @@ Stores transactions in the local storage. The trytes to be used for this call sh
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    StoreTransactionsResponse response = iotaAPI.storeTransactions(new String[]{"FZE9UXESVWNRVHRPGEAGHYTUE ... DKSUNMZ9YMOYMPBKOPUXCEWJN", "IGTJJFUYMJDOICSZRXDGIG9ZX ... IIHMKR9VXH9ZTTPOQAULBDACL"});
+    StoreTransactionsResponse response = iotaAPI.storeTransactions(new String[]{"XEIHGMZRJVMMICZQLMRTGBDXH ... YOMRYHEEERVHIM9GPDJ9NWQSX", "IAWUU9ZYSKLJXIDXP9BKFBCQO ... GQVAJDMXTKLCUU9HGRREQZWUM"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 
