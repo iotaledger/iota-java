@@ -1,5 +1,5 @@
 
-# [prepareTransfers](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L486)
+# [prepareTransfers](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L460)
  List<String> prepareTransfers(String seed , int security , List<[Transfer](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transfer.java)> transfers , String remainder , List<[Input](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Input.java)> inputs , List<[Transaction](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Transaction.java)> tips , boolean validateInputs)
 
 Prepares transfer by generating bundle, finding and signing inputs.
@@ -36,7 +36,7 @@ Prepares transfer by generating bundle, finding and signing inputs.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    List<String> response = iotaAPI.prepareTransfers("YOUR9SECRET9SEED9999999...", 3, new List<Transfer>(new Transfer[]{transfers, transfers}), "RSWV9HB9BUCKYFWZHLNSFHHJFUFUKAJYCFLOCFSHEZPSNXGEEQBICUULCMRKFMIQFXXLNERR9PJDIBRVZ", new List<Input>(new Input[]{inputs, inputs}), new List<Transaction>(new Transaction[]{tips, tips}), true);
+    List<String> response = iotaAPI.prepareTransfers("YOUR9SECRET9SEED9999999...", 3, new List<Transfer>(new Transfer[]{transfers, transfers}), "TQJOTQEBRFGXDYBVEIBFYLRZL9EZYGHNNWPOEJEOSDYHLP9BTBGUDFJYMETKHIVJXCDLOBRA9CZAGEWXY", new List<Input>(new Input[]{inputs, inputs}), new List<Transaction>(new Transaction[]{tips, tips}), false);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

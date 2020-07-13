@@ -1,50 +1,21 @@
 package org.iota.jota.connection;
 
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
 import org.iota.jota.config.types.IotaDefaultConfig;
-import org.iota.jota.dto.request.IotaAttachToTangleRequest;
-import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
-import org.iota.jota.dto.request.IotaCheckConsistencyRequest;
-import org.iota.jota.dto.request.IotaCommandRequest;
-import org.iota.jota.dto.request.IotaCustomRequest;
-import org.iota.jota.dto.request.IotaFindTransactionsRequest;
-import org.iota.jota.dto.request.IotaGetBalancesRequest;
-import org.iota.jota.dto.request.IotaGetInclusionStateRequest;
-import org.iota.jota.dto.request.IotaGetTransactionsToApproveRequest;
-import org.iota.jota.dto.request.IotaGetTrytesRequest;
-import org.iota.jota.dto.request.IotaNeighborsRequest;
-import org.iota.jota.dto.request.IotaStoreTransactionsRequest;
-import org.iota.jota.dto.request.IotaWereAddressesSpentFromRequest;
-import org.iota.jota.dto.response.AddNeighborsResponse;
-import org.iota.jota.dto.response.BroadcastTransactionsResponse;
-import org.iota.jota.dto.response.CheckConsistencyResponse;
-import org.iota.jota.dto.response.FindTransactionResponse;
-import org.iota.jota.dto.response.GetAttachToTangleResponse;
-import org.iota.jota.dto.response.GetBalancesResponse;
-import org.iota.jota.dto.response.GetInclusionStateResponse;
-import org.iota.jota.dto.response.GetNeighborsResponse;
-import org.iota.jota.dto.response.GetNodeAPIConfigurationResponse;
-import org.iota.jota.dto.response.GetNodeInfoResponse;
-import org.iota.jota.dto.response.GetTipsResponse;
-import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
-import org.iota.jota.dto.response.GetTrytesResponse;
-import org.iota.jota.dto.response.InterruptAttachingToTangleResponse;
-import org.iota.jota.dto.response.IotaCustomResponse;
-import org.iota.jota.dto.response.RemoveNeighborsResponse;
-import org.iota.jota.dto.response.StoreTransactionsResponse;
-import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
+import org.iota.jota.dto.request.*;
+import org.iota.jota.dto.response.*;
 import org.iota.jota.error.AccessLimitedException;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.error.ConnectorException;
 import org.iota.jota.error.InternalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -65,14 +36,17 @@ public class HttpConnector implements Connection {
     private IotaNodeHTTPService service;
     private OkHttpClient client;
     
-
     /**
-     * Creates an HTTP connector using the default timeout by creating an {@link OkHttpClient}
+     * Creates an HTTP connector using the provided url.
+     * This url must be complete including port and protocol
+     * <br/>
+     * Example: <code>https://iota.net:14265/node/</code>
      * 
-     * @param url The URL we connect to
+     * @param url The url we use
+     * @throws MalformedURLException if this is an invalid URL
      */
-    public HttpConnector(URL url) {
-        this(url, IotaDefaultConfig.Defaults.CONNECTION_TIMEOUT);
+    public HttpConnector(String url) throws MalformedURLException {
+        this(new URL(url));
     }
     
     /**
@@ -83,7 +57,7 @@ public class HttpConnector implements Connection {
      * @throws MalformedURLException if this is an invalid URL
      */
     public HttpConnector(String protocol, String host) throws MalformedURLException {
-        this(new URL(protocol, host, DEFAULT_PORT, ""));
+        this(protocol, host, DEFAULT_PORT);
     }
     
     /**
@@ -95,7 +69,7 @@ public class HttpConnector implements Connection {
      * @throws MalformedURLException if this is an invalid URL
      */
     public HttpConnector(String protocol, String host, int port) throws MalformedURLException {
-        this(new URL(protocol, host, port, ""));
+        this(protocol, host, port, IotaDefaultConfig.Defaults.CONNECTION_TIMEOUT);
     }
     
     /**
@@ -108,7 +82,43 @@ public class HttpConnector implements Connection {
      * @throws MalformedURLException if this is an invalid URL
      */
     public HttpConnector(String protocol, String host, int port, int timeout) throws MalformedURLException {
-        this(new URL(protocol, host, port, ""), timeout);
+        this(protocol, host, port, "", timeout);
+    }
+    
+    /**
+     * Creates an HTTP connector by creating an {@link OkHttpClient}
+     * 
+     * @param protocol The protocol we use
+     * @param host The host we use (Domain and optional subdomain)
+     * @param port The port we use
+     * @param file The file extension of the host (so "/node/" in iota.net/node/)
+     * @throws MalformedURLException if this is an invalid URL
+     */
+    public HttpConnector(String protocol, String host, int port, String file) throws MalformedURLException {
+        this(new URL(protocol, host, port, file));
+    }
+    
+    /**
+     * Creates an HTTP connector by creating an {@link OkHttpClient}
+     * 
+     * @param protocol The protocol we use
+     * @param host The host we use (Domain and optional subdomain)
+     * @param port The port we use
+     * @param file The file extension of the host (so "node" in iota.net/node)
+     * @param timeout the connection timeout after a request is sent
+     * @throws MalformedURLException if this is an invalid URL
+     */
+    public HttpConnector(String protocol, String host, int port, String file, int timeout) throws MalformedURLException {
+        this(new URL(protocol, host, port, file), timeout);
+    }
+    
+    /**
+     * Creates an HTTP connector using the default timeout by creating an {@link OkHttpClient}
+     * 
+     * @param url The URL we connect to
+     */
+    public HttpConnector(URL url) {
+        this(url, IotaDefaultConfig.Defaults.CONNECTION_TIMEOUT);
     }
     
     /**
@@ -183,6 +193,7 @@ public class HttpConnector implements Connection {
         return url;
     }
     
+    @Override
     public boolean start() {
         // use client to create Retrofit service
         Retrofit retrofit = new Retrofit.Builder()
@@ -195,6 +206,7 @@ public class HttpConnector implements Connection {
         return true;
     }
     
+    @Override
     public void stop() {
         //does nothing
     }

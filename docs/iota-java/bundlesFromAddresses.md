@@ -1,5 +1,5 @@
 
-# [bundlesFromAddresses](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L225)
+# [bundlesFromAddresses](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L198)
  [Bundle[]](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/model/Bundle.java) bundlesFromAddresses(Boolean inclusionStates , String[] addresses)
 
 Internal function to get the formatted bundles of a list of addresses.
@@ -29,7 +29,7 @@ Internal function to get the formatted bundles of a list of addresses.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    Bundle[] response = iotaAPI.bundlesFromAddresses(false, new String[]{"RMQYYPYZKJQOWHDJPXDFUB9NYFWDUNNUBHIQRYUZBYGHKMDDWFLURDCIUVYHGVNQJMFQSPCUNETZFPIPZ", "WALYAJHFLXYTGDTSRTEJZCDKIMAKJZSKEFVBVPUYYFSQDWUXP9TFGXOYSFVQTRZBDTRKYBYMKBJIDWNLZ"});
+    Bundle[] response = iotaAPI.bundlesFromAddresses(false, new String[]{"GJMJYQOFBZEAAYSNZTNWSHHKPYPDWKBXFVIGXGXCRMLRBG9VOYMRYG9CZADARYUFYTQOTTHTKVDGGUCAP", "TJOESBMUBBLAPDRXTJOZVZEJHTEMLRILLPXKJH9LXOXJP9ILYZPQJOFQKZTREGXBTQEDXEXWBJLRCMUSJ"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

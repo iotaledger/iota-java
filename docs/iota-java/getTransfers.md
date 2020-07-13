@@ -1,5 +1,5 @@
 
-# [getTransfers](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L183)
+# [getTransfers](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L156)
  [GetTransferResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetTransferResponse.java) getTransfers(String seed , int security , Integer start , Integer end , Boolean inclusionStates)
 
 Finds all the bundles for all the addresses based on this seed and security.
@@ -35,7 +35,7 @@ Finds all the bundles for all the addresses based on this seed and security.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    GetTransferResponse response = iotaAPI.getTransfers("YOUR9SECRET9SEED9999999...", 3, 978, 649, false);
+    GetTransferResponse response = iotaAPI.getTransfers("YOUR9SECRET9SEED9999999...", 3, 323, 15, false);
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

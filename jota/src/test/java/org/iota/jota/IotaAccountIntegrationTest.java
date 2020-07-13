@@ -191,7 +191,7 @@ public class IotaAccountIntegrationTest {
     }
     
     private IotaAPI fakeBalance(String addr, long balance, IotaAPI spyApi) {
-        when(spyApi.getBalance(100, addr)).thenReturn(balance);
+        when(spyApi.getBalance(addr)).thenReturn(balance);
         return spyApi;
     }
 }

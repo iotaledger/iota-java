@@ -120,6 +120,6 @@ public class IotaAccountTest {
     }
     
     private void mockBalance(String addr, long balance) {
-        when(MOCK_API.getBalance(100, addr)).thenReturn(balance);
+        when(MOCK_API.getBalance(addr)).thenReturn(balance);
     }
 }

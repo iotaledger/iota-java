@@ -1,10 +1,5 @@
 package org.iota.jota.builder;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.iota.jota.IotaAPICore;
 import org.iota.jota.IotaPoW;
 import org.iota.jota.config.options.ApiConfig;
@@ -16,6 +11,11 @@ import org.iota.jota.pow.ICurl;
 import org.iota.jota.pow.SpongeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unchecked")
 public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICore> 
@@ -47,6 +47,7 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
      * @return The builder
      * @throws Exception When we failed to load env configs or a url was malformed
      */
+    @Override
     @SuppressWarnings("deprecation")
     protected T generate() throws Exception {
         for (ApiConfig config : getConfigs()) {
@@ -73,7 +74,8 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
                 
                 // Now if we had a legacy config node, we wont take the default node
                 // BUt if nothing was configured, we add the legacy node from default config
-                if (config.hasNodes() && (!(config instanceof IotaDefaultConfig) || !hasLegacyOptions())) {
+                if (config.hasNodes() && (
+                        !(config instanceof IotaDefaultConfig) || !(hasLegacyOptions() || hasNodes()))){
                     for (Connection c : config.getNodes()) {
                         nodes.add(c);
                     }
@@ -82,7 +84,15 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
         }
         
         if (hasLegacyOptions()) {
-            nodes.add(new HttpConnector(protocol, host, port, timeout));
+            String path = "";
+            //Fix for a path, crude but works!
+            if (host.contains("/")) {
+                System.out.println(host);
+                path = host.substring(host.indexOf("/"));
+                host = host.substring(0, host.indexOf("/"));
+            }
+            
+            nodes.add(new HttpConnector(protocol,  host,  port, path, timeout));
         }
         
         return (T) this;
@@ -160,10 +170,12 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
         return port;
     }
 
+    @Override
     public IotaPoW getLocalPoW() {
         return localPoW;
     }
 
+    @Override
     public ICurl getCustomCurl() {
         return customCurl;
     }
@@ -172,7 +184,13 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
         nodes.add(c);
         return (T) this;
     }
+    
+    public T addHttpNode(Connection c) {
+        nodes.add(c);
+        return (T) this;
+    }
 
+    @Override
     public List<Connection> getNodes() {
         return nodes;
     }

@@ -1,5 +1,5 @@
 
-# [validateTransfersAddresses](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1453)
+# [validateTransfersAddresses](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L1471)
  void validateTransfersAddresses(String seed , int security , List<String> trytes)
 
  Validates the supplied transactions with seed and security. This will check for correct input/output and key reuse 
@@ -32,7 +32,7 @@
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    iotaAPI.validateTransfersAddresses("YOUR9SECRET9SEED9999999...", 3, new List<String>(new String[]{"SVGXZDOJAMLWHTKOISD9THZMG ... P9EFIVJUGYPUUAJITJHSMPM9A", "QCFTIYSFROZXIW9ITTMTOZFUR ... HCADCWOVYOUFYBAJGARMRQOFV"}));
+    iotaAPI.validateTransfersAddresses("YOUR9SECRET9SEED9999999...", 3, new List<String>(new String[]{"FVYMDZDBVEB9SAHFFNIJEHEMG ... UJWSIIEGHKJSZWOQZQGOWKCFB", "IIBDFAEVXGLSCQFZEUOQCGOSS ... A9JIUZSFUJVKIMQPIMPWTQKQQ"}));
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 

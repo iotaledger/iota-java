@@ -1,5 +1,5 @@
 
-# [generateNewAddresses](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L86)
+# [generateNewAddresses](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L59)
  [GetNewAddressResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/GetNewAddressResponse.java) generateNewAddresses([AddressRequest](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/builder/AddressRequest.java) addressRequest)
 
 Generates new addresses, meaning addresses which were not spend from, according to the connected node. Stops when [getAmount()](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/builder/AddressRequest.java#L104) of unspent addresses are found, starting from [getIndex()](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/builder/AddressRequest.java#L96) If [getAmount()](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/builder/AddressRequest.java#L104) is set to 0, we will generate until the first unspent address is found, and stop.

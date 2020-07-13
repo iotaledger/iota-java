@@ -154,7 +154,7 @@ public interface IotaNodeHTTPService {
      * It returns the confirmed balance which a list of addresses have at the latest confirmed milestone.
      * <p>
      * {@code curl http://localhost:14265 -X POST -H 'X-IOTA-API-Version: 1.4.1' -H 'Content-Type: application/json'}
-     * {@code -d '{"command": "getBalances", "addresses": ["HBBYKAKTILIPVUKFOTSLHGENPTXYBNKXZFQFR9VQFWNBMTQNRVOUKPVPRNBSZVVILMAFBKOTBLGLWLOHQ"], "threshold": 100}'}
+     * {@code -d '{"command": "getBalances", "addresses": ["HBBYKAKTILIPVUKFOTSLHGENPTXYBNKXZFQFR9VQFWNBMTQNRVOUKPVPRNBSZVVILMAFBKOTBLGLWLOHQ"]}
      */
     @Headers({CONTENT_TYPE_HEADER, USER_AGENT_HEADER})
     @POST("./")

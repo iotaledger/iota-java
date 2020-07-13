@@ -1,5 +1,5 @@
 
-# [storeAndBroadcast](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L313)
+# [storeAndBroadcast](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPI.java#L286)
  [BroadcastTransactionsResponse](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/dto/response/BroadcastTransactionsResponse.java) storeAndBroadcast(String[] trytes)
 
 Wrapper method: stores and broadcasts the specified trytes.
@@ -24,8 +24,8 @@ Wrapper method: stores and broadcasts the specified trytes.
 ## Related APIs (link to other product documentation)
 | API     | Description |
 |:---------------|:--------|
-| [storeTransactions(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L751) | Stores transactions in the local storage. The trytes to be used for this call should be valid, attached transaction trytes. These trytes are returned by `attachToTangle`, or by doing proof of work somewhere else. |
-| [broadcastTransactions(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L734) | Broadcast a list of transactions to all neighbors. The trytes to be used for this call should be valid, attached transaction trytes. These trytes are returned by `attachToTangle`, or by doing proof of work somewhere else. |
+| [storeTransactions(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L818) | Stores transactions in the local storage. The trytes to be used for this call should be valid, attached transaction trytes. These trytes are returned by `attachToTangle`, or by doing proof of work somewhere else. |
+| [broadcastTransactions(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L800) | Broadcast a list of transactions to all neighbors. The trytes to be used for this call should be valid, attached transaction trytes. These trytes are returned by `attachToTangle`, or by doing proof of work somewhere else. |
 
  ## Example
  
@@ -33,7 +33,7 @@ Wrapper method: stores and broadcasts the specified trytes.
  IotaAPI iotaAPI = new IotaAPI.Builder().build();
 
 try { 
-    BroadcastTransactionsResponse response = iotaAPI.storeAndBroadcast(new String[]{"RK9KALXATTO9IVRWYPMZR9TSQ ... NFQ9MMBVFCULXBSYXYZMYCNMI", "TDBZTXFEVXHTDELKXKN9KEUFS ... AMDWEVETDECBXBSPJAXMJMFCE"});
+    BroadcastTransactionsResponse response = iotaAPI.storeAndBroadcast(new String[]{"AL9PN9OO9RHQNRN9NVXCKPLNG ... LLANXJWH9IDKSYFUVSEODY9FN", "DQTPSWOFHABLHUGYIHVNUGOLK ... 9RMEHUEQGXHZZGUPGCBBCDKZZ"});
 } catch (ArgumentException e) { 
     // Handle error
     e.printStackTrace(); 
