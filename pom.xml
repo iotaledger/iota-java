@@ -74,7 +74,7 @@
         <version.maven-surefire-plugin>2.22.2</version.maven-surefire-plugin>
         <version.maven-failsafe-plugin>2.22.2</version.maven-failsafe-plugin>
         <version.maven-project-info-reports-plugin>2.9</version.maven-project-info-reports-plugin>
-        <dependency-check-maven.version>5.2.2</dependency-check-maven.version>
+        <dependency-check-maven.version>6.0.1</dependency-check-maven.version>
 
         <!-- Please keep this, this is needed for test purposes,
         if the test runs on Jitpack these values will be adjusted -->

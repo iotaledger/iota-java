@@ -13,6 +13,7 @@ import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.model.Transfer;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class SendMessageTest {
@@ -31,6 +32,7 @@ public class SendMessageTest {
         iotaClient = new IotaAPI.Builder().config(new FileConfig()).build();
     }
 
+    @Disabled("{\"error\":\"Wrong MinWeightMagnitude. requested: 14, expected: 9\"}")
     @Test
     public void shouldSendMessage() throws ArgumentException {
         List<Transfer> transfers = new ArrayList<>();
