@@ -20,11 +20,6 @@ Checks if a transaction hash is promotable
 |:---------------|:--------|
 | [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when we can't get the consistency of this transaction |
 
-## Related APIs (link to other product documentation)
-| API     | Description |
-|:---------------|:--------|
-| [checkConsistency(String...)](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/IotaAPICore.java#L628) | Checks the consistency of the subtangle formed by the provided tails. |
-
  ## Example
  
  ```Java

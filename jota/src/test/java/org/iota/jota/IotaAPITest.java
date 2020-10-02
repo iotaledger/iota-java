@@ -347,15 +347,6 @@ public class IotaAPITest {
 
     @Test
     @Tag("IntegrationTest")
-    public void shouldCheckConsistency() throws ArgumentException {
-        GetNodeInfoResponse gni = iotaAPI.getNodeInfo();
-        CheckConsistencyResponse ccr = iotaAPI.checkConsistency(gni.getLatestSolidSubtangleMilestone());
-        assertThat("CheckConsistencyResponse should not return null on failure", ccr, IsNull.notNullValue());
-        assertTrue(ccr.getState(), "Latest milestone should always be consistent");
-    }
-
-    @Test
-    @Tag("IntegrationTest")
     public void shouldGetTransfers(){
         GetTransferResponse gtr = iotaAPI.getTransfers(TEST_SEED3, 2, 0, 10, false);
         assertThat("GetTransfers should return GetTransferResponse object on success", gtr.getTransfers(), IsNull.notNullValue());

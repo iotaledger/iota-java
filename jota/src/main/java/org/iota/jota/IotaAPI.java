@@ -1611,14 +1611,12 @@ public class IotaAPI extends IotaAPICore {
      * @param tail the {@link Transaction} we want to promote
      * @return <tt>true</tt> if it is, otherwise <tt>false</tt>
      * @throws ArgumentException when we can't get the consistency of this transaction
-     * @see #checkConsistency(String...)
      */
     @Document
     public boolean isPromotable(Transaction tail) throws ArgumentException {
         long lowerBound = tail.getAttachmentTimestamp();
-        CheckConsistencyResponse consistencyResponse = checkConsistency(tail.getHash());
-        
-        return consistencyResponse.getState() && isAboveMaxDepth(lowerBound);
+
+        return isAboveMaxDepth(lowerBound);
     }
     
     /**
@@ -1628,7 +1626,6 @@ public class IotaAPI extends IotaAPICore {
      * @return <tt>true</tt> if it is, otherwise <tt>false</tt>
      * @throws ArgumentException when we can't get the consistency of this transaction
      * or when the transaction is not found
-     * @see #checkConsistency(String...)
      */
     public boolean isPromotable(String tail) throws ArgumentException {
         GetTrytesResponse transaction = getTrytes(tail);
@@ -1675,7 +1672,6 @@ public class IotaAPI extends IotaAPICore {
      * @throws ArgumentException When <tt>depth</tt> or <tt>minWeightMagnitude</tt> is lower than 0
      * @throws ArgumentException When the <tt>tail</tt> hash is invalid
      * @throws NotPromotableException When the transaction is not promotable
-     * @see #checkConsistency(String...)
      * @see #getTransactionsToApprove(Integer, String)
      * @see #attachToTangle(String, String, Integer, String...)
      * @see #storeAndBroadcast(String...)
@@ -1692,12 +1688,6 @@ public class IotaAPI extends IotaAPICore {
 
         if(minWeightMagnitude <= 0) {
             throw new ArgumentException("MinWeightMagnitude must be > 0");
-        }
-
-        CheckConsistencyResponse consistencyResponse = checkConsistency(tail);
-
-        if (!consistencyResponse.getState()) {
-            throw new NotPromotableException(consistencyResponse.getInfo());
         }
 
         GetTransactionsToApproveResponse transactionsToApprove = getTransactionsToApprove(depth, tail);
