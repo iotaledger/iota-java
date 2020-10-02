@@ -64,6 +64,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <excludedTests>IntegrationTest</excludedTests>
 
         <!-- plugins -->
         <version.maven-checkstyle-plugin>3.0.0</version.maven-checkstyle-plugin>
@@ -285,7 +286,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${version.maven-surefire-plugin}</version>
                 <configuration>
-                    <excludedGroups>IntegrationTest</excludedGroups>
+                    <excludedGroups>${excludedTests}</excludedGroups>
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
@@ -312,6 +313,12 @@
     </reporting>
 
     <profiles>
+        <profile>
+            <id>allTests</id>
+            <properties>
+                <excludedTests></excludedTests>
+            </properties>
+        </profile>
         <profile>
             <id>build</id>
             <activation>
@@ -377,7 +384,6 @@
                 </plugins>
             </build>
         </profile>
-
         <profile>
             <id>release</id>
             <activation>
