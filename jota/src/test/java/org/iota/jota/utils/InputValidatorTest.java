@@ -1,6 +1,5 @@
 package org.iota.jota.utils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -24,7 +23,6 @@ public class InputValidatorTest {
     private static final String TEST_MESSAGE = "JOTA";
     private static final String TEST_TAG = "JOTASPAM9999999999999999999";
 
-    @Test
     @RepeatedTest(10)
     public void isTrits() {
         // @formatter:off
@@ -68,7 +66,7 @@ public class InputValidatorTest {
 
     @Test
     public void shouldIsArrayOfTrytes() {
-        assertEquals(InputValidator.isArrayOfTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}), true);
+        assertTrue(InputValidator.isArrayOfTrytes(new String[]{TEST_TRYTES, TEST_TRYTES}));
     }
     
     @Test
