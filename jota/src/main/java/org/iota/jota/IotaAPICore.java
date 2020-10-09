@@ -1,5 +1,54 @@
 package org.iota.jota;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.iota.jota.connection.Connection;
+import org.iota.jota.dto.request.IotaAttachToTangleRequest;
+import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
+import org.iota.jota.dto.request.IotaCheckConsistencyRequest;
+import org.iota.jota.dto.request.IotaCommandRequest;
+import org.iota.jota.dto.request.IotaCustomRequest;
+import org.iota.jota.dto.request.IotaFindTransactionsRequest;
+import org.iota.jota.dto.request.IotaGetBalancesRequest;
+import org.iota.jota.dto.request.IotaGetInclusionStateRequest;
+import org.iota.jota.dto.request.IotaGetTransactionsToApproveRequest;
+import org.iota.jota.dto.request.IotaGetTrytesRequest;
+import org.iota.jota.dto.request.IotaNeighborsRequest;
+import org.iota.jota.dto.request.IotaStoreTransactionsRequest;
+import org.iota.jota.dto.request.IotaWereAddressesSpentFromRequest;
+import org.iota.jota.dto.response.AddNeighborsResponse;
+import org.iota.jota.dto.response.BroadcastTransactionsResponse;
+import org.iota.jota.dto.response.CheckConsistencyResponse;
+import org.iota.jota.dto.response.FindTransactionResponse;
+import org.iota.jota.dto.response.GetAttachToTangleResponse;
+import org.iota.jota.dto.response.GetBalancesResponse;
+import org.iota.jota.dto.response.GetInclusionStateResponse;
+import org.iota.jota.dto.response.GetNeighborsResponse;
+import org.iota.jota.dto.response.GetNodeAPIConfigurationResponse;
+import org.iota.jota.dto.response.GetNodeInfoResponse;
+import org.iota.jota.dto.response.GetTipsResponse;
+import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
+import org.iota.jota.dto.response.GetTrytesResponse;
+import org.iota.jota.dto.response.InterruptAttachingToTangleResponse;
+import org.iota.jota.dto.response.IotaCustomResponse;
+import org.iota.jota.dto.response.RemoveNeighborsResponse;
+import org.iota.jota.dto.response.StoreTransactionsResponse;
+import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
+import org.iota.jota.error.ArgumentException;
+import org.iota.jota.model.Transaction;
+import org.iota.jota.pow.ICurl;
+import org.iota.jota.utils.Checksum;
+import org.iota.jota.utils.InputValidator;
+import org.iota.mddoclet.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import static org.iota.jota.utils.Constants.INVALID_ADDRESSES_INPUT_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_APPROVE_DEPTH_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_ATTACHED_TRYTES_INPUT_ERROR;
@@ -8,22 +57,6 @@ import static org.iota.jota.utils.Constants.INVALID_HASHES_INPUT_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_TAG_INPUT_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_THRESHOLD_ERROR;
 import static org.iota.jota.utils.Constants.INVALID_TRYTES_INPUT_ERROR;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.iota.jota.connection.Connection;
-import org.iota.jota.dto.request.*;
-import org.iota.jota.dto.response.*;
-import org.iota.jota.error.ArgumentException;
-import org.iota.jota.model.Transaction;
-import org.iota.jota.pow.ICurl;
-import org.iota.jota.pow.SpongeFactory;
-import org.iota.jota.utils.Checksum;
-import org.iota.jota.utils.InputValidator;
-import org.iota.mddoclet.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 /**
  * This class provides access to the Iota core API
@@ -386,7 +419,7 @@ public class IotaAPICore {
     /**
      * Returns the raw transaction data (trytes) of a specific transaction.
      * These trytes can then be easily converted into the actual transaction object.
-     * You can use {@link Transaction#Transaction(String)} for conversion to an object.
+     * You can use {@link Transaction.Builder#buildWithTrytes(String)} for conversion to an object.
      *
      * @param hashes The transaction hashes you want to get trytes from.
      * @return {@link GetTrytesResponse}
@@ -738,20 +771,20 @@ public class IotaAPICore {
 
         try {
             for (int i = 0; i < resultTrytes.length; i++) {
-                Transaction txn = new Transaction(trytes[i]);
-                txn.setTrunkTransaction(previousTransaction == null ? trunkTransaction : previousTransaction);
-                txn.setBranchTransaction(previousTransaction == null ? branchTransaction : trunkTransaction);
+                Transaction transaction = new Transaction.Builder().buildWithTrytes(trytes[i]);
+                transaction.setTrunkTransaction(previousTransaction == null ? trunkTransaction : previousTransaction);
+                transaction.setBranchTransaction(previousTransaction == null ? branchTransaction : trunkTransaction);
 
-                if (txn.getTag().isEmpty() || txn.getTag().matches("9*")) {
-                    txn.setTag(txn.getObsoleteTag());
+                if (transaction.getTag().isEmpty() || transaction.getTag().matches("9*")) {
+                    transaction.setTag(transaction.getObsoleteTag());
                 }
 
-                txn.setAttachmentTimestamp(System.currentTimeMillis());
-                txn.setAttachmentTimestampLowerBound(0);
-                txn.setAttachmentTimestampUpperBound(3_812_798_742_493L);
+                transaction.setAttachmentTimestamp(System.currentTimeMillis());
+                transaction.setAttachmentTimestampLowerBound(0);
+                transaction.setAttachmentTimestampUpperBound(3_812_798_742_493L);
 
-                resultTrytes[i] = pow.performPoW(txn.toTrytes(), minWeightMagnitude);
-                previousTransaction = new Transaction(resultTrytes[i], SpongeFactory.create(SpongeFactory.Mode.CURL_P81)).getHash();
+                resultTrytes[i] = pow.performPoW(transaction.toTrytes(), minWeightMagnitude);
+                previousTransaction = new Transaction.Builder().buildWithTrytes(resultTrytes[i]).getHash();
             }
             Collections.reverse(Arrays.asList(resultTrytes));
         } catch (Exception e) {

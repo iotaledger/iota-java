@@ -1,8 +1,5 @@
 package org.iota.jota.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -13,10 +10,12 @@ import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.Signing;
 import org.iota.jota.utils.TrytesConverter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * This class represents a Bundle, a set of transactions.
- *
  **/
 public class Bundle implements Comparable<Bundle> {
 
@@ -25,7 +24,7 @@ public class Bundle implements Comparable<Bundle> {
      */
     @Deprecated
     public static final String EMPTY_HASH = Constants.NULL_HASH;
-    
+
     private List<Transaction> transactions;
     private int length;
 
@@ -39,16 +38,16 @@ public class Bundle implements Comparable<Bundle> {
 
     /**
      * Initializes a new instance of the Bundle class.
-     * 
+     *
      * @param transactions
      */
     public Bundle(List<Transaction> transactions) {
         this(transactions, transactions.size());
     }
-    
+
     /**
      * Initializes a new instance of the Bundle class.
-     * 
+     *
      * @param transactions
      * @param length
      */
@@ -65,8 +64,7 @@ public class Bundle implements Comparable<Bundle> {
     public List<Transaction> getTransactions() {
         return transactions;
     }
-    
-    
+
 
     /**
      * Gets the length of the bundle
@@ -85,19 +83,19 @@ public class Bundle implements Comparable<Bundle> {
     public void setLength(int length) {
         this.length = length;
     }
-    
+
     public String getBundleHash() {
         if (getLength() == 0) {
             return Constants.NULL_HASH;
         }
-        
+
         return transactions.get(0).getBundle();
-        
+
     }
-    
+
     public String getMessage() {
         StringBuilder str = new StringBuilder();
-        
+
         for (Transaction t : getTransactions()) {
             if (t.getValue() == 0) {
                 str.append(t.getSignatureFragments());
@@ -108,12 +106,12 @@ public class Bundle implements Comparable<Bundle> {
         }
         return TrytesConverter.trytesToAscii(str.toString());
     }
-    
+
     public void addTransaction(Transaction transaction) {
         if (getTransactions() == null) {
-            transactions = new ArrayList<>(getTransactions());
+            transactions = new ArrayList<>();
         }
-        
+
         transactions.add(transaction);
     }
 
@@ -128,12 +126,19 @@ public class Bundle implements Comparable<Bundle> {
      */
     public void addEntry(int signatureMessageLength, String address, long value, String tag, long timestamp) {
         if (getTransactions() == null) {
-            this.transactions = new ArrayList<>(getTransactions());
+            this.transactions = new ArrayList<>();
         }
 
         for (int i = 0; i < signatureMessageLength; i++) {
-            Transaction trx = new Transaction(address, i == 0 ? value : 0, tag, timestamp);
-            transactions.add(trx);
+            Transaction transaction = new Transaction.Builder()
+                    .address(address)
+                    .value(i == 0 ? value : 0)
+                    .tag(tag)
+                    .obsoleteTag(tag)
+                    .timestamp(timestamp)
+                    .build();
+
+            transactions.add(transaction);
         }
     }
 
@@ -151,37 +156,37 @@ public class Bundle implements Comparable<Bundle> {
         boolean valid = true;
         curl = customCurl == null ? SpongeFactory.create(SpongeFactory.Mode.KERL) : customCurl;
         do {
-          curl.reset();
-          
-          for (int i = 0; i < this.getTransactions().size(); i++) {
+            curl.reset();
 
-            int[] valueTrits = Converter.trits(this.getTransactions().get(i).getValue(), 81);
+            for (int i = 0; i < this.getTransactions().size(); i++) {
 
-            int[] timestampTrits = Converter.trits(this.getTransactions().get(i).getTimestamp(), 27);
+                int[] valueTrits = Converter.trits(this.getTransactions().get(i).getValue(), 81);
 
-            this.getTransactions().get(i).setCurrentIndex(i);
+                int[] timestampTrits = Converter.trits(this.getTransactions().get(i).getTimestamp(), 27);
 
-            int[] currentIndexTrits = Converter.trits(this.getTransactions().get(i).getCurrentIndex(), 27);
+                this.getTransactions().get(i).setCurrentIndex(i);
 
-            this.getTransactions().get(i).setLastIndex(this.getTransactions().size() - 1);
+                int[] currentIndexTrits = Converter.trits(this.getTransactions().get(i).getCurrentIndex(), 27);
 
-            int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).getLastIndex(), 27);
-            
-            int[] t = Converter.trits(
-                    this.getTransactions().get(i).getAddress().substring(0, 81) + 
-                    Converter.trytes(valueTrits) + 
-                    this.getTransactions().get(i).getObsoleteTag() + 
-                    Converter.trytes(timestampTrits) + 
-                    Converter.trytes(currentIndexTrits) + 
-                    Converter.trytes(lastIndexTrits));
-            curl.absorb(t, 0, t.length);
-          }
+                this.getTransactions().get(i).setLastIndex(this.getTransactions().size() - 1);
 
-          curl.squeeze(hash, 0, hash.length);
-          hashInTrytes = Converter.trytes(hash);
-          normalizedBundleValue = normalizedBundle(hashInTrytes);
+                int[] lastIndexTrits = Converter.trits(this.getTransactions().get(i).getLastIndex(), 27);
 
-          boolean foundValue = false;
+                int[] t = Converter.trits(
+                        this.getTransactions().get(i).getAddress().substring(0, 81) +
+                                Converter.trytes(valueTrits) +
+                                this.getTransactions().get(i).getObsoleteTag() +
+                                Converter.trytes(timestampTrits) +
+                                Converter.trytes(currentIndexTrits) +
+                                Converter.trytes(lastIndexTrits));
+                curl.absorb(t, 0, t.length);
+            }
+
+            curl.squeeze(hash, 0, hash.length);
+            hashInTrytes = Converter.trytes(hash);
+            normalizedBundleValue = normalizedBundle(hashInTrytes);
+
+            boolean foundValue = false;
             for (int aNormalizedBundleValue : normalizedBundleValue) {
                 if (aNormalizedBundleValue == 13) {
                     foundValue = true;
@@ -190,7 +195,7 @@ public class Bundle implements Comparable<Bundle> {
                     this.getTransactions().get(0).setObsoleteTag(Converter.trytes(obsoleteTagTrits));
                 }
             }
-          valid = !foundValue;
+            valid = !foundValue;
 
         } while (!valid);
 
@@ -213,7 +218,7 @@ public class Bundle implements Comparable<Bundle> {
 
         for (int i = 0; i < this.getTransactions().size(); i++) {
             Transaction t = this.getTransactions().get(i);
-            
+
             // Fill empty signatureMessageFragment
             t.setSignatureFragments((signatureFragments.size() <= i || signatureFragments.get(i).isEmpty()) ? emptySignatureFragment : signatureFragments.get(i));
             // Fill empty trunkTransaction
@@ -260,17 +265,17 @@ public class Bundle implements Comparable<Bundle> {
      * Compares the current object with another object of the same type.
      *
      * @param o An object to compare with this object.
-     * @return A value that indicates the relative order of the objects being compared. 
-     *         The return value has the following meanings: 
-     *         Value Meaning Less than zero This object is less than the parameter.
-     *         Zero This object is equal to other. 
-     *         Greater than zero This object is greater than other.
+     * @return A value that indicates the relative order of the objects being compared.
+     * The return value has the following meanings:
+     * Value Meaning Less than zero This object is less than the parameter.
+     * Zero This object is equal to other.
+     * Greater than zero This object is greater than other.
      */
     @Override
     public int compareTo(Bundle o) {
         return Long.compare(this.getTransactions().get(0).getAttachmentTimestamp(), o.getTransactions().get(0).getAttachmentTimestamp());
     }
-    
+
     @Override
     public String toString() {
         return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();

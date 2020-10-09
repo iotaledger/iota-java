@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public abstract class AbstractResponse {
 
-    private Long duration;
+    Long duration;
 
     /**
      * Gets the duration.

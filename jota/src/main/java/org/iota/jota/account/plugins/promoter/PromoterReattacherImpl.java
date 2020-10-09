@@ -27,6 +27,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class PromoterReattacherImpl extends AccountPlugin implements PromoterReattacher {
     
@@ -72,15 +75,12 @@ public class PromoterReattacherImpl extends AccountPlugin implements PromoterRea
         
         for (Entry<String, PendingTransfer> entry : manager.getPendingTransfers().entrySet()) {
             // Recreate the bundle
-            Bundle bundle = new Bundle();
-            for (Trits trits : entry.getValue().getBundleTrits()){
-                Transaction tx = new Transaction(Converter.trytes(trits.getTrits()));
-                bundle.addTransaction(tx);
-            }
-            bundle.setLength(entry.getValue().getBundleTrits().size());
-            
-            // Start 
-            addUnconfirmedBundle(bundle, 0);
+            List<Transaction> transactions = entry.getValue().getBundleTrits().stream()
+                    .map(it -> new Transaction.Builder().buildWithTrytes(Converter.trytes(it.getTrits())))
+                    .collect(toList());
+
+            // Start
+            addUnconfirmedBundle(new Bundle(transactions), 0);
         }
     }
 
@@ -182,7 +182,7 @@ public class PromoterReattacherImpl extends AccountPlugin implements PromoterRea
                     // Cant find tail transaction
                     continue;
                 }
-                tailTransaction = new Transaction(res.getTrytes()[0]);
+                tailTransaction = new Transaction.Builder().buildWithTrytes(res.getTrytes()[0]);
                 addBundleTail(tailOrig, tailTransaction);
             }
             
