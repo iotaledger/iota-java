@@ -65,8 +65,8 @@ public class IotaLocalPoWTest {
                 11, TEST_TRYTES_VALUE_TRANSFER);
     
         for (int i = 0; i < TEST_TRYTES_VALUE_TRANSFER.length; i++) {
-            assertEquals(new Transaction(localResponse.getTrytes()[i]).getValue(),
-                    new Transaction(remoteResponse.getTrytes()[i]).getValue());
+            assertEquals(new Transaction.Builder().buildWithTrytes(localResponse.getTrytes()[i]).getValue(),
+                    new Transaction.Builder().buildWithTrytes(remoteResponse.getTrytes()[i]).getValue());
         }
     }
 }

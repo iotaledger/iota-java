@@ -12,15 +12,17 @@ public class GetBalancesAndFormatResponse extends AbstractResponse {
     private List<Input> inputs;
     private long totalBalance;
 
+    private GetBalancesAndFormatResponse(List<Input> inputs, long totalBalance, long duration) {
+        this.inputs = inputs;
+        this.totalBalance = totalBalance;
+        this.duration = duration;
+    }
+
     /**
      * Initializes a new instance of the GetBalancesAndFormatResponse class.
      */
     public static GetBalancesAndFormatResponse create(List<Input> inputs, long totalBalance, long duration) {
-        GetBalancesAndFormatResponse res = new GetBalancesAndFormatResponse();
-        res.inputs = inputs;
-        res.totalBalance = totalBalance;
-        res.setDuration(duration);
-        return res;
+        return new GetBalancesAndFormatResponse(inputs, totalBalance, duration);
     }
 
     /**

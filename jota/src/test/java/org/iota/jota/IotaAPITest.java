@@ -245,7 +245,7 @@ public class IotaAPITest {
         assertNotNull(trytes, "prepareTransfers should throw an error on failure");
         assertFalse(trytes.isEmpty(), "prepareTransfers should throw an error on failure");
 
-        Transaction first = new Transaction(trytes.get(0));
+        Transaction first = new Transaction.Builder().buildWithTrytes(trytes.get(0));
         assertEquals(first.getLastIndex(), first.getCurrentIndex(), "prepareTransfers should have reversed bundle order for attachToTangle");
     }
 
@@ -265,7 +265,7 @@ public class IotaAPITest {
         assertNotNull(trytes, "prepareTransfers should throw an error on failure");
         assertFalse(trytes.isEmpty(), "prepareTransfers should throw an error on failure");
 
-        Transaction first = new Transaction(trytes.get(0));
+        Transaction first = new Transaction.Builder().buildWithTrytes(trytes.get(0));
         assertEquals(first.getLastIndex(), first.getCurrentIndex(), "prepareTransfers should have reversed bundle order for attachToTangle");
     }
 
