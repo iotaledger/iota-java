@@ -1,8 +1,8 @@
 package org.iota.jota.dto.response;
 
 /**
- * Response of {@link jota.dto.request.IotaGetTrytesRequest}.
- **/
+ * Response of {@link org.iota.jota.dto.request.IotaGetTrytesRequest}.
+ */
 public class GetTrytesResponse extends AbstractResponse {
 
     private String[] trytes;
