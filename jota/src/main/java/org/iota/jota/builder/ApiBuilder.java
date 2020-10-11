@@ -76,9 +76,7 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
                 // BUt if nothing was configured, we add the legacy node from default config
                 if (config.hasNodes() && (
                         !(config instanceof IotaDefaultConfig) || !(hasLegacyOptions() || hasNodes()))){
-                    for (Connection c : config.getNodes()) {
-                        nodes.add(c);
-                    }
+                    nodes.addAll(config.getNodes());
                 }
             }
         }
