@@ -19,21 +19,19 @@ import org.slf4j.LoggerFactory;
 
 public class IncomingTransferCheckerTask implements Runnable {
 
-    private static final Logger log = LoggerFactory.getLogger(IncomingTransferCheckerTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IncomingTransferCheckerTask.class);
     
-    private Address address;
-    private IotaAPI api;
-    
+    private final Address address;
+    private final IotaAPI api;
+
     //Bundle hash
-    private List<String> receivingBundles;
-    private List<String> receivedBundles;
-    
-    private List<String> invalidBundles;
-    
+    private final List<String> receivingBundles;
+    private final List<String> receivedBundles;
+    private final List<String> invalidBundles;
+    private final EventManager eventManager;
+    private final AccountStateManager accountManager;
+
     private boolean skipFirst;
-    private EventManager eventManager;
-    
-    private AccountStateManager accountManager;
 
     public IncomingTransferCheckerTask(Address address, IotaAPI api, EventManager eventManager, boolean skipFirst, 
             AccountStateManager accountManager) {
@@ -115,7 +113,7 @@ public class IncomingTransferCheckerTask implements Runnable {
             // http call closed?, could be a problem so we log, could also be a timeout
             if (!Thread.interrupted()) {
                 System.out.println("EHUGFSIF");
-                log.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
     }

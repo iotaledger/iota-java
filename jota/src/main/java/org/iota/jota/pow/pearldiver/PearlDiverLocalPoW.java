@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PearlDiverLocalPoW implements IotaLocalPoW {
 
-    private static final Logger log = LoggerFactory.getLogger(PearlDiverLocalPoW.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PearlDiverLocalPoW.class);
 
     private final PearlDiver pearlDiver = new PearlDiver();
 
@@ -26,7 +26,7 @@ public class PearlDiverLocalPoW implements IotaLocalPoW {
 
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
-        log.debug("Locale POW took {} ms.", elapsedTime);
+        LOGGER.debug("Locale POW took {} ms.", elapsedTime);
 
         return convertedTrits;
     }

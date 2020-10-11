@@ -27,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HttpConnector implements Connection {
 
-    private static final Logger log = LoggerFactory.getLogger(HttpConnector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpConnector.class);
     
     private static final int DEFAULT_PORT = 14265;
     
@@ -280,7 +280,7 @@ public class HttpConnector implements Connection {
                 return null;             
             }
             
-            log.error("Execution of the API call raised exception. IOTA Node not reachable?", e);
+            LOGGER.error("Execution of the API call raised exception. IOTA Node not reachable?", e);
             throw new IllegalStateException(e.getMessage());
         }
     }

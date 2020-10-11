@@ -61,7 +61,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class IotaAPI extends IotaAPICore {
 
-    private static final Logger log = LoggerFactory.getLogger(IotaAPI.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IotaAPI.class);
 
     protected IotaAPI(ApiOptions options) {
         super(options);
@@ -281,7 +281,7 @@ public class IotaAPI extends IotaAPICore {
                     // If error returned from getBundle, simply ignore it because the bundle was most likely incorrect
                 } catch (ArgumentException e) {
                     if (!Thread.interrupted()) {
-                        log.warn(Constants.GET_BUNDLE_RESPONSE_ERROR);
+                        LOGGER.warn(Constants.GET_BUNDLE_RESPONSE_ERROR);
                     }
                 }
             });

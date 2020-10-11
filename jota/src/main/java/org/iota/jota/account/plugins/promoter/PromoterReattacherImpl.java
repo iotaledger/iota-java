@@ -31,7 +31,7 @@ import static java.util.stream.Collectors.toList;
 
 public class PromoterReattacherImpl extends AccountPlugin implements PromoterReattacher {
     
-    private static final Logger log = LoggerFactory.getLogger(PromoterReattacherImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PromoterReattacherImpl.class);
     
     private static final int APROX_ABOVE_MAX_DEPTH_MIN = 5;
     private static final long PROMOTE_DELAY = 10000;
@@ -154,7 +154,7 @@ public class PromoterReattacherImpl extends AccountPlugin implements PromoterRea
                 reattach(bundle);
             }
         } catch (Exception e) {
-            log.error("Failed to run promote task for " + bundle.getBundleHash() + ": " + e.getMessage());
+            LOGGER.error("Failed to run promote task for " + bundle.getBundleHash() + ": " + e.getMessage());
         }
     }
     
