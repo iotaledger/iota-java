@@ -16,9 +16,7 @@ Checks if a transaction hash is promotable
 | boolean  | `true` if it is, otherwise `false` |
 
 ## Exceptions
-| Exceptions     | Description |
-|:---------------|:--------|
-| [ArgumentException](https://github.com/iotaledger/iota-java/blob/master/jota/src/main/java/org/iota/jota/error/ArgumentException.java) | when we can't get the consistency of this transaction |
+None
 
  ## Example
  
