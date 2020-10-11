@@ -15,7 +15,7 @@ public class AddressGeneratorServiceImpl implements AddressGeneratorService {
     // Maybe later: https://github.com/ben-manes/caffeine
     private Map<IndexSec, Hash> map;
     
-    private AccountOptions options;
+    private final AccountOptions options;
 
     public AddressGeneratorServiceImpl(AccountOptions options) {
         this(options, true);

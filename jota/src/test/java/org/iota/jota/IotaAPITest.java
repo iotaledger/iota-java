@@ -689,12 +689,11 @@ public class IotaAPITest {
     @Disabled("Failed with ArgumentException: Sending to a used address.")
     @Test
     public void shouldSendTransferWithInputs() {
-        List<Input> inputList = new ArrayList<>();
         List<Transfer> transfers = new ArrayList<>();
 
         GetBalancesAndFormatResponse rsp = iotaAPI.getInputs(TEST_SEED3, 2, 0, 0, 1);
 
-        inputList.addAll(rsp.getInputs());
+        List<Input> inputList = new ArrayList<>(rsp.getInputs());
 
         AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED3, 2).checksum(true).build();
         String address = iotaAPI.generateNewAddresses(addressRequest).first();

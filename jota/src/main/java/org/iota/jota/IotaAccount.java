@@ -644,7 +644,7 @@ public class IotaAccount implements Account, EventListener {
 
         //If there are a lot of transfers, async and add atomic is still faster
         AtomicLong totalValue = new AtomicLong(0);
-        transfers.stream().forEach(transfer -> totalValue.addAndGet(transfer.getValue()));
+        transfers.forEach(transfer -> totalValue.addAndGet(transfer.getValue()));
 
         Bundle bundle = new Bundle();
         List<String> signatureFragments = prepareBundle(bundle, transfers);
@@ -653,9 +653,9 @@ public class IotaAccount implements Account, EventListener {
         bundle.finalize(getApi().getCurl());
         bundle.addTrytes(signatureFragments);
 
-        List<Transaction> trxb = bundle.getTransactions();
+        List<Transaction> transactions = bundle.getTransactions();
 
-        for (Transaction trx : trxb) {
+        for (Transaction trx : transactions) {
             bundleTrytes.add(trx.toTrytes());
         }
         Collections.reverse(bundleTrytes);

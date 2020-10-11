@@ -16,7 +16,6 @@ import org.iota.jota.dto.response.ReplayBundleResponse;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.types.Hash;
-import org.iota.jota.types.Trits;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.thread.UnboundScheduledExecutorService;
 import org.slf4j.Logger;
@@ -27,7 +26,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
