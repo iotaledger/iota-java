@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class IotaClientConfig implements IotaConfig {
     
-    private static final Logger log = LoggerFactory.getLogger(IotaClientConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IotaClientConfig.class);
     
     protected Store store;
     
@@ -82,7 +82,7 @@ public abstract class IotaClientConfig implements IotaConfig {
                         connections.add(c);
                     }
                 } catch (Exception e) {
-                    log.warn(e.getMessage());
+                    LOGGER.warn(e.getMessage());
                 }
             }
             start++;

@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 public class FlatFileStore implements Store {
 
-    private static final Logger log = LoggerFactory.getLogger(FlatFileStore.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlatFileStore.class);
     
     private File file;
     
@@ -57,7 +57,7 @@ public class FlatFileStore implements Store {
             } 
             
             if (!file.canRead() || !file.canWrite()) {
-                log.debug(file.getName() + " not found. Rolling back for another solution...");
+                LOGGER.debug(file.getName() + " not found. Rolling back for another solution...");
             }   
             inputStream = new FileInputStream(file);
         }
@@ -105,7 +105,7 @@ public class FlatFileStore implements Store {
                 outputStream = null;
             }
         } catch (IOException e) {
-            log.warn("Failed to save config to disk! " + e.getMessage());
+            LOGGER.warn("Failed to save config to disk! " + e.getMessage());
         } finally {
             if (closeResources) {
                 try {

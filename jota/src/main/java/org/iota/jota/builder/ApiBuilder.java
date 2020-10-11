@@ -22,7 +22,7 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
         extends AbstractBuilder<T, E, ApiConfig> 
         implements ApiSettings {
     
-    private static final Logger log = LoggerFactory.getLogger(ApiBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiBuilder.class);
     
     List<Connection> nodes = new ArrayList<>();
     
@@ -36,7 +36,7 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
     ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
     
     public ApiBuilder() {
-        super(log);
+        super(LOGGER);
     }
     
     /**

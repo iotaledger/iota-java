@@ -63,7 +63,7 @@ import static org.iota.jota.utils.Constants.INVALID_TRYTES_INPUT_ERROR;
  * Handles direct methods with the connected node(s), and does basic verification
  */
 public class IotaAPICore {
-    private static final Logger log = LoggerFactory.getLogger(IotaAPICore.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IotaAPICore.class);
 
     private ApiOptions options;
 
@@ -103,7 +103,7 @@ public class IotaAPICore {
             synchronized (nodes) {
                 for (Connection c : nodes) {
                     if (c.equals(n)) {
-                        log.warn("Tried to add a node we allready have: " + n);
+                        LOGGER.warn("Tried to add a node we allready have: " + n);
                         return true;
                     }
                 }
@@ -111,13 +111,13 @@ public class IotaAPICore {
                 boolean started = n.start();
                 if (started) {
                     nodes.add(n);
-                    log.debug("Added node: " + n.toString());
+                    LOGGER.debug("Added node: " + n.toString());
                 }
 
                 return started;
             }
         } catch (Exception e) {
-            log.warn("Failed to add node connection to pool due to \"" + e.getMessage() + "\"");
+            LOGGER.warn("Failed to add node connection to pool due to \"" + e.getMessage() + "\"");
             return false;
         }
     }
@@ -750,7 +750,7 @@ public class IotaAPICore {
     public GetAttachToTangleResponse attachToTangleLocalPow(String trunkTransaction, String branchTransaction,
                                                             Integer minWeightMagnitude, IotaPoW pow, String... trytes) {
         if (pow == null) {
-            log.warn("Called local POW without POW defined, switching to remote POW");
+            LOGGER.warn("Called local POW without POW defined, switching to remote POW");
             return attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes);
         }
 

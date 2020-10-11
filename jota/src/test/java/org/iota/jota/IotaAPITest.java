@@ -203,11 +203,11 @@ public class IotaAPITest {
 
         when(iotaAPIMock.getInputs(TEST_SEED1, 2, 0, 10, 0)).thenReturn(balancesAndFormatResponse);
 
-        GetBalancesAndFormatResponse res = iotaAPIMock.getInputs(TEST_SEED1, 2, 0, 10, 0);
+        GetBalancesAndFormatResponse inputs = iotaAPIMock.getInputs(TEST_SEED1, 2, 0, 10, 0);
 
-        assertThat("Error on getInputs should have thrown", res, IsNull.notNullValue());
-        assertTrue(res.getTotalBalance() > 0, "Res should have a balance(1000)");
-        assertThat("Error on getInputs should have thrown", res.getInputs(), IsNull.notNullValue());
+        assertNotNull(inputs);
+        assertTrue(inputs.getTotalBalance() > 0, "Res should have a balance(1000)");
+        assertNotNull(inputs.getInputs());
     }
 
     @Test
@@ -454,10 +454,10 @@ public class IotaAPITest {
 
         when(iotaAPIMock.findTransactionObjectsByAddresses(TEST_ADDRESSES)).thenReturn(transactions);
 
-        List<Transaction> ftr = iotaAPIMock.findTransactionObjectsByAddresses(TEST_ADDRESSES);
+        List<Transaction> transactionObjectsByAddresses = iotaAPIMock.findTransactionObjectsByAddresses(TEST_ADDRESSES);
 
-        assertThat("findTransactionObjectsByAddresses should not return null on failure", ftr, IsNull.notNullValue());
-        assertFalse(ftr.isEmpty(), "findTransactionObjectsByAddresses should find multiple transactions");
+        assertNotNull(transactionObjectsByAddresses);
+        assertFalse(transactionObjectsByAddresses.isEmpty(), "findTransactionObjectsByAddresses should find multiple transactions");
     }
 
     @Test
@@ -465,9 +465,9 @@ public class IotaAPITest {
         when(iotaAPIMock.getAccountData(TEST_SEED3, 2, 0, true, 0, true, 0, 10, true, 0))
                 .thenReturn(new GetAccountDataResponse());
 
-        GetAccountDataResponse gad = iotaAPIMock.getAccountData(TEST_SEED3, 2, 0, true, 0, true, 0, 10, true, 0);
+        GetAccountDataResponse accountData = iotaAPIMock.getAccountData(TEST_SEED3, 2, 0, true, 0, true, 0, 10, true, 0);
 
-        assertThat("GetAccountDataResponse should not return null on failure", gad, IsNull.notNullValue());
+        assertNotNull(accountData);
     }
 
     @Test
@@ -482,8 +482,8 @@ public class IotaAPITest {
     public void shouldGetBundle() throws ArgumentException {
         when(iotaAPIMock.getBundle(TEST_HASH)).thenReturn(new GetBundleResponse());
 
-        GetBundleResponse gbr = iotaAPIMock.getBundle(TEST_HASH);
-        assertThat("GetBundleResponse should not return null on failure", gbr, IsNull.notNullValue());
+        GetBundleResponse bundle = iotaAPIMock.getBundle(TEST_HASH);
+        assertNotNull(bundle);
     }
 
     @Test
@@ -507,7 +507,7 @@ public class IotaAPITest {
 
         CheckConsistencyResponse checkConsistencyResponse = iotaAPIMock.checkConsistency(nodeInfo.getLatestSolidSubtangleMilestone());
 
-        assertThat("CheckConsistencyResponse should not return null on failure", checkConsistencyResponse, IsNull.notNullValue());
+        assertNotNull(checkConsistencyResponse);
         assertTrue(checkConsistencyResponse.getState(), "Latest milestone should always be consistent");
     }
 
@@ -634,8 +634,8 @@ public class IotaAPITest {
 
         SendTransferResponse str = iotaAPIMock.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, true, null);
 
-        assertThat("Sending transfer should have returned multiple transactions", str.getTransactions(), IsNull.notNullValue());
-        assertThat("Sending transfer should contain success information", str.getSuccessfully(), IsNull.notNullValue());
+        assertNotNull(str.getTransactions());
+        assertNotNull(str.getSuccessfully());
 
         assertEquals(0, str.getTransactions().get(0).getCurrentIndex(), "Returned transfers should have normal bundle order");
     }
