@@ -376,12 +376,6 @@ public class HttpConnector implements Connection {
     }
 
     @Override
-    public CheckConsistencyResponse checkConsistency(IotaCheckConsistencyRequest request) throws ArgumentException {
-        final Call<CheckConsistencyResponse> res = service.checkConsistency(request);
-        return wrapCheckedException(res).body();
-    }
-
-    @Override
     public WereAddressesSpentFromResponse wereAddressesSpentFrom(IotaWereAddressesSpentFromRequest request) throws ArgumentException {
         final Call<WereAddressesSpentFromResponse> res = service.wereAddressesSpentFrom(request);
         return wrapCheckedException(res).body();

@@ -2,7 +2,6 @@ package org.iota.jota.connection;
 
 import org.iota.jota.dto.request.IotaAttachToTangleRequest;
 import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
-import org.iota.jota.dto.request.IotaCheckConsistencyRequest;
 import org.iota.jota.dto.request.IotaCommandRequest;
 import org.iota.jota.dto.request.IotaCustomRequest;
 import org.iota.jota.dto.request.IotaFindTransactionsRequest;
@@ -15,7 +14,6 @@ import org.iota.jota.dto.request.IotaStoreTransactionsRequest;
 import org.iota.jota.dto.request.IotaWereAddressesSpentFromRequest;
 import org.iota.jota.dto.response.AddNeighborsResponse;
 import org.iota.jota.dto.response.BroadcastTransactionsResponse;
-import org.iota.jota.dto.response.CheckConsistencyResponse;
 import org.iota.jota.dto.response.FindTransactionResponse;
 import org.iota.jota.dto.response.GetAttachToTangleResponse;
 import org.iota.jota.dto.response.GetBalancesResponse;
@@ -31,7 +29,6 @@ import org.iota.jota.dto.response.IotaCustomResponse;
 import org.iota.jota.dto.response.RemoveNeighborsResponse;
 import org.iota.jota.dto.response.StoreTransactionsResponse;
 import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
-
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
@@ -39,7 +36,6 @@ import retrofit2.http.POST;
 
 /**
  * IOTA API Proxy Service definition using Retrofit2
- *
  */
 public interface IotaNodeHTTPService {
 
@@ -55,8 +51,8 @@ public interface IotaNodeHTTPService {
     @Headers({CONTENT_TYPE_HEADER, USER_AGENT_HEADER})
     @POST("./")
     Call<GetNodeInfoResponse> getNodeInfo(@Body IotaCommandRequest request);
-    
-    
+
+
     /**
      * Returns information about the node API Configuration.
      * <p>g
@@ -66,7 +62,7 @@ public interface IotaNodeHTTPService {
     @Headers({CONTENT_TYPE_HEADER, USER_AGENT_HEADER})
     @POST("./")
     Call<GetNodeAPIConfigurationResponse> getNodeAPIConfiguration(@Body IotaCommandRequest request);
-    
+
     /**
      * Get the list of neighbors from the node.
      * <p>
@@ -201,16 +197,6 @@ public interface IotaNodeHTTPService {
     Call<StoreTransactionsResponse> storeTransactions(@Body IotaStoreTransactionsRequest request);
 
     /**
-     * Checks the consistency of the subtangle descirbed by the provided tails.
-     * <p>
-     * {@code curl http://localhost:14265 -X POST -H 'X-IOTA-API-Version: 1.4.1' -H 'Content-Type: application/json'}
-     * {@code -d '{"command": "checkConsistency", "tails": ["AYHLOYXFXYNBX9L9TLS9LGKPGJCTHVPEVYNMZEEIPVBVLSIBZEJRKXYYOW9NXKTNQSVFBMGUKVYOZ9999"]}'}
-     */
-    @Headers({CONTENT_TYPE_HEADER, USER_AGENT_HEADER})
-    @POST("./")
-    Call<CheckConsistencyResponse> checkConsistency(@Body IotaCheckConsistencyRequest request);
-    
-    /**
      * Check if a list of addresses was ever spent from, in the current epoch, or in previous epochs.
      * <p>
      * {@code curl http://localhost:14265 -X POST -H 'X-IOTA-API-Version: 1.4.1' -H 'Content-Type: application/json'}
@@ -219,7 +205,7 @@ public interface IotaNodeHTTPService {
     @Headers({CONTENT_TYPE_HEADER, USER_AGENT_HEADER})
     @POST("./")
     Call<WereAddressesSpentFromResponse> wereAddressesSpentFrom(@Body IotaWereAddressesSpentFromRequest request);
-    
+
     @Headers({CONTENT_TYPE_HEADER, USER_AGENT_HEADER})
     @POST("./")
     Call<IotaCustomResponse> customRequest(@Body IotaCustomRequest customRequest);

@@ -618,22 +618,6 @@ public class IotaAPICore {
     }
 
     /**
-     * Checks the consistency of the subtangle formed by the provided tails.
-     *
-     * @param tails The tails describing the subtangle.
-     * @return {@link CheckConsistencyResponse}
-     * @throws ArgumentException when a tail hash is invalid
-     */
-    @Document
-    public CheckConsistencyResponse checkConsistency(String... tails) throws ArgumentException {
-        if (!InputValidator.isArrayOfHashes(tails)) {
-            throw new ArgumentException(INVALID_HASHES_INPUT_ERROR);
-        }
-
-        return getNodeFor(IotaAPICommand.CHECK_CONSISTENCY).checkConsistency(IotaCheckConsistencyRequest.create(tails));
-    }
-
-    /**
      * <p>
      * Prepares the specified transactions (trytes) for attachment to the Tangle by doing Proof of Work.
      * You need to supply <tt>branchTransaction</tt> as well as <tt>trunkTransaction</tt>.

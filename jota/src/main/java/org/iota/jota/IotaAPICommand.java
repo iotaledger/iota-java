@@ -21,7 +21,6 @@ public enum IotaAPICommand {
     INTERRUPT_ATTACHING_TO_TANGLE("interruptAttachingToTangle"),
     BROADCAST_TRANSACTIONS("broadcastTransactions"),
     STORE_TRANSACTIONS("storeTransactions"),
-    CHECK_CONSISTENCY("checkConsistency"),
     WERE_ADDRESSES_SPENT_FROM("wereAddressesSpentFrom"),
     CUSTOM_IXI("IXI");
 
