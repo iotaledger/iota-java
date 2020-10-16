@@ -633,14 +633,16 @@ public class IotaAccount implements Account, EventListener {
     private List<String> prepareTransfers(List<Transfer> transfers) {
         List<String> bundleTrytes = new LinkedList<>();
 
-        for (Transfer transfer : transfers) {
+        // FIXME: since codacy is not happy about empty if statements the following code is commented out.
+        /*for (Transfer transfer : transfers) {
             if (transfer.getValue() > 0) {
 
             }
+
             if (!transfer.getMessage().equals("")) {
                 // Transfer message
             }
-        }
+        }*/
 
         //If there are a lot of transfers, async and add atomic is still faster
         AtomicLong totalValue = new AtomicLong(0);
