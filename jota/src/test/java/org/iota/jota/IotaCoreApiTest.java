@@ -1,6 +1,5 @@
 package org.iota.jota;
 
-import org.hamcrest.core.IsNull;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.dto.response.AddNeighborsResponse;
 import org.iota.jota.dto.response.FindTransactionResponse;
@@ -25,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.util.Collections;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,7 +52,7 @@ public class IotaCoreApiTest {
     @Mock
     private IotaAPI iotaAPIMock;
 
-    // TODO this is online available to verify why the disabled test are not running
+    // TODO this is only available to verify why the disabled test are not running
     @BeforeEach
     public void createProxyInstance() throws Exception {
         proxy = new IotaAPI.Builder().config(new FileConfig()).build();
@@ -75,11 +73,11 @@ public class IotaCoreApiTest {
 
         GetNodeInfoResponse nodeInfo = iotaAPIMock.getNodeInfo();
 
-        assertNotNull(nodeInfo.getAppVersion());
-        assertNotNull(nodeInfo.getAppName());
-        assertNotNull(nodeInfo.getJreVersion());
-        assertNotNull(nodeInfo.getLatestMilestone());
-        assertNotNull(nodeInfo.getLatestSolidSubtangleMilestone());
+        assertNotNull(nodeInfo.getAppVersion(), "Should have been set");
+        assertNotNull(nodeInfo.getAppName(), "Should have been set");
+        assertNotNull(nodeInfo.getJreVersion(), "Should have been set");
+        assertNotNull(nodeInfo.getLatestMilestone(), "Should have been set");
+        assertNotNull(nodeInfo.getLatestSolidSubtangleMilestone(), "Should have been set");
     }
 
     @Disabled("Connector Forbidden")
@@ -87,28 +85,28 @@ public class IotaCoreApiTest {
     public void shouldGetNeighbors() {
         //getNeighBors is by default disabled
         GetNeighborsResponse neighbors = proxy.getNeighbors();
-        assertThat(neighbors.getNeighbors(), IsNull.notNullValue());
+        assertNotNull(neighbors.getNeighbors(), "Should throw an error on failure");
     }
 
     @Disabled("Connector Forbidden")
     @Test //(expected = IllegalAccessError.class)
     public void shouldAddNeighbors() {
-        AddNeighborsResponse res = proxy.addNeighbors("udp://8.8.8.8:14265");
-        assertThat(res, IsNull.notNullValue());
+        AddNeighborsResponse neighborsResponse = proxy.addNeighbors("udp://8.8.8.8:14265");
+        assertNotNull(neighborsResponse, "Should throw an error on failure");
     }
 
     @Disabled("Connector Forbidden")
     @Test //(expected = IllegalAccessError.class)
     public void shouldRemoveNeighbors() {
-        RemoveNeighborsResponse res = proxy.removeNeighbors("udp://8.8.8.8:14265");
-        assertThat(res, IsNull.notNullValue());
+        RemoveNeighborsResponse neighborsResponse = proxy.removeNeighbors("udp://8.8.8.8:14265");
+        assertNotNull(neighborsResponse, "Should throw an error on failure");
     }
 
     @Disabled("ArgumentException: {\"error\":\"command [getTips] is unknown\"}")
     @Test
     public void shouldGetTips() {
         GetTipsResponse tips = proxy.getTips();
-        assertThat(tips, IsNull.notNullValue());
+        assertNotNull(tips, "Should throw an error on failure");
     }
 
     @Test
@@ -121,7 +119,7 @@ public class IotaCoreApiTest {
         FindTransactionResponse transactionsByAddresses =
                 iotaAPIMock.findTransactionsByAddresses(TEST_ADDRESS_WITHOUT_CHECKSUM);
 
-        assertNotNull(transactionsByAddresses.getHashes());
+        assertNotNull(transactionsByAddresses.getHashes(), "Should throw an error on failure");
     }
 
     @Test
@@ -134,7 +132,7 @@ public class IotaCoreApiTest {
         FindTransactionResponse transactionsByApproves =
                 iotaAPIMock.findTransactionsByApprovees(TEST_ADDRESS_WITHOUT_CHECKSUM);
 
-        assertNotNull(transactionsByApproves.getHashes());
+        assertNotNull(transactionsByApproves.getHashes(), "Should throw an error on failure");
     }
 
     @Test
@@ -145,7 +143,7 @@ public class IotaCoreApiTest {
 
         FindTransactionResponse transactionsByBundles = iotaAPIMock.findTransactionsByBundles(TEST_HASH);
 
-        assertNotNull(transactionsByBundles.getHashes());
+        assertNotNull(transactionsByBundles.getHashes(), "Should throw an error on failure");
     }
 
     @Test
@@ -156,7 +154,7 @@ public class IotaCoreApiTest {
 
         FindTransactionResponse trans = iotaAPIMock.findTransactionsByTags(TAG);
 
-        assertNotNull(trans.getHashes());
+        assertNotNull(trans.getHashes(), "Should throw an error on failure");
     }
 
     @Test
@@ -165,9 +163,9 @@ public class IotaCoreApiTest {
         when(iotaAPIMock.getTrytes(TEST_HASH)).thenReturn(trytesResponseMock);
         when(trytesResponseMock.getTrytes()).thenReturn(new String[]{});
 
-        GetTrytesResponse res = iotaAPIMock.getTrytes(TEST_HASH);
+        GetTrytesResponse trytesResponse = iotaAPIMock.getTrytes(TEST_HASH);
 
-        assertNotNull(res.getTrytes());
+        assertNotNull(trytesResponse.getTrytes(), "Should throw an error on failure");
     }
 
     @Disabled("Failed to throw error on wrong bundle hash ==> Expected org.iota.jota.error.ArgumentException to be thrown, but nothing was thrown.")
@@ -189,7 +187,7 @@ public class IotaCoreApiTest {
 
         when(inclusionStateResponse.getStates()).thenReturn(new boolean[]{true});
 
-        assertThat(inclusionStateResponse.getStates(), IsNull.notNullValue());
+        assertNotNull(inclusionStateResponse.getStates(), "Should throw an error on failure");
     }
 
     @Test
@@ -204,8 +202,8 @@ public class IotaCoreApiTest {
         when(res.getTrunkTransaction()).thenReturn("notNullValue");
         when(res.getBranchTransaction()).thenReturn("notNullValue");
 
-        assertThat(res.getTrunkTransaction(), IsNull.notNullValue());
-        assertThat(res.getBranchTransaction(), IsNull.notNullValue());
+        assertNotNull(res.getTrunkTransaction(), "Should throw an error on failure");
+        assertNotNull(res.getBranchTransaction(), "Should throw an error on failure");
     }
 
     @Disabled("Depth more then 15 is not supported by default ==> Expected org.iota.jota.error.ArgumentException to be thrown, but nothing was thrown.")
@@ -227,7 +225,7 @@ public class IotaCoreApiTest {
         when(iotaAPIMock.findTransactions(addresses, tags, approves, bundles)).thenReturn(new FindTransactionResponse());
 
         FindTransactionResponse transactionResponse = iotaAPIMock.findTransactions(addresses, tags, approves, approves);
-        assertNotNull(transactionResponse);
+        assertNotNull(transactionResponse, "Should throw an error on failure");
     }
 
     @Test
@@ -242,9 +240,11 @@ public class IotaCoreApiTest {
         ArgumentException argumentException = assertThrows(ArgumentException.class,
                 () -> iotaAPIMock.findTransactions(
                         new String[]{Checksum.addChecksum(test)}, new String[]{test},
-                        new String[]{test}, new String[]{test}));
+                        new String[]{test}, new String[]{test}),
+                "Invalid tag results in exception");
 
-        assertEquals("Invalid tag provided.", argumentException.getMessage());
+        assertEquals("Invalid tag provided.", argumentException.getMessage(),
+                "Invalid tag results in exception");
     }
 
     @SuppressWarnings("deprecation")
@@ -261,10 +261,9 @@ public class IotaCoreApiTest {
         when(balancesResponseMock.getBalances()).thenReturn(new String[]{});
         when(balancesResponseMock.getDuration()).thenReturn(0L);
 
-        assertThat(balancesResponse.getReferences(), IsNull.notNullValue());
-        assertThat(balancesResponse.getBalances(), IsNull.notNullValue());
-        assertThat(balancesResponse.getMilestoneIndex(), IsNull.notNullValue());
-        assertThat(balancesResponse.getDuration(), IsNull.notNullValue());
+        assertNotNull(balancesResponse.getReferences(), "Should throw an error on failure");
+        assertNotNull(balancesResponse.getBalances(), "Should throw an error on failure");
+        assertNotNull(balancesResponse.getDuration(), "Should throw an error on failure");
     }
 
     @Test
@@ -273,7 +272,8 @@ public class IotaCoreApiTest {
                 .thenThrow(new ArgumentException("Invalid addresses provided."));
 
         ArgumentException argumentException = assertThrows(ArgumentException.class,
-                () -> iotaAPIMock.wereAddressesSpentFrom(TEST_ADDRESS_WITHOUT_CHECKSUM));
+                () -> iotaAPIMock.wereAddressesSpentFrom(TEST_ADDRESS_WITHOUT_CHECKSUM),
+                "Provide invalid address should throw exception");
 
         assertEquals("Invalid addresses provided.", argumentException.getMessage());
     }
@@ -292,7 +292,7 @@ public class IotaCoreApiTest {
         when(iotaAPIMock.wereAddressesSpentFrom(TEST_ADDRESS_UNSPENT)).thenReturn(wereAddressesSpentFromResponseMock);
         when(wereAddressesSpentFromResponseMock.getStates()).thenReturn(new boolean[]{false});
 
-        WereAddressesSpentFromResponse ret = iotaAPIMock.wereAddressesSpentFrom(TEST_ADDRESS_UNSPENT);
-        assertFalse(ret.getStates()[0]);
+        WereAddressesSpentFromResponse addressesSpentFromResponse = iotaAPIMock.wereAddressesSpentFrom(TEST_ADDRESS_UNSPENT);
+        assertFalse(addressesSpentFromResponse.getStates()[0], "Response should have state about address spent");
     }
 }
