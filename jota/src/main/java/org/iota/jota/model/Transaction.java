@@ -361,6 +361,11 @@ public class Transaction {
     }
 
     @Override
+    public int hashCode() {
+        return hash != null ? hash.hashCode() : 0;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -411,6 +416,9 @@ public class Transaction {
                 + this.getNonce();
     }
 
+    /**
+     * Builder class to build and create a transaction instance
+     */
     public static class Builder {
         private transient ICurl customCurl;
         private String hash;
@@ -438,100 +446,219 @@ public class Transaction {
             this.customCurl = SpongeFactory.create(SpongeFactory.Mode.CURL_P81);
         }
 
+        /**
+         * Set the curl mode for this transaction
+         *
+         * @param curl instance of {@link ICurl}
+         * @return Builder instance
+         */
         public Builder curl(ICurl curl) {
             this.customCurl = curl;
             return this;
         }
 
+        /**
+         * Set the hash
+         *
+         * @param hash represented as {@link String}
+         * @return Builder instance
+         */
         public Builder hash(String hash) {
             this.hash = hash;
             return this;
         }
 
+        /**
+         * Set the signature fragments
+         *
+         * @param signatureFragments represented as {@link String}
+         * @return Builder instance
+         */
         public Builder signatureFragments(String signatureFragments) {
             this.signatureFragments = signatureFragments;
             return this;
         }
 
+        /**
+         * Set the address of the transaction
+         *
+         * @param address represented as {@link String}
+         * @return Builder instance
+         */
         public Builder address(String address) {
             this.address = address;
             return this;
         }
 
+        /**
+         * Set the value of this transaction
+         *
+         * @param value represented as long
+         * @return Builder instance
+         */
         public Builder value(long value) {
             this.value = value;
             return this;
         }
 
+        /**
+         * Set the obsolete tag
+         *
+         * @param obsoleteTag represented as {@link String}
+         * @return Builder instance
+         */
         public Builder obsoleteTag(String obsoleteTag) {
             this.obsoleteTag = obsoleteTag;
             return this;
         }
 
+        /**
+         * Set the timestamp
+         *
+         * @param timestamp represented as long
+         * @return Builder instance
+         */
         public Builder timestamp(long timestamp) {
             this.timestamp = timestamp;
             return this;
         }
 
+        /**
+         * Set the current index
+         *
+         * @param currentIndex represented as long
+         * @return Builder instance
+         */
         public Builder currentIndex(long currentIndex) {
             this.currentIndex = currentIndex;
             return this;
         }
 
+        /**
+         * Set the last index
+         *
+         * @param lastIndex represented as long
+         * @return Builder instance
+         */
         public Builder lastIndex(long lastIndex) {
             this.lastIndex = lastIndex;
             return this;
         }
 
+        /**
+         * Set the bundle
+         *
+         * @param bundle represented as {@link String}
+         * @return Builder instance
+         */
         public Builder bundle(String bundle) {
             this.bundle = bundle;
             return this;
         }
 
+        /**
+         * Set the trunk transaction
+         *
+         * @param trunkTransaction represented as {@link String}
+         * @return Builder instance
+         */
         public Builder trunkTransaction(String trunkTransaction) {
             this.trunkTransaction = trunkTransaction;
             return this;
         }
 
+        /**
+         * Set the branch transaction
+         *
+         * @param branchTransaction represented as {@link String}
+         * @return Builder instance
+         */
         public Builder branchTransaction(String branchTransaction) {
             this.branchTransaction = branchTransaction;
             return this;
         }
 
+        /**
+         * Set nonce
+         *
+         * @param nonce represented as {@link String}
+         * @return Builder instance
+         */
         public Builder nonce(String nonce) {
             this.nonce = nonce;
             return this;
         }
 
+        /**
+         * Set if transaction is persisted or not
+         *
+         * @param persistence true if persisted otherwise false
+         * @return Builder instance
+         */
         public Builder persistence(boolean persistence) {
             this.persistence = persistence;
             return this;
         }
 
+        /**
+         * Set the tag
+         *
+         * @param tag represented as {@link String}
+         * @return Builder instance
+         */
         public Builder tag(String tag) {
             this.tag = tag;
             return this;
         }
 
+        /**
+         * Set the attachment timestamp
+         *
+         * @param attachmentTimestamp timestamp represented as long
+         * @return Builder instance
+         */
         public Builder attachmentTimestamp(long attachmentTimestamp) {
             this.attachmentTimestamp = attachmentTimestamp;
             return this;
         }
 
+        /**
+         * Set the lower bound attachment timestamp
+         *
+         * @param attachmentTimestampLowerBound timestamp represented as long
+         * @return Builder instance
+         */
         public Builder attachmentTimestampLowerBound(long attachmentTimestampLowerBound) {
             this.attachmentTimestampLowerBound = attachmentTimestampLowerBound;
             return this;
         }
 
+        /**
+         * Set the upper bound attachment timestamp
+         *
+         * @param attachmentTimestampUpperBound timestamp represented as long
+         * @return Builder instance
+         */
         public Builder attachmentTimestampUpperBound(long attachmentTimestampUpperBound) {
             this.attachmentTimestampUpperBound = attachmentTimestampUpperBound;
             return this;
         }
 
+        /**
+         * Construct {@link Transaction} instance form given builder values
+         *
+         * @return {@link Transaction} Instance
+         */
         public Transaction build() {
             return new Transaction(this);
         }
 
+        /**
+         * Construct of transaction form a trytes string
+         *
+         * @param trytes represented as string
+         * @return {@link Transaction} Instance
+         */
         public Transaction buildWithTrytes(String trytes) {
             if (StringUtils.isEmpty(trytes)) {
                 throw new IllegalArgumentException("Trytes must not be empty");
