@@ -72,8 +72,8 @@ public class IotaAPICore {
     protected IotaAPICore(ApiOptions options) {
         this.options = options;
 
-        for (Connection c : options.getNodes()) {
-            addNode(c);
+        for (Connection connection : options.getNodes()) {
+            addNode(connection);
         }
     }
 
