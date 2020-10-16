@@ -106,7 +106,7 @@ public class IotaAPITest {
             , "QLOXU9GIQXPPE9UUT9DSIDSIESRIXMTGZJMKLSJTNBCRELAVLWVJLUOLKGFCWAEPEQWZWPBV9YZJJEHUSMBQHBROEZ"
             , "XIRMYJSGQXMM9YPHJVVLAVGBBLEEMOOKHHBFWKEAXJFONZLNSLBCGPQEVDMMOGHFVRDSYTETIFOIVNCR9IUZLVJVWX"};
 
-    // TODO this is online available to verify why the disabled test are not running
+    // TODO this is only available to verify why the disabled test are not running
     private IotaAPI iotaAPI;
 
     @Mock
@@ -118,7 +118,7 @@ public class IotaAPITest {
     @Mock
     private CheckConsistencyResponse checkConsistencyResponseMock;
 
-    // TODO this is online available to verify why the disabled test are not running
+    // TODO this is only available to verify why the disabled test are not running
     @BeforeEach
     public void createApiClientInstance() throws Exception {
         iotaAPI = new IotaAPI.Builder().config(new FileConfig()).localPoW(new PearlDiverLocalPoW()).build();
@@ -140,7 +140,7 @@ public class IotaAPITest {
         builder.addNode(new HttpConnector("https://iota.net:14265/node/"));
         assertEquals(builder.getNodes().size(), 1, "URL should have been accepted");
         api = builder.build();
-        assertFalse(api.nodes.isEmpty(), "API should be created succesfully");
+        assertFalse(api.nodes.isEmpty(), "API should be created successfully");
 
         builder = new IotaAPI.Builder();
 
@@ -205,9 +205,9 @@ public class IotaAPITest {
 
         GetBalancesAndFormatResponse inputs = iotaAPIMock.getInputs(TEST_SEED1, 2, 0, 10, 0);
 
-        assertNotNull(inputs);
+        assertNotNull(inputs, "Client should return always not null inputs");
         assertTrue(inputs.getTotalBalance() > 0, "Res should have a balance(1000)");
-        assertNotNull(inputs.getInputs());
+        assertNotNull(inputs.getInputs(), "Inputs should never null");
     }
 
     @Test
@@ -215,12 +215,13 @@ public class IotaAPITest {
         GetNewAddressResponse newAddressResponse = GetNewAddressResponse
                 .create(Collections.singletonList(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1), 497);
 
-        AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED1, 1).checksum(true).amount(5).build();
+        AddressRequest addressRequestMock = new AddressRequest.Builder(TEST_SEED1, 1).checksum(true).amount(5).build();
 
-        when(iotaAPIMock.getAddressesUnchecked(addressRequest)).thenReturn(newAddressResponse);
+        when(iotaAPIMock.getAddressesUnchecked(addressRequestMock)).thenReturn(newAddressResponse);
 
-        GetNewAddressResponse addressResponse = iotaAPIMock.getAddressesUnchecked(addressRequest);
-        assertEquals(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1, addressResponse.getAddresses().get(0));
+        GetNewAddressResponse addressResponse = iotaAPIMock.getAddressesUnchecked(addressRequestMock);
+        assertEquals(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_1, addressResponse.getAddresses().get(0),
+                "Should contain address with checksum with security level 1");
     }
 
     @Test
@@ -228,12 +229,13 @@ public class IotaAPITest {
         GetNewAddressResponse newAddressResponse = GetNewAddressResponse
                 .create(Collections.singletonList(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2), 497);
 
-        AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED1, 2).checksum(true).amount(5).build();
+        AddressRequest addressRequestMock = new AddressRequest.Builder(TEST_SEED1, 2).checksum(true).amount(5).build();
 
-        when(iotaAPIMock.getAddressesUnchecked(addressRequest)).thenReturn(newAddressResponse);
+        when(iotaAPIMock.getAddressesUnchecked(addressRequestMock)).thenReturn(newAddressResponse);
 
-        GetNewAddressResponse addressResponse = iotaAPIMock.getAddressesUnchecked(addressRequest);
-        assertEquals(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, addressResponse.getAddresses().get(0));
+        GetNewAddressResponse addressResponse = iotaAPIMock.getAddressesUnchecked(addressRequestMock);
+        assertEquals(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, addressResponse.getAddresses().get(0),
+                "Should contain address with checksum with security level 2");
     }
 
     @Test
@@ -241,12 +243,13 @@ public class IotaAPITest {
         GetNewAddressResponse newAddressResponse = GetNewAddressResponse
                 .create(Collections.singletonList(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_3), 497);
 
-        AddressRequest addressRequest = new AddressRequest.Builder(TEST_SEED1, 3).checksum(true).amount(5).build();
+        AddressRequest addressRequestMock = new AddressRequest.Builder(TEST_SEED1, 3).checksum(true).amount(5).build();
 
-        when(iotaAPIMock.getAddressesUnchecked(addressRequest)).thenReturn(newAddressResponse);
+        when(iotaAPIMock.getAddressesUnchecked(addressRequestMock)).thenReturn(newAddressResponse);
 
-        GetNewAddressResponse res1 = iotaAPIMock.getAddressesUnchecked(addressRequest);
-        assertEquals(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_3, res1.getAddresses().get(0));
+        GetNewAddressResponse addressResponse = iotaAPIMock.getAddressesUnchecked(addressRequestMock);
+        assertEquals(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_3, addressResponse.getAddresses().get(0),
+                "Should contain address with checksum with security level 3");
     }
 
     @Test
@@ -259,7 +262,8 @@ public class IotaAPITest {
         when(iotaAPIMock.getAddressesUnchecked(addressRequest)).thenReturn(newAddressResponseMock);
 
         GetNewAddressResponse newAddressResponse = iotaAPIMock.getAddressesUnchecked(addressRequest);
-        assertEquals(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_1, newAddressResponse.getAddresses().get(0));
+        assertEquals(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_1, newAddressResponse.getAddresses().get(0),
+                "Should contain address without checksum with security level 1");
     }
 
     @Test
@@ -272,7 +276,8 @@ public class IotaAPITest {
         when(iotaAPIMock.getAddressesUnchecked(addressRequest)).thenReturn(newAddressResponseMock);
 
         GetNewAddressResponse newAddressResponse = iotaAPIMock.getAddressesUnchecked(addressRequest);
-        assertEquals(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, newAddressResponse.getAddresses().get(0));
+        assertEquals(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_2, newAddressResponse.getAddresses().get(0),
+                "Should contain address without checksum with security level 2");
     }
 
     @Test
@@ -285,7 +290,8 @@ public class IotaAPITest {
         when(iotaAPIMock.getAddressesUnchecked(addressRequest)).thenReturn(newAddressResponseMock);
 
         GetNewAddressResponse newAddressResponse = iotaAPIMock.getAddressesUnchecked(addressRequest);
-        assertEquals(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_3, newAddressResponse.getAddresses().get(0));
+        assertEquals(TEST_ADDRESS_WITHOUT_CHECKSUM_SECURITY_LEVEL_3, newAddressResponse.getAddresses().get(0),
+                "Should contain address without checksum with security level 3");
     }
 
     @Test
@@ -298,8 +304,9 @@ public class IotaAPITest {
 
         when(iotaAPIMock.getAddressesUnchecked(addressRequest)).thenReturn(newAddressResponse);
 
-        GetNewAddressResponse res = iotaAPIMock.getAddressesUnchecked(addressRequest);
-        assertEquals(100, res.getAddresses().size());
+        GetNewAddressResponse addressResponse = iotaAPIMock.getAddressesUnchecked(addressRequest);
+        assertEquals(100, addressResponse.getAddresses().size(),
+                "Client should respect the address request values");
     }
 
     @Test
@@ -312,7 +319,8 @@ public class IotaAPITest {
         when(iotaAPIMock.generateNewAddresses(addressRequest)).thenReturn(newAddressResponseMock);
 
         GetNewAddressResponse addressResponse = iotaAPIMock.generateNewAddresses(addressRequest);
-        assertEquals(1, addressResponse.getAddresses().size());
+        assertEquals(1, addressResponse.getAddresses().size(),
+                "Client should respect the address request values");
     }
 
     @Test
@@ -325,7 +333,8 @@ public class IotaAPITest {
         when(iotaAPIMock.generateNewAddresses(addressRequest)).thenReturn(newAddressResponseMock);
 
         GetNewAddressResponse addressResponse = iotaAPIMock.generateNewAddresses(addressRequest);
-        assertEquals(1, addressResponse.getAddresses().size());
+        assertEquals(1, addressResponse.getAddresses().size(),
+                "Client should respect the address request values");
     }
 
     @Test
@@ -339,8 +348,9 @@ public class IotaAPITest {
 
         GetNewAddressResponse firstAddressResponse = iotaAPIMock.generateNewAddresses(addressRequest);
 
-        assertEquals(1, firstAddressResponse.getAddresses().size());
-        assertNotNull(firstAddressResponse.getAddresses().get(0));
+        assertEquals(1, firstAddressResponse.getAddresses().size(),
+                "Client should respect the address request values");
+        assertNotNull(firstAddressResponse.getAddresses().get(0), "Address response should contain address");
     }
 
     @Test
@@ -355,9 +365,12 @@ public class IotaAPITest {
         GetNewAddressResponse firstAddressResponse = iotaAPIMock.generateNewAddresses(addressRequest);
         GetNewAddressResponse secondAddressResponse = iotaAPIMock.generateNewAddresses(addressRequest);
 
-        assertEquals(1, firstAddressResponse.getAddresses().size());
-        assertEquals(1, secondAddressResponse.getAddresses().size());
-        assertEquals(firstAddressResponse.getAddresses().get(0), secondAddressResponse.getAddresses().get(0));
+        assertEquals(1, firstAddressResponse.getAddresses().size(),
+                "Client should respect the address request values");
+        assertEquals(1, secondAddressResponse.getAddresses().size(),
+                "Client should respect the address request values");
+        assertEquals(firstAddressResponse.getAddresses().get(0), secondAddressResponse.getAddresses().get(0),
+                "Execute the same request two times then the address must be the same too");
     }
 
     @Test
@@ -374,8 +387,9 @@ public class IotaAPITest {
         assertNotNull(trytes, "prepareTransfers should throw an error on failure");
         assertFalse(trytes.isEmpty(), "prepareTransfers should throw an error on failure");
 
-        Transaction first = new Transaction.Builder().buildWithTrytes(trytes.get(0));
-        assertEquals(first.getLastIndex(), first.getCurrentIndex(), "prepareTransfers should have reversed bundle order for attachToTangle");
+        Transaction transaction = new Transaction.Builder().buildWithTrytes(trytes.get(0));
+        assertEquals(transaction.getLastIndex(), transaction.getCurrentIndex(),
+                "prepareTransfers should have reversed bundle order for attachToTangle");
     }
 
     @Test
@@ -398,8 +412,9 @@ public class IotaAPITest {
         assertNotNull(trytes, "prepareTransfers should throw an error on failure");
         assertFalse(trytes.isEmpty(), "prepareTransfers should throw an error on failure");
 
-        Transaction first = new Transaction.Builder().buildWithTrytes(trytes.get(0));
-        assertEquals(first.getLastIndex(), first.getCurrentIndex(), "prepareTransfers should have reversed bundle order for attachToTangle");
+        Transaction transaction = new Transaction.Builder().buildWithTrytes(trytes.get(0));
+        assertEquals(transaction.getLastIndex(), transaction.getCurrentIndex(),
+                "prepareTransfers should have reversed bundle order for attachToTangle");
     }
 
     @Test
@@ -456,7 +471,7 @@ public class IotaAPITest {
 
         List<Transaction> transactionObjectsByAddresses = iotaAPIMock.findTransactionObjectsByAddresses(TEST_ADDRESSES);
 
-        assertNotNull(transactionObjectsByAddresses);
+        assertNotNull(transactionObjectsByAddresses, "Should always return a list and not null");
         assertFalse(transactionObjectsByAddresses.isEmpty(), "findTransactionObjectsByAddresses should find multiple transactions");
     }
 
@@ -467,7 +482,7 @@ public class IotaAPITest {
 
         GetAccountDataResponse accountData = iotaAPIMock.getAccountData(TEST_SEED3, 2, 0, true, 0, true, 0, 10, true, 0);
 
-        assertNotNull(accountData);
+        assertNotNull(accountData, "Should throw an error on failure");
     }
 
     @Test
@@ -475,7 +490,8 @@ public class IotaAPITest {
         when(iotaAPIMock.getBundle("SADASD"))
                 .thenThrow(new ArgumentException(Constants.INVALID_ADDRESSES_INPUT_ERROR));
 
-        assertThrows(ArgumentException.class, () -> iotaAPIMock.getBundle("SADASD"));
+        assertThrows(ArgumentException.class, () -> iotaAPIMock.getBundle("SADASD"),
+                "Should throw an error on failure");
     }
 
     @Test
@@ -483,7 +499,7 @@ public class IotaAPITest {
         when(iotaAPIMock.getBundle(TEST_HASH)).thenReturn(new GetBundleResponse());
 
         GetBundleResponse bundle = iotaAPIMock.getBundle(TEST_HASH);
-        assertNotNull(bundle);
+        assertNotNull(bundle, "Should return bundle if valid hash is provided");
     }
 
     @Test
@@ -507,7 +523,7 @@ public class IotaAPITest {
 
         CheckConsistencyResponse checkConsistencyResponse = iotaAPIMock.checkConsistency(nodeInfo.getLatestSolidSubtangleMilestone());
 
-        assertNotNull(checkConsistencyResponse);
+        assertNotNull(checkConsistencyResponse, "Should throw an error on failure");
         assertTrue(checkConsistencyResponse.getState(), "Latest milestone should always be consistent");
     }
 
@@ -520,7 +536,7 @@ public class IotaAPITest {
 
         GetTransferResponse transferResponse = iotaAPIMock.getTransfers(TEST_SEED3, 2, 0, 10, false);
 
-        assertNotNull(transferResponse.getTransfers());
+        assertNotNull(transferResponse.getTransfers(), "Should throw an error on failure");
         assertTrue(transferResponse.getTransfers().length > 0, "GetTransfers should return more than 0 transfers");
     }
 
@@ -530,7 +546,7 @@ public class IotaAPITest {
                 .thenReturn(new ReplayBundleResponse());
 
         ReplayBundleResponse replayBundleResponse = iotaAPIMock.replayBundle(TEST_HASH, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, null);
-        assertNotNull(replayBundleResponse);
+        assertNotNull(replayBundleResponse, "should throw an error on failure");
     }
 
     @Test
@@ -539,7 +555,8 @@ public class IotaAPITest {
                 .thenThrow(ArgumentException.class);
 
         assertThrows(ArgumentException.class, () ->
-                iotaAPIMock.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE, null));
+                iotaAPIMock.sendTrytes(new String[]{TEST_INVALID_TRYTES}, DEPTH, MIN_WEIGHT_MAGNITUDE, null),
+                "If invalid trytes present the method should fail");
     }
 
     @Test
@@ -548,7 +565,7 @@ public class IotaAPITest {
         when(trytesResponse.getTrytes()).thenReturn(new String[]{TEST_TRYTES});
 
         GetTrytesResponse trytes = iotaAPIMock.getTrytes(TEST_HASH);
-        assertNotNull(trytes);
+        assertNotNull(trytes, "should throw an error on failure");
         assertEquals(1, trytes.getTrytes().length, "getTrytes should send back 1 transaction trytes");
     }
 
@@ -629,15 +646,15 @@ public class IotaAPITest {
         transactions.get(2).setValue(0);
         transactions.get(3).setValue(5997);
 
-        SendTransferResponse transferResponse = SendTransferResponse.create(transactions, new Boolean[]{true, true, true, true}, 26281);
-        when(iotaAPIMock.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, true, null)).thenReturn(transferResponse);
+        SendTransferResponse transferResponseMock = SendTransferResponse.create(transactions, new Boolean[]{true, true, true, true}, 26281);
+        when(iotaAPIMock.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, true, null)).thenReturn(transferResponseMock);
 
-        SendTransferResponse str = iotaAPIMock.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, true, null);
+        SendTransferResponse transferResponse = iotaAPIMock.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE_DEV, transfers, null, null, false, true, null);
 
-        assertNotNull(str.getTransactions());
-        assertNotNull(str.getSuccessfully());
+        assertNotNull(transferResponse.getTransactions(), "Returned transfer should contain transactions");
+        assertNotNull(transferResponse.getSuccessfully(), "Returned transfer should contain states about transfer");
 
-        assertEquals(0, str.getTransactions().get(0).getCurrentIndex(), "Returned transfers should have normal bundle order");
+        assertEquals(0, transferResponse.getTransactions().get(0).getCurrentIndex(), "Returned transfers should have normal bundle order");
     }
 
     @Test
