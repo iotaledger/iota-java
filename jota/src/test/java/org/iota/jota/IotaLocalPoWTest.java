@@ -1,6 +1,5 @@
 package org.iota.jota;
 
-import org.hamcrest.core.IsNull;
 import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.dto.response.GetAttachToTangleResponse;
 import org.iota.jota.dto.response.SendTransferResponse;
@@ -18,8 +17,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
@@ -61,15 +60,15 @@ public class IotaLocalPoWTest {
                         .trunkTransaction("LHLAMAKVITLBYMEKOOYV9TUDKSFZU9FKNGJSZADEUJANGSIMIO9LKOKSUGZUNXDKSPXAVGCEDQQNKE999")
                         .value(0).build());
 
-        SendTransferResponse transferResponse = SendTransferResponse.create(transactions, new Boolean[]{true}, 718);
+        SendTransferResponse transferResponseMock = SendTransferResponse.create(transactions, new Boolean[]{true}, 718);
 
         List<Transfer> transfers = Collections.singletonList(
                 new Transfer(TEST_ADDRESS_WITH_CHECKSUM_SECURITY_LEVEL_2, 0, TEST_MESSAGE, TEST_TAG));
 
-        when(iotaClient.sendTransfer(eq(TEST_SEED1), eq(2), eq(DEPTH), eq(MIN_WEIGHT_MAGNITUDE), eq(transfers), isNull(), isNull(), eq(false), eq(false), isNull())).thenReturn(transferResponse);
+        when(iotaClient.sendTransfer(eq(TEST_SEED1), eq(2), eq(DEPTH), eq(MIN_WEIGHT_MAGNITUDE), eq(transfers), isNull(), isNull(), eq(false), eq(false), isNull())).thenReturn(transferResponseMock);
 
-        SendTransferResponse str = iotaClient.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false, false, null);
-        assertThat(str.getSuccessfully(), IsNull.notNullValue());
+        SendTransferResponse transferResponse = iotaClient.sendTransfer(TEST_SEED1, 2, DEPTH, MIN_WEIGHT_MAGNITUDE, transfers, null, null, false, false, null);
+        assertNotNull(transferResponse.getSuccessfully(), "If transaction transfer was successful then the response should represent this");
     }
 
     @Disabled("{\"error\":\"Wrong MinWeightMagnitude. requested: 11, expected: 9\"}")
