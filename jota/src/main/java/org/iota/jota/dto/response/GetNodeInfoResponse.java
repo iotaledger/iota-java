@@ -136,7 +136,7 @@ public class GetNodeInfoResponse extends AbstractResponse {
      * @param coordinatorAddress {@link #coordinatorAddress}
      * @return a {@link GetNodeInfoResponse} filled with all the provided parameters
      */
-    public static AbstractResponse create(String appName, String appVersion, int jreAvailableProcessors, long jreFreeMemory,
+    public static GetNodeInfoResponse create(String appName, String appVersion, int jreAvailableProcessors, long jreFreeMemory,
             String jreVersion, long maxMemory, long totalMemory, String latestMilestone, int latestMilestoneIndex,
             String latestSolidSubtangleMilestone, int latestSolidSubtangleMilestoneIndex, int milestoneStartIndex,
             int neighbors, int packetsQueueSize, long currentTimeMillis, int tips, 

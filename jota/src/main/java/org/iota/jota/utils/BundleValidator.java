@@ -76,7 +76,7 @@ public class BundleValidator {
      * @throws ArgumentException if there is an error with the bundle
      */
     public static boolean isBundle(Bundle bundle, Optional<SpongeFactory.Mode> customCurlMode) throws ArgumentException {
-        ICurl curl = null;
+        ICurl curl;
         if (null == customCurlMode || !customCurlMode.isPresent()) {
             curl = SpongeFactory.create(SpongeFactory.Mode.KERL);
         } else {

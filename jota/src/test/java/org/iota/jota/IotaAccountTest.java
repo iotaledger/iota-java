@@ -59,7 +59,7 @@ public class IotaAccountTest {
         store = new AccountFileStore(file);
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(MOCK_API).build();
 
-        assertTrue(account.loaded, "Account should be loaded after build");
+        assertTrue(account.isLoaded(), "Account should be loaded after build");
         assertEquals(TEST_SEED_ID, account.getId(), "Account ID should be set to the seed id ");
         assertTrue(account.isNew(), "Should be a new account");
         assertEquals(0, account.availableBalance(), "New accounts should have 0 balance");
@@ -74,7 +74,7 @@ public class IotaAccountTest {
 
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(9).store(store).api(MOCK_API).build();
 
-        assertTrue(account.loaded, "Account should be loaded after build");
+        assertTrue(account.isLoaded(), "Account should be loaded after build");
         assertEquals(TEST_SEED_ID, account.getId(), "Account ID should be set to the seed id");
         assertFalse(account.isNew(), "Should not be a new account");
         assertEquals(0, account.availableBalance(), "Account should have 0 usable balance");

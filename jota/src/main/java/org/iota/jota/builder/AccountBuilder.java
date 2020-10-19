@@ -37,13 +37,12 @@ import org.slf4j.LoggerFactory;
 public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount, AccountConfig> 
     implements AccountSettings {
     
-    private static final Logger log = LoggerFactory.getLogger(AccountBuilder.class);
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountBuilder.class);
+    private final SeedProvider seed;
+
     private AccountStore store;
     private IotaAPI api;
 
-    private SeedProvider seed;
-    
     private int mwm, depth, securityLevel;
     
     private Clock clock;
@@ -57,7 +56,7 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
      * @throws ArgumentException When an invalid seed is provided
      */
     public AccountBuilder(String seed) throws ArgumentException {
-        super(log);
+        super(LOGGER);
         
         if (!InputValidator.isValidSeed(seed)) {
             throw new ArgumentException(Constants.INVALID_SEED_INPUT_ERROR);
@@ -72,7 +71,7 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
      * @param seed A custom seed provider for maintaining your seed securely elsewhere
      */
     public AccountBuilder(SeedProvider seed) {
-        super(log);
+        super(LOGGER);
         this.seed = seed;
     }
     
@@ -80,7 +79,7 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
         if (mwm > 0) {
             this.mwm = mwm;
         } else {
-            log.warn(Constants.INVALID_INPUT_ERROR);
+            LOGGER.warn(Constants.INVALID_INPUT_ERROR);
         }
         return this;
     }
@@ -89,7 +88,7 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
         if (depth > 0) {
             this.depth = depth;
         } else {
-            log.warn(Constants.INVALID_INPUT_ERROR);
+            LOGGER.warn(Constants.INVALID_INPUT_ERROR);
         }
         return this;
     }
@@ -98,7 +97,7 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
         if (InputValidator.isValidSecurityLevel(securityLevel)) {
             this.securityLevel = securityLevel;
         } else {
-            log.warn(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
+            LOGGER.warn(Constants.INVALID_SECURITY_LEVEL_INPUT_ERROR);
         }
         
         return this;

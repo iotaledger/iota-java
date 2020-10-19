@@ -1,14 +1,48 @@
 package org.iota.jota.connection;
 
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.iota.jota.config.types.IotaDefaultConfig;
-import org.iota.jota.dto.request.*;
-import org.iota.jota.dto.response.*;
+import org.iota.jota.dto.request.IotaAttachToTangleRequest;
+import org.iota.jota.dto.request.IotaBroadcastTransactionRequest;
+import org.iota.jota.dto.request.IotaCommandRequest;
+import org.iota.jota.dto.request.IotaCustomRequest;
+import org.iota.jota.dto.request.IotaFindTransactionsRequest;
+import org.iota.jota.dto.request.IotaGetBalancesRequest;
+import org.iota.jota.dto.request.IotaGetInclusionStateRequest;
+import org.iota.jota.dto.request.IotaGetTransactionsToApproveRequest;
+import org.iota.jota.dto.request.IotaGetTrytesRequest;
+import org.iota.jota.dto.request.IotaNeighborsRequest;
+import org.iota.jota.dto.request.IotaStoreTransactionsRequest;
+import org.iota.jota.dto.request.IotaWereAddressesSpentFromRequest;
+import org.iota.jota.dto.response.AddNeighborsResponse;
+import org.iota.jota.dto.response.BroadcastTransactionsResponse;
+import org.iota.jota.dto.response.FindTransactionResponse;
+import org.iota.jota.dto.response.GetAttachToTangleResponse;
+import org.iota.jota.dto.response.GetBalancesResponse;
+import org.iota.jota.dto.response.GetInclusionStateResponse;
+import org.iota.jota.dto.response.GetNeighborsResponse;
+import org.iota.jota.dto.response.GetNodeAPIConfigurationResponse;
+import org.iota.jota.dto.response.GetNodeInfoResponse;
+import org.iota.jota.dto.response.GetTipsResponse;
+import org.iota.jota.dto.response.GetTransactionsToApproveResponse;
+import org.iota.jota.dto.response.GetTrytesResponse;
+import org.iota.jota.dto.response.InterruptAttachingToTangleResponse;
+import org.iota.jota.dto.response.IotaCustomResponse;
+import org.iota.jota.dto.response.RemoveNeighborsResponse;
+import org.iota.jota.dto.response.StoreTransactionsResponse;
+import org.iota.jota.dto.response.WereAddressesSpentFromResponse;
 import org.iota.jota.error.AccessLimitedException;
 import org.iota.jota.error.ArgumentException;
 import org.iota.jota.error.ConnectorException;
 import org.iota.jota.error.InternalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -17,114 +51,106 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
 public class HttpConnector implements Connection {
 
-    private static final Logger log = LoggerFactory.getLogger(HttpConnector.class);
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpConnector.class);
+
     private static final int DEFAULT_PORT = 14265;
-    
-    private URL url;
-    
+
+    private final URL url;
+    private final OkHttpClient client;
+
     private IotaNodeHTTPService service;
-    private OkHttpClient client;
-    
+
     /**
      * Creates an HTTP connector using the provided url.
      * This url must be complete including port and protocol
      * <br/>
      * Example: <code>https://iota.net:14265/node/</code>
-     * 
+     *
      * @param url The url we use
      * @throws MalformedURLException if this is an invalid URL
      */
     public HttpConnector(String url) throws MalformedURLException {
         this(new URL(url));
     }
-    
+
     /**
      * Creates an HTTP connector using the default port by creating an {@link OkHttpClient}
-     * 
+     *
      * @param protocol The protocol we use
-     * @param host The host we use (Domain and optional subdomain)
+     * @param host     The host we use (Domain and optional subdomain)
      * @throws MalformedURLException if this is an invalid URL
      */
     public HttpConnector(String protocol, String host) throws MalformedURLException {
         this(protocol, host, DEFAULT_PORT);
     }
-    
+
     /**
      * Creates an HTTP connector using the default timeout by creating an {@link OkHttpClient}
-     * 
+     *
      * @param protocol The protocol we use
-     * @param host The host we use (Domain and optional subdomain)
-     * @param port The port we use
+     * @param host     The host we use (Domain and optional subdomain)
+     * @param port     The port we use
      * @throws MalformedURLException if this is an invalid URL
      */
     public HttpConnector(String protocol, String host, int port) throws MalformedURLException {
         this(protocol, host, port, IotaDefaultConfig.Defaults.CONNECTION_TIMEOUT);
     }
-    
+
     /**
      * Creates an HTTP connector by creating an {@link OkHttpClient}
-     * 
+     *
      * @param protocol The protocol we use
-     * @param host The host we use (Domain and optional subdomain)
-     * @param port The port we use
-     * @param timeout the connection timeout after a request is sent
+     * @param host     The host we use (Domain and optional subdomain)
+     * @param port     The port we use
+     * @param timeout  the connection timeout after a request is sent
      * @throws MalformedURLException if this is an invalid URL
      */
     public HttpConnector(String protocol, String host, int port, int timeout) throws MalformedURLException {
         this(protocol, host, port, "", timeout);
     }
-    
+
     /**
      * Creates an HTTP connector by creating an {@link OkHttpClient}
-     * 
+     *
      * @param protocol The protocol we use
-     * @param host The host we use (Domain and optional subdomain)
-     * @param port The port we use
-     * @param file The file extension of the host (so "/node/" in iota.net/node/)
+     * @param host     The host we use (Domain and optional subdomain)
+     * @param port     The port we use
+     * @param file     The file extension of the host (so "/node/" in iota.net/node/)
      * @throws MalformedURLException if this is an invalid URL
      */
     public HttpConnector(String protocol, String host, int port, String file) throws MalformedURLException {
         this(new URL(protocol, host, port, file));
     }
-    
+
     /**
      * Creates an HTTP connector by creating an {@link OkHttpClient}
-     * 
+     *
      * @param protocol The protocol we use
-     * @param host The host we use (Domain and optional subdomain)
-     * @param port The port we use
-     * @param file The file extension of the host (so "node" in iota.net/node)
-     * @param timeout the connection timeout after a request is sent
+     * @param host     The host we use (Domain and optional subdomain)
+     * @param port     The port we use
+     * @param file     The file extension of the host (so "node" in iota.net/node)
+     * @param timeout  the connection timeout after a request is sent
      * @throws MalformedURLException if this is an invalid URL
      */
     public HttpConnector(String protocol, String host, int port, String file, int timeout) throws MalformedURLException {
         this(new URL(protocol, host, port, file), timeout);
     }
-    
+
     /**
      * Creates an HTTP connector using the default timeout by creating an {@link OkHttpClient}
-     * 
+     *
      * @param url The URL we connect to
      */
     public HttpConnector(URL url) {
         this(url, IotaDefaultConfig.Defaults.CONNECTION_TIMEOUT);
     }
-    
+
     /**
      * Creates an HTTP connector by creating an {@link OkHttpClient}
-     * 
-     * @param url The URL we connect to
+     *
+     * @param url     The URL we connect to
      * @param timeout the connection timeout after a request is sent
      */
     public HttpConnector(URL url, int timeout) {
@@ -149,37 +175,37 @@ public class HttpConnector implements Connection {
                 .build();
         this.url = url;
     }
-    
+
     /**
      * Creates an HTTP connector using the provided HTTP client, with the default port
-     * 
-     * @param client The client we use to send/receive/intercept
+     *
+     * @param client   The client we use to send/receive/intercept
      * @param protocol The protocol we use
-     * @param host The host we use (Domain and optional subdomain)
+     * @param host     The host we use (Domain and optional subdomain)
      * @throws MalformedURLException if this is an invalid URL
      */
     public HttpConnector(OkHttpClient client, String protocol, String host) throws MalformedURLException {
         this(client, new URL(protocol, host, DEFAULT_PORT, ""));
     }
-    
+
     /**
      * Creates an HTTP connector using the provided HTTP client
-     * 
-     * @param client The client we use to send/receive/intercept
+     *
+     * @param client   The client we use to send/receive/intercept
      * @param protocol The protocol we use
-     * @param host The host we use (Domain and optional subdomain)
-     * @param port The port we use
+     * @param host     The host we use (Domain and optional subdomain)
+     * @param port     The port we use
      * @throws MalformedURLException if this is an invalid URL
      */
     public HttpConnector(OkHttpClient client, String protocol, String host, int port) throws MalformedURLException {
         this(client, new URL(protocol, host, port, ""));
     }
-    
+
     /**
      * Creates an HTTP connector using the provided HTTP client
-     * 
+     *
      * @param client The client we use to send/receive/intercept
-     * @param url The URL we connect to
+     * @param url    The URL we connect to
      */
     public HttpConnector(OkHttpClient client, URL url) {
         Objects.requireNonNull(client, "Client cannot be null");
@@ -187,12 +213,12 @@ public class HttpConnector implements Connection {
         this.url = url;
         this.client = client;
     }
-    
+
     @Override
     public URL url() {
         return url;
     }
-    
+
     @Override
     public boolean start() {
         // use client to create Retrofit service
@@ -201,16 +227,16 @@ public class HttpConnector implements Connection {
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
-        
+
         service = retrofit.create(IotaNodeHTTPService.class);
         return true;
     }
-    
+
     @Override
     public void stop() {
         //does nothing
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -245,7 +271,7 @@ public class HttpConnector implements Connection {
     public boolean isConnectedToSameNode(Connection other) {
         return other.url() != null && other.url().equals(url());
     }
-    
+
     @Override
     public String toString() {
         return "HttpConnector [url=" + url + "]";
@@ -253,35 +279,40 @@ public class HttpConnector implements Connection {
 
     protected static <T> Response<T> wrapCheckedException(final Call<T> call) throws ArgumentException, IllegalStateException, IllegalAccessError {
         try {
-            final Response<T> res = call.execute();
+            Response<T> response = call.execute();
 
-            String error = null;
-
-            if (res.errorBody() != null) {
-                error = res.errorBody().string();
+            if (!response.isSuccessful()) {
+                wrapError(response);
             }
 
-            if (res.code() == 400) {
-                throw new ArgumentException(error);
-
-            } else if (res.code() == 401) {
-                throw new AccessLimitedException(error);
-            } else if (res.code() == 500) {
-                throw new InternalException(error);
-            } else if (error != null || res.body() == null) {
-                //Unknown error, could be node timeout before our timeout or similar errors
-                throw new ConnectorException(res.message(), res.code());
-            }
-
-            return res;
+            return response;
         } catch (IOException e) {
             if (e instanceof InterruptedIOException) {
                 // We shut down the app 
-                return null;             
+                return null;
             }
-            
-            log.error("Execution of the API call raised exception. IOTA Node not reachable?", e);
+
+            LOGGER.error("Execution of the API call raised exception. IOTA Node not reachable?", e);
             throw new IllegalStateException(e.getMessage());
+        }
+    }
+
+    private static <T> void wrapError(Response<T> response) throws IOException {
+        String error = response.errorBody().string();
+
+        switch (response.code()) {
+            case 400:
+                throw new ArgumentException(error);
+            case 401:
+                throw new AccessLimitedException(error);
+            case 500:
+                throw new InternalException(error);
+            default: {
+                if (response.body() == null) {
+                    throw new ConnectorException(response.message(), response.code());
+                }
+                break;
+            }
         }
     }
 
@@ -290,7 +321,7 @@ public class HttpConnector implements Connection {
         final Call<GetNodeInfoResponse> res = service.getNodeInfo(IotaCommandRequest.createNodeInfoRequest());
         return wrapCheckedException(res).body();
     }
-    
+
     @Override
     public GetNodeAPIConfigurationResponse getNodeAPIConfiguration(IotaCommandRequest request) throws ArgumentException {
         final Call<GetNodeAPIConfigurationResponse> res = service.getNodeAPIConfiguration(IotaCommandRequest.createGetNodeAPIConfiguration());

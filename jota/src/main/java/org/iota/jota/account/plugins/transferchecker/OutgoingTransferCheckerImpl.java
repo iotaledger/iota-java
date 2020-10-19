@@ -1,11 +1,5 @@
 package org.iota.jota.account.plugins.transferchecker;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
 import org.iota.jota.IotaAPI;
 import org.iota.jota.account.AccountStateManager;
 import org.iota.jota.account.PendingTransfer;
@@ -22,12 +16,18 @@ import org.iota.jota.types.Trits;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.thread.UnboundScheduledExecutorService;
 
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements OutgoingTransferChecker {
 
     private static final long CHECK_CONFIRMED_DELAY = 30000;
 
     private Map<String, ScheduledFuture<?>> unconfirmedBundles;
-    
+
     private UnboundScheduledExecutorService service;
     private EventManager eventManager;
 
@@ -51,8 +51,8 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
     public boolean start() {
         for (Entry<String, PendingTransfer> entry : accountManager.getPendingTransfers().entrySet()) {
             Bundle bundle = new Bundle();
-            for (Trits trits : entry.getValue().getBundleTrits()){
-                bundle.addTransaction( new Transaction(Converter.trytes(trits.getTrits())));
+            for (Trits trits : entry.getValue().getBundleTrits()) {
+                bundle.addTransaction(new Transaction.Builder().buildWithTrytes(Converter.trytes(trits.getTrits())));
             }
             //TODO: use all tails created from reattach
             addUnconfirmedBundle(bundle);
@@ -64,17 +64,17 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
     public void shutdown() {
         service.shutdownNow();
     }
-    
+
     @AccountEvent
     private void onBundleBroadcast(EventSentTransfer event) {
         addUnconfirmedBundle(event.getBundle());
     }
-    
+
     private void addUnconfirmedBundle(Bundle bundle) {
         Runnable r = () -> doTask(bundle);
         unconfirmedBundles.put(
-            bundle.getBundleHash(), 
-            service.scheduleAtFixedRate(r, 0, CHECK_CONFIRMED_DELAY, TimeUnit.MILLISECONDS)
+                bundle.getBundleHash(),
+                service.scheduleAtFixedRate(r, 0, CHECK_CONFIRMED_DELAY, TimeUnit.MILLISECONDS)
         );
     }
 
@@ -82,23 +82,23 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
         try {
             String hash = bundle.getTransactions().get(0).getHash();
             PendingTransfer pending = accountManager.getPendingTransfers().get(hash);
-            
+
             // Get states of all tails (reattachments incl original)
             GetInclusionStateResponse check = api.getLatestInclusion(
-                pending.getTailHashes().stream().map(Hash::getHash).toArray(size -> new String[size])
+                    pending.getTailHashes().stream().map(Hash::getHash).toArray(size -> new String[size])
             );
-            
+
             if (anyTrue(check.getStates())) {
                 // Restart might not have a runnable
                 ScheduledFuture<?> runnable = unconfirmedBundles.get(bundle.getBundleHash());
                 if (null != runnable) {
                     runnable.cancel(true);
                 }
-                
+
                 unconfirmedBundles.remove(bundle.getBundleHash());
-                
+
                 accountManager.removePendingTransfer(new Hash(hash));
-                
+
                 EventTransferConfirmed event = new EventTransferConfirmed(bundle);
                 eventManager.emit(event);
             } else {

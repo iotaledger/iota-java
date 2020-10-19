@@ -13,6 +13,8 @@ public class SendTransferResponse extends AbstractResponse {
     private List<Transaction> transactions = new ArrayList<>();
     private Boolean[] successfully;
 
+    private SendTransferResponse() {}
+
     /**
      * Initializes a new instance of the SendTransferResponse class.
      */

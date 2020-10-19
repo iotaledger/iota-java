@@ -1,7 +1,5 @@
 package org.iota.jota.model;
 
-import java.util.Arrays;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -13,16 +11,16 @@ import org.iota.jota.utils.InputValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 /**
  * This class represents an iota transaction.
- *
  */
 public class Transaction {
 
-    private static final transient Logger log = LoggerFactory.getLogger(Transaction.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(Transaction.class);
 
     private transient ICurl customCurl;
-
     private String hash;
     private String signatureFragments;
     private String address;
@@ -40,128 +38,32 @@ public class Transaction {
     private String tag;
     private long attachmentTimestampLowerBound;
     private long attachmentTimestampUpperBound;
-    
-    /**
-     * Converts an array of transaction trytes into an array of transaction objects.
-     * @param trytes the array of transactions trytes
-     * @return the transaction objects
-     */
-    public static Transaction[] asTransactionObjects(String... trytes) {
-        Transaction[] transactions = new Transaction[trytes.length];
-        for (int i = 0; i < trytes.length; i++) {
-            transactions[i] = asTransactionObject(trytes[i]);
-        }
-        return transactions;
-    }
-    
-    /**
-     * Converts  transaction trytes into a transaction object.
-     * @param trytes the transaction trytes
-     * @return the transaction object
-     */
-    public static Transaction asTransactionObject(String trytes) {
-        return new Transaction(trytes);
+
+    private Transaction(Builder builder) {
+        this.customCurl = builder.customCurl;
+        this.hash = builder.hash;
+        this.signatureFragments = builder.signatureFragments;
+        this.address = builder.address;
+        this.value = builder.value;
+        this.obsoleteTag = builder.obsoleteTag;
+        this.timestamp = builder.timestamp;
+        this.currentIndex = builder.currentIndex;
+        this.lastIndex = builder.lastIndex;
+        this.bundle = builder.bundle;
+        this.trunkTransaction = builder.trunkTransaction;
+        this.branchTransaction = builder.branchTransaction;
+        this.nonce = builder.nonce;
+        this.persistence = builder.persistence;
+        this.attachmentTimestamp = builder.attachmentTimestamp;
+        this.tag = builder.tag;
+        this.attachmentTimestampLowerBound = builder.attachmentTimestampLowerBound;
+        this.attachmentTimestampUpperBound = builder.attachmentTimestampUpperBound;
     }
 
-    /**
-     * Initializes a new instance of the Signature class.
-     * 
-     * @param signatureFragments
-     * @param currentIndex
-     * @param lastIndex
-     * @param nonce
-     * @param hash
-     * @param obsoleteTag
-     * @param timestamp
-     * @param trunkTransaction
-     * @param branchTransaction
-     * @param address
-     * @param value
-     * @param bundle
-     * @param tag
-     * @param attachmentTimestamp
-     * @param attachmentTimestampLowerBound
-     * @param attachmentTimestampUpperBound
-     */
-    public Transaction(String signatureFragments, long currentIndex, long lastIndex, String nonce, String hash, String obsoleteTag, long timestamp, String trunkTransaction, String branchTransaction, String address, long value, String bundle, String tag, long attachmentTimestamp, long attachmentTimestampLowerBound, long attachmentTimestampUpperBound) {
-        this();
-        this.hash = hash;
-        this.obsoleteTag = obsoleteTag;
-        this.signatureFragments = signatureFragments;
-        this.address = address;
-        this.value = value;
-        this.timestamp = timestamp;
-        this.currentIndex = currentIndex;
-        this.lastIndex = lastIndex;
-        this.bundle = bundle;
-        this.trunkTransaction = trunkTransaction;
-        this.branchTransaction = branchTransaction;
-        this.tag = tag;
-        this.attachmentTimestamp = attachmentTimestamp;
-        this.attachmentTimestampLowerBound = attachmentTimestampLowerBound;
-        this.attachmentTimestampUpperBound = attachmentTimestampUpperBound;
-        this.nonce = nonce;
-    }
-
-    /**
-     * Initializes a new instance of the Signature class.
-     * 
-     * @param address
-     * @param value
-     * @param tag
-     * @param timestamp
-     */
-    public Transaction(String address, long value, String tag, long timestamp) {
-        this();
-        this.address = address;
-        this.value = value;
-        this.tag = tag;
-        this.obsoleteTag = tag;
-        this.timestamp = timestamp;
-    }
-    
-    /**
-     * Initializes a new instance of the Signature class.
-     * 
-     * @param curl custom curl instance used for creating the hash
-     */
-    public Transaction(ICurl curl) {
-        customCurl = curl;
-    }
-
-    /**
-     * Initializes a new instance of the Signature class.
-     * Default Mode.CURL_P81 is being used
-     */
-    public Transaction() {
-        customCurl = SpongeFactory.create(SpongeFactory.Mode.CURL_P81);
-    }
-
-    /**
-     * Initializes a new instance of the Signature class.
-     * 
-     * @param trytes transaction trytes
-     */
-    public Transaction(String trytes) {
-        this();
-        transactionObject(trytes);
-    }
-
-    /**
-     * Initializes a new instance of the Signature class.
-     * 
-     * @param trytes transaction trytes
-     * @param customCurl custom curl instance used for creating the hash
-     */
-    public Transaction(String trytes, ICurl customCurl) {
-       this(customCurl);
-        transactionObject(trytes);
-    }
-    
     public void setCustomCurl(ICurl customCurl) {
         this.customCurl = customCurl;
     }
-    
+
     public long getAttachmentTimestampLowerBound() {
         return attachmentTimestampLowerBound;
     }
@@ -458,13 +360,26 @@ public class Transaction {
         this.attachmentTimestamp = attachmentTimestamp;
     }
 
-    public boolean equals(Object obj) {
-        return obj != null && ((Transaction) obj).getHash().equals(this.getHash());
+    @Override
+    public int hashCode() {
+        return hash != null ? hash.hashCode() : 0;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return ((Transaction) obj).getHash().equals(this.getHash());
+    }
 
     /**
      * Converts the transaction to the corresponding trytes representation
+     *
      * @return The transaction trytes
      */
     public String toTrytes() {
@@ -484,7 +399,7 @@ public class Transaction {
 
         this.tag = this.tag != null && !this.tag.isEmpty() ? this.tag : this.obsoleteTag;
 
-        String trytes = this.getSignatureFragments()
+        return this.getSignatureFragments()
                 + this.getAddress().substring(0, 81)
                 + Converter.trytes(valueTrits)
                 + this.getObsoleteTag()
@@ -499,59 +414,289 @@ public class Transaction {
                 + Converter.trytes(attachmentTimestampLowerBoundTrits)
                 + Converter.trytes(attachmentTimestampUpperBoundTrits)
                 + this.getNonce();
-        return trytes;
     }
 
     /**
-     * Initializes a new instance of the Signature class.
-     * 
-     * @param trytes
+     * Builder class to build and create a transaction instance
      */
-    public void transactionObject(final String trytes) {
+    public static class Builder {
+        private transient ICurl customCurl;
+        private String hash;
+        private String signatureFragments;
+        private String address;
+        private long value;
+        private String obsoleteTag;
+        private long timestamp;
+        private long currentIndex;
+        private long lastIndex;
+        private String bundle;
+        private String trunkTransaction;
+        private String branchTransaction;
+        private String nonce;
+        private Boolean persistence;
+        private long attachmentTimestamp;
+        private String tag;
+        private long attachmentTimestampLowerBound;
+        private long attachmentTimestampUpperBound;
 
-        if (StringUtils.isEmpty(trytes)) {
-            log.warn("Warning: empty trytes in input for transactionObject");
-            return;
+        /**
+         * Start builder with curl mode CURL_P81 as default
+         */
+        public Builder() {
+            this.customCurl = SpongeFactory.create(SpongeFactory.Mode.CURL_P81);
         }
 
-        // validity check
-        if (!InputValidator.isNinesTrytes(trytes.substring(2279, 2295), 16)) {
-            log.warn("Trytes {} does not seem a valid tryte", trytes);
-            return;
+        /**
+         * Set the curl mode for this transaction
+         *
+         * @param curl instance of {@link ICurl}
+         * @return Builder instance
+         */
+        public Builder curl(ICurl curl) {
+            this.customCurl = curl;
+            return this;
         }
 
-        int[] transactionTrits = Converter.trits(trytes);
-        int[] hash = new int[Constants.HASH_LENGTH_TRITS];
+        /**
+         * Set the hash
+         *
+         * @param hash represented as {@link String}
+         * @return Builder instance
+         */
+        public Builder hash(String hash) {
+            this.hash = hash;
+            return this;
+        }
 
-        ICurl curl = customCurl != null ? customCurl.clone() : SpongeFactory.create(SpongeFactory.Mode.CURL_P81);
-        // generate the correct transaction hash
-        curl.reset();
-        curl.absorb(transactionTrits, 0, transactionTrits.length);
-        curl.squeeze(hash, 0, hash.length);
+        /**
+         * Set the signature fragments
+         *
+         * @param signatureFragments represented as {@link String}
+         * @return Builder instance
+         */
+        public Builder signatureFragments(String signatureFragments) {
+            this.signatureFragments = signatureFragments;
+            return this;
+        }
 
-        this.setHash(Converter.trytes(hash));
-        this.setSignatureFragments(trytes.substring(0, Constants.MESSAGE_LENGTH));
-        this.setAddress(trytes.substring(Constants.MESSAGE_LENGTH, Constants.MESSAGE_LENGTH + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM));
-        this.setValue(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6804, 6837)));
-        this.setObsoleteTag(trytes.substring(2295, 2295 + Constants.TAG_LENGTH));
-        this.setTimestamp(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6966, 6993)));
-        this.setCurrentIndex(Converter.longValue(Arrays.copyOfRange(transactionTrits, 6993, 7020)));
-        this.setLastIndex(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7020, 7047)));
-        this.setBundle(trytes.substring(2349, 2349 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM));
-        this.setTrunkTransaction(trytes.substring(2430, 2430 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM));
-        this.setBranchTransaction(trytes.substring(2511, 2511 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM));
-        this.setTag(trytes.substring(2592, 2592 + Constants.TAG_LENGTH));
-        this.setAttachmentTimestamp(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7857, 7884)));
-        this.setAttachmentTimestampLowerBound(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7884, 7911)));
-        this.setAttachmentTimestampUpperBound(Converter.longValue(Arrays.copyOfRange(transactionTrits, 7911, 7938)));
-        this.setNonce(trytes.substring(2646, 2673));
+        /**
+         * Set the address of the transaction
+         *
+         * @param address represented as {@link String}
+         * @return Builder instance
+         */
+        public Builder address(String address) {
+            this.address = address;
+            return this;
+        }
+
+        /**
+         * Set the value of this transaction
+         *
+         * @param value represented as long
+         * @return Builder instance
+         */
+        public Builder value(long value) {
+            this.value = value;
+            return this;
+        }
+
+        /**
+         * Set the obsolete tag
+         *
+         * @param obsoleteTag represented as {@link String}
+         * @return Builder instance
+         */
+        public Builder obsoleteTag(String obsoleteTag) {
+            this.obsoleteTag = obsoleteTag;
+            return this;
+        }
+
+        /**
+         * Set the timestamp
+         *
+         * @param timestamp represented as long
+         * @return Builder instance
+         */
+        public Builder timestamp(long timestamp) {
+            this.timestamp = timestamp;
+            return this;
+        }
+
+        /**
+         * Set the current index
+         *
+         * @param currentIndex represented as long
+         * @return Builder instance
+         */
+        public Builder currentIndex(long currentIndex) {
+            this.currentIndex = currentIndex;
+            return this;
+        }
+
+        /**
+         * Set the last index
+         *
+         * @param lastIndex represented as long
+         * @return Builder instance
+         */
+        public Builder lastIndex(long lastIndex) {
+            this.lastIndex = lastIndex;
+            return this;
+        }
+
+        /**
+         * Set the bundle
+         *
+         * @param bundle represented as {@link String}
+         * @return Builder instance
+         */
+        public Builder bundle(String bundle) {
+            this.bundle = bundle;
+            return this;
+        }
+
+        /**
+         * Set the trunk transaction
+         *
+         * @param trunkTransaction represented as {@link String}
+         * @return Builder instance
+         */
+        public Builder trunkTransaction(String trunkTransaction) {
+            this.trunkTransaction = trunkTransaction;
+            return this;
+        }
+
+        /**
+         * Set the branch transaction
+         *
+         * @param branchTransaction represented as {@link String}
+         * @return Builder instance
+         */
+        public Builder branchTransaction(String branchTransaction) {
+            this.branchTransaction = branchTransaction;
+            return this;
+        }
+
+        /**
+         * Set nonce
+         *
+         * @param nonce represented as {@link String}
+         * @return Builder instance
+         */
+        public Builder nonce(String nonce) {
+            this.nonce = nonce;
+            return this;
+        }
+
+        /**
+         * Set if transaction is persisted or not
+         *
+         * @param persistence true if persisted otherwise false
+         * @return Builder instance
+         */
+        public Builder persistence(boolean persistence) {
+            this.persistence = persistence;
+            return this;
+        }
+
+        /**
+         * Set the tag
+         *
+         * @param tag represented as {@link String}
+         * @return Builder instance
+         */
+        public Builder tag(String tag) {
+            this.tag = tag;
+            return this;
+        }
+
+        /**
+         * Set the attachment timestamp
+         *
+         * @param attachmentTimestamp timestamp represented as long
+         * @return Builder instance
+         */
+        public Builder attachmentTimestamp(long attachmentTimestamp) {
+            this.attachmentTimestamp = attachmentTimestamp;
+            return this;
+        }
+
+        /**
+         * Set the lower bound attachment timestamp
+         *
+         * @param attachmentTimestampLowerBound timestamp represented as long
+         * @return Builder instance
+         */
+        public Builder attachmentTimestampLowerBound(long attachmentTimestampLowerBound) {
+            this.attachmentTimestampLowerBound = attachmentTimestampLowerBound;
+            return this;
+        }
+
+        /**
+         * Set the upper bound attachment timestamp
+         *
+         * @param attachmentTimestampUpperBound timestamp represented as long
+         * @return Builder instance
+         */
+        public Builder attachmentTimestampUpperBound(long attachmentTimestampUpperBound) {
+            this.attachmentTimestampUpperBound = attachmentTimestampUpperBound;
+            return this;
+        }
+
+        /**
+         * Construct {@link Transaction} instance form given builder values
+         *
+         * @return {@link Transaction} Instance
+         */
+        public Transaction build() {
+            return new Transaction(this);
+        }
+
+        /**
+         * Construct of transaction form a trytes string
+         *
+         * @param trytes represented as string
+         * @return {@link Transaction} Instance
+         */
+        public Transaction buildWithTrytes(String trytes) {
+            if (StringUtils.isEmpty(trytes)) {
+                throw new IllegalArgumentException("Trytes must not be empty");
+            }
+
+            if (!InputValidator.isNinesTrytes(trytes.substring(2279, 2295), 16)) {
+                LOGGER.warn("Trytes {} does not seem a valid tryte", trytes);
+                throw new IllegalArgumentException("Trytes does not seem a valid tryte");
+            }
+
+            int[] transactionTrits = Converter.trits(trytes);
+            int[] hash = new int[Constants.HASH_LENGTH_TRITS];
+
+            // generate the correct transaction hash
+            this.customCurl.reset();
+            this.customCurl.absorb(transactionTrits, 0, transactionTrits.length);
+            this.customCurl.squeeze(hash, 0, hash.length);
+
+            this.hash = Converter.trytes(hash);
+            this.signatureFragments = trytes.substring(0, Constants.MESSAGE_LENGTH);
+            this.address = trytes.substring(Constants.MESSAGE_LENGTH, Constants.MESSAGE_LENGTH + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM);
+            this.value = Converter.longValue(Arrays.copyOfRange(transactionTrits, 6804, 6837));
+            this.obsoleteTag = trytes.substring(2295, 2295 + Constants.TAG_LENGTH);
+            this.timestamp = Converter.longValue(Arrays.copyOfRange(transactionTrits, 6966, 6993));
+            this.currentIndex = Converter.longValue(Arrays.copyOfRange(transactionTrits, 6993, 7020));
+            this.lastIndex = Converter.longValue(Arrays.copyOfRange(transactionTrits, 7020, 7047));
+            this.bundle = trytes.substring(2349, 2349 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM);
+            this.trunkTransaction = trytes.substring(2430, 2430 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM);
+            this.branchTransaction = trytes.substring(2511, 2511 + Constants.ADDRESS_LENGTH_WITHOUT_CHECKSUM);
+            this.tag = trytes.substring(2592, 2592 + Constants.TAG_LENGTH);
+            this.attachmentTimestamp = Converter.longValue(Arrays.copyOfRange(transactionTrits, 7857, 7884));
+            this.attachmentTimestampLowerBound = Converter.longValue(Arrays.copyOfRange(transactionTrits, 7884, 7911));
+            this.attachmentTimestampUpperBound = Converter.longValue(Arrays.copyOfRange(transactionTrits, 7911, 7938));
+            this.nonce = trytes.substring(2646, 2673);
+
+            return new Transaction(this);
+        }
+
     }
-    
-    /**
-     * Checks if the current index is 0
-     * @return if this is a tail transaction
-     */
-    public boolean isTailTransaction() {
-        return getCurrentIndex() == 0;
-    }
+
 }

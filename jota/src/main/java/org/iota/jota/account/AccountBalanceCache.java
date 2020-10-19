@@ -17,11 +17,10 @@ import java.util.stream.Stream;
 
 public class AccountBalanceCache {
     
-    private Map<Input, DepositRequest> cachedIndexMap;
-    
-    private AddressGeneratorService addressGenerator;
-    private AccountState state;
+    private final AddressGeneratorService addressGenerator;
+    private final AccountState state;
 
+    private Map<Input, DepositRequest> cachedIndexMap;
     private long totalBalance;
     
     public AccountBalanceCache( AddressGeneratorService addressGenerator, AccountState state, IotaAPI api) {

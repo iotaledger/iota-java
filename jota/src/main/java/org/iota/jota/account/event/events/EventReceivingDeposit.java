@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class EventReceivingDeposit extends EventAbstractBundle {
     
-    private static final Logger log = LoggerFactory.getLogger(EventReceivingDeposit.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventReceivingDeposit.class);
     
     private Address receiver;
 
@@ -34,7 +34,7 @@ public class EventReceivingDeposit extends EventAbstractBundle {
         }
         
         // This should NEVER happen
-        log.error("Deposit received event fired but could not find amount!\\n Please check " + receiver.getAddress());
+        LOGGER.error("Deposit received event fired but could not find amount!\\n Please check " + receiver.getAddress());
         return -1;
     }
 }

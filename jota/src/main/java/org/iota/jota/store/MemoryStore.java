@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class MemoryStore implements Store {
 
-    private static final Logger log = LoggerFactory.getLogger(MemoryStore.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemoryStore.class);
     
     private Map<String, Serializable> store;
     
@@ -46,8 +46,8 @@ public class MemoryStore implements Store {
             T old = (T) oldValue;
             return old;
         } catch (ClassCastException e) {
-            log.warn("Attempted to store a different type of value for a key." );
-            log.warn("Explanation: " + e.getMessage());
+            LOGGER.warn("Attempted to store a different type of value for a key." );
+            LOGGER.warn("Explanation: " + e.getMessage());
             return null;
         }
     }

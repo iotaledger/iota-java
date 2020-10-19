@@ -16,7 +16,7 @@ public class ThreadUtils {
     /**
      * Logger for this class allowing us to dump debug and status messages.
      */
-    private static final Logger logger = LoggerFactory.getLogger(ThreadUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadUtils.class);
 
     /**
      * Holds a map of {@link Thread}s that are managed by the {@link ThreadUtils}.
@@ -68,14 +68,14 @@ public class ThreadUtils {
      * @return the thread that got spawned by this method
      */
     public static Thread spawnThread(Runnable runnable, String threadName) {
-        logger.info("Starting Thread: " + threadName + " ...");
+        LOGGER.info("Starting Thread: " + threadName + " ...");
 
         Thread thread = new Thread(() -> {
-            logger.info(threadName + " [STARTED]");
+            LOGGER.info(threadName + " [STARTED]");
 
             runnable.run();
 
-            logger.info(threadName + " [STOPPED]");
+            LOGGER.info(threadName + " [STOPPED]");
         }, threadName);
         thread.start();
 
@@ -100,7 +100,7 @@ public class ThreadUtils {
         if (threads.get(threadIdentifier) != null && !threads.get(threadIdentifier).isInterrupted()) {
             synchronized(threadIdentifier) {
                 if (threads.get(threadIdentifier) != null && !threads.get(threadIdentifier).isInterrupted()) {
-                    logger.info("Stopping Thread: " + threadIdentifier.getName() + " ...");
+                    LOGGER.info("Stopping Thread: " + threadIdentifier.getName() + " ...");
 
                     threads.get(threadIdentifier).interrupt();
                 }
