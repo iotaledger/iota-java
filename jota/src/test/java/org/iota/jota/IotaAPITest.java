@@ -6,7 +6,6 @@ import org.iota.jota.config.types.FileConfig;
 import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.connection.HttpConnector;
 import org.iota.jota.dto.response.BroadcastTransactionsResponse;
-import org.iota.jota.dto.response.CheckConsistencyResponse;
 import org.iota.jota.dto.response.GetAccountDataResponse;
 import org.iota.jota.dto.response.GetBalancesAndFormatResponse;
 import org.iota.jota.dto.response.GetBundleResponse;
@@ -114,9 +113,6 @@ public class IotaAPITest {
 
     @Mock
     private GetTrytesResponse trytesResponse;
-
-    @Mock
-    private CheckConsistencyResponse checkConsistencyResponseMock;
 
     // TODO this is only available to verify why the disabled test are not running
     @BeforeEach
@@ -500,31 +496,6 @@ public class IotaAPITest {
 
         GetBundleResponse bundle = iotaAPIMock.getBundle(TEST_HASH);
         assertNotNull(bundle, "Should return bundle if valid hash is provided");
-    }
-
-    @Test
-    public void shouldCheckConsistency() throws ArgumentException {
-        GetNodeInfoResponse nodeInfoResponse = GetNodeInfoResponse.create("HORNET",
-                "0.5.3-rc3", 0, 0, null, 0, 0,
-                "HSPDOTYNLKWIXYWLOCBVMGGKDQYBSC9BZJNJDEGXNIFMQNVJGZMYJNFVXBCVCKNJDOWKQDJXATSDUU999",
-                1942896,
-                "HSPDOTYNLKWIXYWLOCBVMGGKDQYBSC9BZJNJDEGXNIFMQNVJGZMYJNFVXBCVCKNJDOWKQDJXATSDUU999",
-                1942896, 1651535, 3, 0,
-                Instant.now().toEpochMilli(), 3, 0, new String[]{"RemotePOW", "WereAddressesSpentFrom"},
-                "GYISMBVRKSCEXXTUPBWTIHRCZIKIRPDYAHAYKMNTPZSCSDNADDWAEUNHKUERZCTVAYJCNFXGTNUH9OGTW");
-        nodeInfoResponse.setDuration(0L);
-
-        when(iotaAPIMock.getNodeInfo()).thenReturn(nodeInfoResponse);
-
-        GetNodeInfoResponse nodeInfo = iotaAPIMock.getNodeInfo();
-
-        when(iotaAPIMock.checkConsistency(nodeInfo.getLatestSolidSubtangleMilestone())).thenReturn(checkConsistencyResponseMock);
-        when(checkConsistencyResponseMock.getState()).thenReturn(true);
-
-        CheckConsistencyResponse checkConsistencyResponse = iotaAPIMock.checkConsistency(nodeInfo.getLatestSolidSubtangleMilestone());
-
-        assertNotNull(checkConsistencyResponse, "Should throw an error on failure");
-        assertTrue(checkConsistencyResponse.getState(), "Latest milestone should always be consistent");
     }
 
     @Test
