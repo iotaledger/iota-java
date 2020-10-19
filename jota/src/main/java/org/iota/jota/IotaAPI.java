@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.iota.jota.builder.AddressRequest;
 import org.iota.jota.builder.ApiBuilder;
 import org.iota.jota.dto.response.BroadcastTransactionsResponse;
-import org.iota.jota.dto.response.CheckConsistencyResponse;
 import org.iota.jota.dto.response.FindTransactionResponse;
 import org.iota.jota.dto.response.GetAccountDataResponse;
 import org.iota.jota.dto.response.GetAttachToTangleResponse;
@@ -348,20 +347,9 @@ public class IotaAPI extends IotaAPICore {
             return new ArrayList<>();
         }
 
-        // TODO
-        /**
-         * return Arrays.stream(res.getTrytes())
-         *                 .map(tryte -> new Transaction.Builder().buildWithTrytes(tryte))
-         *                 .collect(toList());
-         */
-
-        final List<Transaction> trx = new ArrayList<>();
-
-        for (String tryte : res.getTrytes()) {
-            trx.add(new Transaction.Builder().buildWithTrytes(tryte));
-        }
-
-        return trx;
+        return Arrays.stream(res.getTrytes())
+                .map(tryte -> new Transaction.Builder().buildWithTrytes(tryte))
+                .collect(toList());
     }
 
     /**
