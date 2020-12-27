@@ -6,6 +6,7 @@ import org.iota.jota.account.AccountStore;
 import org.iota.jota.account.store.AccountFileStore;
 import org.iota.jota.config.IotaClientConfig;
 import org.iota.jota.connection.Connection;
+import org.iota.jota.error.InternalException;
 import org.iota.jota.store.EnvironmentStore;
 
 public class EnvConfig extends IotaClientConfig {
@@ -21,7 +22,7 @@ public class EnvConfig extends IotaClientConfig {
     private static final String ENV_DEPTH = "IOTA_ACCOUNT_DEPTH";
     private static final String ENV_SECURITY = "IOTA_ACCOUNT_SECURITY";
     
-    public EnvConfig() throws Exception {
+    public EnvConfig() throws InternalException {
         super(new EnvironmentStore());
     }
     

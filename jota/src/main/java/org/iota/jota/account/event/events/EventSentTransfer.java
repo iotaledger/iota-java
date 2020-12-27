@@ -9,7 +9,7 @@ public class EventSentTransfer extends EventImpl {
     private Bundle bundle;
 
     public EventSentTransfer(Bundle bundle) {
-        super(AccountEventType.SendingTransfer);
+        super(AccountEventType.SENDING_TRANSFER);
         this.bundle = bundle;
     }
 

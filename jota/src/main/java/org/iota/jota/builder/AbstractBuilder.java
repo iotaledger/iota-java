@@ -8,6 +8,7 @@ import org.iota.jota.config.Config;
 import org.iota.jota.config.types.EnvConfig;
 import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.config.types.PropertiesConfig;
+import org.iota.jota.error.InternalException;
 import org.iota.jota.store.PropertiesStore;
 import org.slf4j.Logger;
 
@@ -19,10 +20,10 @@ import org.slf4j.Logger;
 @SuppressWarnings("unchecked")
 public abstract class AbstractBuilder<T, E, F extends Config> {
     
-    private Logger log;
+    private final Logger log;
     private Config config;
     
-    public AbstractBuilder(Logger log) {
+    protected AbstractBuilder(Logger log) {
         this.log = log;
     }
 
@@ -40,7 +41,7 @@ public abstract class AbstractBuilder<T, E, F extends Config> {
 
     protected abstract E compile();
 
-    protected abstract T generate() throws Exception;
+    protected abstract T generate();
     
     public T config(F config) {
         try {
@@ -67,7 +68,7 @@ public abstract class AbstractBuilder<T, E, F extends Config> {
         return (T) this;
     }
     
-    protected List<F> getConfigs() throws Exception{
+    protected List<F> getConfigs() {
         EnvConfig env = new EnvConfig();
         ArrayList<F> array = new ArrayList<>();
         array.add((F)env);

@@ -8,11 +8,14 @@ import org.iota.jota.account.AccountState;
 import org.iota.jota.account.ExportedAccountState;
 import org.iota.jota.account.PendingTransfer;
 import org.iota.jota.account.deposits.StoredDepositAddress;
+import org.iota.jota.builder.AccountBuilder;
 import org.iota.jota.store.IotaFileStore;
 import org.iota.jota.store.JsonFlatFileStore;
 import org.iota.jota.store.Store;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -21,6 +24,8 @@ import org.iota.jota.types.Trytes;
  *
  */
 public class AccountFileStore extends AccountStoreImpl {
+
+    private static final Logger log = LoggerFactory.getLogger(AccountFileStore.class);
 
     private Store store;
     
@@ -59,8 +64,7 @@ public class AccountFileStore extends AccountStoreImpl {
         try {
             store.save(true);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Exception at shutdown. Message: {}",e.getMessage(), e);
         }
     }
     
@@ -69,7 +73,8 @@ public class AccountFileStore extends AccountStoreImpl {
         AccountState state = store.get(id, null);
 
         if (state == null) {
-            saveAccount(id, state = new AccountState());
+            state = new AccountState();
+            saveAccount(id, state);
         }
         return state;
     }
@@ -155,8 +160,7 @@ public class AccountFileStore extends AccountStoreImpl {
         try {
             store.save(false);
         } catch (Exception e) {
-            // TODO log account error
-            e.printStackTrace();
+            log.error("Exception at shutdown. Message: {}",e.getMessage(), e);
         }
     }
     

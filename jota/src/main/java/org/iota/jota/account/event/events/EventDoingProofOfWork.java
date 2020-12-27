@@ -9,7 +9,7 @@ public class EventDoingProofOfWork extends EventImpl {
     private String[] trytes;
 
     public EventDoingProofOfWork(String[] trytes) {
-        super(AccountEventType.DoingProofOfWork);
+        super(AccountEventType.DOING_PROOF_OF_WORK);
         
         this.trytes = trytes;
     }
