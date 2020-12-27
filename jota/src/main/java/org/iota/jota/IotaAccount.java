@@ -474,12 +474,12 @@ public class IotaAccount implements Account, EventListener {
             StoredDepositAddress storedRequest = new StoredDepositAddress(request, options.getSecurityLevel());
             accountManager.addDepositRequest(address.getIndex(), storedRequest);
             balanceCache.addBalance(
-                    new Input(address.getAddress().getHashCheckSum(), 0, address.getIndex(), options.getSecurityLevel()), 
+                    new Input(address.getAddressHash().getHashCheckSum(), 0, address.getIndex(), options.getSecurityLevel()),
                     request);
             
             EventNewInput event = new EventNewInput(address, request);
             eventManager.emit(event);
-            return new ConditionalDepositAddress(request, address.getAddress());
+            return new ConditionalDepositAddress(request, address.getAddressHash());
         });
         task.run();
         return task;
@@ -732,7 +732,7 @@ public class IotaAccount implements Account, EventListener {
     
     private List<Transaction> sendTrytes(Hash reference, String... trytes) {
         GetTransactionsToApproveResponse txs = getApi().getTransactionsToApprove(options.getDepth(), 
-                reference == null ? null : reference.getHash());
+                reference == null ? null : reference.getHashString());
 
         EventAttachingToTangle attach = new EventAttachingToTangle(trytes);
         getEventManager().emit(attach);

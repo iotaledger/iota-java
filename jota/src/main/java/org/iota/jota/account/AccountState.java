@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.iota.jota.account.deposits.StoredDepositAddress;
 
@@ -94,15 +95,15 @@ public class AccountState implements Serializable {
         
         if (null != depositRequests) {
             newState.depositRequests = new HashMap<>();
-            for (int key : depositRequests.keySet()) {
-                newState.depositRequests.put(key, depositRequests.get(key).clone());
+            for (Map.Entry<Integer, StoredDepositAddress> entry : depositRequests.entrySet()) {
+                newState.depositRequests.put(entry.getKey(), entry.getValue().clone());
             }
         }
         
         if (null != pendingTransfers) {
             newState.pendingTransfers = new HashMap<>();
-            for (String key : pendingTransfers.keySet()) {
-                newState.pendingTransfers.put(key, pendingTransfers.get(key).clone());
+            for (Map.Entry<String, PendingTransfer> entry : pendingTransfers.entrySet()) {
+                newState.pendingTransfers.put(entry.getKey(), entry.getValue().clone());
             }
         }
         
@@ -134,4 +135,6 @@ public class AccountState implements Serializable {
                 && Objects.equals(depositRequests, as.depositRequests)
                 && Objects.equals(pendingTransfers, as.pendingTransfers);
     }
+
+    //TODO: SonarLint-Rule: "equals(Object obj)" and "hashCode()" should be overridden in pairs. Therefore also overrie "hashCode()".
 }

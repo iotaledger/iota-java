@@ -10,7 +10,7 @@ public class EventReattachment extends EventImpl {
     private Bundle newBundle;
 
     public EventReattachment(Bundle originalBundle, Bundle newBundle) {
-        super(AccountEventType.Reattachment);
+        super(AccountEventType.REATTACHMENT);
         this.originalBundle = originalBundle;
         this.newBundle = newBundle;
     }

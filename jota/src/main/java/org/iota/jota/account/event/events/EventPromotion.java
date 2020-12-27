@@ -9,7 +9,7 @@ public class EventPromotion extends EventImpl {
     private Bundle promotedBundle;
 
     public EventPromotion(Bundle promotedBundle) {
-        super(AccountEventType.Promotion);
+        super(AccountEventType.PROMOTION);
         
         this.promotedBundle = promotedBundle;
     }

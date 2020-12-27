@@ -171,9 +171,9 @@ public class PromoterReattacherImpl extends AccountPlugin implements PromoterRea
     }
     
     private String findPromotableTail(PendingTransfer pendingBundle) {
-        String tailOrig = pendingBundle.getTailHashes().get(0).getHash();
+        String tailOrig = pendingBundle.getTailHashes().get(0).getHashString();
         for (int i = pendingBundle.getTailHashes().size() - 1; i >= 0; i--) {
-            String tail = pendingBundle.getTailHashes().get(i).getHash();
+            String tail = pendingBundle.getTailHashes().get(i).getHashString();
             Transaction tailTransaction = getBundleTail(tailOrig, tail);
             
             if (null == tailTransaction) {

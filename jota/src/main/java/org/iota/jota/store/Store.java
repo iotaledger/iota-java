@@ -1,5 +1,8 @@
 package org.iota.jota.store;
 
+import org.iota.jota.error.InternalException;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -13,17 +16,17 @@ public interface Store {
     /**
      * Loads this store into cache
      * 
-     * @throws Exception
+     * @throws InternalException
      */
-    void load() throws Exception;
+    void load() throws InternalException, IOException;
     
     /**
      * Saves this store onto its storage method.
      * 
      * @param closeResources if we want to clean up (final safe before exit)
-     * @throws Exception
+     * @throws InternalException
      */
-    void save(boolean closeResources) throws Exception;
+    void save(boolean closeResources) throws InternalException;
 
     /**
      * 

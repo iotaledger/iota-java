@@ -8,7 +8,7 @@ public class EventReceivedMessage extends EventAbstractBundle {
     private String message = null;
     
     public EventReceivedMessage(Bundle bundle) {
-        super(AccountEventType.ReceivedMessage, bundle);
+        super(AccountEventType.RECEIVED_MESSAGE, bundle);
     }
 
     public String getMessage() {

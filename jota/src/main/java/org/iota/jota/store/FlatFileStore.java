@@ -1,12 +1,6 @@
 package org.iota.jota.store;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +44,7 @@ public class FlatFileStore implements Store {
     }
 
     @Override
-    public void load() throws Exception {
+    public void load() throws IOException {
         if (null != file) {
             if (!file.exists()) {
                 file.createNewFile();

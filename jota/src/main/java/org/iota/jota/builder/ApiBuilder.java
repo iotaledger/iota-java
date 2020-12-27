@@ -12,6 +12,7 @@ import org.iota.jota.pow.SpongeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
      */
     @Override
     @SuppressWarnings("deprecation")
-    protected T generate() throws Exception {
+    protected T generate() throws IOException {
         for (ApiConfig config : getConfigs()) {
             if (config != null) {
              // Defaults have the node in the nodes list

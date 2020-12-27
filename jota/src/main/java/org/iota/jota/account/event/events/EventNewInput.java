@@ -11,7 +11,7 @@ public class EventNewInput extends EventImpl {
     private Address address;
 
     public EventNewInput(Address address, DepositRequest request) {
-        super(AccountEventType.DepositAddress);
+        super(AccountEventType.DEPOSIT_ADDRESS);
         this.address = address;
         this.request = request;
     }

@@ -9,7 +9,7 @@ public class EventTransferConfirmed extends EventImpl {
     private Bundle bundle;
     
     public EventTransferConfirmed(Bundle bundle) {
-        super(AccountEventType.TransferConfirmed);
+        super(AccountEventType.TRANSFER_CONFIRMED);
         this.bundle = bundle;
     }
 

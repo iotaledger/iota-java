@@ -1,5 +1,8 @@
 package org.iota.jota.store;
 
+import org.iota.jota.error.InternalException;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -21,12 +24,12 @@ public abstract class IotaClientStore implements Store {
     }
 
     @Override
-    public void load() throws Exception {
+    public void load() throws InternalException, IOException {
         store.load();
     }
 
     @Override
-    public void save(boolean closeResources) throws Exception {
+    public void save(boolean closeResources) throws InternalException {
         store.save(closeResources);
     }
 

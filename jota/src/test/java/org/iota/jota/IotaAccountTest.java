@@ -85,7 +85,7 @@ public class IotaAccountTest {
 
         assertEquals(0, account.availableBalance(), "Account should have 0 usable balance");
         assertEquals(15, account.totalBalance(), "Account should have 15 total balance");
-        assertEquals( "GGAOVJJKOHECPAR9GQBFOISLYUXSRXXXPT9GEYBTRBBMTJAN9CMH9EVVRYDGXUTDMECGXKFWPYAXUO9QD", cda.getDepositAddress().getHash(),
+        assertEquals( "GGAOVJJKOHECPAR9GQBFOISLYUXSRXXXPT9GEYBTRBBMTJAN9CMH9EVVRYDGXUTDMECGXKFWPYAXUO9QD", cda.getDepositAddress().getHashString(),
                 "Should have generated address at index 5");
     }
 

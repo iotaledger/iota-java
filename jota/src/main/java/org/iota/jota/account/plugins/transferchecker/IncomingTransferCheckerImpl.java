@@ -87,7 +87,7 @@ public class IncomingTransferCheckerImpl extends TransferCheckerImpl implements 
         ScheduledFuture<?> task = service.scheduleAtFixedRate(
                 new IncomingTransferCheckerTask(address, api, eventManager, skipFirst, accountManager), 
                 0, CHECK_INCOMING_DELAY, TimeUnit.MILLISECONDS);
-        unconfirmedBundles.put(address.getAddress().getHash(), task);
+        unconfirmedBundles.put(address.getAddressHash().getHashString(), task);
     }
     
     @AccountEvent

@@ -1,16 +1,16 @@
 package org.iota.jota.account.event;
 
 public enum AccountEventType {
-    Promotion,
-    Reattachment,
-    SendingTransfer, 
-    TransferConfirmed, 
-    ReceivedDeposit,
-    ReceivingDeposit, 
-    ReceivedMessage,
-    DepositAddress,
-    Shutdown,
-    Error, 
-    AttachingToTangle,
-    DoingProofOfWork
+    PROMOTION,
+    REATTACHMENT,
+    SENDING_TRANSFER,
+    TRANSFER_CONFIRMED,
+    RECEIVED_DEPOSIT,
+    RECEIVING_DEPOSIT,
+    RECEIVED_MESSAGE,
+    DEPOSIT_ADDRESS,
+    SHUTDOWN,
+    ERROR,
+    ATTACHING_TO_TANGLE,
+    DOING_PROOF_OF_WORK
 }

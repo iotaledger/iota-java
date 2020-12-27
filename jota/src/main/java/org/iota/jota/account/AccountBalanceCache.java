@@ -61,13 +61,13 @@ public class AccountBalanceCache {
         long balance;
         if (request.hasTimeOut()) {
             // Not a remainder address, check balance
-            balance = api.getBalance(address.getAddress().getHashCheckSum());
+            balance = api.getBalance(address.getAddressHash().getHashCheckSum());
         } else {
             balance = request.getExpectedAmount();
         }
         
         Input input = new Input(
-            address.getAddress().getHashCheckSum(), balance, index, security
+            address.getAddressHash().getHashCheckSum(), balance, index, security
         );
         addInput(input, request);
     }
@@ -78,7 +78,7 @@ public class AccountBalanceCache {
     }
 
     public Entry<Input, DepositRequest> getByAddress(Address address){
-        return getByHash(address.getAddress());
+        return getByHash(address.getAddressHash());
     }
     
     public Entry<Input, DepositRequest> getByHash(Hash hash){

@@ -20,7 +20,7 @@ public class MagnetTest extends DepositTest {
 
     private static final String MAGNET_CHECKSUM = "UDJPO99SI";
 
-    private static final String MAGNET = "iota://" + DepositTest.depositAddress.getHash() + MAGNET_CHECKSUM + "/?"
+    private static final String MAGNET = "iota://" + DepositTest.depositAddress.getHashString() + MAGNET_CHECKSUM + "/?"
             + MagnetMethod.CONDITION_EXPIRES + "=" + TIME + "&"
             + MagnetMethod.CONDITION_MULTI_USE + "=" + MULTI + "&"
             + MagnetMethod.CONDITION_AMOUNT + "=" + AMOUNT;
@@ -65,7 +65,7 @@ public class MagnetTest extends DepositTest {
 
     @Test
     public void magnetChecksum() {
-        String checksum = method.magnetChecksum(DepositTest.depositAddress.getHash(),
+        String checksum = method.magnetChecksum(DepositTest.depositAddress.getHashString(),
                 TIME, MULTI, AMOUNT);
 
         assertEquals(MAGNET_CHECKSUM, checksum, "Checksum should be equal to the pre-generated one");
