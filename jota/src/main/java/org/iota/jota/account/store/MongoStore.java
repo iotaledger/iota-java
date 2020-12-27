@@ -301,7 +301,7 @@ public class MongoStore extends DatabaseStore {
                 Filters.eq("_id", id), 
                 new Document("$set", 
                         new Document(PENDING, 
-                        new Document(tailTx.getHash(), transfer))),
+                        new Document(tailTx.getHashString(), transfer))),
                 updateOptions);
         
         if (result.isModifiedCountAvailable() && result.getModifiedCount() == 0) {
@@ -315,7 +315,7 @@ public class MongoStore extends DatabaseStore {
                 Filters.eq("_id", id), 
                 new Document("$unset", 
                         new Document(PENDING, 
-                                new Document(tailHash.getHash(), ""))),
+                                new Document(tailHash.getHashString(), ""))),
                 updateOptions);
         if (result == null) {
             // TODO Log account error
@@ -327,7 +327,7 @@ public class MongoStore extends DatabaseStore {
         UpdateResult result = collection.updateOne(
                 Filters.eq("_id", id), 
                 new Document("$push", 
-                        new Document(PENDING + "." + tailHash.getHash() + "." + TAILS, newTailTxHash)),
+                        new Document(PENDING + "." + tailHash.getHashString() + "." + TAILS, newTailTxHash)),
                 updateOptions);
         if (result == null) {
             // TODO Log account error

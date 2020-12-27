@@ -85,7 +85,7 @@ public class OutgoingTransferCheckerImpl extends TransferCheckerImpl implements 
             
             // Get states of all tails (reattachments incl original)
             GetInclusionStateResponse check = api.getLatestInclusion(
-                pending.getTailHashes().stream().map(Hash::getHash).toArray(size -> new String[size])
+                pending.getTailHashes().stream().map(Hash::getHashString).toArray(size -> new String[size])
             );
             
             if (anyTrue(check.getStates())) {

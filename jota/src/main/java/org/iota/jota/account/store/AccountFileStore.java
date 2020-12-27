@@ -8,7 +8,6 @@ import org.iota.jota.account.AccountState;
 import org.iota.jota.account.ExportedAccountState;
 import org.iota.jota.account.PendingTransfer;
 import org.iota.jota.account.deposits.StoredDepositAddress;
-import org.iota.jota.builder.AccountBuilder;
 import org.iota.jota.store.IotaFileStore;
 import org.iota.jota.store.JsonFlatFileStore;
 import org.iota.jota.store.Store;
@@ -124,19 +123,19 @@ public class AccountFileStore extends AccountStoreImpl {
         PendingTransfer pendingTransfer = new PendingTransfer(trytesToTrits(bundleTrytes));
         pendingTransfer.addTail(tailTx);
         
-        loadAccount(id).addPendingTransfers(tailTx.getHash(), pendingTransfer);
+        loadAccount(id).addPendingTransfers(tailTx.getHashString(), pendingTransfer);
         save();
     }
 
     @Override
     public void removePendingTransfer(String id, Hash tailHash) {
-        loadAccount(id).removePendingTransfer(tailHash.getHash());
+        loadAccount(id).removePendingTransfer(tailHash.getHashString());
         save();
     }
 
     @Override
     public void addTailHash(String id, Hash tailHash, Hash newTailTxHash) {
-        loadAccount(id).getPendingTransfer(tailHash.getHash()).addTail(newTailTxHash);
+        loadAccount(id).getPendingTransfer(tailHash.getHashString()).addTail(newTailTxHash);
         save();
     }
 

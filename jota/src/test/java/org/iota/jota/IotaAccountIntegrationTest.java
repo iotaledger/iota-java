@@ -91,7 +91,7 @@ class IotaAccountIntegrationTest {
         
         Bundle sent = account.sendZeroValue("Another IOTA Accounts test run at " + new Date().toString(), 
                 "IOTA9ACCOUNTS", 
-                account.getAccountManager().getNextAddress().getAddress().getHashCheckSum()).get();
+                account.getAccountManager().getNextAddress().getAddressHash().getHashCheckSum()).get();
 
         assertTrue(BundleValidator.isBundle(sent), "Should be a valid bundle");
     }
@@ -105,7 +105,7 @@ class IotaAccountIntegrationTest {
         IotaAccount account = new IotaAccount.Builder(TEST_SEED).mwm(MWM).store(store).api(iotaAPI).build();
         
         Bundle sent = account.sendZeroValue(lorem, "IOTA9ACCOUNTS", 
-                account.getAccountManager().getNextAddress().getAddress().getHashCheckSum()).get();
+                account.getAccountManager().getNextAddress().getAddressHash().getHashCheckSum()).get();
 
         assertTrue(BundleValidator.isBundle(sent), "Should be a valid bundle");
     }

@@ -2,6 +2,7 @@ package org.iota.jota.store;
 
 import org.iota.jota.error.InternalException;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public interface Store {
      * 
      * @throws InternalException
      */
-    void load() throws InternalException;
+    void load() throws InternalException, IOException;
     
     /**
      * Saves this store onto its storage method.

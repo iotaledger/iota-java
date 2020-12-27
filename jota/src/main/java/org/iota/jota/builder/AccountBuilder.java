@@ -1,5 +1,6 @@
 package org.iota.jota.builder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,7 +151,7 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     }
 
     @Override
-    public AccountBuilder generate() throws InternalException {
+    public AccountBuilder generate() throws InternalException, IOException {
         //If a config is specified through ENV, that one will be in the stream, otherwise default config is used
         for (AccountConfig config : getConfigs()) {
             if (config != null) {

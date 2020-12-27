@@ -1,5 +1,6 @@
 package org.iota.jota.config;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -46,7 +47,7 @@ public abstract class IotaClientConfig implements IotaConfig {
      * @param store the store to use in this config
      * @throws InternalException if the store failed to load
      */
-    public IotaClientConfig(Store store) throws InternalException {
+    public IotaClientConfig(Store store) throws InternalException, IOException {
         this.store = store;
         this.store.load();
     }

@@ -1,5 +1,6 @@
 package org.iota.jota.config.types;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.iota.jota.account.AccountStore;
@@ -22,7 +23,7 @@ public class EnvConfig extends IotaClientConfig {
     private static final String ENV_DEPTH = "IOTA_ACCOUNT_DEPTH";
     private static final String ENV_SECURITY = "IOTA_ACCOUNT_SECURITY";
     
-    public EnvConfig() throws InternalException {
+    public EnvConfig() throws InternalException, IOException {
         super(new EnvironmentStore());
     }
     

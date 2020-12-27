@@ -2,26 +2,26 @@ package org.iota.jota.types;
 
 public class Address {
     
-    private Hash address;
+    private final Hash addressHash;
     
-    private int index;
+    private final int index;
     
-    private int securityLevel;
+    private final int securityLevel;
 
     /**
      * 
-     * @param address
-     * @param index
-     * @param securityLevel
+     * @param addressHash Represents the address in the form of a hash.
+     * @param index The index of an address.
+     * @param securityLevel The securityLevel of an address.
      */
-    public Address(Hash address, int index, int securityLevel) {
-        this.address = address;
+    public Address(Hash addressHash, int index, int securityLevel) {
+        this.addressHash = addressHash;
         this.index = index;
         this.securityLevel = securityLevel;
     }
 
-    public Hash getAddress() {
-        return address;
+    public Hash getAddressHash() {
+        return addressHash;
     }
 
     public int getIndex() {
@@ -34,6 +34,6 @@ public class Address {
 
     @Override
     public String toString() {
-        return "Address [address=" + address + ", index=" + index + ", securityLevel=" + securityLevel + "]";
+        return "Address [address=" + addressHash + ", index=" + index + ", securityLevel=" + securityLevel + "]";
     }
 }

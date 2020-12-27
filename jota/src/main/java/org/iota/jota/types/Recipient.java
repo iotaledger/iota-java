@@ -4,10 +4,10 @@ import java.util.Arrays;
 
 public class Recipient {
     
-    private long value;
-    private String message;
-    private String tag;
-    private String[] addresses;
+    private final long value;
+    private final String message;
+    private final String tag;
+    private final String[] addresses;
     
     public Recipient(long value, String message, String tag, String... addresses) {
         this.value = value;
@@ -34,8 +34,8 @@ public class Recipient {
 
     @Override
     public String toString() {
-        return "Recipient [value=" + value + ", message=" + message + ", tag=" + tag + ", address="
-                + Arrays.toString(addresses) + "]";
+        return "Recipient [value=" + getValue() + ", message=" + getMessage() + ", tag=" + getTag() + ", address="
+                + Arrays.toString(getAddresses()) + "]";
     }
 
     @Override
@@ -55,7 +55,11 @@ public class Recipient {
             return true;
         }
         
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
             return false;
         }
         
@@ -63,17 +67,25 @@ public class Recipient {
         if (!Arrays.equals(addresses, other.addresses)) {
             return false;
         }
-        
-        if ((message == null && other.message != null) || !message.equals(other.message)) {
+
+        // check the message
+        if(!checkGivenValue(message, other.message)) {
             return false;
         }
-        
-        if ((tag == null && other.tag != null) || !tag.equals(other.tag)) {
+
+        // check the tag
+        if(!checkGivenValue(tag, other.tag)) {
             return false;
         }
-        
+
         return value == other.value;
     }
-    
-    
+
+    private boolean checkGivenValue (String thisValue, String otherValue) {
+        if(thisValue == null && otherValue != null) {
+            return false;
+        }
+
+        return thisValue == null || thisValue.equals(otherValue);
+    }
 }

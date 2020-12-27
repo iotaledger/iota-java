@@ -1,5 +1,6 @@
 package org.iota.jota.builder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -41,7 +42,7 @@ public abstract class AbstractBuilder<T, E, F extends Config> {
 
     protected abstract E compile();
 
-    protected abstract T generate();
+    protected abstract T generate() throws IOException;
     
     public T config(F config) {
         try {
@@ -68,7 +69,7 @@ public abstract class AbstractBuilder<T, E, F extends Config> {
         return (T) this;
     }
     
-    protected List<F> getConfigs() {
+    protected List<F> getConfigs() throws IOException {
         EnvConfig env = new EnvConfig();
         ArrayList<F> array = new ArrayList<>();
         array.add((F)env);
