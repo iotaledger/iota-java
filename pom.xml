@@ -85,7 +85,7 @@
 
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
 
-        <bcprov-jdk15on.version>1.66</bcprov-jdk15on.version>
+        <bcprov-jdk15on.version>1.67</bcprov-jdk15on.version>
         <retrofit.version>2.9.0</retrofit.version>
         <commons-lang3.version>3.11</commons-lang3.version>
         <slf4j-api.version>1.7.30</slf4j-api.version>
