@@ -3,7 +3,7 @@
   <a href="https://docs.iota.org/docs/client-libraries/0.1/getting-started/java-quickstart"><img src="iota-java.png"></a>
 </h1>
 
-<h2 align="center">The official Java client library for interacting with the Tangle</h2>
+<h2 align="center">The official Java client library for interacting with the legacy Tangle (deprecated since Chrysalis)</h2>
 
 <p align="center">
     <a href="https://docs.iota.org/docs/client-libraries/0.1/getting-started/java-quickstart" style="text-decoration:none;">
@@ -36,9 +36,15 @@
 
 ---
 
+## Deprecation warning
+
+This java client is no longer usable in the new Chrysalis network.
+Please use the Java bindings generated for iota.rs.
+They can be found [here](https://github.com/iotaledger/iota.rs/tree/dev/bindings/java)
+
 ## About
 
-This is the **official** Java client library, which allows you to do the following:
+This was the **official** Java client library, which allows you to do the following:
 
 * Create transactions
 * Read transactions
