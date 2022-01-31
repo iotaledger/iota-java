@@ -18,18 +18,18 @@ public class ConnectionFactory {
     private static final String KEY_PORT = "port";
     private static final String KEY_PROTOCOL = "protocol";
     
-    private static final Logger log = LoggerFactory.getLogger(ConnectionFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionFactory.class);
     
     public static Connection createConnection(Properties properties, int timeout) {
         if (!preRequirements(properties)) {
-            log.error("Configuration of node missing critical sections. Required: " + 
+            LOGGER.error("Configuration of node missing critical sections. Required: " +
                     KEY_TYPE + ", " + KEY_NAME + " and " + KEY_HOST);
             return null;
         }
         
         ConnectionType type = ConnectionType.byType(propGetString(properties, KEY_TYPE));
         if (type == null) {
-            log.error("Found unknown connection type. " + 
+            LOGGER.error("Found unknown connection type. " +
                     KEY_TYPE + ", " + KEY_NAME + " and " + KEY_HOST);
             return null;
         }
@@ -47,11 +47,11 @@ public class ConnectionFactory {
             }
         } catch (Exception e) {
             //Wrong parameters for a connection type
-            log.error("Failed making a connection due to " + e.getMessage());
+            LOGGER.error("Failed making a connection due to " + e.getMessage());
         }
         
         //We wont get here, any ConnectionType must have an entry in the switch
-        log.error("Failed making a connection for node type " + type + " at location " + host);
+        LOGGER.error("Failed making a connection for node type " + type + " at location " + host);
         return null;
     }
     

@@ -1,7 +1,7 @@
 package org.iota.jota.dto.response;
 
 /**
- * Response of {@link jota.dto.request.IotaGetInclusionStateRequest}.
+ * Response of {@link org.iota.jota.dto.request.IotaGetInclusionStateRequest}.
  **/
 public class GetInclusionStateResponse extends AbstractResponse {
 

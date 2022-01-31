@@ -16,7 +16,6 @@ import org.iota.jota.dto.response.ReplayBundleResponse;
 import org.iota.jota.model.Bundle;
 import org.iota.jota.model.Transaction;
 import org.iota.jota.types.Hash;
-import org.iota.jota.types.Trits;
 import org.iota.jota.utils.Converter;
 import org.iota.jota.utils.thread.UnboundScheduledExecutorService;
 import org.slf4j.Logger;
@@ -28,9 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.stream.Collectors.toList;
+
 public class PromoterReattacherImpl extends AccountPlugin implements PromoterReattacher {
     
-    private static final Logger log = LoggerFactory.getLogger(PromoterReattacherImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PromoterReattacherImpl.class);
     
     private static final int APROX_ABOVE_MAX_DEPTH_MIN = 5;
     private static final long PROMOTE_DELAY = 10000;
@@ -72,15 +73,12 @@ public class PromoterReattacherImpl extends AccountPlugin implements PromoterRea
         
         for (Entry<String, PendingTransfer> entry : manager.getPendingTransfers().entrySet()) {
             // Recreate the bundle
-            Bundle bundle = new Bundle();
-            for (Trits trits : entry.getValue().getBundleTrits()){
-                Transaction tx = new Transaction(Converter.trytes(trits.getTrits()));
-                bundle.addTransaction(tx);
-            }
-            bundle.setLength(entry.getValue().getBundleTrits().size());
-            
-            // Start 
-            addUnconfirmedBundle(bundle, 0);
+            List<Transaction> transactions = entry.getValue().getBundleTrits().stream()
+                    .map(it -> new Transaction.Builder().buildWithTrytes(Converter.trytes(it.getTrits())))
+                    .collect(toList());
+
+            // Start
+            addUnconfirmedBundle(new Bundle(transactions), 0);
         }
     }
 
@@ -156,7 +154,7 @@ public class PromoterReattacherImpl extends AccountPlugin implements PromoterRea
                 reattach(bundle);
             }
         } catch (Exception e) {
-            log.error("Failed to run promote task for " + bundle.getBundleHash() + ": " + e.getMessage());
+            LOGGER.error("Failed to run promote task for " + bundle.getBundleHash() + ": " + e.getMessage());
         }
     }
     
@@ -182,7 +180,7 @@ public class PromoterReattacherImpl extends AccountPlugin implements PromoterRea
                     // Cant find tail transaction
                     continue;
                 }
-                tailTransaction = new Transaction(res.getTrytes()[0]);
+                tailTransaction = new Transaction.Builder().buildWithTrytes(res.getTrytes()[0]);
                 addBundleTail(tailOrig, tailTransaction);
             }
             

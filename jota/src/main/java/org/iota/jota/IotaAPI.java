@@ -60,7 +60,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class IotaAPI extends IotaAPICore {
 
-    private static final Logger log = LoggerFactory.getLogger(IotaAPI.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IotaAPI.class);
 
     protected IotaAPI(ApiOptions options) {
         super(options);
@@ -280,7 +280,7 @@ public class IotaAPI extends IotaAPICore {
                     // If error returned from getBundle, simply ignore it because the bundle was most likely incorrect
                 } catch (ArgumentException e) {
                     if (!Thread.interrupted()) {
-                        log.warn(Constants.GET_BUNDLE_RESPONSE_ERROR);
+                        LOGGER.warn(Constants.GET_BUNDLE_RESPONSE_ERROR);
                     }
                 }
             });
@@ -347,13 +347,9 @@ public class IotaAPI extends IotaAPICore {
             return new ArrayList<>();
         }
 
-        final List<Transaction> trx = new ArrayList<>();
-
-        for (String tryte : res.getTrytes()) {
-            trx.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURL_P81)));
-        }
-
-        return trx;
+        return Arrays.stream(res.getTrytes())
+                .map(tryte -> new Transaction.Builder().buildWithTrytes(tryte))
+                .collect(toList());
     }
 
     /**
@@ -374,12 +370,9 @@ public class IotaAPI extends IotaAPICore {
 
         final GetTrytesResponse trytesResponse = getTrytes(hashes);
 
-        final List<Transaction> trxs = new ArrayList<>();
-
-        for (final String tryte : trytesResponse.getTrytes()) {
-            trxs.add(new Transaction(tryte, SpongeFactory.create(SpongeFactory.Mode.CURL_P81)));
-        }
-        return trxs;
+        return Arrays.stream(trytesResponse.getTrytes())
+                .map(tryte -> new Transaction.Builder().buildWithTrytes(tryte))
+                .collect(toList());
     }
 
     /**
@@ -657,12 +650,9 @@ public class IotaAPI extends IotaAPICore {
             bundle.finalize(SpongeFactory.create(SpongeFactory.Mode.KERL));
             bundle.addTrytes(signatureFragments);
 
-            List<Transaction> trxb = bundle.getTransactions();
-            List<String> bundleTrytes = new ArrayList<>();
-
-            for (Transaction trx : trxb) {
-                bundleTrytes.add(trx.toTrytes());
-            }
+            List<String> bundleTrytes = bundle.getTransactions().stream()
+                    .map(Transaction::toTrytes)
+                    .collect(toList());
 
             Collections.reverse(bundleTrytes);
             return bundleTrytes;
@@ -1191,45 +1181,44 @@ public class IotaAPI extends IotaAPICore {
      */
     @Document
     public Bundle traverseBundle(String trunkTx, String bundleHash, Bundle bundle) throws ArgumentException {
-        GetTrytesResponse gtr = getTrytes(trunkTx);
+        GetTrytesResponse trytesResponse = getTrytes(trunkTx);
 
-        if (gtr != null) {
-
-            if (gtr.getTrytes().length == 0) {
-                throw new ArgumentException(Constants.INVALID_BUNDLE_ERROR);
-            }
-
-            Transaction trx = new Transaction(gtr.getTrytes()[0], SpongeFactory.create(SpongeFactory.Mode.CURL_P81));
-            if (trx.getBundle() == null) {
-                throw new ArgumentException(Constants.INVALID_TRYTES_INPUT_ERROR);
-            }
-            // If first transaction to search is not a tail, return error
-            if (bundleHash == null && trx.getCurrentIndex() != 0) {
-                throw new ArgumentException(Constants.INVALID_TAIL_HASH_INPUT_ERROR);
-            }
-            // If no bundle hash, define it
-            if (bundleHash == null) {
-                bundleHash = trx.getBundle();
-            }
-            // If different bundle hash, return with bundle
-            if (!bundleHash.equals(trx.getBundle())) {
-                bundle.setLength(bundle.getTransactions().size());
-                return bundle;
-            }
-            // If only one bundle element, return
-            if (trx.getLastIndex() == 0 && trx.getCurrentIndex() == 0) {
-                return new Bundle(Collections.singletonList(trx), 1);
-            }
-            // Define new trunkTransaction for search
-            trunkTx = trx.getTrunkTransaction();
-            // Add transaction object to bundle
-            bundle.getTransactions().add(trx);
-
-            // Continue traversing with new trunkTx
-            return traverseBundle(trunkTx, bundleHash, bundle);
-        } else {
+        if (trytesResponse == null) {
             throw new ArgumentException(Constants.GET_TRYTES_RESPONSE_ERROR);
         }
+
+        if (trytesResponse.getTrytes().length == 0) {
+            throw new ArgumentException(Constants.INVALID_BUNDLE_ERROR);
+        }
+
+        Transaction transaction = new Transaction.Builder().buildWithTrytes(trytesResponse.getTrytes()[0]);
+        if (transaction.getBundle() == null) {
+            throw new ArgumentException(Constants.INVALID_TRYTES_INPUT_ERROR);
+        }
+        // If first transaction to search is not a tail, return error
+        if (bundleHash == null && transaction.getCurrentIndex() != 0) {
+            throw new ArgumentException(Constants.INVALID_TAIL_HASH_INPUT_ERROR);
+        }
+        // If no bundle hash, define it
+        if (bundleHash == null) {
+            bundleHash = transaction.getBundle();
+        }
+        // If different bundle hash, return with bundle
+        if (!bundleHash.equals(transaction.getBundle())) {
+            bundle.setLength(bundle.getTransactions().size());
+            return bundle;
+        }
+        // If only one bundle element, return
+        if (transaction.getLastIndex() == 0 && transaction.getCurrentIndex() == 0) {
+            return new Bundle(Collections.singletonList(transaction), 1);
+        }
+        // Define new trunkTransaction for search
+        trunkTx = transaction.getTrunkTransaction();
+        // Add transaction object to bundle
+        bundle.getTransactions().add(transaction);
+
+        // Continue traversing with new trunkTx
+        return traverseBundle(trunkTx, bundleHash, bundle);
     }
 
     /**
@@ -1499,7 +1488,7 @@ public class IotaAPI extends IotaAPICore {
         List<String> inputAddresses = new ArrayList<>();
 
         for (String trx : trytes) {
-            Transaction transaction = new Transaction(trx, SpongeFactory.create(SpongeFactory.Mode.CURL_P81));
+            Transaction transaction = new Transaction.Builder().buildWithTrytes(trx);
             addresses.add(Checksum.addChecksum(transaction.getAddress()));
             inputTransactions.add(transaction);
         }
@@ -1639,7 +1628,6 @@ public class IotaAPI extends IotaAPICore {
     @Document
     public boolean isPromotable(Transaction tail) throws ArgumentException {
         long lowerBound = tail.getAttachmentTimestamp();
-
         return isAboveMaxDepth(lowerBound);
     }
 
@@ -1656,7 +1644,7 @@ public class IotaAPI extends IotaAPICore {
             throw new ArgumentException(Constants.TRANSACTION_NOT_FOUND);
         }
 
-        return isPromotable(new Transaction(transaction.getTrytes()[0]));
+        return isPromotable(new Transaction.Builder().buildWithTrytes(transaction.getTrytes()[0]));
     }
 
     private boolean isAboveMaxDepth(long attachmentTimestamp) {
@@ -1724,7 +1712,9 @@ public class IotaAPI extends IotaAPICore {
             return Collections.emptyList();
         }
 
-        return Arrays.stream(res.getTrytes()).map(trytes -> new Transaction(trytes, getCurl())).collect(toList());
+        return Arrays.stream(res.getTrytes())
+                .map(trytes -> new Transaction.Builder().curl(getCurl()).buildWithTrytes(trytes))
+                .collect(toList());
     }
 
     public static class Builder extends ApiBuilder<Builder, IotaAPI> {

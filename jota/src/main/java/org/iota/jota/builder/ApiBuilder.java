@@ -18,32 +18,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
-public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICore> 
-        extends AbstractBuilder<T, E, ApiConfig> 
+public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICore>
+        extends AbstractBuilder<T, E, ApiConfig>
         implements ApiSettings {
-    
-    private static final Logger log = LoggerFactory.getLogger(ApiBuilder.class);
-    
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiBuilder.class);
+
     List<Connection> nodes = new ArrayList<>();
-    
+
     String protocol, host;
     int port;
-    
+
     int timeout = 0;
-    
+
     // If this is null, no local PoW is done, therefore no default value
     IotaPoW localPoW;
     ICurl customCurl = SpongeFactory.create(SpongeFactory.Mode.KERL);
-    
+
     public ApiBuilder() {
-        super(log);
+        super(LOGGER);
     }
-    
+
     /**
      * Generates values for options which were not assigned through the builder.
      * Starts by checking a optionally set config using {@link #config(org.iota.jota.config.Config)}
      * THen checks Environment, and in the end goes to {@link IotaDefaultConfig} for defaults
-     * 
+     *
      * @return The builder
      * @throws Exception When we failed to load env configs or a url was malformed
      */
@@ -52,37 +52,35 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
     protected T generate() throws Exception {
         for (ApiConfig config : getConfigs()) {
             if (config != null) {
-             // Defaults have the node in the nodes list
+                // Defaults have the node in the nodes list
                 // Only load legacy defaults when we used a legacy value
                 if (!(config instanceof IotaDefaultConfig) || hasLegacyOptions()) {
                     if (null == protocol) {
                         protocol = config.getLegacyProtocol();
                     }
-    
+
                     if (null == host) {
                         host = config.getLegacyHost();
                     }
-    
+
                     if (0 == port) {
                         port = config.getLegacyPort();
-                    } 
+                    }
                 }
 
                 if (0 == timeout) {
                     timeout = config.getConnectionTimeout();
                 }
-                
+
                 // Now if we had a legacy config node, we wont take the default node
                 // BUt if nothing was configured, we add the legacy node from default config
                 if (config.hasNodes() && (
-                        !(config instanceof IotaDefaultConfig) || !(hasLegacyOptions() || hasNodes()))){
-                    for (Connection c : config.getNodes()) {
-                        nodes.add(c);
-                    }
+                        !(config instanceof IotaDefaultConfig) || !(hasLegacyOptions() || hasNodes()))) {
+                    nodes.addAll(config.getNodes());
                 }
             }
         }
-        
+
         if (hasLegacyOptions()) {
             String path = "";
             //Fix for a path, crude but works!
@@ -91,26 +89,32 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
                 path = host.substring(host.indexOf("/"));
                 host = host.substring(0, host.indexOf("/"));
             }
-            
-            nodes.add(new HttpConnector(protocol,  host,  port, path, timeout));
+
+            nodes.add(new HttpConnector(protocol, host, port, path, timeout));
         }
-        
+
         return (T) this;
     }
-    
+
     private boolean hasLegacyOptions() {
         return null != host || null != protocol || 0 != port;
     }
 
+    /**
+     * Sets the custom curl
+     *
+     * @param curl {@link ICurl} to set
+     * @return The Builder instance
+     */
     public T withCustomCurl(ICurl curl) {
         customCurl = curl;
         return (T) this;
     }
-    
+
     /**
      * Sets the legacy host field
-     * 
-     * @param host The host to set
+     *
+     * @param host  The host to set
      * @param check if we should check if the address is valid (network check)
      * @return The builder instance
      */
@@ -124,13 +128,13 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        
+
         return (T) this;
     }
 
     /**
      * Sets the legacy host field after checking if the address is valid (network check)
-     * 
+     *
      * @param host The host to set
      * @return The builder instance
      */
@@ -138,26 +142,50 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
         return host(host, true);
     }
 
+    /**
+     * Sets the legacy port field
+     *
+     * @param port The port to set
+     * @return The builder instance
+     */
     public T port(int port) {
         this.port = port;
         return (T) this;
     }
 
+    /**
+     * Set the protocol
+     *
+     * @param protocol The protocol to set
+     * @return The builder instance
+     */
     public T protocol(String protocol) {
         this.protocol = protocol;
         return (T) this;
     }
 
+    /**
+     * Set the {@link IotaPoW}
+     *
+     * @param localPoW The local pow to set
+     * @return The builder instance
+     */
     public T localPoW(IotaPoW localPoW) {
         this.localPoW = localPoW;
         return (T) this;
     }
-    
+
+    /**
+     * Sets the timeout
+     *
+     * @param timeout The timeout to set
+     * @return The builder instance
+     */
     public T timeout(int timeout) {
         this.timeout = timeout;
         return (T) this;
     }
-    
+
     public String getProtocol() {
         return protocol;
     }
@@ -179,12 +207,12 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
     public ICurl getCustomCurl() {
         return customCurl;
     }
-    
+
     public T addNode(Connection c) {
         nodes.add(c);
         return (T) this;
     }
-    
+
     public T addHttpNode(Connection c) {
         nodes.add(c);
         return (T) this;
@@ -194,7 +222,7 @@ public abstract class ApiBuilder<T extends ApiBuilder<T, E>, E extends IotaAPICo
     public List<Connection> getNodes() {
         return nodes;
     }
-    
+
     @Override
     public int getConnectionTimeout() {
         return timeout;
