@@ -9,7 +9,7 @@ public class EventAttachingToTangle extends EventImpl {
     private String[] trytes;
 
     public EventAttachingToTangle(String[] trytes) {
-        super(AccountEventType.AttachingToTangle);
+        super(AccountEventType.ATTACHING_TO_TANGLE);
         
         this.trytes = trytes;
     }

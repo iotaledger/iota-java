@@ -1,5 +1,6 @@
 package org.iota.jota.builder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.iota.jota.config.options.AccountConfig;
 import org.iota.jota.config.options.AccountSettings;
 import org.iota.jota.config.types.IotaDefaultConfig;
 import org.iota.jota.error.ArgumentException;
+import org.iota.jota.error.InternalException;
 import org.iota.jota.utils.Constants;
 import org.iota.jota.utils.InputValidator;
 import org.slf4j.Logger;
@@ -42,9 +44,11 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     private AccountStore store;
     private IotaAPI api;
 
-    private SeedProvider seed;
+    private final SeedProvider seed;
     
-    private int mwm, depth, securityLevel;
+    private int mwm;
+    private int depth;
+    private int securityLevel;
     
     private Clock clock;
 
@@ -56,7 +60,7 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
      * @param seed The seed which we load the account for
      * @throws ArgumentException When an invalid seed is provided
      */
-    public AccountBuilder(String seed) throws ArgumentException {
+    public AccountBuilder(String seed) {
         super(log);
         
         if (!InputValidator.isValidSeed(seed)) {
@@ -77,20 +81,22 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     }
     
     public AccountBuilder mwm(int mwm) {
-        if (mwm > 0) {
-            this.mwm = mwm;
-        } else {
-            log.warn(Constants.INVALID_INPUT_ERROR);
-        }
+        this.mwm = setIntValueOrLogAWarning(mwm, "mwm");
         return this;
+    }
+
+    private int setIntValueOrLogAWarning(int intValue, String intTypeName){
+        int tempInt = 0;
+        if (intValue > 0) {
+            tempInt = intValue;
+        } else {
+            log.warn("{} For: {}", Constants.INVALID_INPUT_ERROR, intTypeName);
+        }
+        return tempInt;
     }
     
     public AccountBuilder depth(int depth) {
-        if (depth > 0) {
-            this.depth = depth;
-        } else {
-            log.warn(Constants.INVALID_INPUT_ERROR);
-        }
+        this.depth = setIntValueOrLogAWarning(depth, "depth");
         return this;
     }
     
@@ -145,42 +151,62 @@ public class AccountBuilder extends AbstractBuilder<AccountBuilder, IotaAccount,
     }
 
     @Override
-    public AccountBuilder generate() throws Exception {
+    public AccountBuilder generate() throws InternalException, IOException {
         //If a config is specified through ENV, that one will be in the stream, otherwise default config is used
         for (AccountConfig config : getConfigs()) {
             if (config != null) {
                 //calculate Account specific values
-                
-                if (0 == getMwm() && config.getMwm() != 0) {
-                    mwm(config.getMwm());
-                }
-                
-                if (0 == getDepth() && config.getDepth() != 0) {
-                    depth(config.getDepth());
-                }
-                
-                if (0 == getSecurityLevel() && config.getSecurityLevel() != 0) {
-                    securityLevel(config.getSecurityLevel());
-                }
-                
-                if (null == store && config.getStore() != null) {
-                    store(config.getStore());
-                }
-                
-                if (null == api) {
-                    api(new IotaAPI.Builder().build());
-                }
-                
-                if (null == clock) {
-                    // TODO: Configify
-                    clock(new SystemClock());
-                }
+                checkMwm(config);
+                checkDepth(config);
+                checkSecurityLevel(config);
+                checkStore(config);
+                checkApi();
+                checkClock();
+            } else {
+                log.warn("AccountConfig is null");
             }
         }
         
         return this;
     }
-    
+
+    private void checkClock() {
+        if (null == clock) {
+            // TODO: Configify
+            clock(new SystemClock());
+        }
+    }
+
+    private void checkApi() {
+        if (null == api) {
+            api(new IotaAPI.Builder().build());
+        }
+    }
+
+    private void checkStore(AccountConfig config) {
+        if (null == store && config.getStore() != null) {
+            store(config.getStore());
+        }
+    }
+
+    private void checkSecurityLevel(AccountConfig config) {
+        if (0 == getSecurityLevel() && config.getSecurityLevel() != 0) {
+            securityLevel(config.getSecurityLevel());
+        }
+    }
+
+    private void checkDepth(AccountConfig config) {
+        if (0 == getDepth() && config.getDepth() != 0) {
+            depth(config.getDepth());
+        }
+    }
+
+    private void checkMwm(AccountConfig config) {
+        if (0 == getMwm() && config.getMwm() != 0) {
+            mwm(config.getMwm());
+        }
+    }
+
     @Override
     protected IotaAccount compile(){
         return new IotaAccount(new AccountOptions(this));

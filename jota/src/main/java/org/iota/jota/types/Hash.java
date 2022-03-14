@@ -11,7 +11,7 @@ public class Hash implements Serializable {
 
     private static final long serialVersionUID = -5040410304130966841L;
     
-    private String hash;
+    private String hashString;
     private transient String hashCheckSum;
     
     /**
@@ -22,35 +22,35 @@ public class Hash implements Serializable {
         
     }
 
-    public Hash(String hash) throws ArgumentException {
-        if (InputValidator.isAddress(hash)) {
-            hashCheckSum = hash;
-            this.hash = hash.substring(0, 81);
-        } else if (!InputValidator.isHash(hash)){
+    public Hash(String hashString) {
+        if (InputValidator.isAddress(hashString)) {
+            hashCheckSum = hashString;
+            this.hashString = hashString.substring(0, 81);
+        } else if (!InputValidator.isHash(hashString)){
             throw new ArgumentException(Constants.INVALID_HASH_INPUT_ERROR);
         } else {
-            this.hash = hash;
+            this.hashString = hashString;
         }
     }
 
-    public String getHash() {
-        return hash;
+    public String getHashString() {
+        return hashString;
     }
     
     public String getHashCheckSum() {
-        if (null != hashCheckSum) {
-            return hashCheckSum;
+        if (null == hashCheckSum) {
+            hashCheckSum = Checksum.addChecksum(hashString);
         }
-        return hashCheckSum = Checksum.addChecksum(hash);
+        return hashCheckSum;
     }
     
     @Override
     public String toString() {
-        return hash;
+        return hashString;
     }
     
     @Override
     public boolean equals(Object obj) {
-        return obj != null && obj.getClass().equals(Hash.class) && hash.equals(((Hash)obj).hash);
+        return obj != null && obj.getClass().equals(Hash.class) && hashString.equals(((Hash)obj).hashString);
     }
 }

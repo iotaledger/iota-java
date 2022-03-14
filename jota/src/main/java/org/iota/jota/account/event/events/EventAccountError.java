@@ -9,7 +9,7 @@ public class EventAccountError extends EventImpl {
     private boolean shouldLog;
 
     public EventAccountError(Exception exception) {
-        super(AccountEventType.Error);
+        super(AccountEventType.ERROR);
         this.exception = exception;
         this.shouldLog = true;
     }

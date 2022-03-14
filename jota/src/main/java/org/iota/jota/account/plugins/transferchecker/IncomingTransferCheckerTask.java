@@ -55,7 +55,7 @@ public class IncomingTransferCheckerTask implements Runnable {
 
     @Override
     public void run() {
-        String addrHash = address.getAddress().getHashCheckSum();
+        String addrHash = address.getAddressHash().getHashCheckSum();
         try {
             Bundle[] bundles = api.bundlesFromAddresses(true, addrHash);
             if (bundles == null) {

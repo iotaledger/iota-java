@@ -95,7 +95,7 @@ public class AccountStateManager {
         
         
             Input remainderInput = new Input(
-                addressService.get(key).getAddress().getHash(), 
+                addressService.get(key).getAddressHash().getHashString(),
                 remainder, 
                 key, 
                 options.getSecurityLevel()
@@ -202,7 +202,7 @@ public class AccountStateManager {
     public boolean isOwnAddress(String hash) {
         for (Entry<Integer, StoredDepositAddress> entry : getDepositRequests().entrySet()) {
             if (addressService.get(entry.getKey(), entry.getValue().getSecurityLevel())
-                    .getAddress().getHash().equals(hash)) {
+                    .getAddressHash().getHashString().equals(hash)) {
                 
                 return true;
             }

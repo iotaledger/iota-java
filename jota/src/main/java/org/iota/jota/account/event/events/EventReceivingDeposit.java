@@ -14,7 +14,7 @@ public class EventReceivingDeposit extends EventAbstractBundle {
     private Address receiver;
 
     public EventReceivingDeposit(Bundle bundle, Address address) {
-        super(AccountEventType.ReceivingDeposit, bundle);
+        super(AccountEventType.RECEIVING_DEPOSIT, bundle);
         this.receiver = address;
     }
     
@@ -28,13 +28,13 @@ public class EventReceivingDeposit extends EventAbstractBundle {
     
     public long getAmount() {
         for (Transaction t : getBundle().getTransactions()) {
-            if (t.getAddress().equals(receiver.getAddress().toString())) {
+            if (t.getAddress().equals(receiver.getAddressHash().toString())) {
                 return t.getValue();
             }
         }
         
         // This should NEVER happen
-        log.error("Deposit received event fired but could not find amount!\\n Please check " + receiver.getAddress());
+        log.error("Deposit received event fired but could not find amount!\\n Please check " + receiver.getAddressHash());
         return -1;
     }
 }

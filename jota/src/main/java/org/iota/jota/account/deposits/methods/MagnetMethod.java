@@ -135,7 +135,7 @@ public class MagnetMethod implements DepositMethod<String> {
 
     @Override
     public String build(ConditionalDepositAddress conditions) {
-        String address = conditions.getDepositAddress().getHash();
+        String address = conditions.getDepositAddress().getHashString();
         String magnetChecksum = magnetChecksum(address,
                 conditions.getRequest().getTimeOut().getTime(),
                 conditions.getRequest().isMultiUse(),

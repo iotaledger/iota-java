@@ -1,5 +1,7 @@
 package org.iota.jota.store;
 
+import org.iota.jota.error.InternalException;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -11,8 +13,8 @@ public class EnvironmentStore implements Store {
     }
 
     @Override
-    public void save(boolean closeResources) throws Exception {
-        throw new Exception("Environment store does not allow saving");
+    public void save(boolean closeResources) throws InternalException {
+        throw new InternalException("Environment store does not allow saving");
     }
 
     @Override

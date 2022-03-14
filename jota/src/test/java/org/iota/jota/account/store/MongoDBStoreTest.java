@@ -100,14 +100,14 @@ public class MongoDBStoreTest {
         
         Map<String, PendingTransfer> result = store.getPendingTransfers(ID);
         assertEquals(1, result.size(), "Store should have a value after setting");
-        assertEquals(transfer, result.get(hash.getHash()), "Store should have the same value after setting");
+        assertEquals(transfer, result.get(hash.getHashString()), "Store should have the same value after setting");
         
         store.addTailHash(ID, hash, nextTail);
         result = store.getPendingTransfers(ID);
         
         transfer.addTail(nextTail);
         assertEquals(1, result.size(), "Store should have a value after setting");
-        assertEquals(transfer, result.get(hash.getHash()), "Store should have the same value after setting");
+        assertEquals(transfer, result.get(hash.getHashString()), "Store should have the same value after setting");
         
         store.removePendingTransfer(ID, hash);
         result = store.getPendingTransfers(ID);

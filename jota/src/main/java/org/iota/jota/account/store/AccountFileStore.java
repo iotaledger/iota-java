@@ -13,6 +13,8 @@ import org.iota.jota.store.JsonFlatFileStore;
 import org.iota.jota.store.Store;
 import org.iota.jota.types.Hash;
 import org.iota.jota.types.Trytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -21,6 +23,8 @@ import org.iota.jota.types.Trytes;
  *
  */
 public class AccountFileStore extends AccountStoreImpl {
+
+    private static final Logger log = LoggerFactory.getLogger(AccountFileStore.class);
 
     private Store store;
     
@@ -59,8 +63,7 @@ public class AccountFileStore extends AccountStoreImpl {
         try {
             store.save(true);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Exception at shutdown. Message: {}",e.getMessage(), e);
         }
     }
     
@@ -69,7 +72,8 @@ public class AccountFileStore extends AccountStoreImpl {
         AccountState state = store.get(id, null);
 
         if (state == null) {
-            saveAccount(id, state = new AccountState());
+            state = new AccountState();
+            saveAccount(id, state);
         }
         return state;
     }
@@ -119,19 +123,19 @@ public class AccountFileStore extends AccountStoreImpl {
         PendingTransfer pendingTransfer = new PendingTransfer(trytesToTrits(bundleTrytes));
         pendingTransfer.addTail(tailTx);
         
-        loadAccount(id).addPendingTransfers(tailTx.getHash(), pendingTransfer);
+        loadAccount(id).addPendingTransfers(tailTx.getHashString(), pendingTransfer);
         save();
     }
 
     @Override
     public void removePendingTransfer(String id, Hash tailHash) {
-        loadAccount(id).removePendingTransfer(tailHash.getHash());
+        loadAccount(id).removePendingTransfer(tailHash.getHashString());
         save();
     }
 
     @Override
     public void addTailHash(String id, Hash tailHash, Hash newTailTxHash) {
-        loadAccount(id).getPendingTransfer(tailHash.getHash()).addTail(newTailTxHash);
+        loadAccount(id).getPendingTransfer(tailHash.getHashString()).addTail(newTailTxHash);
         save();
     }
 
@@ -155,8 +159,7 @@ public class AccountFileStore extends AccountStoreImpl {
         try {
             store.save(false);
         } catch (Exception e) {
-            // TODO log account error
-            e.printStackTrace();
+            log.error("Exception at shutdown. Message: {}",e.getMessage(), e);
         }
     }
     

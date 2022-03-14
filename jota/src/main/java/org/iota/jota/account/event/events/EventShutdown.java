@@ -10,7 +10,7 @@ public class EventShutdown extends EventImpl {
     private Date time;
 
     public EventShutdown(Date now) {
-        super(AccountEventType.Shutdown);
+        super(AccountEventType.SHUTDOWN);
         this.time = now;
     }
 
