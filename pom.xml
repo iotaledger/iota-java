@@ -94,7 +94,7 @@
         <zxing.version>3.4.0</zxing.version>
         <javase.version>2.6.0</javase.version>
         <jackson-databind.version>2.11.2</jackson-databind.version>
-        <mongodb-driver.version>3.12.7</mongodb-driver.version>
+        <mongodb-driver.version>3.12.8</mongodb-driver.version>
         <bson.version>3.12.7</bson.version>
 
         <!-- Test dependencies -->
