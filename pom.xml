@@ -93,7 +93,7 @@
         <jadler-all.version>1.3.0</jadler-all.version>
         <zxing.version>3.4.0</zxing.version>
         <javase.version>2.6.0</javase.version>
-        <jackson-databind.version>2.11.2</jackson-databind.version>
+        <jackson-databind.version>2.12.7.1</jackson-databind.version>
         <mongodb-driver.version>3.12.7</mongodb-driver.version>
         <bson.version>3.12.7</bson.version>
 
